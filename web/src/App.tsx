@@ -47,6 +47,12 @@ class App extends React.Component<any, app> {
     const FlowPage = React.lazy(() => import('./pages/flow/flow'));
     const ChatPage = React.lazy(() => import('./pages/chat/chat'));
 
+    const UserPage = React.lazy(() => import('./pages/system/user/user'));
+    const RolePage = React.lazy(() => import('./pages/system/role/role'));
+    const PagePage = React.lazy(() => import('./pages/system/page/page'));
+    const OrgPage = React.lazy(() => import('./pages/system/org/org'));
+    const StatePage = React.lazy(() => import('./pages/system/state/state'));
+
     return (
       <Router>
         <Switch>
@@ -60,8 +66,11 @@ class App extends React.Component<any, app> {
                   <Route exact={true} path="/chat"><Suspense fallback="加载中..."><ChatPage /></Suspense></Route>
                   <Route exact={true} path="/about"><Suspense fallback="加载中..."><AboutPage /></Suspense></Route>
 
-                  <Route exact={true} path="/submenu1"><Suspense fallback="加载中..."><AboutPage /></Suspense></Route>
-                  <Route exact={true} path="/submenu2"><Suspense fallback="加载中..."><AboutPage /></Suspense></Route>
+                  <Route exact={true} path="/user"><Suspense fallback="加载中..."><UserPage /></Suspense></Route>
+                  <Route exact={true} path="/role"><Suspense fallback="加载中..."><RolePage /></Suspense></Route>
+                  <Route exact={true} path="/page"><Suspense fallback="加载中..."><PagePage /></Suspense></Route>
+                  <Route exact={true} path="/org"><Suspense fallback="加载中..."><OrgPage /></Suspense></Route>
+                  <Route exact={true} path="/state"><Suspense fallback="加载中..."><StatePage /></Suspense></Route>
                   <Route path="*">
                     <Redirect to="/home"></Redirect>
                   </Route>
