@@ -1,0 +1,88 @@
+﻿<#@ template language="C#" hostspecific="True"#>  
+<#@ include file="Manager.ttinclude"#>  
+<# var manager = Manager.Create(Host, GenerationEnvironment); #>  
+
+<# 	
+	var entity = new EntityInfo()
+	{
+		TableName = "t_test",
+		EntityName = "Test",
+		TableComment = "测试",
+		PropertyInfos = new List<PropertyInfo>
+		{
+			new PropertyInfo("user_id",1,"Id","主键"),
+			new PropertyInfo("user_name",5,"Name","姓名"),
+		}
+	};
+#>
+
+
+<# 	
+	var entityFileName = entity.EntityName + ".cs";
+#>
+
+<# manager.StartNewFile(entityFileName); #>
+//------------------------------------------------------------------------------
+// 生成时间 <#=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")#>
+//------------------------------------------------------------------------------
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SnippetAdmin.Services
+{
+    [Comment("<#=entity.TableComment#>")]
+    [Table("<#=entity.TableName#>")]
+	public class <#=entity.EntityName#>
+	{
+		<#
+		foreach(var p in entity.PropertyInfos)		
+		{
+			// C# 8 switch表达式
+			var typeString = p.PropertyType switch {
+				1 => "int",
+				2 => "string",
+				3 => "bool",
+				4 => "DateTime",
+				5 => "Guid",
+				6 => "decimal",
+				_ => "string"
+			};
+		#>    
+        [Comment("<#=p.PropertyComment#>")]
+        [Column("<#=p.ColumnName#>")]
+		public <#=typeString#> <#=p.PropertyName#> { get; set; }
+  <#}#>
+	}
+}
+<# manager.EndBlock(); #> 
+<# manager.Process(true); #>
+
+
+<#+	
+	public class EntityInfo {
+		public string TableName{get;set;}
+		public string EntityName{get;set;}
+		public string TableComment{get;set;}
+		public List<PropertyInfo> PropertyInfos{get;set;}
+	}
+
+	public class PropertyInfo {
+		public string ColumnName{get;set;}
+		public int PropertyType{get;set;}
+		public string PropertyName{get;set;}
+		public string PropertyComment{get;set;}
+
+		public PropertyInfo(string columnName,int propertyType,string propertyName,string propertyComment)
+		{
+			ColumnName = columnName;
+			PropertyType = propertyType;
+			PropertyName = propertyName;
+			PropertyComment = propertyComment;
+		}
+
+	}
+#>

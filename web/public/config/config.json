@@ -1,0 +1,13 @@
+{
+    "server_url": "http://localhost:29680",
+    "oauth": {
+        "github": {
+            "client_id": "",
+            "redirect_uri": "http://localhost:3000/callback?source=github"
+        },
+        "baidu": {
+            "client_id": "",
+            "redirect_uri": "http://localhost:3000/callback?source=baidu"
+        }
+    }
+}

@@ -1,0 +1,83 @@
+version: "3"
+services:
+  web:
+    container_name: snippetadmin-web
+    image: snippetadmin-web
+    build: 
+      context: ./web
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "21001:80"
+    volumes:
+      - ./volumns/web/config.json:/usr/share/nginx/html/config/config.json
+      - ./volumns/web/default.conf:/etc/nginx/conf.d/default.conf
+      - ./volumns/web/nginx.conf:/etc/nginx/nginx.conf
+  api:    
+    container_name: snippetadmin-api
+    image: snippetadmin-api
+    build: 
+      context: ./api
+      dockerfile: SnippetAdmin/Dockerfile
+    restart: always
+    ports:
+      - "21002:80"
+    environment:
+      ASPNETCORE_HOSTINGSTARTUPASSEMBLIES: SkyAPM.Agent.AspNetCore
+      SKYWALKING__SERVICENAME: sample_app
+    volumes:
+      - ./volumns/api/appsettings.json:/app/appsettings.json
+      - ./volumns/api/skyapm.json:/app/skyapm.json
+      - ./volumns/api/Logs:/app/logs
+      - ./volumns/api/skyapm-logs:/app/skyapm-logs
+  database: 
+    container_name: snippetadmin-mysql
+    image: mysql:8.0.21
+    privileged: true
+    restart: always
+    ports: 
+      - "3306:3306"
+    environment: 
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - ./volumns/mysql/data:/var/lib/mysql
+  sk-es6:
+    container_name: sk-es6
+    image: elasticsearch:6.8.15
+    privileged: true
+    restart: always
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    volumes:
+      - ./volumns/es6/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./volumns/es6/data:/usr/share/elasticsearch/data
+  sw-oap:
+    container_name: sw-oap
+    image: apache/skywalking-oap-server:8.5.0-es6
+    restart: always
+    ports:
+      - "1234:1234"
+      - "11800:11800"
+      - "12800:12800"
+    links:
+      - sk-es6
+    environment:
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: sk-es6:9200
+  sw-oap-ui:
+    container_name: sw-oap-ui
+    image: apache/skywalking-ui
+    privileged: true
+    ports:
+      - "9898:8080"
+    links:
+      - sw-oap
+    environment:
+      SW_OAP_ADDRESS: sw-oap:12800
+
+
+

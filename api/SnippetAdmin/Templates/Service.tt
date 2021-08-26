@@ -1,0 +1,45 @@
+﻿<#@ template language="C#" hostspecific="True"#>  
+<#@ include file="Manager.ttinclude"#>  
+<# var manager = Manager.Create(Host, GenerationEnvironment); #>  
+
+<# 
+	var serviceName = "Date"; 
+	var serviceFileName = serviceName + "Service.cs";
+	var iserviceFileName = "I" + serviceName + "Service.cs";
+#>
+
+<# manager.StartNewFile(serviceFileName); #>
+//------------------------------------------------------------------------------
+// 生成时间 <#=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")#>
+//------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SnippetAdmin.Services
+{
+	public class <#=serviceName#>Service : I<#=serviceName#>Service 
+	{
+	}
+}
+<# manager.EndBlock(); #> 
+
+<# manager.StartNewFile(iserviceFileName); #>
+//------------------------------------------------------------------------------
+// 生成时间 <#=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")#>
+//------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SnippetAdmin.Services
+{
+	public interface I<#=serviceName#>Service 
+	{
+	}
+}
+<# manager.EndBlock(); #> 
+
+<# manager.Process(true); #>

@@ -1,0 +1,63 @@
+//@import '~antd/dist/antd.dark.less'; // 引入官方提供的暗色 less 样式入口文件
+//@import '~antd/dist/antd.compact.less'; // 引入官方提供的紧凑 less 样式入口文件
+
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width : 8px;
+  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow   : inset 0 0 5px gray;
+  background   : gray;
+}
+
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow   : inset 0 0 5px gray;
+  border-radius: 10px;
+  background   : #ededed;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height        : 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height      : 100vh;
+  display         : flex;
+  flex-direction  : column;
+  align-items     : center;
+  justify-content : center;
+  font-size       : calc(10px + 2vmin);
+  color           : white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

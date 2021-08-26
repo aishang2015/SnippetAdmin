@@ -1,0 +1,84 @@
+﻿<#@ template language="C#" hostspecific="True"#>  
+<#@ include file="Manager.ttinclude"#>  
+<# var manager = Manager.Create(Host, GenerationEnvironment); #>  
+
+<# 	
+	var entity = new EntityInfo()
+	{
+		Name = "Test",
+		Comment = "测试",
+		PropertyInfos = new List<PropertyInfo>
+		{
+			new PropertyInfo(1,"Id","主键"),
+			new PropertyInfo(5,"Name","姓名"),
+		}
+	};
+#>
+
+
+<# 	
+	var entityFileName = entity.Name + ".cs";
+#>
+
+<# manager.StartNewFile(entityFileName); #>
+//------------------------------------------------------------------------------
+// 生成时间 <#=DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")#>
+//------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SnippetAdmin.Services
+{
+    /// <summary>
+	/// <#=entity.Comment#>
+    /// </summary>
+	public record <#=entity.Name#>
+	{
+		<#
+		foreach(var p in entity.PropertyInfos)		
+		{
+			// C# 8 switch表达式
+			var typeString = p.PropertyType switch {
+				1 => "int",
+				2 => "string",
+				3 => "bool",
+				4 => "DateTime",
+				5 => "Guid",
+				6 => "decimal",
+				_ => "string"
+			};
+		#>    
+        /// <summary>
+		/// <#=p.PropertyComment#>
+        /// </summary>
+		public <#=typeString#> <#=p.PropertyName#> { get; set; }
+  <#}#>
+	}
+}
+<# manager.EndBlock(); #> 
+<# manager.Process(true); #>
+
+
+<#+	
+	public class EntityInfo {
+		public string Name{get;set;}
+		public string Comment{get;set;}
+		public List<PropertyInfo> PropertyInfos{get;set;}
+	}
+
+	public class PropertyInfo {
+		public int PropertyType{get;set;}
+		public string PropertyName{get;set;}
+		public string PropertyComment{get;set;}
+
+		public PropertyInfo(int propertyType,string propertyName,string propertyComment)
+		{
+			PropertyType = propertyType;
+			PropertyName = propertyName;
+			PropertyComment = propertyComment;
+		}
+
+	}
+#>
