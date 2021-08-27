@@ -42,7 +42,7 @@ class NavMenu extends React.Component<INavMenuProps, any>{
                 <div className="logo" >SnippetAdmin</div> :
                 <div className="logo large-logo-font" >SnippetAdmin</div>
             }
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: "space-between" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: "space-between", userSelect: "none" }}>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}
                     selectedKeys={this.state.selectedKeys} onSelect={this.onSelect.bind(this)}>
                     {Constants.RouteInfo.map((r, index) => {
