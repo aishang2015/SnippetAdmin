@@ -9,7 +9,7 @@ export class Constants {
         { path: '/home', name: '主页', icon: <HomeOutlined /> },
         {
             path: '', name: '系统管理', icon: <SettingOutlined />, children: [
-                { path: '/user', name: '用户管理', icon: <UserOutlined /> },
+                { path: '/user', name: '系统用户', icon: <UserOutlined /> },
                 { path: '/role', name: '角色管理', icon: <SolutionOutlined /> },
                 { path: '/org', name: '组织管理', icon: <PartitionOutlined /> },
                 { path: '/page', name: '页面权限', icon: <SafetyCertificateOutlined /> },

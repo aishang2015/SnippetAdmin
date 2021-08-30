@@ -1,13 +1,14 @@
-import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tree, TreeSelect } from 'antd';
+import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tooltip, Tree, TreeSelect } from 'antd';
 import {
     HomeOutlined, PlusOutlined, ManOutlined, WomanOutlined, UserOutlined,
-    SearchOutlined, ClearOutlined, EditOutlined, DeleteOutlined, KeyOutlined
+    SearchOutlined, ClearOutlined, EditOutlined, DeleteOutlined, KeyOutlined,
+    SaveOutlined, MinusCircleOutlined
 } from "@ant-design/icons";
 
 import './user.less';
-import { DebounceSelect } from '../../../components/common/debounceSelect';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
+import { DebounceSelect } from '../../../components/common/debounceSelect';
 
 export default function User() {
 
@@ -15,12 +16,15 @@ export default function User() {
     const [total, setTotal] = useState(0);
     const [size, setSize] = useState(0);
 
-    const [groupSettingModal, setGroupSettingModal] = useState(false);
-    const [groupSettingForm] = useForm();
+    const [orgSettingModal, setOrgSettingModal] = useState(false);
+    const [orgSettingForm] = useForm();
     const [searchForm] = useForm();
 
     const [userEditModal, setUserEditModal] = useState(false);
     const [userEditForm] = useForm();
+
+    const [pwdEditVisible, setPwdEditVisible] = useState(false);
+    const [pwdEditForm] = useForm();
 
     const [userTableData, setUserTableData] = useState(new Array<any>());
 
@@ -65,7 +69,19 @@ export default function User() {
         {
             title: '角色', dataIndex: "role", align: 'center', width: '220px',
             render: (array: any, record: any) => (
-                array.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s}</Tag>))
+                array?.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s}</Tag>))
+            ),
+        },
+        {
+            title: '部门', dataIndex: "org", align: 'center', width: '220px',
+            render: (array: any, record: any) => (
+                array?.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#f50">{s}</Tag>))
+            ),
+        },
+        {
+            title: '职位', dataIndex: "post", align: 'center', width: '220px',
+            render: (array: any, record: any) => (
+                array?.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#87d068">{s}</Tag>))
             ),
         },
         {
@@ -78,9 +94,10 @@ export default function User() {
             title: '操作', key: 'operate', align: 'center',
             render: (text: any, record: any) => (
                 <Space size="middle">
-                    <a><EditOutlined /></a>
-                    <a><DeleteOutlined /></a>
-                    <a><KeyOutlined /></a>
+                    <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><EditOutlined /></a></Tooltip>
+                    <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><DeleteOutlined /></a></Tooltip>
+                    <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><KeyOutlined /></a></Tooltip>
+                    <Tooltip title="移出组织"><a onClick={() => moveOutOrg(record.id)}><MinusCircleOutlined /></a></Tooltip>
                 </Space>
             ),
         },
@@ -88,8 +105,8 @@ export default function User() {
 
     useEffect(() => {
         setUserTableData([
-            { num: 1, avatar: null, userName: "toknod", name: "王蛋八蛋", gender: 1, phone: 15900318989, role: ["管理"], isActive: true },
-            { num: 2, avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", userName: "toknod", name: "李报那个", gender: 0, phone: 15900318989, role: ["超级管理员"], isActive: false }
+            { num: 1, avatar: null, userName: "toknod", name: "王蛋八蛋", gender: 1, phone: 15900318989, role: ["管理"], org: ["董事办"], post: ["秘书"], isActive: true },
+            { num: 2, avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", userName: "toknod", name: "李报那个", gender: 0, phone: 15900318989, role: ["超级管理员"], org: ["行政部"], post: ["行政主管"], isActive: false }
         ]);
 
         setPage(1);
@@ -97,21 +114,19 @@ export default function User() {
         setSize(10)
     }, []);
 
-    function loadUser(username: string): Promise<Array<any>> {
-        return new Promise<Array<any>>((resolve, reject) => [
-            { label: '张三', value: 'zhangs' },
-            { label: '李四', value: 'lis' },
-            { label: '王五', value: 'wangw' }
-        ]);
+    async function loadUser(username: string): Promise<Array<any>> {
+        return new Promise<Array<any>>((resolve, reject) => {
+            console.log("e");
+            return [
+                { label: '张三', value: 'zhangs' },
+                { label: '李四', value: 'lis' },
+                { label: '王五', value: 'wangw' }
+            ]
+        });
     }
 
-    function setGroupMember() {
-        setGroupSettingModal(true);
-    }
-
-    // 组织成员设定
-    function groupSettingSubmit(values: any) {
-
+    function setOrgMember() {
+        setOrgSettingModal(true);
     }
 
     // 搜索提交
@@ -133,8 +148,38 @@ export default function User() {
         setUserEditModal(true);
     }
 
+    // 编辑用户
+    function editUser(id: number) {
+        setUserEditModal(true);
+    }
+
+    // 用户密码设定
+    function setPwd(id: number) {
+        setPwdEditVisible(true);
+    }
+
+    // 移出组织
+    function moveOutOrg(id: number) {
+        Modal.confirm({
+            title: '是否将该用户移出组织'
+        });
+    }
+
+    // 删除用户确认
+    function deleteUser(id: number) {
+        Modal.confirm({
+            title: "确认删除用户",
+            content: "是否删除该系统用户？"
+        });
+    }
+
     // 提交用户编辑信息
     function userInfoSubmit(values: any) {
+
+    }
+
+    // 提交用户密码信息
+    function pwdSubmit(values: any) {
 
     }
 
@@ -143,7 +188,7 @@ export default function User() {
             <div id="user-container">
                 <div id="user-group-container">
                     <div>
-                        <Button icon={<PlusOutlined />} onClick={setGroupMember}>组织成员设定</Button>
+                        <Button icon={<PlusOutlined />} onClick={setOrgMember}>成员设定</Button>
                     </div>
                     <Divider style={{ margin: "10px 0" }} />
                     <Tree showLine={true} showIcon={true} treeData={treeData} />
@@ -151,7 +196,7 @@ export default function User() {
                 <div id="user-list-container">
                     <Form form={searchForm} layout="inline" onFinish={searchSubmit}>
                         <Form.Item name="userName">
-                            <Input className="searchInput" autoComplete="off2" placeholder="请输入用户名" />
+                            <Input className="searchInput" autoComplete="off2" placeholder="请输入账号" />
                         </Form.Item>
                         <Form.Item name="name">
                             <Input className="searchInput" autoComplete="off2" placeholder="请输入姓名" />
@@ -167,37 +212,36 @@ export default function User() {
                         </Form.Item>
                     </Form>
                     <Space style={{ marginTop: "10px" }}>
-                        <Button icon={<SearchOutlined />} onClick={searchUser}>查找用户</Button>
-                        <Button icon={<ClearOutlined />} onClick={resetSearchForm}>重置条件</Button>
-                        <Button icon={<PlusOutlined />} onClick={createUser}>创建用户</Button>
+                        <Button icon={<SearchOutlined />} onClick={searchUser}>查找</Button>
+                        <Button icon={<ClearOutlined />} onClick={resetSearchForm}>重置</Button>
+                        <Button icon={<PlusOutlined />} onClick={createUser}>创建</Button>
                     </Space>
                     <Divider style={{ margin: "10px 0" }} />
-                    <Table columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1300 }} pagination={false}></Table>
+                    <Table columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1700 }} pagination={false}></Table>
                     <Pagination current={page} total={total} pageSize={size} showSizeChanger={true} style={{ marginTop: '10px' }}></Pagination>
                 </div>
             </div>
 
-            <Modal visible={groupSettingModal} onCancel={() => setGroupSettingModal(false)} title="组织成员设定" footer={null}>
-                <Form form={groupSettingForm} onFinish={groupSettingSubmit}>
-                    <Form.Item label="组织" name="group" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
-                        <TreeSelect placeholder="请选择组织"></TreeSelect>
-                    </Form.Item>
-                    <Form.Item label="负责人" name="leader" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
-                        <DebounceSelect mode="multiple" fetchOptions={loadUser} placeholder="请选择负责人" />
-                    </Form.Item>
+            <Modal visible={orgSettingModal} onCancel={() => setOrgSettingModal(false)} title="组织成员编辑" footer={null}
+                destroyOnClose={true}>
+                <Form form={orgSettingForm} >
                     <Form.Item label="成员" name="member" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
-                        <DebounceSelect mode="multiple" fetchOptions={loadUser} placeholder="请选择负责人" />
+                        <DebounceSelect mode="multiple" fetchOptions={loadUser} placeholder="请选择成员" />
+                    </Form.Item>
+                    <Form.Item label="职位" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
+                        <Select mode="multiple" placeholder="请选择职位" ></Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
                         <Button type="primary">确定</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => setGroupSettingModal(false)}>取消</Button>
+                        <Button style={{ marginLeft: '10px' }} onClick={() => setOrgSettingModal(false)}>取消</Button>
                     </Form.Item>
                 </Form>
             </Modal>
 
-            <Modal visible={userEditModal} title="用户信息编辑" footer={null} onCancel={() => setUserEditModal(false)}>
+            <Modal visible={userEditModal} title="用户信息" footer={null} onCancel={() => setUserEditModal(false)}
+                destroyOnClose={true}>
                 <Form form={userEditForm} onFinish={userInfoSubmit} labelCol={{ span: 6 }}
-                    wrapperCol={{ span: 16 }}>
+                    wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="id" hidden >
                         <Input />
                     </Form.Item>
@@ -223,7 +267,25 @@ export default function User() {
                         </Select>
                     </Form.Item>
                     <Form.Item name="phone" wrapperCol={{ offset: 6 }}>
-                        <Button>确定</Button>
+                        <Button icon={<SaveOutlined />}>保存</Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal visible={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}>
+                <Form form={pwdEditForm} onFinish={pwdSubmit} labelCol={{ span: 6 }}
+                    wrapperCol={{ span: 16 }}>
+                    <Form.Item name="id" hidden >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="pwd" label="密码">
+                        <Input autoComplete="off2" placeholder="请输入密码" type="password" />
+                    </Form.Item>
+                    <Form.Item name="confirmPwd" label="确认密码">
+                        <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
+                    </Form.Item>
+                    <Form.Item name="phone" wrapperCol={{ offset: 6 }}>
+                        <Button icon={<SaveOutlined />}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
