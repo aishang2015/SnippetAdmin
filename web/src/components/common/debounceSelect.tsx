@@ -24,6 +24,7 @@ export function DebounceSelect<
       setFetching(true);
 
       fetchOptions(value).then(newOptions => {
+
         if (fetchId !== fetchRef.current) {
           return;
         }

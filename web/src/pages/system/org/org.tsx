@@ -1,4 +1,6 @@
 import './org.less';
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
 
 import { Modal, Button, Descriptions, Divider, Form, Tag, Tree, Input, Switch, Select } from 'antd';
 import {
@@ -15,6 +17,9 @@ export default function Org() {
 
     const [orgEditVisible, setOrgEditVisible] = useState(false);
     const [orgForm] = useForm();
+
+    const [orgIcon, setOrgIcon] = useState("🏟");
+    const [emojiModalVisible, setEmojiModalVisible] = useState(false);
 
     const treeData = [
         {
@@ -98,7 +103,7 @@ export default function Org() {
                                         labelCol={{ span: index === 0 ? 6 : 0 }}
                                         wrapperCol={{ offset: index === 0 ? 0 : 6 }} >
                                         <Form.Item {...field} validateTrigger={['onChange', 'onBlur']} noStyle                                        >
-                                            <Input placeholder="职位名称" style={{ width: '60%' }} />
+                                            <Input placeholder="职位名称" style={{ width: '60%' }} autoComplete="off" />
                                         </Form.Item>
                                         {fields.length > 0 ? (
                                             <MinusCircleOutlined style={{ marginLeft: "10px", fontSize: "24px", color: "#999" }} onClick={() => remove(field.name)} />
@@ -129,6 +134,9 @@ export default function Org() {
                     <Form.Item name="orgName" label="组织名称" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
                         <Input placeholder="请输入组织名称" allowClear={true}></Input>
                     </Form.Item>
+                    <Form.Item name="orgIcon" label="组织图标" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
+                        <a onClick={() => setEmojiModalVisible(true)} style={{ fontSize: "20px" }}>{orgIcon}</a>
+                    </Form.Item>
                     <Form.Item name="orgPhone" label="联系电话" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
                         <Input placeholder="请输入联系电话" allowClear={true}></Input>
                     </Form.Item>
@@ -139,6 +147,14 @@ export default function Org() {
                         <Button icon={<SaveOutlined />}>保存</Button>
                     </Form.Item>
                 </Form>
+            </Modal>
+
+            <Modal width={390} visible={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
+                onCancel={() => setEmojiModalVisible(false)} >
+                <Picker native={true} onSelect={(e: any) => {
+                    setOrgIcon(e.native);
+                    setEmojiModalVisible(false);
+                }} />
             </Modal>
 
         </>

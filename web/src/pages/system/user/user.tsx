@@ -73,15 +73,11 @@ export default function User() {
             ),
         },
         {
-            title: '部门', dataIndex: "org", align: 'center', width: '220px',
+            title: '部门/职位', dataIndex: "orgPost", align: 'center', width: '440px',
             render: (array: any, record: any) => (
-                array?.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#f50">{s}</Tag>))
-            ),
-        },
-        {
-            title: '职位', dataIndex: "post", align: 'center', width: '220px',
-            render: (array: any, record: any) => (
-                array?.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#87d068">{s}</Tag>))
+                array?.map((s: any) => (
+                    <Tag key={s.org + s.post} style={{ marginBottom: '5px' }} color="#f50">{s.org + "/" + s.post}</Tag>)
+                )
             ),
         },
         {
@@ -105,8 +101,14 @@ export default function User() {
 
     useEffect(() => {
         setUserTableData([
-            { num: 1, avatar: null, userName: "toknod", name: "王蛋八蛋", gender: 1, phone: 15900318989, role: ["管理"], org: ["董事办"], post: ["秘书"], isActive: true },
-            { num: 2, avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", userName: "toknod", name: "李报那个", gender: 0, phone: 15900318989, role: ["超级管理员"], org: ["行政部"], post: ["行政主管"], isActive: false }
+            {
+                num: 1, avatar: null, userName: "toknod", name: "王蛋八蛋", gender: 1, phone: 15900318989, role: ["管理"],
+                orgPost: [{ org: "董事办", post: "秘书" }], isActive: true
+            },
+            {
+                num: 2, avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", userName: "toknod", name: "李报那个", gender: 0, phone: 15900318989, role: ["超级管理员"],
+                orgPost: [{ org: "行政办", post: "行政主管" }, { org: "人力资源办", post: "人力资源专员" }], isActive: false
+            }
         ]);
 
         setPage(1);
@@ -116,12 +118,11 @@ export default function User() {
 
     async function loadUser(username: string): Promise<Array<any>> {
         return new Promise<Array<any>>((resolve, reject) => {
-            console.log("e");
-            return [
+            resolve([
                 { label: '张三', value: 'zhangs' },
                 { label: '李四', value: 'lis' },
                 { label: '王五', value: 'wangw' }
-            ]
+            ]);
         });
     }
 
