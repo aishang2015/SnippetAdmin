@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SnippetAdmin.Data.Entity;
+using SnippetAdmin.Data.Entity.RBAC;
 
 namespace SnippetAdmin.Data
 {
@@ -15,6 +16,28 @@ namespace SnippetAdmin.Data
 
             // 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
             ChangeTracker.AutoDetectChangesEnabled = false;
+        }
+
+        public DbSet<Element> Elements { get; set; }
+
+        public DbSet<ElementTree> ElementTrees { get; set; }
+
+        public DbSet<Orgnazation> Orgnazations { get; set; }
+
+        public DbSet<OrgnazationTree> OrgnazationTrees { get; set; }
+
+        public DbSet<Position> Positions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<SnippetAdminUser>().ToTable("T_RBAC_User");
+            builder.Entity<SnippetAdminRole>().ToTable("T_RBAC_Role");
+            builder.Entity<IdentityUserRole<int>>().ToTable("T_RBAC_UserRole");
+            builder.Entity<IdentityUserClaim<int>>().ToTable("T_RBAC_UserClaim");
+            builder.Entity<IdentityRoleClaim<int>>().ToTable("T_RBAC_RoleClaim");
+            builder.Entity<IdentityUserLogin<int>>().ToTable("T_RBAC_UserLogin");
+            builder.Entity<IdentityUserToken<int>>().ToTable("T_RBAC_UserToken");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

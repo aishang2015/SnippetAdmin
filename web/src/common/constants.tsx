@@ -29,4 +29,13 @@ export class Constants {
         ...Constants.RouteInfo[2].children!
     ];
 
+    static ElementTypeArray = [
+        { key: 1, value: '菜单' },
+        { key: 2, value: '按钮/链接' }
+    ]
+
+    static ElementTypeDic: { [key: number]: string } = {
+        1: '菜单',
+        2: '按钮/链接'
+    }
 }

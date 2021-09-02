@@ -5,13 +5,16 @@
 <# 	
 	var entity = new EntityInfo()
 	{
-		TableName = "t_test",
-		EntityName = "Test",
-		TableComment = "测试",
+		TableName = "TRBAC_Element",
+		EntityName = "Element",
+		TableComment = "元素树",
 		PropertyInfos = new List<PropertyInfo>
 		{
-			new PropertyInfo("user_id",1,"Id","主键"),
-			new PropertyInfo("user_name",5,"Name","姓名"),
+			new PropertyInfo("id",1,"Id","主键"),
+			new PropertyInfo("name",2,"Name","元素名称"),
+			new PropertyInfo("type",1,"Type","元素类型"),
+			new PropertyInfo("identity",2,"Identity","元素标识"),
+			new PropertyInfo("access_api",2,"AccessApi","访问接口"),
 		}
 	};
 #>

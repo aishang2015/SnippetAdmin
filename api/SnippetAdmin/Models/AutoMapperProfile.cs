@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using SnippetAdmin.Data.Entity;
+using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models.Account;
+using SnippetAdmin.Models.RBAC.Element;
 
 namespace SnippetAdmin.Models
 {
@@ -9,6 +10,10 @@ namespace SnippetAdmin.Models
         public AutoMapperProfile()
         {
             CreateMap<SnippetAdminUser, UserInfoOutputModel>().ReverseMap();
+
+            CreateMap<Element, GetElementOutputModel>();
+            CreateMap<CreateElementInputModel, Element>();
+            CreateMap<UpdateElementInputModel, Element>();
         }
     }
 }

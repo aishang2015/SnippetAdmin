@@ -5,7 +5,7 @@ using Moq;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Controllers;
 using SnippetAdmin.Core.Authentication;
-using SnippetAdmin.Data.Entity;
+using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Account;
 using System;

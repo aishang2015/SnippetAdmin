@@ -46,6 +46,9 @@ export class Axios {
         // 异常捕获拦截器
         Axios.instance.interceptors.response.use(
             (response: AxiosResponse<any>) => {
+                if (response.config.responseType === "blob") {
+                    return response;
+                }
 
                 if (response.data.isSuccess) {
 
@@ -56,7 +59,8 @@ export class Axios {
                     return response;
                 } else {
                     // 处理失败
-                    message.error(`${response.data.message}(${response.data.code})`);
+                    message.error(`请求失败！`);
+                    console.error(`${response.data.message}(${response.data.code})`);
                     return Promise.reject(response);
                 }
             },

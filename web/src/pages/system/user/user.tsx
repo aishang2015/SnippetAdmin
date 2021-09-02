@@ -45,7 +45,7 @@ export default function User() {
     ];
 
     const userTableColumns: any = [
-        { title: '序号', dataIndex: "num", align: 'center', width: '100px' },
+        { title: '序号', dataIndex: "num", align: 'center', width: '100px', fixed: "left" },
         {
             title: '头像', dataIndex: "avatar", align: 'center', width: '120px',
             render: (data: any, record: any) => (
@@ -81,13 +81,13 @@ export default function User() {
             ),
         },
         {
-            title: '启用', dataIndex: "isActive", align: 'center', width: '120px',
+            title: '启用', dataIndex: "isActive", align: 'center', width: '120px', fixed: "right",
             render: (data: any, record: any) => (
                 <Switch checked={data}></Switch>
             ),
         },
         {
-            title: '操作', key: 'operate', align: 'center',
+            title: '操作', key: 'operate', align: 'center', fixed: "right",
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><EditOutlined /></a></Tooltip>

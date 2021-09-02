@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using SnippetAdmin.Constants;
+using SnippetAdmin.Core.Attribute;
 using SnippetAdmin.Core.Authentication;
 using SnippetAdmin.Core.Method;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Core.UserAccessor;
-using SnippetAdmin.Data.Entity;
+using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Account;
 using System;
@@ -59,7 +60,7 @@ namespace SnippetAdmin.Controllers
         /// 登录操作
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(CommonResult<LoginOutputModel>), 200)]
+        [CommonResultResponseType(typeof(CommonResult<LoginOutputModel>))]
         public async Task<CommonResult> Login([FromBody] LoginInputModel inputModel)
         {
             // 取得用户
@@ -81,7 +82,7 @@ namespace SnippetAdmin.Controllers
         /// </summary>
         [Authorize]
         [HttpPost]
-        [ProducesResponseType(typeof(CommonResult<UserInfoOutputModel>), 200)]
+        [CommonResultResponseType(typeof(CommonResult<UserInfoOutputModel>))]
         public async Task<CommonResult> GetCurrentUserInfo()
         {
             // 查找自己的信息
@@ -155,7 +156,7 @@ namespace SnippetAdmin.Controllers
         /// 绑定第三方账号
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(CommonResult<LoginOutputModel>), 200)]
+        [CommonResultResponseType(typeof(CommonResult<LoginOutputModel>))]
         public async Task<CommonResult> BindingThirdPartyAccount(BindingThirdPartyAccountInputModel inputModel)
         {
             // 检查用户信息

@@ -4,3 +4,9 @@ export interface CommonResult<T> {
     message: string;
     data: T;
 }
+
+export interface CommonResultNoData {
+    isSuccess: boolean;
+    code: string;
+    message: string;
+}

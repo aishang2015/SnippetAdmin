@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SnippetAdmin.Data.Entity;
+using SnippetAdmin.Data.Entity.RBAC;
 using System;
 
 namespace SnippetAdmin.Data
