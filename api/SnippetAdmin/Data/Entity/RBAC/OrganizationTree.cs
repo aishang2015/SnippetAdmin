@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.RBAC
 {
     [Comment("组织树")]
-    [Table("T_RBAC_OrgnazationTree")]
-    public class OrgnazationTree
+    [Table("T_RBAC_OrganizationTree")]
+    public class OrganizationTree
     {
         [Comment("主键")]
         [Column("id")]

@@ -2,6 +2,7 @@
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models.Account;
 using SnippetAdmin.Models.RBAC.Element;
+using SnippetAdmin.Models.RBAC.Organization;
 
 namespace SnippetAdmin.Models
 {
@@ -14,6 +15,10 @@ namespace SnippetAdmin.Models
             CreateMap<Element, GetElementOutputModel>();
             CreateMap<CreateElementInputModel, Element>();
             CreateMap<UpdateElementInputModel, Element>();
+
+            CreateMap<Organization, GetOrganizationOutputModel>();
+            CreateMap<CreateOrganizationInputModel, Organization>();
+            CreateMap<UpdateOrganizationInputModel, Organization>();
         }
     }
 }

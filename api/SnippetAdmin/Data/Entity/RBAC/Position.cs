@@ -15,8 +15,8 @@ namespace SnippetAdmin.Data.Entity.RBAC
         public int Id { get; set; }
 
         [Comment("所属组织Id")]
-        [Column("orgnazation_id")]
-        public string OrgnazationId { get; set; }
+        [Column("organization_id")]
+        public string OrganizationId { get; set; }
 
         [Comment("名称")]
         [Column("name")]

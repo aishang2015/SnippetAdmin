@@ -6,6 +6,7 @@ using SnippetAdmin.Core.Attribute;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
+using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.Element;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(GetElementOutputModel))]
-        public async Task<CommonResult> GetElement([FromBody] GetElementInputModel inputModel,
+        public async Task<CommonResult> GetElement([FromBody] IntIdInputModel inputModel,
             [FromServices] IMapper mapper)
         {
             var element = await _dbContext.Elements.FindAsync(inputModel.Id);
@@ -104,7 +105,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteElement([FromBody] DeleteElementInputModel inputModel)
+        public async Task<CommonResult> DeleteElement([FromBody] IntIdInputModel inputModel)
         {
             var elements = from e in _dbContext.Elements
                            join et in _dbContext.ElementTrees on e.Id equals et.Descendant
@@ -143,13 +144,14 @@ namespace SnippetAdmin.Controllers.RBAC
             var sw = new StreamWriter(ms);
             sw.AutoFlush = true;
 
-            sw.WriteLine("await _dbContext.Database.ExecuteSqlRawAsync(\"truncate table t_rbac_element\");");
+            sw.WriteLine("// 元素数据");
             foreach (var e in elements)
             {
                 sw.WriteLine($"_dbContext.Elements.Add(new Element {{ Id = {e.Id}, Name = \"{e.Name}\", Identity = \"{e.Identity}\", Type = ElementType.{e.Type}, AccessApi = \"{e.AccessApi}\" }});");
             }
 
-            sw.WriteLine("await _dbContext.Database.ExecuteSqlRawAsync(\"truncate table t_rbac_elementtree\");");
+            sw.WriteLine();
+            sw.WriteLine("// 元素树数据");
             foreach (var e in elementTrees)
             {
                 sw.WriteLine($"_dbContext.ElementTrees.Add(new ElementTree {{ Id = {e.Id}, Ancestor = {e.Ancestor}, Descendant = {e.Descendant} ,Length = {e.Length} }});");
@@ -161,7 +163,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         private List<GetElementTreeOutputModel> MakeTreeData(List<Element> elements, List<ElementTree> elementTrees,
-        List<Element> childElements)
+            List<Element> childElements)
         {
             var outputModels = childElements.Select(e => new GetElementTreeOutputModel
             {

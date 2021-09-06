@@ -38,5 +38,13 @@
         public static readonly (string, string) ELEMENT_ERROR_0006 = ("ELEMENT_ERROR_0006", "元素标识只允许数字字母下划线！");
 
         #endregion ElementController
+
+        #region OrganizationController
+
+        public static readonly (string, string) ORGANIZATION_INFO_0001 = ("ORGANIZATION_INFO_0001", "创建成功！");
+        public static readonly (string, string) ORGANIZATION_INFO_0002 = ("ORGANIZATION_INFO_0002", "删除成功！");
+        public static readonly (string, string) ORGANIZATION_INFO_0003 = ("ORGANIZATION_INFO_0003", "更新成功！");
+
+        #endregion OrganizationController
     }
 }

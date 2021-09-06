@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.RBAC
 {
     [Comment("组织")]
-    [Table("T_RBAC_Orgnazation")]
-    public class Orgnazation
+    [Table("T_RBAC_Organization")]
+    public class Organization
     {
         [Comment("主键")]
         [Column("id")]
@@ -17,6 +17,10 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Comment("名称")]
         [Column("name")]
         public string Name { get; set; }
+
+        [Comment("图标")]
+        [Column("icon")]
+        public string Icon { get; set; }
 
         [Comment("电话")]
         [Column("phone")]

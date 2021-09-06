@@ -22,9 +22,9 @@ namespace SnippetAdmin.Data
 
         public DbSet<ElementTree> ElementTrees { get; set; }
 
-        public DbSet<Orgnazation> Orgnazations { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
 
-        public DbSet<OrgnazationTree> OrgnazationTrees { get; set; }
+        public DbSet<OrganizationTree> OrganizationTrees { get; set; }
 
         public DbSet<Position> Positions { get; set; }
 
