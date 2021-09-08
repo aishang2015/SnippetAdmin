@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, Modal, Pagination, Select, Space, Switch, Table, Tooltip, TreeSelect } from 'antd';
+import { Button, Divider, Form, Input, Modal, Pagination, Space, Switch, Table, Tooltip, TreeSelect } from 'antd';
 import { SaveOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import './role.less';

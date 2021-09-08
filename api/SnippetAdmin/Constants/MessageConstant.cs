@@ -11,9 +11,9 @@
 
         #region AccountController
 
-        public static readonly (string, string) ACCOUNT_INFO_0001 = ("ACCOUNT_INFO_0001", "登录成功！");
+        public static readonly (string, string) ACCOUNT_INFO_0001 = ("ACCOUNT_INFO_0001", "滞纳金 登录成功！");
         public static readonly (string, string) ACCOUNT_INFO_0002 = ("ACCOUNT_INFO_0002", "第三方信息获取成功，请绑定您的账号！");
-
+           
         public static readonly (string, string) ACCOUNT_ERROR_0001 = ("ACCOUNT_ERROR_0001", "账号或密码错误！");
         public static readonly (string, string) ACCOUNT_ERROR_0002 = ("ACCOUNT_ERROR_0002", "请输入账号！");
         public static readonly (string, string) ACCOUNT_ERROR_0003 = ("ACCOUNT_ERROR_0003", "请输入密码！");
@@ -44,6 +44,10 @@
         public static readonly (string, string) ORGANIZATION_INFO_0001 = ("ORGANIZATION_INFO_0001", "创建成功！");
         public static readonly (string, string) ORGANIZATION_INFO_0002 = ("ORGANIZATION_INFO_0002", "删除成功！");
         public static readonly (string, string) ORGANIZATION_INFO_0003 = ("ORGANIZATION_INFO_0003", "更新成功！");
+        public static readonly (string, string) ORGANIZATION_INFO_0004 = ("ORGANIZATION_INFO_0004", "职位编辑成功！");
+
+        public static readonly (string, string) ORGANIZATION_ERROR_0001 = ("ORGANIZATION_ERROR_0001", "请输入组织名称！");
+        public static readonly (string, string) ORGANIZATION_ERROR_0002 = ("ORGANIZATION_ERROR_0002", "组织名称过长！");
 
         #endregion OrganizationController
     }

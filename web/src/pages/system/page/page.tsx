@@ -22,7 +22,7 @@ export default function Page() {
 
     useEffect(() => {
         init();
-    }, []);
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     async function init() {
         await initApiInfo();

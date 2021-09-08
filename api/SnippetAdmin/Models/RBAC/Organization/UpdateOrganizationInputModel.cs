@@ -1,4 +1,8 @@
-﻿namespace SnippetAdmin.Models.RBAC.Organization
+﻿using FluentValidation;
+using SnippetAdmin.Constants;
+using SnippetAdmin.Core;
+
+namespace SnippetAdmin.Models.RBAC.Organization
 {
     public class UpdateOrganizationInputModel
     {
@@ -13,5 +17,14 @@
         public string Phone { get; set; }
 
         public string Address { get; set; }
+    }
+
+    public class UpdateOrganizationInputModelValidator : AbstractValidator<UpdateOrganizationInputModel>
+    {
+        public UpdateOrganizationInputModelValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty().ConfirmMessage(MessageConstant.ELEMENT_ERROR_0001);
+            RuleFor(x => x.Name).MaximumLength(50).ConfirmMessage(MessageConstant.ELEMENT_ERROR_0002);
+        }
     }
 }

@@ -35,7 +35,18 @@ namespace SnippetAdmin.Controllers.RBAC
             [FromServices] IMapper mapper)
         {
             var org = await _dbContext.Organizations.FindAsync(inputModel.Id);
-            return this.SuccessCommonResult(mapper.Map<GetOrganizationOutputModel>(org));
+            var result = mapper.Map<GetOrganizationOutputModel>(org);
+            result.UpPositions = (from p in _dbContext.Positions
+                                  join t in _dbContext.OrganizationTrees on p.OrganizationId equals t.Ancestor
+                                  where t.Descendant == inputModel.Id && t.Length > 0 && p.IsLowerVisible
+                                  select p.Name).ToArray();
+            result.Positions = (from p in _dbContext.Positions
+                                where p.OrganizationId == inputModel.Id
+                                select new PositionInfo { Name = p.Name, VisibleToChild = p.IsLowerVisible }).ToArray();
+            result.UpId = (from tree in _dbContext.OrganizationTrees
+                           where tree.Descendant == inputModel.Id && tree.Length == 1
+                           select tree).FirstOrDefault()?.Ancestor;
+            return this.SuccessCommonResult(result);
         }
 
         /// <summary>
@@ -169,11 +180,50 @@ namespace SnippetAdmin.Controllers.RBAC
                 }
             }
 
-            var element = mapper.Map<Element>(inputModel);
-            _dbContext.Elements.Update(element);
+            var organization = mapper.Map<Organization>(inputModel);
+            _dbContext.Organizations.Update(organization);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0003);
         }
+
+        [HttpPost]
+        [CommonResultResponseType]
+        public async Task<CommonResult> SetPosition([FromBody] SetPositionInputModel inputModel)
+        {
+
+            var positions = await (from p in _dbContext.Positions
+                                   where p.OrganizationId == inputModel.OrganizationId
+                                   select p).ToListAsync();
+
+            // 删除职位
+            var deletePositions = positions.Where(p => !inputModel.Positions.Select(p => p.Name).Contains(p.Name));
+            _dbContext.Positions.RemoveRange(deletePositions);
+
+            // 新职位
+            var newPositions = inputModel.Positions.Where(p => !positions.Select(p => p.Name).Contains(p.Name));
+            foreach (var p in newPositions)
+            {
+                _dbContext.Positions.Add(new Position
+                {
+                    IsLowerVisible = p.VisibleToChild,
+                    Name = p.Name,
+                    OrganizationId = inputModel.OrganizationId
+                });
+            }
+
+            // 更新旧职位
+            var updatePositons = positions.Where(p => inputModel.Positions.Select(p => p.Name).Contains(p.Name));
+            foreach (var position in updatePositons)
+            {
+                var inputPosition = inputModel.Positions.First(p => p.Name == position.Name);
+                position.IsLowerVisible = inputPosition.VisibleToChild;
+                _dbContext.Positions.Update(position);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0004);
+        }
+
 
         private List<GetOrganizationTreeOutputModel> MakeTreeData(
             List<Organization> orgs,
