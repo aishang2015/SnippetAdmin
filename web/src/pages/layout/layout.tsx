@@ -15,7 +15,6 @@ const signalR = require("@microsoft/signalr");
 
 const { Content } = Layout;
 
-
 class BasicLayout extends React.Component<any, any> {
 
     newTabIndex = 0;
@@ -120,7 +119,7 @@ class BasicLayout extends React.Component<any, any> {
                 activeKey: newActiveKey,
             });
             this.saveTabData(newActiveKey, newPanes);
-            
+
             // 发送事件到菜单组件，修改菜单选择状态
             EventService.Emit("tabChange", [newActiveKey]);
         }

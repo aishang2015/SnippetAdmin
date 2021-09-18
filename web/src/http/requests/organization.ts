@@ -5,13 +5,15 @@ export type getOrganizationResult = {
     id: number,
     upId: number,
     name: string,
+    code: string,
     icon: string,
     phone: string,
     address: string,
     upPositions: Array<string>,
     positions: {
         visibleToChild: boolean,
-        name: string
+        name: string,
+        code: string
     }[]
 }
 
@@ -25,6 +27,7 @@ export type getOrganizationTreeResult = {
 export type createOrganizationInput = {
     upId: number,
     name: string,
+    code: string,
     icon: string,
     phone: string,
     address: string
@@ -34,6 +37,7 @@ export type updateOrganizationInput = {
     upId: number,
     id: number,
     name: string,
+    code: string,
     icon: string,
     phone: string,
     address: string
@@ -43,7 +47,8 @@ export type setPositionInput = {
     organizationId: number,
     positions: {
         visibleToChild: boolean,
-        name: string
+        name: string,
+        code: string
     }[]
 
 }

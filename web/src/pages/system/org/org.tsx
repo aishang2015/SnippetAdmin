@@ -52,6 +52,7 @@ export default function Org() {
             id: orgDetail?.id,
             upOrg: orgDetail?.upId,
             orgName: orgDetail?.name,
+            orgCode: orgDetail?.code,
             orgPhone: orgDetail?.phone,
             orgAddress: orgDetail?.address
         });
@@ -91,6 +92,7 @@ export default function Org() {
                 id: values["id"],
                 upId: values["upOrg"],
                 name: values["orgName"],
+                code: values["orgCode"],
                 icon: orgIcon,
                 phone: values["orgPhone"],
                 address: values["orgAddress"],
@@ -105,6 +107,7 @@ export default function Org() {
             await OrganizationService.createOrganization({
                 upId: values["upOrg"],
                 name: values["orgName"],
+                code: values["orgCode"],
                 icon: orgIcon,
                 phone: values["orgPhone"],
                 address: values["orgAddress"],
@@ -122,7 +125,6 @@ export default function Org() {
             message.error("职位名称冲突！");
             return;
         }
-
 
         await OrganizationService.setPosition({
             organizationId: orgDetail!.id,
@@ -173,11 +175,12 @@ export default function Org() {
                             </div>
                             <Divider style={{ margin: "10px 0" }} />
                             <Descriptions title="组织信息" bordered>
-                                <Descriptions.Item label="组织名称" labelStyle={{ width: "200px" }}>{orgDetail.name}</Descriptions.Item>
-                                <Descriptions.Item label="电话" span={2}>{orgDetail.phone}</Descriptions.Item>
+                                <Descriptions.Item label="组织名称" labelStyle={{ width: "200px" }} span={3}>{orgDetail.name}</Descriptions.Item>
+                                <Descriptions.Item label="组织代码" span={3}>{orgDetail.code}</Descriptions.Item>
+                                <Descriptions.Item label="电话" span={3}>{orgDetail.phone}</Descriptions.Item>
                                 <Descriptions.Item label="地址" span={3}>{orgDetail.address}</Descriptions.Item>
                                 <Descriptions.Item label="可用上级职位" span={3}>{orgDetail.upPositions.map(p => <Tag color="#87d068" key={p}>{p}</Tag>)}</Descriptions.Item>
-                                <Descriptions.Item label="当前组织职位" span={3}>{orgDetail.positions.map(p => <Tag color={p.visibleToChild ? "#87d068" : "grey"} key={p.name}>{p.name}</Tag>)}</Descriptions.Item>
+                                <Descriptions.Item label="当前组织职位" span={3}>{orgDetail.positions.map(p => <Tag color={p.visibleToChild ? "#87d068" : "grey"} key={p.name}>{p.name}({p.code})</Tag>)}</Descriptions.Item>
                             </Descriptions>
                         </>
                     }
@@ -185,7 +188,7 @@ export default function Org() {
             </div>
 
             <Modal destroyOnClose={true} visible={postModalVisible} onCancel={() => setPostModalVisible(false)}
-                footer={null} title="职位设置" width={700}>
+                footer={null} title="职位设置" width={900}>
                 <Form form={postForm} preserve={false} onFinish={postFormSubmit}>
                     <Form.List name="positions">
                         {(fields, { add, remove }, { errors }) => (
@@ -201,11 +204,16 @@ export default function Org() {
                                                 <Input placeholder="职位名称" autoComplete="off" />
                                             </Form.Item>
                                             <Form.Item {...field} validateTrigger={['onChange', 'onBlur']}
+                                                name={[field.name, 'code']}
+                                                fieldKey={[field.fieldKey, 'code']} noStyle>
+                                                <Input placeholder="职位编码" autoComplete="off" />
+                                            </Form.Item>
+                                            <Form.Item {...field} validateTrigger={['onChange', 'onBlur']}
                                                 name={[field.name, 'visibleToChild']}
                                                 fieldKey={[field.fieldKey, 'visibleToChild']}
                                                 initialValue={false}
                                                 valuePropName="checked" noStyle>
-                                                <Checkbox>下级可见</Checkbox>
+                                                <Checkbox>下级可用</Checkbox>
                                             </Form.Item>
                                             {fields.length > 0 ? (
                                                 <MinusCircleOutlined style={{ marginLeft: "10px", fontSize: "24px", color: "#999" }} onClick={() => remove(field.name)} />
@@ -244,6 +252,15 @@ export default function Org() {
                         ]
                     }>
                         <Input placeholder="请输入组织名称" allowClear={true} autoComplete="off"></Input>
+                    </Form.Item>
+                    <Form.Item name="orgCode" label="组织编码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} required rules={
+                        [
+                            { required: true, message: "请输入组织编码" },
+                            { max: 50, message: "组织编码过长" },
+                            { pattern: /^[A-Za-z0-9-_]+$/g, message: "请输入数字字母" },
+                        ]
+                    }>
+                        <Input placeholder="请输入组织编码" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="orgIcon" label="组织图标" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
                         <a onClick={() => setEmojiModalVisible(true)} style={{ fontSize: "20px" }}>{orgIcon}</a>

@@ -8,6 +8,8 @@
 
         public string Name { get; set; }
 
+        public string Code { get; set; }
+
         public string Icon { get; set; }
 
         public string Phone { get; set; }
@@ -22,6 +24,9 @@
     public class PositionInfo
     {
         public string Name { get; set; }
+
+        public string Code { get; set; }
+
         public bool VisibleToChild { get; set; }
     }
 }

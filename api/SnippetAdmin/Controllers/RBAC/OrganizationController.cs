@@ -42,7 +42,12 @@ namespace SnippetAdmin.Controllers.RBAC
                                   select p.Name).ToArray();
             result.Positions = (from p in _dbContext.Positions
                                 where p.OrganizationId == inputModel.Id
-                                select new PositionInfo { Name = p.Name, VisibleToChild = p.IsLowerVisible }).ToArray();
+                                select new PositionInfo
+                                {
+                                    Name = p.Name,
+                                    Code = p.Code,
+                                    VisibleToChild = p.IsLowerVisible
+                                }).ToArray();
             result.UpId = (from tree in _dbContext.OrganizationTrees
                            where tree.Descendant == inputModel.Id && tree.Length == 1
                            select tree).FirstOrDefault()?.Ancestor;
@@ -81,6 +86,13 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> CreateOrganization([FromBody] CreateOrganizationInputModel inputModel,
             [FromServices] IMapper mapper)
         {
+            // 校验组织编码重复
+            if (_dbContext.Organizations.Any(o => o.Code == inputModel.Code))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
+            }
+
+
             // 开启事务
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
@@ -134,6 +146,12 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> UpdateOrganization([FromBody] UpdateOrganizationInputModel inputModel,
             [FromServices] IMapper mapper)
         {
+            // 校验组织编码重复
+            if (_dbContext.Organizations.Any(o => o.Code == inputModel.Code && o.Id != inputModel.Id))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
+            }
+
             // 判断树节点是否被移动
             var upNode = (from orgTree in _dbContext.OrganizationTrees
                           where orgTree.Descendant == inputModel.Id &&
@@ -190,33 +208,53 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<CommonResult> SetPosition([FromBody] SetPositionInputModel inputModel)
         {
+            // 校验同一组织下相同编码的职位
+            if (inputModel.Positions.Count() != inputModel.Positions.Select(p => p.Code).Distinct().Count())
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0005);
+            }
 
-            var positions = await (from p in _dbContext.Positions
-                                   where p.OrganizationId == inputModel.OrganizationId
-                                   select p).ToListAsync();
+            // 校验同一组织下有相同名称的职位
+            if (inputModel.Positions.Count() != inputModel.Positions.Select(p => p.Name).Distinct().Count())
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0006);
+            }
+
+            var allPositions = await _dbContext.Positions.ToListAsync();
+            var currentOrgPositions = allPositions.Where(p => p.OrganizationId == inputModel.OrganizationId);
+            var otherOrgPositions = allPositions.Where(p => p.OrganizationId != inputModel.OrganizationId);
+
+            // 校验别的组织下相同编码的职位
+            if (otherOrgPositions.Any(o => inputModel.Positions.Any(p => p.Code == o.Code)))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0005);
+            }
+
 
             // 删除职位
-            var deletePositions = positions.Where(p => !inputModel.Positions.Select(p => p.Name).Contains(p.Name));
+            var deletePositions = currentOrgPositions.Where(p => !inputModel.Positions.Select(p => p.Name).Contains(p.Name));
             _dbContext.Positions.RemoveRange(deletePositions);
 
             // 新职位
-            var newPositions = inputModel.Positions.Where(p => !positions.Select(p => p.Name).Contains(p.Name));
+            var newPositions = inputModel.Positions.Where(p => !currentOrgPositions.Select(p => p.Name).Contains(p.Name));
             foreach (var p in newPositions)
             {
                 _dbContext.Positions.Add(new Position
                 {
                     IsLowerVisible = p.VisibleToChild,
                     Name = p.Name,
+                    Code = p.Code,
                     OrganizationId = inputModel.OrganizationId
                 });
             }
 
             // 更新旧职位
-            var updatePositons = positions.Where(p => inputModel.Positions.Select(p => p.Name).Contains(p.Name));
+            var updatePositons = currentOrgPositions.Where(p => inputModel.Positions.Select(p => p.Name).Contains(p.Name));
             foreach (var position in updatePositons)
             {
                 var inputPosition = inputModel.Positions.First(p => p.Name == position.Name);
                 position.IsLowerVisible = inputPosition.VisibleToChild;
+                position.Code = inputPosition.Code;
                 _dbContext.Positions.Update(position);
             }
 

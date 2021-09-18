@@ -6,7 +6,9 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     DownOutlined,
-    NotificationOutlined
+    NotificationOutlined,
+    ExpandOutlined,
+    CompressOutlined
 } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Dispatch } from "redux";
@@ -23,6 +25,7 @@ type INavHeaderProps = {
 
 type INavHeaderState = {
     visible: boolean;
+    isExpand: boolean;
 }
 
 
@@ -30,6 +33,7 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
 
     state = {
         visible: false,
+        isExpand: false
     };
 
     render = () => {
@@ -69,6 +73,8 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
                     onClick: this.props.toggle,
                 })}
                 <div>
+                    <Button icon={this.state.isExpand ? <CompressOutlined /> : <ExpandOutlined />} shape="circle" style={{ marginRight: '10px' }}
+                        onClick={() => this.showFullScreen()}></Button>
                     <Badge count={this.props.notifications.length}>
                         <Dropdown overlay={message} placement="bottomRight" visible={this.state?.visible}
                             onVisibleChange={(flag) => { this.setState({ visible: flag }) }}
@@ -87,10 +93,37 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
                         </a>
                     </Dropdown>
                 </div>
-            </Header>
+            </Header >
         );
     }
 
+    showFullScreen() {
+
+        let element: any = document.documentElement;
+        if (!this.state.isExpand) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            }
+        } else {
+            let doc: any = document;
+            if (doc.exitFullscreen) {
+                doc.exitFullscreen();
+            } else if (doc.msExitFullscreen) {
+                doc.msExitFullscreen();
+            } else if (doc.mozCancelFullScreen) {
+                doc.mozCancelFullScreen();
+            } else if (doc.webkitExitFullscreen) {
+                doc.webkitExitFullscreen();
+            }
+        }
+        this.setState({ isExpand: !this.state.isExpand });
+    }
 
     logout() {
         StorageService.clearLoginStore();

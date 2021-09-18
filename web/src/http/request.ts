@@ -59,8 +59,7 @@ export class Axios {
                     return response;
                 } else {
                     // 处理失败
-                    message.error(`请求失败！`);
-                    console.error(`${response.data.message}(${response.data.code})`);
+                    message.error(`${response.data.message}(${response.data.code})`);
                     return Promise.reject(response);
                 }
             },

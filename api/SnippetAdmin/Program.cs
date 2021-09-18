@@ -41,9 +41,9 @@ namespace SnippetAdmin
                 }).UseSerilog((context, services, configuration) =>
                 {
                     // 读取appsetting内的日志配置
-                    string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "log-all-.txt");
-                    string errorLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "log-error-.txt");
-                    string serilogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "log-serilog-.txt");
+                    string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/all", "log-all-.txt");
+                    string errorLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/error", "log-error-.txt");
+                    string serilogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/serilog", "log-serilog-.txt");
                     string logFormat = @"{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3} {SourceContext:l}] {Message:lj}{NewLine}{Exception}";
                     configuration.ReadFrom.Configuration(context.Configuration)
                             .ReadFrom.Services(services)
@@ -64,7 +64,8 @@ namespace SnippetAdmin
                                    rollingInterval: RollingInterval.Day,
                                    rollOnFileSizeLimit: true,
                                    shared: true,
-                                   fileSizeLimitBytes: 10_000_000);
+                                   fileSizeLimitBytes: 10_000_000,
+                                   retainedFileCountLimit: 30);
                            })
                            .WriteTo.Logger(config =>
                            {
@@ -74,7 +75,8 @@ namespace SnippetAdmin
                                    rollingInterval: RollingInterval.Day,
                                    rollOnFileSizeLimit: true,
                                    shared: true,
-                                   fileSizeLimitBytes: 10_000_000);
+                                   fileSizeLimitBytes: 10_000_000,
+                                   retainedFileCountLimit: 30);
                            })
                            .WriteTo.Logger(config =>
                            {
@@ -84,7 +86,8 @@ namespace SnippetAdmin
                                    rollingInterval: RollingInterval.Day,
                                    rollOnFileSizeLimit: true,
                                    shared: true,
-                                   fileSizeLimitBytes: 10_000_000);
+                                   fileSizeLimitBytes: 10_000_000,
+                                   retainedFileCountLimit: 30);
                                config.Filter.ByIncludingOnly(Matching.FromSource("Serilog.AspNetCore"));
                            });
                 });

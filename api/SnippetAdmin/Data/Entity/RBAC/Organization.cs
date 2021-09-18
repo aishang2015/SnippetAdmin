@@ -18,6 +18,10 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Column("name")]
         public string Name { get; set; }
 
+        [Comment("编码")]
+        [Column("code")]
+        public string Code { get; set; }
+
         [Comment("图标")]
         [Column("icon")]
         public string Icon { get; set; }

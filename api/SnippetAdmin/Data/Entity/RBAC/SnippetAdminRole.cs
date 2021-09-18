@@ -8,6 +8,9 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Comment("名称")]
         public new string Name { get; set; }
 
+        [Comment("编码")]
+        public string Code { get; set; }
+
         [Comment("备注")]
         public string Remark { get; set; }
 

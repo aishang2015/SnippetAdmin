@@ -10,7 +10,7 @@ namespace SnippetAdmin.Data.Entity.RBAC
         public string Avatar { get; set; }
 
         [Comment("姓名")]
-        public string Name { get; set; }
+        public string RealName { get; set; }
 
         [Comment("性别")]
         public Gender Gender { get; set; }
