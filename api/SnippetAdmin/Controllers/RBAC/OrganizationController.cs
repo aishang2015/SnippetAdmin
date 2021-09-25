@@ -92,7 +92,6 @@ namespace SnippetAdmin.Controllers.RBAC
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
             }
 
-
             // 开启事务
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
@@ -262,7 +261,9 @@ namespace SnippetAdmin.Controllers.RBAC
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0004);
         }
 
-
+        /// <summary>
+        /// 生成树数据
+        /// </summary>
         private List<GetOrganizationTreeOutputModel> MakeTreeData(
             List<Organization> orgs,
             List<OrganizationTree> orgTrees,
