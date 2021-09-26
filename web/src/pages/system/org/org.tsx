@@ -1,6 +1,6 @@
 import './org.less';
-import 'emoji-mart/css/emoji-mart.css'
-import { Picker } from 'emoji-mart'
+import 'emoji-mart/css/emoji-mart.css';
+import { Picker } from 'emoji-mart';
 
 import { Modal, Button, Descriptions, Divider, Form, Tag, Tree, Input, Space, Checkbox, TreeSelect, message } from 'antd';
 import {

@@ -15,6 +15,11 @@ export type GetRolesResult = {
     data: Array<GetRoleResult>
 }
 
+export type GetRoleDicResult = {
+    key: number,
+    value: string
+}
+
 export class RoleService {
 
     static activeRole(param: {
@@ -35,6 +40,10 @@ export class RoleService {
         size: number
     }) {
         return Axios.instance.post<CommonResult<GetRolesResult>>('api/role/getRoles', param);
+    }
+
+    static getRoleDic() {
+        return Axios.instance.post<CommonResult<Array<GetRoleDicResult>>>('api/role/getRoleDic', null);
     }
 
     static addOrUpdateRole(param: {

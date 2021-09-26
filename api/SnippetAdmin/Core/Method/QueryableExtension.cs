@@ -14,6 +14,12 @@ namespace SnippetAdmin.Core.Method
             => queryable.Where(predicate);
 
         /// <summary>
+        /// 拼接条件(直接拼接）
+        /// </summary>
+        public static IQueryable<T> AndIf<T>(this IQueryable<T> queryable, bool condition, Expression<Func<T, bool>> predicate) where T : class
+            => condition ? queryable.Where(predicate) : queryable;
+
+        /// <summary>
         /// 拼接条件（字符串不为空）
         /// </summary>
         public static IQueryable<T> AndIfExist<T>(this IQueryable<T> queryable, string value,

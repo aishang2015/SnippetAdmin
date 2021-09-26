@@ -1,3 +1,4 @@
+import { type } from "os";
 import { CommonResult, CommonResultNoData } from "../common-result";
 import { Axios } from "../request";
 
@@ -50,7 +51,11 @@ export type setPositionInput = {
         name: string,
         code: string
     }[]
+}
 
+export type getPositionResult = {
+    key: number,
+    value: string
 }
 
 export class OrganizationService {
@@ -77,5 +82,9 @@ export class OrganizationService {
 
     static setPosition(params: setPositionInput) {
         return Axios.instance.post<CommonResultNoData>('api/organization/setPosition', params);
+    }
+
+    static GetPositionDic(params: { id: number }) {
+        return Axios.instance.post<CommonResult<Array<getPositionResult>>>('api/organization/getPositionDic', params);
     }
 }

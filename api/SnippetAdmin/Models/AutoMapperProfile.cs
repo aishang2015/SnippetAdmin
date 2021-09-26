@@ -4,6 +4,7 @@ using SnippetAdmin.Models.Account;
 using SnippetAdmin.Models.RBAC.Element;
 using SnippetAdmin.Models.RBAC.Organization;
 using SnippetAdmin.Models.RBAC.Role;
+using SnippetAdmin.Models.RBAC.User;
 
 namespace SnippetAdmin.Models
 {
@@ -23,6 +24,9 @@ namespace SnippetAdmin.Models
 
             CreateMap<SnippetAdminRole, GetRoleOutputModel>();
             CreateMap<AddOrUpdateRoleInputModel, SnippetAdminRole>();
+
+            CreateMap<AddOrUpdateUserInputModel, SnippetAdminUser>();
+            CreateMap<SnippetAdminUser, GetUserOutputModel>();
 
         }
     }

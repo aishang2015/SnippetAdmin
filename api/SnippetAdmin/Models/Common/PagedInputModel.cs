@@ -4,7 +4,7 @@ using SnippetAdmin.Core;
 
 namespace SnippetAdmin.Models.Common
 {
-    public class PageSizeInputModel
+    public class PagedInputModel
     {
         public int Page { get; set; }
 
@@ -15,9 +15,9 @@ namespace SnippetAdmin.Models.Common
         public int SkipCount { get => Size * (Page - 1); }
     }
 
-    public class PageSizeInputModelValidator : AbstractValidator<PageSizeInputModel>
+    public class PagedInputModelValidator : AbstractValidator<PagedInputModel>
     {
-        public PageSizeInputModelValidator()
+        public PagedInputModelValidator()
         {
             RuleFor(x => x.Page).GreaterThan(0).ConfirmMessage(MessageConstant.SYSTEM_COMMON_001);
             RuleFor(x => x.Size).GreaterThan(0).ConfirmMessage(MessageConstant.SYSTEM_COMMON_002);

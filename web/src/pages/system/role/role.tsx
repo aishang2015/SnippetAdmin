@@ -56,7 +56,6 @@ export default function Role() {
     }
 
     async function activeChange(checked: boolean, event: Event, roleId: number, isActive: boolean) {
-        isActive = checked;
         await RoleService.activeRole({ id: roleId, isActive: checked });
     }
 
@@ -105,7 +104,7 @@ export default function Role() {
 
     useEffect(() => {
         init();
-    }, []);
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     async function init() {
         await getRoles();

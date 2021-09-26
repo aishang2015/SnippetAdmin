@@ -261,6 +261,30 @@ namespace SnippetAdmin.Controllers.RBAC
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0004);
         }
 
+        [HttpPost]
+        [CommonResultResponseType(typeof(List<DicOutputModel>))]
+        public CommonResult GetPositionDic([FromBody] IntIdInputModel inputModel)
+        {
+            var upPositions = from p in _dbContext.Positions
+                              join t in _dbContext.OrganizationTrees on p.OrganizationId equals t.Ancestor
+                              where t.Descendant == inputModel.Id && t.Length > 0 && p.IsLowerVisible
+                              select new DicOutputModel
+                              {
+                                  Key = p.Id,
+                                  Value = p.Name
+                              };
+
+            var positions = from p in _dbContext.Positions
+                            where p.OrganizationId == inputModel.Id
+                            select new DicOutputModel
+                            {
+                                Key = p.Id,
+                                Value = p.Name
+                            };
+
+            return this.SuccessCommonResult(upPositions.Concat(positions));
+        }
+
         /// <summary>
         /// 生成树数据
         /// </summary>

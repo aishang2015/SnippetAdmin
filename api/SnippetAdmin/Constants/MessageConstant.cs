@@ -74,5 +74,28 @@
         public static readonly (string, string) ROLE_ERROR_0008 = ("ROLE_ERROR_0008", "角色代码重复！");
 
         #endregion RoleController
+
+        #region UserController
+
+        public static readonly (string, string) USER_INFO_0001 = ("USER_INFO_0001", "操作成功！");
+        public static readonly (string, string) USER_INFO_0002 = ("USER_INFO_0002", "删除成功！");
+        public static readonly (string, string) USER_INFO_0003 = ("USER_INFO_0003", "密码设置成功！");
+        public static readonly (string, string) USER_INFO_0004 = ("USER_INFO_0004", "成员添加成功！");
+        public static readonly (string, string) USER_INFO_0005 = ("USER_INFO_0005", "成员移出成功！");
+
+        public static readonly (string, string) USER_ERROR_0001 = ("USER_ERROR_0001", "请选择成员！");
+        public static readonly (string, string) USER_ERROR_0002 = ("USER_ERROR_0002", "请输入用户名！");
+        public static readonly (string, string) USER_ERROR_0003 = ("USER_ERROR_0003", "用户名过长！");
+        public static readonly (string, string) USER_ERROR_0004 = ("USER_ERROR_0004", "用户名只允许数字字母！");
+        public static readonly (string, string) USER_ERROR_0005 = ("USER_ERROR_0005", "请输入姓名！");
+        public static readonly (string, string) USER_ERROR_0006 = ("USER_ERROR_0006", "姓名过长！");
+        public static readonly (string, string) USER_ERROR_0007 = ("USER_ERROR_0007", "请输入密码！");
+        public static readonly (string, string) USER_ERROR_0008 = ("USER_ERROR_0008", "密码过长！");
+        public static readonly (string, string) USER_ERROR_0009 = ("USER_ERROR_0009", "请输入确认密码！");
+        public static readonly (string, string) USER_ERROR_0011 = ("USER_ERROR_0011", "两次输入的密码不一致！");
+
+        public static readonly (string, string) USER_ERROR_0012 = ("USER_ERROR_0012", "用户名重复！");
+
+        #endregion
     }
 }

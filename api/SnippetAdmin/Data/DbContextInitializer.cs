@@ -14,7 +14,7 @@ namespace SnippetAdmin.Data
             InitialSnippetAdminDbContext = (dbContext, userManager, logger) =>
             {
                 logger.LogInformation("开始执行初始化数据操作。");
-                dbContext.Database.EnsureDeleted();
+                //dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
@@ -27,10 +27,10 @@ namespace SnippetAdmin.Data
                         PhoneNumber = "16655558888",
                     }, "admin").Wait();
                     logger.LogInformation("数据创建完毕。");
-                }
 
-                // 加载菜单数据
-                InitialElements(dbContext).Wait();
+                    // 加载菜单数据
+                    InitialElements(dbContext).Wait();
+                }
 
                 logger.LogInformation("初始化数据操作执行完毕。");
             };

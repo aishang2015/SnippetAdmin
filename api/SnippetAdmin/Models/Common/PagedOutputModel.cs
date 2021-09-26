@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SnippetAdmin.Models.Common
 {
-    public class TotalDataResult<T>
+    public class PagedOutputModel<T>
     {
         public int Total { get; set; }
 

@@ -28,6 +28,8 @@ namespace SnippetAdmin.Data
 
         public DbSet<Position> Positions { get; set; }
 
+        public DbSet<UserOrganizationPosition> UserOrganizationPositions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

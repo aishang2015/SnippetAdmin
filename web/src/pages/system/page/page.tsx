@@ -171,7 +171,7 @@ export default function Page() {
 
             <Modal visible={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
                 title="组织信息编辑" width={600}>
-                <Form preserve={false} form={elementForm} onFinish={elementFormSubmit}>
+                <Form form={elementForm} onFinish={elementFormSubmit} preserve={false} >
                     <Form.Item name="id" hidden>
                         <Input />
                     </Form.Item>
@@ -197,7 +197,7 @@ export default function Page() {
                         }>
                         <Select placeholder="请选择元素类型" allowClear={true}>
                             {Constants.ElementTypeArray.map(e => (
-                                <Select.Option value={e.key}>{e.value}</Select.Option>
+                                <Select.Option value={e.key} key={e.key}>{e.value}</Select.Option>
                             ))}
                         </Select>
                     </Form.Item>

@@ -51,17 +51,30 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(TotalDataResult<GetRoleOutputModel>))]
-        public async Task<CommonResult> GetRolesAsync([FromBody] PageSizeInputModel inputModel)
+        [CommonResultResponseType(typeof(PagedOutputModel<GetRoleOutputModel>))]
+        public async Task<CommonResult> GetRolesAsync([FromBody] PagedInputModel inputModel)
         {
             var roles = await _dbContext.Roles.Skip(inputModel.SkipCount)
                 .Take(inputModel.TakeCount).ToListAsync();
 
-            var result = new TotalDataResult<GetRoleOutputModel>()
+            var result = new PagedOutputModel<GetRoleOutputModel>()
             {
                 Total = _dbContext.Roles.Count(),
                 Data = _mapper.Map<List<GetRoleOutputModel>>(roles)
             };
+
+            return this.SuccessCommonResult(result);
+        }
+
+        [HttpPost]
+        [CommonResultResponseType(typeof(DicOutputModel))]
+        public async Task<CommonResult> GetRoleDic()
+        {
+            var result = await _dbContext.Roles.Select(r => new DicOutputModel
+            {
+                Key = r.Id,
+                Value = r.Name
+            }).ToListAsync();
 
             return this.SuccessCommonResult(result);
         }
