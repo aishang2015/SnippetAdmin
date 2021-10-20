@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.System;
 
 namespace SnippetAdmin.Data
 {
@@ -34,6 +35,8 @@ namespace SnippetAdmin.Data
         public DbSet<Position> Positions { get; set; }
 
         public DbSet<UserOrganizationPosition> UserOrganizationPositions { get; set; }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,6 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import { Configuration } from '../common/config';
+import { LoginResult, refresh } from './requests/account';
+import { CommonResult } from './common-result';
+import { StorageService } from '../common/storage';
 
 export class Axios {
 
@@ -31,6 +34,48 @@ export class Axios {
         Axios.instance = axios.create({
             baseURL: Configuration.BaseUrl,
         });
+
+        // 添加检测token过期时间拦截器
+        Axios.instance.interceptors.request.use(
+            config => {
+                let userName = localStorage.getItem("user-name");
+                let refreshToken = localStorage.getItem("refresh-token");
+                let token = localStorage.getItem("token");
+                let expires = localStorage.getItem("expire");
+                if (token && expires && userName && refreshToken) {
+                    if (new Date() > new Date(expires)) {
+                        axios.create({
+                            baseURL: Configuration.BaseUrl,
+                        }).post<CommonResult<LoginResult>>('api/account/refresh', {
+                            userName: userName,
+                            jwtToken: token,
+                            refreshToken: refreshToken
+                        }).then(response => {
+                            console.log(response);
+                            if (response.data.isSuccess) {
+                                let result = response.data.data;
+
+                                // 保存登录信息
+                                StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(),
+                                    result.identifies, result.refreshToken);
+                            } else {
+
+                                // 清空登录信息
+                                message.error(`${response.data.message}(${response.data.code})`);
+                                StorageService.clearLoginStore();
+                                window.location.reload();
+                            }
+
+                        });
+                    }
+                }
+                return config;
+            },
+            error => {
+                return Promise.reject(error);
+            }
+        );
+
 
         // 添加认证头拦截器
         Axios.instance.interceptors.request.use(

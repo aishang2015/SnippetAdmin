@@ -29,17 +29,19 @@ export class StorageService {
         localStorage.removeItem("user-name");
         localStorage.removeItem("expire");
         localStorage.removeItem("right");
+        localStorage.removeItem("refresh-token");
 
         // tab页相关信息
         localStorage.removeItem('activeKey');
         localStorage.removeItem('panes');
     }
 
-    static setLoginStore(accessToken: string, userName: string, expire: string, rights: string[]): void {
+    static setLoginStore(accessToken: string, userName: string, expire: string, rights: string[], refreshToken:string): void {
         localStorage.setItem('token', accessToken);
         localStorage.setItem('user-name', userName);
         localStorage.setItem("expire", expire);
         localStorage.setItem("right", join(rights, ','));
+        localStorage.setItem("refresh-token", refreshToken);
     }
 
     static getAccessToken = () => localStorage.getItem("token");

@@ -102,7 +102,7 @@ namespace SnippetAdmin.Data.Cache
             // 缓存用户角色关系
             _addUserRoles.ForEach(e =>
             {
-                var cache = _memoryCache.GetUserRole(e.Entity.UserId);
+                var cache = _memoryCache.GetUserRole(e.Entity.UserId) ?? new List<int>();
                 cache.Add(e.Entity.RoleId);
                 _memoryCache.SetUserRole(e.Entity.UserId, cache);
             });
@@ -123,7 +123,7 @@ namespace SnippetAdmin.Data.Cache
             // 缓存角色和元素关联信息
             _addRoleClaims.ForEach(e =>
             {
-                var cache = _memoryCache.GetRoleElement(e.Entity.RoleId);
+                var cache = _memoryCache.GetRoleElement(e.Entity.RoleId) ?? new List<int>();
                 cache.Add(int.Parse(e.Entity.ClaimValue));
                 _memoryCache.SetRoleElement(e.Entity.RoleId, cache);
             });

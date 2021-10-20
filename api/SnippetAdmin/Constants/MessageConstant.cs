@@ -24,6 +24,10 @@
         public static readonly (string, string) ACCOUNT_ERROR_0005 = ("ACCOUNT_ERROR_0005", "第三方登录类型不能是空！");
         public static readonly (string, string) ACCOUNT_ERROR_0006 = ("ACCOUNT_ERROR_0006", "第三方信息缓存密钥不能是空！");
         public static readonly (string, string) ACCOUNT_ERROR_0007 = ("ACCOUNT_ERROR_0007", "第三方账号信息已过期，请返回登陆页面重试！");
+        public static readonly (string, string) ACCOUNT_ERROR_0008 = ("ACCOUNT_ERROR_0008", "无法获取账号登录凭证，请重新登录！");
+        public static readonly (string, string) ACCOUNT_ERROR_0009 = ("ACCOUNT_ERROR_0009", "账号被别人登录！");
+        public static readonly (string, string) ACCOUNT_ERROR_0010 = ("ACCOUNT_ERROR_0010", "Jwt不合法！");
+        public static readonly (string, string) ACCOUNT_ERROR_0011 = ("ACCOUNT_ERROR_0011", "刷新token已过期！");
 
         #endregion AccountController
 

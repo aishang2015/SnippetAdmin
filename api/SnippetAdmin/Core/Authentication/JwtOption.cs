@@ -17,9 +17,11 @@ namespace SnippetAdmin.Core.Authentication
 
         public string SecretKey { get; set; }
 
+        public double RefreshExpireSpan { get; set; }
+
         #endregion 配置属性
 
-        public DateTime Expires { get => DateTime.Now.AddHours(ExpireSpan); }
+        public DateTime Expires { get => DateTime.Now.AddMinutes(ExpireSpan); }
 
         public SecurityKey SecurityKey { get => new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey)); }
 
