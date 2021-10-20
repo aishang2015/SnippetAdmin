@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
 using System;
 
@@ -15,7 +16,9 @@ namespace SnippetAdmin.Data
             var databaseOption = configuration.GetSection(optionKey).Get<DatabaseOption>();
             if (databaseOption != null)
             {
-                services.AddDbContext<SnippetAdminDbContext>(option =>
+                services.AddScoped<CacheSavingInterceptor>();
+
+                services.AddDbContext<SnippetAdminDbContext>((provider, option) =>
                 {
                     option = databaseOption.Type switch
                     {
@@ -48,6 +51,8 @@ namespace SnippetAdmin.Data
                         }),
                         _ => option
                     };
+
+                    option.AddInterceptors(provider.GetRequiredService<CacheSavingInterceptor>());
                 }).AddIdentity<SnippetAdminUser, SnippetAdminRole>(option =>
                 {
                     // 密码强度设置

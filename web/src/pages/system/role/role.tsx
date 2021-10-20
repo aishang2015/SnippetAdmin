@@ -7,6 +7,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useForm } from 'antd/lib/form/Form';
 import { RoleService } from '../../../http/requests/role';
 import { ElementService } from '../../../http/requests/element';
+import { RightElement } from '../../../components/right/rightElement';
 
 export default function Role() {
 
@@ -37,8 +38,16 @@ export default function Role() {
             title: '操作', key: 'operate', align: 'center', width: '120px',
             render: (text: any, record: any) => (
                 <Space size="middle">
-                    <Tooltip title="编辑"><a onClick={() => editRole(record.id)}><EditOutlined /></a></Tooltip>
-                    <Tooltip title="删除"><a onClick={() => deleteRole(record.id)}><DeleteOutlined /></a></Tooltip>
+                    <RightElement identify="edit-role" child={
+                        <>
+                            <Tooltip title="编辑角色"><a onClick={() => editRole(record.id)}><EditOutlined /></a></Tooltip>
+                        </>
+                    }></RightElement>
+                    <RightElement identify="remove-role" child={
+                        <>
+                            <Tooltip title="删除角色"><a onClick={() => deleteRole(record.id)}><DeleteOutlined /></a></Tooltip>
+                        </>
+                    }></RightElement>
                     <Tooltip title="查看权限"><a onClick={() => viewRight(record.id)}><SearchOutlined /></a></Tooltip>
                 </Space>
             ),
@@ -127,10 +136,14 @@ export default function Role() {
     return (
         <>
             <div id="role-container">
-                <Space style={{ marginTop: "10px" }}>
-                    <Button icon={<PlusOutlined />} onClick={createRole}>创建</Button>
-                </Space>
-                <Divider style={{ margin: "10px 0" }} />
+                <RightElement identify="create-role" child={
+                    <>
+                        <Space style={{ marginTop: "10px" }}>
+                            <Button icon={<PlusOutlined />} onClick={createRole}>创建</Button>
+                        </Space>
+                        <Divider style={{ margin: "10px 0" }} />
+                    </>
+                }></RightElement>
                 <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false}></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
@@ -169,7 +182,7 @@ export default function Role() {
                         <TextArea placeholder="请输入备注" />
                     </Form.Item>
                     <Form.Item name="rights" label="权限">
-                        <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true}></TreeSelect>
+                        <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true} showCheckedStrategy="SHOW_ALL"></TreeSelect>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
                         <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>

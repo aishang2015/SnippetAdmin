@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
 
 namespace SnippetAdmin.Data
 {
     public class SnippetAdminDbContext : IdentityDbContext<SnippetAdminUser, SnippetAdminRole, int>
     {
-        public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options) : base(options)
+        private readonly CacheSavingInterceptor _cacheSavingInterceptor;
+
+        public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options, CacheSavingInterceptor cacheSavingInterceptor) : base(options)
         {
             // 更改默认不跟踪所有实体
             // ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
@@ -16,6 +19,8 @@ namespace SnippetAdmin.Data
 
             // 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
             ChangeTracker.AutoDetectChangesEnabled = false;
+
+            _cacheSavingInterceptor = cacheSavingInterceptor;
         }
 
         public DbSet<Element> Elements { get; set; }

@@ -12,6 +12,7 @@ import { DebounceSelect } from '../../../components/common/debounceSelect';
 import { UserService } from '../../../http/requests/user';
 import { OrganizationService } from '../../../http/requests/organization';
 import { RoleService } from '../../../http/requests/role';
+import { RightElement } from '../../../components/right/rightElement';
 
 export default function User() {
 
@@ -88,17 +89,37 @@ export default function User() {
         {
             title: '启用', dataIndex: "isActive", align: 'center', width: '120px', fixed: "right",
             render: (data: any, record: any) => (
-                <Switch defaultChecked={data} onChange={(checked, event) => { activeChange(checked, record.id) }}></Switch>
+                <RightElement identify="active-user" child={
+                    <>
+                        <Switch defaultChecked={data} onChange={(checked, event) => { activeChange(checked, record.id) }}></Switch>
+                    </>
+                }></RightElement>
             ),
         },
         {
             title: '操作', key: 'operate', align: 'center', fixed: "right",
             render: (text: any, record: any) => (
                 <Space size="middle">
-                    <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><EditOutlined /></a></Tooltip>
-                    <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><DeleteOutlined /></a></Tooltip>
-                    <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><KeyOutlined /></a></Tooltip>
-                    {selectedOrg !== null && <Tooltip title="移出组织"><a onClick={() => moveOutOrg(record.id)}><MinusCircleOutlined /></a></Tooltip>}
+                    <RightElement identify="edit-user" child={
+                        <>
+                            <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><EditOutlined /></a></Tooltip>
+                        </>
+                    }></RightElement>
+                    <RightElement identify="remove-user" child={
+                        <>
+                            <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><DeleteOutlined /></a></Tooltip>
+                        </>
+                    }></RightElement>
+                    <RightElement identify="set-password" child={
+                        <>
+                            <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><KeyOutlined /></a></Tooltip>
+                        </>
+                    }></RightElement>
+                    <RightElement identify="move-out" child={
+                        <>
+                            {selectedOrg !== null && <Tooltip title="移出组织"><a onClick={() => moveOutOrg(record.id)}><MinusCircleOutlined /></a></Tooltip>}
+                        </>
+                    }></RightElement>
                 </Space>
             ),
         },
@@ -300,10 +321,14 @@ export default function User() {
         <>
             <div id="user-container">
                 <div id="user-group-container">
-                    <div>
-                        <Button icon={<PlusOutlined />} onClick={setOrgMember} disabled={selectedOrg === null}>添加成员</Button>
-                    </div>
-                    <Divider style={{ margin: "10px 0" }} />
+                    <RightElement identify="add-member" child={
+                        <>
+                            <div>
+                                <Button icon={<PlusOutlined />} onClick={setOrgMember} disabled={selectedOrg === null}>添加成员</Button>
+                            </div>
+                            <Divider style={{ margin: "10px 0" }} />
+                        </>
+                    }></RightElement>
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys, event) => orgSelect(keys, event)} />
                 </div>
                 <div id="user-list-container">
@@ -330,7 +355,11 @@ export default function User() {
                     <Space style={{ marginTop: "10px" }}>
                         <Button icon={<SearchOutlined />} onClick={searchUser}>查找</Button>
                         <Button icon={<ClearOutlined />} onClick={resetSearchForm}>重置</Button>
-                        <Button icon={<PlusOutlined />} onClick={createUser}>创建</Button>
+                        <RightElement identify="create-user" child={
+                            <>
+                                <Button icon={<PlusOutlined />} onClick={createUser}>创建</Button>
+                            </>
+                        }></RightElement>
                     </Space>
                     <Divider style={{ margin: "10px 0" }} />
                     <Table size="small" columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1700 }} pagination={false}></Table>

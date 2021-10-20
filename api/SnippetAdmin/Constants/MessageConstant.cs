@@ -96,6 +96,6 @@
 
         public static readonly (string, string) USER_ERROR_0012 = ("USER_ERROR_0012", "用户名重复！");
 
-        #endregion
+        #endregion UserController
     }
 }

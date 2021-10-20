@@ -1,3 +1,5 @@
+import { join, split } from "lodash";
+
 export class StorageService {
 
     //#region 第三方登录授权信息
@@ -26,17 +28,24 @@ export class StorageService {
         localStorage.removeItem("token");
         localStorage.removeItem("user-name");
         localStorage.removeItem("expire");
+        localStorage.removeItem("right");
+
+        // tab页相关信息
+        localStorage.removeItem('activeKey');
+        localStorage.removeItem('panes');
     }
 
-    static setLoginStore(accessToken: string, userName: string, expire: string): void {
+    static setLoginStore(accessToken: string, userName: string, expire: string, rights: string[]): void {
         localStorage.setItem('token', accessToken);
         localStorage.setItem('user-name', userName);
         localStorage.setItem("expire", expire);
+        localStorage.setItem("right", join(rights, ','));
     }
 
     static getAccessToken = () => localStorage.getItem("token");
     static getUserName = () => localStorage.getItem("user-name");
     static getExpire = () => localStorage.getItem("expire");
+    static getRights = () => split(localStorage.getItem("right"), ",");
 
     //#endregion
 }

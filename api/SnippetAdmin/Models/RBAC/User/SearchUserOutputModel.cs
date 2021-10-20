@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SnippetAdmin.Models.RBAC.User
+﻿namespace SnippetAdmin.Models.RBAC.User
 {
     public class SearchUserOutputModel
     {

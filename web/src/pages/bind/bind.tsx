@@ -86,7 +86,7 @@ export class Bind extends React.Component<any, BindState> {
             StorageService.clearOauthStore();
 
             // 保存登录信息
-            StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString());
+            StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(), result.identifies);
             window.location.reload();
         } catch (err) {
             return;

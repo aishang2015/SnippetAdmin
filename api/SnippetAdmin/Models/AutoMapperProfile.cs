@@ -27,7 +27,6 @@ namespace SnippetAdmin.Models
 
             CreateMap<AddOrUpdateUserInputModel, SnippetAdminUser>();
             CreateMap<SnippetAdminUser, GetUserOutputModel>();
-
         }
     }
 }

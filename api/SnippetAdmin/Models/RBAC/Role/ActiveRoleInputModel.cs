@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SnippetAdmin.Models.RBAC.Role
+﻿namespace SnippetAdmin.Models.RBAC.Role
 {
     public class ActiveRoleInputModel
     {

@@ -23,5 +23,4 @@ namespace SnippetAdmin.Models.Common
             RuleFor(x => x.Size).GreaterThan(0).ConfirmMessage(MessageConstant.SYSTEM_COMMON_002);
         }
     }
-
 }

@@ -10,6 +10,7 @@ import { ElementService } from '../../../http/requests/element';
 import { join, split } from 'lodash';
 import { Constants } from '../../../common/constants';
 import { downloadBlob } from '../../../common/file';
+import { RightElement } from '../../../components/right/rightElement';
 
 export default function Page() {
 
@@ -136,8 +137,16 @@ export default function Page() {
             <div id="page-container">
                 <div id="page-tree-container">
                     <div>
-                        <Button icon={<PlusOutlined />} style={{ marginRight: '10px' }} onClick={addElement}>添加</Button>
-                        <Button icon={<ExportOutlined />} style={{ marginRight: '10px' }} onClick={exportElement}>导出</Button>
+                        <RightElement identify="add-element" child={
+                            <>
+                                <Button icon={<PlusOutlined />} style={{ marginRight: '10px' }} onClick={addElement}>添加</Button>
+                            </>
+                        }></RightElement>
+                        <RightElement identify="export-element" child={
+                            <>
+                                <Button icon={<ExportOutlined />} style={{ marginRight: '10px' }} onClick={exportElement}>导出</Button>
+                            </>
+                        }></RightElement>
                     </div>
                     <Divider style={{ margin: "10px 0" }} />
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
@@ -146,9 +155,16 @@ export default function Page() {
                     {elementDetail !== null &&
                         <>
                             <div>
-                                <Button icon={<EditOutlined />} style={{ marginRight: '10px' }} onClick={() => editElement(1)}>编辑</Button>
-                                <Button icon={<DeleteOutlined />} style={{ marginRight: '10px' }} onClick={() => deleteElement(1)}>删除</Button>
-
+                                <RightElement identify="edit-element" child={
+                                    <>
+                                        <Button icon={<EditOutlined />} style={{ marginRight: '10px' }} onClick={() => editElement(1)}>编辑</Button>
+                                    </>
+                                }></RightElement>
+                                <RightElement identify="remove-element" child={
+                                    <>
+                                        <Button icon={<DeleteOutlined />} style={{ marginRight: '10px' }} onClick={() => deleteElement(1)}>删除</Button>
+                                    </>
+                                }></RightElement>
                             </div>
                             <Divider style={{ margin: "10px 0" }} />
                             <Descriptions title="页面元素信息" bordered column={3}>

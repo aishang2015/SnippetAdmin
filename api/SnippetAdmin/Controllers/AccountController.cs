@@ -11,6 +11,7 @@ using SnippetAdmin.Core.Method;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Core.UserAccessor;
+using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Account;
@@ -38,6 +39,8 @@ namespace SnippetAdmin.Controllers
 
         private readonly IUserAccessor _userAccessor;
 
+        private readonly SnippetAdminDbContext _dbContext;
+
         public AccountController(
             UserManager<SnippetAdminUser> userManager,
             OauthHelper oauthHttpClient,
@@ -45,7 +48,8 @@ namespace SnippetAdmin.Controllers
             IMapper mapper,
             IDistributedCache cache,
             IOptions<JwtOption> options,
-            IUserAccessor userAccessor)
+            IUserAccessor userAccessor,
+            SnippetAdminDbContext dbContext)
         {
             _userManager = userManager;
             _oauthHelper = oauthHttpClient;
@@ -54,6 +58,7 @@ namespace SnippetAdmin.Controllers
             _cache = cache;
             _jwtOption = options.Value;
             _userAccessor = userAccessor;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -71,7 +76,7 @@ namespace SnippetAdmin.Controllers
                 var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
                 if (isValidPassword)
                 {
-                    return GetSuccessTokenResult(inputModel.UserName);
+                    return await MakeLoginResultAsync(user);
                 }
             }
             return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
@@ -99,7 +104,6 @@ namespace SnippetAdmin.Controllers
         [HttpPost]
         public async Task<CommonResult> ThirdPartyLogin(ThirdPartyLoginInputModel model)
         {
-            string userName = null;
             switch (model.Source)
             {
                 case CommonConstant.Github:
@@ -120,8 +124,9 @@ namespace SnippetAdmin.Controllers
                         return this.SuccessCommonResult(MessageConstant.ACCOUNT_INFO_0002,
                             new ThirdPartyLoginOutputModel(null, null, CommonConstant.Github, githubUserInfo.name, key));
                     }
-                    userName = findUser.UserName;
-                    break;
+
+                    // 根据找到的用户信息生成登录token
+                    return await MakeLoginResultAsync(findUser);
 
                 case CommonConstant.Baidu:
                     var baiduUserInfo = await _oauthHelper.GetBaiduUserInfoAsync(model.Code);
@@ -141,15 +146,13 @@ namespace SnippetAdmin.Controllers
                         return this.SuccessCommonResult(MessageConstant.ACCOUNT_INFO_0002,
                             new ThirdPartyLoginOutputModel(null, null, CommonConstant.Baidu, baiduUserInfo.uname, key));
                     }
-                    userName = findUser.UserName;
-                    break;
+
+                    // 根据找到的用户信息生成登录token
+                    return await MakeLoginResultAsync(findUser);
 
                 default:
                     return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
             }
-
-            // 根据找到的用户信息生成登录token
-            return GetSuccessTokenResult(userName);
         }
 
         /// <summary>
@@ -200,7 +203,7 @@ namespace SnippetAdmin.Controllers
                             return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
                     }
 
-                    return GetSuccessTokenResult(user.UserName);
+                    return await MakeLoginResultAsync(user);
                 }
             }
             return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
@@ -209,14 +212,35 @@ namespace SnippetAdmin.Controllers
         /// <summary>
         /// 生成token返回结果
         /// </summary>
-        private CommonResult GetSuccessTokenResult(string username)
+        private async Task<CommonResult> MakeLoginResultAsync(SnippetAdminUser user)
         {
-            // 生成包含username的token
-            var token = _jwtFactory.GenerateJwtToken(username);
+            var token = _jwtFactory.GenerateJwtToken(user.UserName);
+            var identifies = await GetUserFrontRightsAsync(user);
             return this.SuccessCommonResult(
                 MessageConstant.ACCOUNT_INFO_0001,
-                new LoginOutputModel(token, username, _jwtOption.Expires)
+                new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies)
             );
+        }
+
+        private async Task<string[]> GetUserFrontRightsAsync(SnippetAdminUser user)
+        {
+            // 取得前端页面元素权限
+            var roles = await _userManager.GetRolesAsync(user);
+            var elementIds = (from role in _dbContext.Roles
+                              from element in _dbContext.Elements
+                              from rc in _dbContext.RoleClaims
+                              where
+                                 element.Id.ToString() == rc.ClaimValue &&
+                                 rc.ClaimType == ClaimConstant.RoleRight &&
+                                 rc.RoleId == role.Id &&
+                                 roles.Contains(role.Name)
+                              select element.Id).Distinct().ToList();
+
+            return (from element in _dbContext.Elements
+                    from elementTree in _dbContext.ElementTrees
+                    where element.Id == elementTree.Ancestor &&
+                          elementIds.Contains(elementTree.Descendant)
+                    select element.Identity).Distinct().ToArray();
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
 using SnippetAdmin.Data;
+using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -17,6 +19,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
+    [SnippetAdminAuthorize]
     public class OrganizationController : ControllerBase
     {
         private readonly SnippetAdminDbContext _dbContext;
@@ -228,7 +232,6 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0005);
             }
-
 
             // 删除职位
             var deletePositions = currentOrgPositions.Where(p => !inputModel.Positions.Select(p => p.Name).Contains(p.Name));

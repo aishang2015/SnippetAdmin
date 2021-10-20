@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
 using SnippetAdmin.Data;
+using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -18,6 +20,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
+    [SnippetAdminAuthorize]
     public class ElementController : ControllerBase
     {
         private readonly SnippetAdminDbContext _dbContext;

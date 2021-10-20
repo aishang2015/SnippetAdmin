@@ -21,7 +21,6 @@ namespace SnippetAdmin.Models.RBAC.Organization
 
     public class CreateOrganizationInputModelValidator : AbstractValidator<CreateOrganizationInputModel>
     {
-
         public CreateOrganizationInputModelValidator()
         {
             RuleFor(x => x.Name).NotEmpty().ConfirmMessage(MessageConstant.ORGANIZATION_ERROR_0001);

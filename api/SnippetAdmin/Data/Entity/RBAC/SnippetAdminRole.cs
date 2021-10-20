@@ -5,9 +5,6 @@ namespace SnippetAdmin.Data.Entity.RBAC
 {
     public class SnippetAdminRole : IdentityRole<int>
     {
-        [Comment("名称")]
-        public new string Name { get; set; }
-
         [Comment("编码")]
         public string Code { get; set; }
 

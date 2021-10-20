@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [ProducesResponseType(typeof(CommonResult<List<string>>), 200)]
+        [Authorize]
+        [SnippetAdminAuthorize]
         public CommonResult GetApiPaths([FromServices] IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider)
         {
             var result = apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items

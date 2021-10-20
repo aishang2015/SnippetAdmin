@@ -1,4 +1,4 @@
-import { Layout, Tabs } from 'antd';
+import { Layout, Space, Tabs } from 'antd';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import NavMenu from '../../components/menu/navMenu';
@@ -142,9 +142,9 @@ class BasicLayout extends React.Component<any, any> {
                             onEdit={this.onEdit}>
                             {this.state.panes.map((pane: any) => (
                                 <Tabs.TabPane tab={
-                                    <>
+                                    <Space>
                                         {Constants.FlatRouteInfo.find(r => r.path === pane.key)?.icon}{pane.title}
-                                    </>
+                                    </Space>
                                 } key={pane.key} closable={pane.closable}>
                                 </Tabs.TabPane>
                             ))}

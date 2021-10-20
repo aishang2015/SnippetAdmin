@@ -17,7 +17,6 @@ namespace SnippetAdmin.Models.RBAC.Role
         public int[] Rights { get; set; }
     }
 
-
     public class AddOrUpdateRoleInputModelValidator : AbstractValidator<AddOrUpdateRoleInputModel>
     {
         public AddOrUpdateRoleInputModelValidator()

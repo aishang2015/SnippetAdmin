@@ -29,6 +29,7 @@ export interface LoginResult {
     accessToken: string;
     userName: string;
     expire: Date;
+    identifies: string[];
 }
 
 export interface UserInfoResult {

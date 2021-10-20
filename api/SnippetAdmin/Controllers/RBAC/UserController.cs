@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
 using SnippetAdmin.Core.Method;
 using SnippetAdmin.Data;
+using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -17,6 +19,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
+    [SnippetAdminAuthorize]
     public class UserController : ControllerBase
     {
         private readonly SnippetAdminDbContext _dbContext;
@@ -120,7 +124,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> AddOrUpdateUserAsync([FromBody] AddOrUpdateUserInputModel inputModel,
             [FromServices] UserManager<SnippetAdminUser> userManager)
         {
-            if(_dbContext.Users.Any(u => u.UserName == inputModel.UserName && u.Id != inputModel.Id))
+            if (_dbContext.Users.Any(u => u.UserName == inputModel.UserName && u.Id != inputModel.Id))
             {
                 return this.FailCommonResult(MessageConstant.USER_ERROR_0012);
             }
@@ -213,7 +217,6 @@ namespace SnippetAdmin.Controllers.RBAC
                         PositionId = null
                     });
                 }
-
             }
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.USER_INFO_0004);
@@ -230,6 +233,5 @@ namespace SnippetAdmin.Controllers.RBAC
 
             return this.SuccessCommonResult(MessageConstant.USER_INFO_0004);
         }
-
     }
 }

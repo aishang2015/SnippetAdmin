@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
 import { uniq } from 'lodash';
+import { RightElement } from '../../../components/right/rightElement';
 
 export default function Org() {
 
@@ -161,17 +162,33 @@ export default function Org() {
         <>
             <div id="org-container">
                 <div id='org-tree-container'>
-                    <Button icon={<PlusOutlined />} onClick={createOrg}>创建组织</Button>
-                    <Divider style={{ margin: "10px 0" }} />
+                    <RightElement identify="create-org" child={
+                        <>
+                            <Button icon={<PlusOutlined />} onClick={createOrg}>创建组织</Button>
+                            <Divider style={{ margin: "10px 0" }} />
+                        </>
+                    }></RightElement>
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
                 </div>
                 <div id="org-detail-container">
                     {orgDetail !== null &&
                         <>
                             <div>
-                                <Button onClick={editOrg} icon={<EditOutlined />} style={{ marginRight: '10px' }}>编辑</Button>
-                                <Button onClick={deleteOrg} icon={<DeleteOutlined />} style={{ marginRight: '10px' }}>删除</Button>
-                                <Button onClick={setPost} icon={<ContactsOutlined />} style={{ marginRight: '10px' }}>职位设置</Button>
+                                <RightElement identify="edit-org" child={
+                                    <>
+                                        <Button onClick={editOrg} icon={<EditOutlined />} style={{ marginRight: '10px' }}>编辑组织</Button>
+                                    </>
+                                }></RightElement>
+                                <RightElement identify="remove-org" child={
+                                    <>
+                                        <Button onClick={deleteOrg} icon={<DeleteOutlined />} style={{ marginRight: '10px' }}>删除组织</Button>
+                                    </>
+                                }></RightElement>
+                                <RightElement identify="set-pos" child={
+                                    <>
+                                        <Button onClick={setPost} icon={<ContactsOutlined />} style={{ marginRight: '10px' }}>职位设置</Button>
+                                    </>
+                                }></RightElement>
                             </div>
                             <Divider style={{ margin: "10px 0" }} />
                             <Descriptions title="组织信息" bordered>

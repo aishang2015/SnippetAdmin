@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import DynamicAntdTheme from 'dynamic-antd-theme';
 import { Constants } from "../../common/constants";
 import { EventService } from "../../common/event";
+import { RightElement } from "../right/rightElement";
+import { StorageService } from "../../common/storage";
 
 interface INavMenuProps {
     collapsed: boolean;
@@ -39,7 +41,7 @@ class NavMenu extends React.Component<INavMenuProps, any>{
 
         <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
             {this.props.collapsed ?
-                <div className="logo" >SnippetAdmin</div> :
+                <div className="logo" >Admin</div> :
                 <div className="logo large-logo-font" >SnippetAdmin</div>
             }
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: "space-between", userSelect: "none" }}>
@@ -48,21 +50,35 @@ class NavMenu extends React.Component<INavMenuProps, any>{
                     {Constants.RouteInfo.map((r, index) => {
                         if (r.children !== undefined) {
                             return (
-                                <Menu.SubMenu key={index} icon={r.icon} title={r.name}>
-                                    {
-                                        r.children.map(r =>
-                                            <Menu.Item key={r.path} icon={r.icon}>
-                                                <Link to={r.path}>{r.name}</Link>
-                                            </Menu.Item>
-                                        )
+                                <>
+                                    {StorageService.getRights().find(right => right === r.identify) &&
+                                        <Menu.SubMenu key={index} icon={r.icon} title={r.name}>
+                                            {
+                                                r.children.map(item => {
+                                                    return (
+                                                        <>
+                                                            {StorageService.getRights().find(r => r === item.identify) &&
+                                                                <Menu.Item key={item.path} icon={item.icon}>
+                                                                    <Link to={item.path}>{item.name}</Link>
+                                                                </Menu.Item>
+                                                            }
+                                                        </>
+                                                    );
+                                                })
+                                            }
+                                        </Menu.SubMenu>
                                     }
-                                </Menu.SubMenu>
+                                </>
                             );
                         } else {
                             return (
-                                <Menu.Item key={r.path} icon={r.icon}>
-                                    <Link to={r.path}>{r.name}</Link>
-                                </Menu.Item>
+                                <>
+                                    {StorageService.getRights().find(right => right === r.identify) &&
+                                        <Menu.Item key={r.path} icon={r.icon}>
+                                            <Link to={r.path}>{r.name}</Link>
+                                        </Menu.Item>
+                                    }
+                                </>
                             );
                         }
 
