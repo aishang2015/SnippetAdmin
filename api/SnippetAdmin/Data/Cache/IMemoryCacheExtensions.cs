@@ -80,5 +80,40 @@ namespace SnippetAdmin.Data.Cache
         }
 
         #endregion element id -> api addresses
+
+        #region username -> isActive
+        public static bool GetUserIsActive(this IMemoryCache memoryCache, string userName)
+        {
+            return memoryCache.Get<bool>($"UserIsActive{userName}");
+        }
+
+        public static void SetUserIsActive(this IMemoryCache memoryCache, string userName, bool isActive)
+        {
+            memoryCache.Set($"UserIsActive{userName}", isActive);
+        }
+
+        public static void RemoveUserIsActive(this IMemoryCache memoryCache, string userName)
+        {
+            memoryCache.Remove($"UserIsActive{userName}");
+        }
+        #endregion
+
+        #region role id -> isActive
+        public static bool GetRoleIsActive(this IMemoryCache memoryCache, int roleId)
+        {
+            return memoryCache.Get<bool>($"RoleIsActive{roleId}");
+        }
+
+        public static void SetRoleIsActive(this IMemoryCache memoryCache, int roleId, bool isActive)
+        {
+            memoryCache.Set($"RoleIsActive{roleId}", isActive);
+        }
+
+        public static void RemoveRoleIsActive(this IMemoryCache memoryCache, int roleId)
+        {
+            memoryCache.Remove($"RoleIsActive{roleId}");
+        }
+
+        #endregion
     }
 }

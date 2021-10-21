@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Core.UserAccessor;
 using SnippetAdmin.Data.Cache;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SnippetAdmin.Data.Auth
 {
@@ -28,6 +29,13 @@ namespace SnippetAdmin.Data.Auth
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            var isUserActive = _memoryCache.GetUserIsActive(_userAccessor.UserName);
+            if (!isUserActive)
+            {
+                context.Result = new StatusCodeResult(403);
+                return;
+            }
+
             var userId = _memoryCache.GetUserId(_userAccessor.UserName);
             var userRoles = _memoryCache.GetUserRole(userId);
             if (userRoles == null)
@@ -36,7 +44,8 @@ namespace SnippetAdmin.Data.Auth
                 return;
             }
             var roleElements = new List<int>();
-            userRoles.ForEach(roleid => roleElements.AddRange(_memoryCache.GetRoleElement(roleid)));
+            userRoles.Where(roleId => _memoryCache.GetRoleIsActive(roleId)).ToList()
+                .ForEach(roleid => roleElements.AddRange(_memoryCache.GetRoleElement(roleid)));
             var apiList = new List<string>();
             roleElements.ForEach(element => apiList.AddRange(_memoryCache.GetElementApi(element)));
 

@@ -27,13 +27,18 @@ namespace SnippetAdmin.Data.Cache
                 // 缓存用户id和用户名
                 var users = dbcontext.Users.ToList();
                 users.ForEach(e => memoryCache.SetUserId(e.UserName, e.Id));
+                users.ForEach(e => memoryCache.SetUserIsActive(e.UserName, e.IsActive));
+
+                // 缓存用户id和用户名
+                var roles = dbcontext.Roles.ToList();
+                users.ForEach(e => memoryCache.SetRoleIsActive(e.Id, e.IsActive));
 
                 // 缓存用户角色关系
                 var userRoles = dbcontext.UserRoles.ToList();
                 foreach (var userId in userRoles.Select(ur => ur.UserId).Distinct())
                 {
-                    var roles = userRoles.Where(ur => ur.UserId == userId).Select(ur => ur.RoleId).ToList();
-                    memoryCache.SetUserRole(userId, roles);
+                    var urs = userRoles.Where(ur => ur.UserId == userId).Select(ur => ur.RoleId).ToList();
+                    memoryCache.SetUserRole(userId, urs);
                 }
             };
     }

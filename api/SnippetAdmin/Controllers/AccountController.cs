@@ -71,16 +71,23 @@ namespace SnippetAdmin.Controllers
         {
             // 取得用户
             var user = await _userManager.FindByNameAsync(inputModel.UserName);
-            if (user != null)
+            if (user == null)
             {
-                // 检查密码
-                var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
-                if (isValidPassword)
-                {
-                    return await MakeLoginResultAsync(user);
-                }
+                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
             }
-            return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+
+            // 检查密码
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
+            if (!isValidPassword)
+            {
+                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+            }
+
+            if (!user.IsActive)
+            {
+                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+            }
+            return await MakeLoginResultAsync(user);
         }
 
         /// <summary>
@@ -126,6 +133,12 @@ namespace SnippetAdmin.Controllers
                             new ThirdPartyLoginOutputModel(null, null, CommonConstant.Github, githubUserInfo.name, key));
                     }
 
+                    // 用户未激活
+                    if (!findUser.IsActive)
+                    {
+                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+                    }
+
                     // 根据找到的用户信息生成登录token
                     return await MakeLoginResultAsync(findUser);
 
@@ -148,6 +161,12 @@ namespace SnippetAdmin.Controllers
                             new ThirdPartyLoginOutputModel(null, null, CommonConstant.Baidu, baiduUserInfo.uname, key));
                     }
 
+                    // 用户未激活
+                    if (!findUser.IsActive)
+                    {
+                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+                    }
+
                     // 根据找到的用户信息生成登录token
                     return await MakeLoginResultAsync(findUser);
 
@@ -165,6 +184,13 @@ namespace SnippetAdmin.Controllers
         {
             // 检查用户信息
             var user = await _userManager.FindByNameAsync(inputModel.UserName);
+
+            // 用户未激活
+            if (!user.IsActive)
+            {
+                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+            }
+
             if (user != null)
             {
                 // 检查密码
@@ -296,6 +322,7 @@ namespace SnippetAdmin.Controllers
                               from element in _dbContext.Elements
                               from rc in _dbContext.RoleClaims
                               where
+                                 role.IsActive &&
                                  element.Id.ToString() == rc.ClaimValue &&
                                  rc.ClaimType == ClaimConstant.RoleRight &&
                                  rc.RoleId == role.Id &&

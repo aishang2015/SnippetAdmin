@@ -17,8 +17,10 @@ namespace SnippetAdmin.Data.Cache
         private readonly IMemoryCache _memoryCache;
 
         private List<EntityEntry<SnippetAdminUser>> _addOrUpdataUsers;
-
         private List<EntityEntry<SnippetAdminUser>> _deleteUsers;
+
+        private List<EntityEntry<SnippetAdminRole>> _addOrUpdataRoles;
+        private List<EntityEntry<SnippetAdminRole>> _deleteRoles;
 
         private List<EntityEntry<IdentityUserRole<int>>> _addUserRoles;
         private List<EntityEntry<IdentityUserRole<int>>> _updateUserRoles;
@@ -29,6 +31,7 @@ namespace SnippetAdmin.Data.Cache
 
         private List<EntityEntry<Element>> _addOrUpdateElements;
         private List<EntityEntry<Element>> _deleteElements;
+
 
         public CacheSavingInterceptor(IMemoryCache memoryCache)
         {
@@ -71,6 +74,11 @@ namespace SnippetAdmin.Data.Cache
             _addOrUpdataUsers = eventData.Context.ChangeTracker.Entries<SnippetAdminUser>()
                 .Where(e => e.State is EntityState.Added or EntityState.Modified).ToList();
             _deleteUsers = eventData.Context.ChangeTracker.Entries<SnippetAdminUser>()
+                .Where(e => e.State is EntityState.Deleted).ToList();
+
+            _addOrUpdataRoles = eventData.Context.ChangeTracker.Entries<SnippetAdminRole>()
+                .Where(e => e.State is EntityState.Added or EntityState.Modified).ToList();
+            _deleteRoles = eventData.Context.ChangeTracker.Entries<SnippetAdminRole>()
                 .Where(e => e.State is EntityState.Deleted).ToList();
 
             _addUserRoles = eventData.Context.ChangeTracker.Entries<IdentityUserRole<int>>()
@@ -137,6 +145,14 @@ namespace SnippetAdmin.Data.Cache
             // 缓存元素信息
             _addOrUpdateElements.ForEach(e => _memoryCache.SetElementApi(e.Entity.Id, e.Entity.AccessApi.ToLower().Split(",").ToList()));
             _deleteElements.ForEach(e => _memoryCache.RemoveElementApi(e.Entity.Id));
+
+            // 缓存用户激活状态
+            _addOrUpdataUsers.ForEach(e => _memoryCache.SetUserIsActive(e.Entity.UserName, e.Entity.IsActive));
+            _deleteUsers.ForEach(e => _memoryCache.RemoveUserIsActive(e.Entity.UserName));
+
+            // 缓存角色激活状态
+            _addOrUpdataRoles.ForEach(e => _memoryCache.SetRoleIsActive(e.Entity.Id, e.Entity.IsActive));
+            _deleteRoles.ForEach(e => _memoryCache.RemoveRoleIsActive(e.Entity.Id));
         }
     }
 }

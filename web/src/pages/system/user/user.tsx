@@ -75,7 +75,8 @@ export default function User() {
         {
             title: '角色', dataIndex: "roles", align: 'center', width: '220px',
             render: (array: any, record: any) => (
-                array?.map((s: any) => (<Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s}</Tag>))
+                array?.map((s: any) => (s.isActive?<Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s.roleName}</Tag>
+                    :<Tag key={s} style={{ marginBottom: '5px' }} color="gray">{s.roleName}</Tag>))
             ),
         },
         {

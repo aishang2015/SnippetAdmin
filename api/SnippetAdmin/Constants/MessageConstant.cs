@@ -28,6 +28,7 @@
         public static readonly (string, string) ACCOUNT_ERROR_0009 = ("ACCOUNT_ERROR_0009", "账号被别人登录！");
         public static readonly (string, string) ACCOUNT_ERROR_0010 = ("ACCOUNT_ERROR_0010", "Jwt不合法！");
         public static readonly (string, string) ACCOUNT_ERROR_0011 = ("ACCOUNT_ERROR_0011", "刷新token已过期！");
+        public static readonly (string, string) ACCOUNT_ERROR_0012 = ("ACCOUNT_ERROR_0012", "账号未激活！");
 
         #endregion AccountController
 

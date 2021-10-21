@@ -13,7 +13,10 @@ export type SearchUserResult = {
             gender: number,
             phoneNumber: string,
             isActive: boolean,
-            roles: Array<string>,
+            roles: Array<{
+                roleName: string,
+                isActive: boolean
+            }>,
             orgPositions: Array<
                 {
                     org: string,

@@ -16,9 +16,16 @@
 
         public bool IsActive { get; set; }
 
-        public string[] Roles { get; set; }
+        public RoleInfo[] Roles { get; set; }
 
         public OrgPositionOutputModel[] OrgPositions { get; set; }
+    }
+
+    public class RoleInfo
+    {
+        public string RoleName { get; set; }
+
+        public bool IsActive { get; set; }
     }
 
     public class OrgPositionOutputModel

@@ -98,7 +98,11 @@ namespace SnippetAdmin.Controllers.RBAC
                                   Roles = (from ur in _dbContext.UserRoles
                                            join r in _dbContext.Roles on ur.RoleId equals r.Id
                                            where ur.UserId == u.Id
-                                           select r.Name).ToArray(),
+                                           select new RoleInfo
+                                           {
+                                               RoleName = r.Name,
+                                               IsActive = r.IsActive
+                                           }).ToArray(),
                                   OrgPositions = (from uop in _dbContext.UserOrganizationPositions
                                                   join o in _dbContext.Organizations on uop.OrganizationId equals o.Id
                                                   join p in _dbContext.Positions on uop.PositionId equals p.Id
