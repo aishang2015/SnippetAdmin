@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using SnippetAdmin.Data.Entity.Scheduler;
 using System.Collections.Generic;
 
 namespace SnippetAdmin.Data.Cache
@@ -112,6 +113,25 @@ namespace SnippetAdmin.Data.Cache
         public static void RemoveRoleIsActive(this IMemoryCache memoryCache, int roleId)
         {
             memoryCache.Remove($"RoleIsActive{roleId}");
+        }
+
+        #endregion
+
+        #region job config
+
+        public static List<Job> GetJobConfig(this IMemoryCache memoryCache)
+        {
+            return memoryCache.Get<List<Job>>($"JobConfig");
+        }
+
+        public static void SetJobConfig(this IMemoryCache memoryCache, List<Job> jobs)
+        {
+            memoryCache.Set($"JobConfig", jobs);
+        }
+
+        public static void RemoveJobConfig(this IMemoryCache memoryCache)
+        {
+            memoryCache.Remove($"JobConfig");
         }
 
         #endregion

@@ -1,4 +1,4 @@
-import { faCog, faColumns, faHome, faInfo, faSignInAlt, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faCog, faColumns, faHome, faInfo, faSignInAlt, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export class Constants {
@@ -13,6 +13,12 @@ export class Constants {
                 { path: '/page', name: '页面权限', identify: 'permission', icon: <FontAwesomeIcon icon={faColumns} fixedWidth /> },
             ]
         },
+        {
+            path: '', name: '定时任务', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
+                { path: '/taskMange', name: '任务管理', identify: 'user', icon: <FontAwesomeIcon icon={faThumbtack} fixedWidth /> },
+                { path: '/taskRecord', name: '任务记录', identify: 'role', icon: <FontAwesomeIcon icon={faClipboardCheck} fixedWidth /> },
+            ]
+        },
         // {
         //     path: '', name: '系统设置', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
         //         { path: '/state', name: '登录管理', icon: <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> },
@@ -24,7 +30,7 @@ export class Constants {
     static FlatRouteInfo = [
         ...Constants.RouteInfo,
         ...Constants.RouteInfo[1].children!,
-        //...Constants.RouteInfo[2].children!
+        ...Constants.RouteInfo[2].children!
     ];
 
     static ElementTypeArray = [

@@ -53,6 +53,9 @@ class App extends React.Component<any, app> {
     const OrgPage = React.lazy(() => import('./pages/system/org/org'));
     const StatePage = React.lazy(() => import('./pages/system/state/state'));
 
+    const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
+    const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
+
     return (
       <Router>
         <Switch>
@@ -71,6 +74,9 @@ class App extends React.Component<any, app> {
                   <Route exact={true} path="/page"><Suspense fallback="加载中..."><PagePage /></Suspense></Route>
                   <Route exact={true} path="/org"><Suspense fallback="加载中..."><OrgPage /></Suspense></Route>
                   <Route exact={true} path="/state"><Suspense fallback="加载中..."><StatePage /></Suspense></Route>
+
+                  <Route exact={true} path="/taskMange"><Suspense fallback="加载中..."><TaskManagePage /></Suspense></Route>
+                  <Route exact={true} path="/taskRecord"><Suspense fallback="加载中..."><TaskRecordPage /></Suspense></Route>
                   <Route path="*">
                     <Redirect to="/home"></Redirect>
                   </Route>

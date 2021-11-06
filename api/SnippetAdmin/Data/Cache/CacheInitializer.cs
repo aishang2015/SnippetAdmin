@@ -40,6 +40,9 @@ namespace SnippetAdmin.Data.Cache
                     var urs = userRoles.Where(ur => ur.UserId == userId).Select(ur => ur.RoleId).ToList();
                     memoryCache.SetUserRole(userId, urs);
                 }
+
+                // 定时任务
+                memoryCache.SetJobConfig(dbcontext.Jobs.ToList());
             };
     }
 }

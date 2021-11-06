@@ -4,8 +4,15 @@ using System.Linq;
 
 namespace SnippetAdmin.Core.HostedService
 {
-    public static class BackgroundServiceExtension
+    public static class IServiceCollectionExtensions
     {
+        public static IServiceCollection AddSchedulerService(this IServiceCollection services)
+        {
+            services.AddBackgroundService<JobSchedulerService>();
+
+            return services;
+        }
+
         public static IServiceCollection AddBackgroundService<T>(this IServiceCollection services)
             where T : BackgroundService
         {

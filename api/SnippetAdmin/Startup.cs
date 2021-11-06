@@ -7,6 +7,7 @@ using SnippetAdmin.Business;
 using SnippetAdmin.Core;
 using SnippetAdmin.Core.Authentication;
 using SnippetAdmin.Core.Cache;
+using SnippetAdmin.Core.HostedService;
 using SnippetAdmin.Core.Middleware;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.TextJson;
@@ -45,8 +46,11 @@ namespace SnippetAdmin
             // 添加signalr
             services.AddSignalR();
 
-            // 添加后台服务
-            services.AddWorks();
+            // 添加业务处理
+            services.AddBusinesses();
+
+            // 添加调度器
+            services.AddSchedulerService();
 
             // 配置swagger权限访问
             services.AddCustomSwaggerGen();

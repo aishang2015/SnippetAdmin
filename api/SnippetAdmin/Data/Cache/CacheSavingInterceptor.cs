@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Scheduler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -32,6 +33,9 @@ namespace SnippetAdmin.Data.Cache
         private List<EntityEntry<Element>> _addOrUpdateElements;
         private List<EntityEntry<Element>> _deleteElements;
 
+        private List<EntityEntry<Job>> _addJobs;
+        private List<EntityEntry<Job>> _deleteJobs;
+        private List<EntityEntry<Job>> _updateJobs;
 
         public CacheSavingInterceptor(IMemoryCache memoryCache)
         {
@@ -99,6 +103,13 @@ namespace SnippetAdmin.Data.Cache
                 .Where(e => e.State is EntityState.Added or EntityState.Modified).ToList();
             _deleteElements = eventData.Context.ChangeTracker.Entries<Element>()
                 .Where(e => e.State is EntityState.Deleted).ToList();
+
+            _addJobs = eventData.Context.ChangeTracker.Entries<Job>()
+                .Where(e => e.State is EntityState.Added).ToList();
+            _deleteJobs = eventData.Context.ChangeTracker.Entries<Job>()
+                .Where(e => e.State is EntityState.Deleted).ToList();
+            _updateJobs = eventData.Context.ChangeTracker.Entries<Job>()
+                .Where(e => e.State is EntityState.Modified).ToList();
         }
 
         private void ConfirmCachingData(SaveChangesCompletedEventData eventData)
@@ -153,6 +164,27 @@ namespace SnippetAdmin.Data.Cache
             // 缓存角色激活状态
             _addOrUpdataRoles.ForEach(e => _memoryCache.SetRoleIsActive(e.Entity.Id, e.Entity.IsActive));
             _deleteRoles.ForEach(e => _memoryCache.RemoveRoleIsActive(e.Entity.Id));
+
+            // 缓存定时任务数据
+            _addJobs.ForEach(e =>
+            {
+                var cache = _memoryCache.GetJobConfig() ?? new List<Job>();
+                cache.Add(e.Entity);
+                _memoryCache.SetJobConfig(cache);
+            });
+            _deleteJobs.ForEach(e =>
+            {
+                var cache = _memoryCache.GetJobConfig() ?? new List<Job>();
+                cache.RemoveAll(j => j.Id == e.Entity.Id);
+                _memoryCache.SetJobConfig(cache);
+            });
+            _updateJobs.ForEach(e =>
+            {
+                var cache = _memoryCache.GetJobConfig() ?? new List<Job>();
+                cache.RemoveAll(j => j.Id == e.Entity.Id);
+                cache.Add(e.Entity);
+                _memoryCache.SetJobConfig(cache);
+            });
         }
     }
 }

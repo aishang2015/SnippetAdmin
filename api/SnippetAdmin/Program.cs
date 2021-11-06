@@ -4,6 +4,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
 using SnippetAdmin.Core;
+using SnippetAdmin.Core.HostedService;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Cache;
 using System;
@@ -22,6 +23,7 @@ namespace SnippetAdmin
                 Log.Information("Server start Runing!");
                 var builder = CreateHostBuilder(args).Build();
                 builder.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
+                builder.Initialize(JobInitializer.InitialJob);
                 builder.Initialize(CacheInitializer.InitialCache);
                 builder.Run();
             }
