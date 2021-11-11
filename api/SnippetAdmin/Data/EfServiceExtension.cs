@@ -16,7 +16,7 @@ namespace SnippetAdmin.Data
             var databaseOption = configuration.GetSection(optionKey).Get<DatabaseOption>();
             if (databaseOption != null)
             {
-                services.AddScoped<CacheSavingInterceptor>();
+                services.AddScoped<MemoryCacheInterceptor>();
 
                 services.AddDbContext<SnippetAdminDbContext>((provider, option) =>
                 {
@@ -52,7 +52,7 @@ namespace SnippetAdmin.Data
                         _ => option
                     };
 
-                    option.AddInterceptors(provider.GetRequiredService<CacheSavingInterceptor>());
+                    option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor>());
                 }).AddIdentity<SnippetAdminUser, SnippetAdminRole>(option =>
                 {
                     // 密码强度设置

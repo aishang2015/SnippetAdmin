@@ -23,8 +23,8 @@ namespace SnippetAdmin
                 Log.Information("Server start Runing!");
                 var builder = CreateHostBuilder(args).Build();
                 builder.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
+                builder.Initialize(MemoryCacheInitializer.InitialCache);
                 builder.Initialize(JobInitializer.InitialJob);
-                builder.Initialize(CacheInitializer.InitialCache);
                 builder.Run();
             }
             catch (Exception e)
