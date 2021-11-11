@@ -1,7 +1,5 @@
 ﻿using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
-using System;
-using System.Linq;
 
 namespace SnippetAdmin.Core.HostedService
 {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Data.Entity.Enums;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Scheduler

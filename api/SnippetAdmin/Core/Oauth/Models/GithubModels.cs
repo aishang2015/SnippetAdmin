@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SnippetAdmin.Core.Oauth.Models
+﻿namespace SnippetAdmin.Core.Oauth.Models
 {
     public class GithubAccessTokenResponse
     {

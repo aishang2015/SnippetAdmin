@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SnippetAdmin.Models.RBAC.Organization
+﻿namespace SnippetAdmin.Models.RBAC.Organization
 {
     public class GetOrganizationTreeOutputModel
     {

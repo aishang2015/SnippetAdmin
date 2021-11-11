@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-
-namespace SnippetAdmin.Core
+﻿namespace SnippetAdmin.Core
 {
     /// <summary>
     /// 用于在程序启动时执行一些操作

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace SnippetAdmin.Business.Hubs
+﻿namespace SnippetAdmin.Business.Hubs
 {
     /// <summary>
     /// 定义客户端singalr方法

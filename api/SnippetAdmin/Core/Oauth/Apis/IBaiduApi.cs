@@ -1,6 +1,5 @@
 ﻿using Refit;
 using SnippetAdmin.Core.Oauth.Models;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Core.Oauth.Apis
 {

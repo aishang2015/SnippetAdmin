@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using SnippetAdmin.Core.Oauth.Apis;
 using SnippetAdmin.Core.Oauth.Models;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Core.Oauth
 {

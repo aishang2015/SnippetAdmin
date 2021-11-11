@@ -1,24 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.UserAccessor;
-using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SnippetAdmin.Data.Auth
 {
     public class SnippetAdminAuthorizeFilter : IAuthorizationFilter
     {
-        private SnippetAdminDbContext _dbContext;
+        private readonly SnippetAdminDbContext _dbContext;
 
-        private IUserAccessor _userAccessor;
+        private readonly IUserAccessor _userAccessor;
 
-        private IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public SnippetAdminAuthorizeFilter(
             SnippetAdminDbContext dbContext,
@@ -42,7 +37,7 @@ namespace SnippetAdmin.Data.Auth
             // get all user role
             var userId = _dbContext.CacheSet<SnippetAdminUser>().First(u => u.UserName == _userAccessor.UserName).Id;
             var userRoles = _dbContext.CacheSet<IdentityUserRole<int>>().Where(ur => ur.UserId == userId);
-            if (userRoles == null || userRoles.Count() == 0)
+            if (userRoles == null || !userRoles.Any())
             {
                 context.Result = new StatusCodeResult(403);
                 return;

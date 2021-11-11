@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SnippetAdmin.Core.Utils
+﻿namespace SnippetAdmin.Core.Utils
 {
     public static class DateTimeUtil
     {

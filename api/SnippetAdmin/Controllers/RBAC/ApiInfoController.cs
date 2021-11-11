@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SnippetAdmin.Controllers.RBAC
 {

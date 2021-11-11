@@ -1,7 +1,4 @@
 ﻿using SnippetAdmin.Core.HostedService;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Business.Jobs
 {

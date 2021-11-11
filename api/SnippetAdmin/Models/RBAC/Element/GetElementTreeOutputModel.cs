@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SnippetAdmin.Models.RBAC.Element
+﻿namespace SnippetAdmin.Models.RBAC.Element
 {
     public class GetElementTreeOutputModel
     {

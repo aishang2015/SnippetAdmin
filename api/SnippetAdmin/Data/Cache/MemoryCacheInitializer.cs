@@ -1,14 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SnippetAdmin.Data.Cache
 {
     public class MemoryCacheInitializer
     {
-        public static Action<IMemoryCache, SnippetAdminDbContext> InitialCache =
+        public static readonly Action<IMemoryCache, SnippetAdminDbContext> InitialCache =
             (memoryCache, dbcontext) =>
             {
                 var dbSetPropertyTypes = dbcontext.GetType().GetProperties()

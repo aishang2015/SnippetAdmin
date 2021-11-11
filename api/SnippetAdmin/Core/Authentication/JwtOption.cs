@@ -1,6 +1,4 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-
-using System;
 using System.Text;
 
 namespace SnippetAdmin.Core.Authentication

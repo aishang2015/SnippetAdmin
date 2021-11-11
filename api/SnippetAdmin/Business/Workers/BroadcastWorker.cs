@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting;
 using SnippetAdmin.Business.Hubs;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Business.Workers
 {

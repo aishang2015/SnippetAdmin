@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Refit;
+﻿using Refit;
 using SnippetAdmin.Core.Oauth.Apis;
-using System;
 
 namespace SnippetAdmin.Core.Oauth
 {

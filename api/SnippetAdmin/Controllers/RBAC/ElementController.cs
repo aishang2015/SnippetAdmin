@@ -10,11 +10,6 @@ using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.Element;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -145,8 +140,10 @@ namespace SnippetAdmin.Controllers.RBAC
             var elementTrees = await _dbContext.ElementTrees.ToListAsync();
 
             var ms = new MemoryStream(2048);
-            var sw = new StreamWriter(ms);
-            sw.AutoFlush = true;
+            var sw = new StreamWriter(ms)
+            {
+                AutoFlush = true
+            };
 
             sw.WriteLine("// 元素数据");
             foreach (var e in elements)

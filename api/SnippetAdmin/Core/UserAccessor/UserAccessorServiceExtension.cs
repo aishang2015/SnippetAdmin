@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace SnippetAdmin.Core.UserAccessor
+﻿namespace SnippetAdmin.Core.UserAccessor
 {
     public static class UserAccessorServiceExtension
     {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Models;
-using System;
 
 namespace SnippetAdmin.Core.Attribute
 {

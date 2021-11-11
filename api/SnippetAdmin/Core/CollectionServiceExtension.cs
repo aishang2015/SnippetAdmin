@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace SnippetAdmin.Core
 {

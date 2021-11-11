@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace SnippetAdmin.Core.TextJson
+﻿namespace SnippetAdmin.Core.TextJson
 {
     public static class TextJsonExtension
     {

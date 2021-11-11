@@ -1,5 +1,6 @@
 ﻿namespace SnippetAdmin.Core.HostedService
 {
+    [AttributeUsage(AttributeTargets.Class)]
     public class SchedulerAttribute : System.Attribute
     {
         public string Cron { get; }

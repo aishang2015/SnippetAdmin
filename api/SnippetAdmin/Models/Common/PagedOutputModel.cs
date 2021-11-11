@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SnippetAdmin.Models.Common
+﻿namespace SnippetAdmin.Models.Common
 {
     public class PagedOutputModel<T>
     {

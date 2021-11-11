@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Models;
 using System.Text.Json;

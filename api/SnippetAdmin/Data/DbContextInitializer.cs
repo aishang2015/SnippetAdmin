@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data.Entity.Enums;
 using SnippetAdmin.Data.Entity.RBAC;
-using System;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Data
 {

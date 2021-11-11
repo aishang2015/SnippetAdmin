@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace SnippetAdmin.Core.Cache
+﻿namespace SnippetAdmin.Core.Cache
 {
     public static class DistributeCacheServiceExtension
     {

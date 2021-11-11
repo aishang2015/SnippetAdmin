@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using SnippetAdmin.Models;
-using System.Linq;
 
 namespace SnippetAdmin.Core
 {

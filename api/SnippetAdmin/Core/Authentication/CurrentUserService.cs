@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Linq;
-
-namespace SnippetAdmin.Core.Authentication
+﻿namespace SnippetAdmin.Core.Authentication
 {
     public interface ICurrentUserService
     {

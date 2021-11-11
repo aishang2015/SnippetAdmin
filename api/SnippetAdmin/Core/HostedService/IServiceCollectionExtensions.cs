@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Linq;
-
-namespace SnippetAdmin.Core.HostedService
+﻿namespace SnippetAdmin.Core.HostedService
 {
     public static class IServiceCollectionExtensions
     {
