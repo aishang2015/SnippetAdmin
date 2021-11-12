@@ -38,9 +38,6 @@ try
     // 添加signalr
     builder.Services.AddSignalR();
 
-    // 添加业务处理
-    builder.Services.AddBusinesses();
-
     // 添加调度器
     builder.Services.AddSchedulerService();
 
@@ -68,6 +65,9 @@ try
         // 历史会默认保存30分钟
         options.RouteBasePath = "/profiler";
     }).AddEntityFramework();
+
+    // 添加业务处理
+    builder.Services.AddBusiness();
 
     builder.Host.UseSerilog((context, services, configuration) =>
     {
