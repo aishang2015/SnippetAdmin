@@ -19,6 +19,6 @@ jobs:
         cd api
         docker build -t ${{ secrets.DOCKER_REPOSITORY }}:latest -f ./SnippetAdmin/Dockerfile .
     - name: Login to Ali Registry
-      run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
+      run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
     - name: Push Image
       run: docker push ${{ secrets.DOCKER_REPOSITORY }}:latest
