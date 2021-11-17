@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: | 
-        cd api
+        cd api/SnippetAdmin
         docker build -t ${{ secrets.DOCKER_REPOSITORY }}:latest ./
     - name: Login to Ali Registry
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
