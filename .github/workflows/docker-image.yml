@@ -23,7 +23,7 @@ jobs:
     - name: Push Image
       run: |
         export tagVersion=$(date +%s)
-        docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:tagVersion
+        docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
         docker push ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
 
         
@@ -43,5 +43,5 @@ jobs:
       - name: Push Image
         run: |
           export tagVersion=$(date +%s)
-          docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:tagVersion
+          docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
           docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
