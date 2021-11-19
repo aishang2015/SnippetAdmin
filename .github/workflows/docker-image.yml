@@ -16,13 +16,15 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: |
-        export tagVersion=$(date +%s)
         cd api
-        docker build -t ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion -f ./SnippetAdmin/Dockerfile .
+        docker build -t ${{ secrets.DOCKER_API_REPOSITORY }}:latest -f ./SnippetAdmin/Dockerfile .
     - name: Login to Ali Registry
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
     - name: Push Image
-      run: docker push ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
+      run: |
+        export tagVersion=$(date +%s)
+        docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:tagVersion
+        docker push ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
 
         
   build-web:
@@ -34,10 +36,12 @@ jobs:
         env: 
           CI: false
         run: |
-          export tagVersion=$(date +%s)
           cd web
-          docker build -t ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion .
+          docker build -t ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest .
       - name: Login to Ali Registry
         run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
       - name: Push Image
-        run: docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
+        run: |
+          export tagVersion=$(date +%s)
+          docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:tagVersion
+          docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
