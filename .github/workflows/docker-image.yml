@@ -47,7 +47,7 @@ jobs:
           docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest
 
   deploy-to-server:
-    need: [build-api,build-web]
+    needs: [build-api,build-web]
     runs-on: ubuntu-latest
     steps:
       - name: deploy
