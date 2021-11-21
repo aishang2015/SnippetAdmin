@@ -22,8 +22,8 @@ jobs:
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
     - name: Push Image
       run: |
-#        export tagVersion=$(date +%s)
-#        docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
+        # export tagVersion=$(date +%s)
+        # docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
         docker push ${{ secrets.DOCKER_API_REPOSITORY }}:latest
 
         
@@ -42,8 +42,8 @@ jobs:
         run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
       - name: Push Image
         run: |
-#          export tagVersion=$(date +%s)
-#          docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
+          # export tagVersion=$(date +%s)
+          # docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
           docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest
 
   deploy-to-server:
