@@ -11,6 +11,7 @@ import React, { Suspense } from 'react';
 import Callback from './pages/callback/callback';
 import { Bind } from './pages/bind/bind';
 import { StorageService } from './common/storage';
+import { react } from '@babel/types';
 
 interface app {
 }
@@ -56,6 +57,8 @@ class App extends React.Component<any, app> {
     const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
     const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
 
+    const SettingPage = React.lazy(()=>import('./pages/setting/setting'));
+
     return (
       <Router>
         <Switch>
@@ -77,6 +80,8 @@ class App extends React.Component<any, app> {
 
                   <Route exact={true} path="/taskMange"><Suspense fallback="加载中..."><TaskManagePage /></Suspense></Route>
                   <Route exact={true} path="/taskRecord"><Suspense fallback="加载中..."><TaskRecordPage /></Suspense></Route>
+
+                  <Route exact={true} path="/setting"><Suspense fallback="加载中..."><SettingPage /></Suspense></Route>
                   <Route path="*">
                     <Redirect to="/home"></Redirect>
                   </Route>

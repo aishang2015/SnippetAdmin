@@ -1,4 +1,4 @@
-import { faClipboardCheck, faCog, faColumns, faHome, faInfo, faSignInAlt, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faCog, faColumns, faHome, faInfo, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export class Constants {
@@ -14,7 +14,7 @@ export class Constants {
             ]
         },
         {
-            path: '', name: '定时任务', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
+            path: '', name: '任务调度', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
                 { path: '/taskMange', name: '任务管理', identify: 'user', icon: <FontAwesomeIcon icon={faThumbtack} fixedWidth /> },
                 { path: '/taskRecord', name: '任务记录', identify: 'role', icon: <FontAwesomeIcon icon={faClipboardCheck} fixedWidth /> },
             ]
@@ -24,6 +24,7 @@ export class Constants {
         //         { path: '/state', name: '登录管理', icon: <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> },
         //     ]
         // },
+        { path: '/setting', name: '系统设置', identify: 'about', icon: <FontAwesomeIcon icon={faCog} fixedWidth /> },
         { path: '/about', name: '关于', identify: 'about', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> }
     ];
 

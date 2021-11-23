@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Models.Account;
 using SnippetAdmin.Models.RBAC.Element;
 using SnippetAdmin.Models.RBAC.Organization;
 using SnippetAdmin.Models.RBAC.Role;
 using SnippetAdmin.Models.RBAC.User;
+using SnippetAdmin.Models.Scheduler.Job;
 
 namespace SnippetAdmin.Models
 {
@@ -27,6 +29,8 @@ namespace SnippetAdmin.Models
 
             CreateMap<AddOrUpdateUserInputModel, SnippetAdminUser>();
             CreateMap<SnippetAdminUser, GetUserOutputModel>();
+
+            CreateMap<Job, GetJobsOutputModel>();
         }
     }
 }

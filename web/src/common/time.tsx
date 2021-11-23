@@ -1,4 +1,9 @@
 export function dateFormat(d: string, fmt: any = null) {
+
+    if (d === undefined || d === null || d === "") {
+        return '';
+    }
+
     let ret;
     let date = new Date(d);
     const opt: any = {

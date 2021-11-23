@@ -102,5 +102,17 @@
         public static readonly (string, string) USER_ERROR_0012 = ("USER_ERROR_0012", "用户名重复！");
 
         #endregion UserController
+
+        #region JobController
+        public static readonly (string, string) JOB_INFO_0001 = ("JOB_INFO_0001", "创建成功！");
+        public static readonly (string, string) JOB_INFO_0002 = ("JOB_INFO_0002", "删除成功！");
+        public static readonly (string, string) JOB_INFO_0003 = ("JOB_INFO_0003", "更新成功！");
+        public static readonly (string, string) JOB_INFO_0004 = ("JOB_INFO_0004", "任务已启用！");
+        public static readonly (string, string) JOB_INFO_0005 = ("JOB_INFO_0005", "任务已停止！");
+        public static readonly (string, string) JOB_INFO_0006 = ("JOB_INFO_0006", "任务开始执行！");
+
+        public static readonly (string, string) JOB_ERROR_0001 = ("JOB_ERROR_0001", "没有找到该任务！");
+
+        #endregion UserController
     }
 }

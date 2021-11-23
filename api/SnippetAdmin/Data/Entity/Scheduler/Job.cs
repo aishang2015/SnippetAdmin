@@ -21,9 +21,6 @@ namespace SnippetAdmin.Data.Entity.Scheduler
         [Comment("是否活动的任务")]
         public bool IsActive { get; set; }
 
-        [Comment("下次执行时间")]
-        public DateTime? NextTime { get; set; }
-
         [Comment("上次执行时间")]
         public DateTime? LastTime { get; set; }
 

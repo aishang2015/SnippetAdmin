@@ -13,6 +13,9 @@ namespace SnippetAdmin.Data.Entity.Scheduler
         [Comment("任务Id")]
         public int JobId { get; set; }
 
+        [Comment("触发方式")]
+        public TriggerMode TriggerMode { get; set; }
+
         [Comment("任务状态")]
         public JobState JobState { get; set; }
 
