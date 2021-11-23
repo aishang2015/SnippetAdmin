@@ -22,9 +22,9 @@ jobs:
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
     - name: Push Image
       run: |
-        export tagVersion=$(date +%s)
-        docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
-        docker push ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
+        # export tagVersion=$(date +%s)
+        # docker tag ${{ secrets.DOCKER_API_REPOSITORY }}:latest ${{ secrets.DOCKER_API_REPOSITORY }}:$tagVersion
+        docker push ${{ secrets.DOCKER_API_REPOSITORY }}:latest
 
         
   build-web:
@@ -42,6 +42,30 @@ jobs:
         run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
       - name: Push Image
         run: |
-          export tagVersion=$(date +%s)
-          docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
-          docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
+          # export tagVersion=$(date +%s)
+          # docker tag ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest ${{ secrets.DOCKER_WEB_REPOSITORY }}:$tagVersion
+          docker push ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest
+
+  deploy-to-server:
+    needs: [build-api,build-web]
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        uses: appleboy/ssh-action@v0.1.4
+        with: 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.HOST_USERNAME }}
+          password: ${{ secrets.HOST_PASSWORD }}
+          script: |
+            docker stop snippet-admin-api
+            docker rm snippet-admin-api
+            docker rmi ${{ secrets.DOCKER_API_REPOSITORY }}:latest
+            docker stop snippet-admin-web
+            docker rm snippet-admin-web
+            docker rmi ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest
+            docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} registry.cn-hangzhou.aliyuncs.com
+            docker pull ${{ secrets.DOCKER_API_REPOSITORY }}:latest
+            docker pull ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest
+            docker run -d -p 31001:80 --name snippet-admin-api -v /home/snippet-admin/volumns/api/appsettings.json:/app/appsettings.json -v /home/snippet-admin/volumns/api/Logs:/app/logs ${{ secrets.DOCKER_API_REPOSITORY }}:latest
+            docker run -d -p 31000:80 --name snippet-admin-web -v /home/snippet-admin/volumns/web/config.json:/usr/share/nginx/html/config/config.json -v /home/snippet-admin/volumns/web/default.conf:/etc/nginx/conf.d/default.conf -v /home/snippet-admin/volumns/web/nginx.conf:/etc/nginx/nginx.conf ${{ secrets.DOCKER_WEB_REPOSITORY }}:latest
+
