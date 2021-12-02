@@ -20,7 +20,7 @@ export default function Role() {
 
     const roleTableColumns: any = [
         {
-            title: '序号', dataIndex: "num", align: 'center', width: '100px',
+            title: '序号', dataIndex: "num", align: 'center', width: '90px',
             render: (data: any, record: any, index: any) => (
                 <span>{(page - 1) * size + 1 + index}</span>
             )
@@ -29,13 +29,13 @@ export default function Role() {
         { title: '角色代码', dataIndex: "code", align: 'center', width: '220px' },
         { title: '备注', dataIndex: "remark", align: 'center' },
         {
-            title: '启用', dataIndex: "isActive", align: 'center', width: '120px',
+            title: '启用', dataIndex: "isActive", align: 'center', width: '90px',
             render: (data: any, record: any) => (
                 <Switch defaultChecked={data} onChange={(checked, event) => activeChange(checked, event, record.id, record.isActive)}></Switch>
             ),
         },
         {
-            title: '操作', key: 'operate', align: 'center', width: '120px',
+            title: '操作', key: 'operate', align: 'center', width: '130px',
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <RightElement identify="edit-role" child={
@@ -144,7 +144,7 @@ export default function Role() {
                         <Divider style={{ margin: "10px 0" }} />
                     </>
                 }></RightElement>
-                <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false}></Table>
+                <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
                 }

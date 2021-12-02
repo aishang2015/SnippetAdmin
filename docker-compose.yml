@@ -7,6 +7,8 @@ services:
       context: ./web
       dockerfile: Dockerfile
     restart: always
+    depends_on:
+      - database
     ports:
       - "21001:80"
     volumes:
@@ -41,43 +43,4 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     volumes:
       - ./volumns/mysql/data:/var/lib/mysql
-  sk-es6:
-    container_name: sk-es6
-    image: elasticsearch:6.8.15
-    privileged: true
-    restart: always
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      discovery.type: single-node
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
-    volumes:
-      - ./volumns/es6/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./volumns/es6/data:/usr/share/elasticsearch/data
-  sw-oap:
-    container_name: sw-oap
-    image: apache/skywalking-oap-server:8.5.0-es6
-    restart: always
-    ports:
-      - "1234:1234"
-      - "11800:11800"
-      - "12800:12800"
-    links:
-      - sk-es6
-    environment:
-      SW_STORAGE: elasticsearch
-      SW_STORAGE_ES_CLUSTER_NODES: sk-es6:9200
-  sw-oap-ui:
-    container_name: sw-oap-ui
-    image: apache/skywalking-ui
-    privileged: true
-    ports:
-      - "9898:8080"
-    links:
-      - sw-oap
-    environment:
-      SW_OAP_ADDRESS: sw-oap:12800
-
-
-
+  

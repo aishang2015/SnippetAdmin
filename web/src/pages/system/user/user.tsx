@@ -43,13 +43,13 @@ export default function User() {
 
     const userTableColumns: any = [
         {
-            title: '序号', dataIndex: "num", align: 'center', width: '100px', fixed: "left",
+            title: '序号', dataIndex: "num", align: 'center', width: '90px', fixed: "left",
             render: (data: any, record: any, index: any) => (
                 <span>{(page - 1) * size + 1 + index}</span>
             )
         },
         {
-            title: '头像', dataIndex: "avatar", align: 'center', width: '120px',
+            title: '头像', dataIndex: "avatar", align: 'center', width: '80px',
             render: (data: any, record: any) => (
                 data === null ?
                     <Avatar icon={<UserOutlined />} /> :
@@ -75,12 +75,12 @@ export default function User() {
         {
             title: '角色', dataIndex: "roles", align: 'center', width: '220px',
             render: (array: any, record: any) => (
-                array?.map((s: any) => (s.isActive?<Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s.roleName}</Tag>
-                    :<Tag key={s} style={{ marginBottom: '5px' }} color="gray">{s.roleName}</Tag>))
+                array?.map((s: any) => (s.isActive ? <Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s.roleName}</Tag>
+                    : <Tag key={s} style={{ marginBottom: '5px' }} color="gray">{s.roleName}</Tag>))
             ),
         },
         {
-            title: '部门/职位', dataIndex: "orgPositions", align: 'center', width: '440px',
+            title: '部门/职位', dataIndex: "orgPositions", align: 'center',
             render: (array: any, record: any) => (
                 array?.map((s: any) => (
                     <Tag key={s.org + s.position} style={{ marginBottom: '5px' }} color="#f50">{s.org + "/" + s.position}</Tag>)
@@ -88,7 +88,7 @@ export default function User() {
             ),
         },
         {
-            title: '启用', dataIndex: "isActive", align: 'center', width: '120px', fixed: "right",
+            title: '启用', dataIndex: "isActive", align: 'center', width: '90px', fixed: 'right',
             render: (data: any, record: any) => (
                 <RightElement identify="active-user" child={
                     <>
@@ -98,8 +98,8 @@ export default function User() {
             ),
         },
         {
-            title: '操作', key: 'operate', align: 'center', fixed: "right",
-            render: (text: any, record: any) => (
+            title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
+            render: (data: any, record: any) => (
                 <Space size="middle">
                     <RightElement identify="edit-user" child={
                         <>
@@ -330,7 +330,7 @@ export default function User() {
                             <Divider style={{ margin: "10px 0" }} />
                         </>
                     }></RightElement>
-                    <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys, event) => orgSelect(keys, event)} />
+                    <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys: any, event: any) => orgSelect(keys, event)} />
                 </div>
                 <div id="user-list-container">
                     <Form form={searchForm} layout="inline" onFinish={searchSubmit}>
