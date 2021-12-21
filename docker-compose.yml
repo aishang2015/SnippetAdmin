@@ -29,9 +29,7 @@ services:
       SKYWALKING__SERVICENAME: sample_app
     volumes:
       - ./volumns/api/appsettings.json:/app/appsettings.json
-      - ./volumns/api/skyapm.json:/app/skyapm.json
       - ./volumns/api/Logs:/app/logs
-      - ./volumns/api/skyapm-logs:/app/skyapm-logs
   database: 
     container_name: snippetadmin-mysql
     image: mysql:8.0.21
