@@ -13,7 +13,7 @@ namespace SnippetAdmin.Data
             InitialSnippetAdminDbContext = (dbContext, userManager, roleManager, logger) =>
             {
                 logger.LogInformation("开始执行初始化操作。");
-                dbContext.Database.EnsureDeleted();
+                //dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
