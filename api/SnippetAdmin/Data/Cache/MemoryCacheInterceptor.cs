@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,6 +15,11 @@ namespace SnippetAdmin.Data.Cache
         private Dictionary<Type, List<object>> _deleteEntityDic;
 
         private Dictionary<Type, List<object>> _modifyEntityDic;
+
+        private Dictionary<Type, string> _specialTypeKeyDic = new Dictionary<Type, string>()
+        {
+            { typeof(IdentityUserRole<int>), "UserId"}
+        };
 
         public MemoryCacheInterceptor(IMemoryCache memoryCache)
         {
@@ -80,14 +86,14 @@ namespace SnippetAdmin.Data.Cache
             });
             _modifyEntityDic.ToList().ForEach(kv =>
             {
-                var modifyDataIds = kv.Value.Select(d => d.GetType().GetProperty("Id").GetValue(d));
+                var modifyDataIds = kv.Value.Select(d => d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
                 var data = _memoryCache.Get(kv.Key.FullName);
 
                 if (data != null)
                 {
                     // remove all modified entity
                     var removeMethod = data.GetType().GetMethod("RemoveAll");
-                    Predicate<object> action = d => modifyDataIds.Contains(d.GetType().GetProperty("Id").GetValue(d));
+                    Predicate<object> action = d => modifyDataIds.Contains(d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
                     removeMethod.Invoke(data, new object[] { action });
 
                     // re add 
@@ -100,12 +106,12 @@ namespace SnippetAdmin.Data.Cache
             });
             _deleteEntityDic.ToList().ForEach(kv =>
             {
-                var deleteDataIds = kv.Value.Select(d => d.GetType().GetProperty("Id").GetValue(d));
+                var deleteDataIds = kv.Value.Select(d => d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
                 var data = _memoryCache.Get(kv.Key.FullName);
                 if (data != null)
                 {
                     var removeMethod = data.GetType().GetMethod("RemoveAll");
-                    Predicate<object> action = d => deleteDataIds.Contains(d.GetType().GetProperty("Id").GetValue(d));
+                    Predicate<object> action = d => deleteDataIds.Contains(d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
                     removeMethod.Invoke(data, new object[] { action });
                 }
             });
@@ -114,7 +120,7 @@ namespace SnippetAdmin.Data.Cache
         /// <summary>
         /// get entity from tracker
         /// </summary>
-        private static Dictionary<Type, List<object>> ExtractEntityDic(IEnumerable<EntityEntry> entries,
+        private Dictionary<Type, List<object>> ExtractEntityDic(IEnumerable<EntityEntry> entries,
             EntityState entityState)
         {
             return entries
@@ -122,6 +128,11 @@ namespace SnippetAdmin.Data.Cache
                 .Select(entry => entry.Entity)
                 .GroupBy(entity => entity.GetType())
                 .ToDictionary(entityGroup => entityGroup.Key, entityGroup => entityGroup.ToList());
+        }
+
+        private string GetKeyPropertyName(Type t)
+        {
+            return _specialTypeKeyDic.ContainsKey(t) ? _specialTypeKeyDic[t] : "Id";
         }
     }
 }

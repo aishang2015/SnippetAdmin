@@ -414,7 +414,7 @@ export default function User() {
                     <Form.Item name="realName" label="姓名" rules={
                         [
                             { required: true, message: "请输入姓名" },
-                            { max: 20, message: "姓名过长" },
+                            { max: 10, message: "姓名过长" },
                         ]
                     }>
                         <Input autoComplete="off2" placeholder="请输入姓名" />
@@ -426,7 +426,12 @@ export default function User() {
                             <Radio value={2}>女</Radio>
                         </Radio.Group>
                     </Form.Item>
-                    <Form.Item name="phoneNumber" label="电话">
+                    <Form.Item name="phoneNumber" label="电话" rules={
+                        [
+                            { pattern: /^[0-9-]+$/g, message: '电话只能包含数字和-' },
+                            { max: 20, message: "电话过长" },
+                        ]
+                    }>
                         <Input autoComplete="off2" placeholder="请输入电话" />
                     </Form.Item>
                     <Form.Item name="roles" label="角色">

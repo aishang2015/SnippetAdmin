@@ -81,7 +81,6 @@ class App extends React.Component<any, app> {
                   <Route exact={true} path="/taskMange"><Suspense fallback="加载中..."><TaskManagePage /></Suspense></Route>
                   <Route exact={true} path="/taskRecord"><Suspense fallback="加载中..."><TaskRecordPage /></Suspense></Route>
 
-                  <Route exact={true} path="/setting"><Suspense fallback="加载中..."><SettingPage /></Suspense></Route>
                   <Route path="*">
                     <Redirect to="/home"></Redirect>
                   </Route>
