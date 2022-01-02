@@ -5,7 +5,9 @@ namespace SnippetAdmin.Core.HostedService
 {
     public static class JobInitializer
     {
-        public static Action<SnippetAdminDbContext> InitialJob =
+        public static Action<SnippetAdminDbContext> InitialJob { get => _initialJob; }
+
+        private static Action<SnippetAdminDbContext> _initialJob =
            (dbcontext) =>
            {
                // 查找全局的ijob定义
@@ -49,5 +51,6 @@ namespace SnippetAdmin.Core.HostedService
                }
 
            };
+
     }
 }

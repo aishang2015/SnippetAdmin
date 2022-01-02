@@ -208,13 +208,13 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> SetPosition([FromBody] SetPositionInputModel inputModel)
         {
             // 校验同一组织下相同编码的职位
-            if (inputModel.Positions.Count() != inputModel.Positions.Select(p => p.Code).Distinct().Count())
+            if (inputModel.Positions.Length != inputModel.Positions.Select(p => p.Code).Distinct().Count())
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0005);
             }
 
             // 校验同一组织下有相同名称的职位
-            if (inputModel.Positions.Count() != inputModel.Positions.Select(p => p.Name).Distinct().Count())
+            if (inputModel.Positions.Length != inputModel.Positions.Select(p => p.Name).Distinct().Count())
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0006);
             }

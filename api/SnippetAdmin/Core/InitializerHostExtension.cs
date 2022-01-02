@@ -66,7 +66,9 @@
         /// <summary>
         /// 执行初始化操作(5个参数)
         /// </summary>
-        public static void Initialize<T1, T2, T3, T4, T5>(this IHost host, Action<T1, T2, T3, T4, T5> action)
+        public static void Initialize<T1, T2, T3, T4, T5>(
+            this IHost host,
+            Action<T1, T2, T3, T4, T5> action)
         {
             using (var serviceScope = host.Services.CreateScope())
             {
@@ -83,7 +85,9 @@
         /// <summary>
         /// 执行初始化操作(6个参数)
         /// </summary>
-        public static void Initialize<T1, T2, T3, T4, T5, T6>(this IHost host, Action<T1, T2, T3, T4, T5, T6> action)
+        public static void Initialize<T1, T2, T3, T4, T5, T6>(
+            this IHost host,
+            Action<T1, T2, T3, T4, T5, T6> action)
         {
             using (var serviceScope = host.Services.CreateScope())
             {
@@ -101,7 +105,8 @@
         /// <summary>
         /// 执行初始化操作(7个参数)
         /// </summary>
-        public static void Initialize<T1, T2, T3, T4, T5, T6, T7>(this IHost host,
+        public static void Initialize<T1, T2, T3, T4, T5, T6, T7>(
+            this IHost host,
             Action<T1, T2, T3, T4, T5, T6, T7> action)
         {
             using (var serviceScope = host.Services.CreateScope())
@@ -121,7 +126,8 @@
         /// <summary>
         /// 执行初始化操作(8个参数)
         /// </summary>
-        public static void Initialize<T1, T2, T3, T4, T5, T6, T7, T8>(this IHost host,
+        public static void Initialize<T1, T2, T3, T4, T5, T6, T7, T8>(
+            this IHost host,
             Action<T1, T2, T3, T4, T5, T6, T7, T8> action)
         {
             using (var serviceScope = host.Services.CreateScope())

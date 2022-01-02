@@ -31,7 +31,7 @@ namespace SnippetAdmin.Core
                                 Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        Array.Empty<string>()
                     }
                 });
             });

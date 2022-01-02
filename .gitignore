@@ -351,3 +351,6 @@ MigrationBackup/
 
 /volumns/mysql/data
 /volumns/es6/data
+
+#sonarqube
+.sonarqube

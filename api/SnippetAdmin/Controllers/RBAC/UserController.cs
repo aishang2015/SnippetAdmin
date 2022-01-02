@@ -228,7 +228,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> RemoveOrgMemberAsync([FromBody] RemoveOrgMemberInputModel inputModel)
         {
             var uops = _dbContext.UserOrganizationPositions.Where(uop => uop.OrganizationId == inputModel.OrgId &&
-                uop.UserId == inputModel.UserId).ToList(); ;
+                uop.UserId == inputModel.UserId).ToList();
             _dbContext.UserOrganizationPositions.RemoveRange(uops);
             await _dbContext.SaveChangesAsync();
 

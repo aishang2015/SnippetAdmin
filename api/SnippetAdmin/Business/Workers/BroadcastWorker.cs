@@ -18,7 +18,7 @@ namespace SnippetAdmin.Business.Workers
             {
                 // 调用客户端HandleMessage处理方法
                 await _broadcastHub.Clients.All.HandleMessage($"服务器广播：服务器时间为{DateTime.Now}");
-                await Task.Delay(30000);
+                await Task.Delay(30000, stoppingToken);
             }
         }
     }

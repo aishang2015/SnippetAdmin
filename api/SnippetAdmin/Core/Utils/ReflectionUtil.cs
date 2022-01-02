@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace SnippetAdmin.Core.Utils
 {
-    public class ReflectionUtil
+    public static class ReflectionUtil
     {
         /// <summary>
         /// 获取当前应用的所有程序集

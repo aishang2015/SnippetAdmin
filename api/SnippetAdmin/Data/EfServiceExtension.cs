@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Exceptions;
 
 namespace SnippetAdmin.Data
 {
@@ -64,7 +65,7 @@ namespace SnippetAdmin.Data
 
                 return services;
             }
-            throw new Exception("没有配置数据库，无法找到数据库配置片段！");
+            throw new NoDatabaseOptionException();
         }
 
         public static IServiceCollection AddDatabase<TDbContext>(this IServiceCollection services,
@@ -110,7 +111,7 @@ namespace SnippetAdmin.Data
 
                 return services;
             }
-            throw new Exception("没有配置数据库，无法找到数据库配置片段！");
+            throw new NoDatabaseOptionException();
         }
     }
 }

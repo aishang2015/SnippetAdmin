@@ -25,8 +25,6 @@ namespace SnippetAdmin.Controllers
     {
         private readonly UserManager<SnippetAdminUser> _userManager;
 
-        private readonly OauthHelper _oauthHelper;
-
         private readonly IJwtFactory _jwtFactory;
 
         private readonly IMapper _mapper;
@@ -41,7 +39,6 @@ namespace SnippetAdmin.Controllers
 
         public AccountController(
             UserManager<SnippetAdminUser> userManager,
-            OauthHelper oauthHttpClient,
             IJwtFactory jwtFactory,
             IMapper mapper,
             IDistributedCache cache,
@@ -50,7 +47,6 @@ namespace SnippetAdmin.Controllers
             SnippetAdminDbContext dbContext)
         {
             _userManager = userManager;
-            _oauthHelper = oauthHttpClient;
             _jwtFactory = jwtFactory;
             _mapper = mapper;
             _cache = cache;
@@ -107,7 +103,8 @@ namespace SnippetAdmin.Controllers
         /// 第三方登录
         /// </summary>
         [HttpPost]
-        public async Task<CommonResult> ThirdPartyLogin(ThirdPartyLoginInputModel model)
+        public async Task<CommonResult> ThirdPartyLogin(ThirdPartyLoginInputModel model,
+            [FromServices] OauthHelper _oauthHelper)
         {
             switch (model.Source)
             {
@@ -182,55 +179,60 @@ namespace SnippetAdmin.Controllers
             // 检查用户信息
             var user = await _userManager.FindByNameAsync(inputModel.UserName);
 
+            // 用户不存在
+            if (user == null)
+            {
+                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+            }
+
+            // 检查密码
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
+            if (isValidPassword)
+            {
+                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+            }
+
             // 用户未激活
             if (!user.IsActive)
             {
                 return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
             }
 
-            if (user != null)
+            // 账号验证通过则绑定用户的第三方账号信息
+            switch (inputModel.ThirdPartyType)
             {
-                // 检查密码
-                var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
-                if (isValidPassword)
-                {
-                    // 账号验证通过则绑定用户的第三方账号信息
-                    switch (inputModel.ThirdPartyType)
+                case CommonConstant.Github:
+                    var githubUserInfo = await _cache.GetObjectAsync<GithubUserInfo>(inputModel.ThirdPartyInfoCacheKey);
+                    if (githubUserInfo != null)
                     {
-                        case CommonConstant.Github:
-                            var githubUserInfo = await _cache.GetObjectAsync<GithubUserInfo>(inputModel.ThirdPartyInfoCacheKey);
-                            if (githubUserInfo != null)
-                            {
-                                user.GithubId = githubUserInfo.id;
-                                await _userManager.UpdateAsync(user);
-                            }
-                            else
-                            {
-                                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0007);
-                            }
-                            break;
-
-                        case CommonConstant.Baidu:
-                            var baiduUserInfo = await _cache.GetObjectAsync<BaiduUserInfo>(inputModel.ThirdPartyInfoCacheKey);
-                            if (baiduUserInfo != null)
-                            {
-                                user.BaiduId = baiduUserInfo.openid;
-                                await _userManager.UpdateAsync(user);
-                            }
-                            else
-                            {
-                                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0007);
-                            }
-                            break;
-
-                        default:
-                            return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
+                        user.GithubId = githubUserInfo.id;
+                        await _userManager.UpdateAsync(user);
+                        return await MakeLoginResultAsync(user);
+                    }
+                    else
+                    {
+                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0007);
                     }
 
-                    return await MakeLoginResultAsync(user);
-                }
+                case CommonConstant.Baidu:
+                    var baiduUserInfo = await _cache.GetObjectAsync<BaiduUserInfo>(inputModel.ThirdPartyInfoCacheKey);
+                    if (baiduUserInfo != null)
+                    {
+                        user.BaiduId = baiduUserInfo.openid;
+                        await _userManager.UpdateAsync(user);
+                        return await MakeLoginResultAsync(user);
+                    }
+                    else
+                    {
+                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0007);
+                    }
+
+                default:
+                    return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
             }
-            return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+
+
+
         }
 
         /// <summary>
