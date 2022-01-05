@@ -14,8 +14,7 @@ namespace SnippetAdmin.Business.Hubs
 
         public override Task OnConnectedAsync()
         {
-            var userName = Context.User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier)
-                .FirstOrDefault()?.Value;
+            var userName = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             _logger.LogInformation($"{userName} connected to the hub.");
             return base.OnConnectedAsync();
         }

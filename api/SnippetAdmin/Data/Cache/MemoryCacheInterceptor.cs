@@ -16,7 +16,10 @@ namespace SnippetAdmin.Data.Cache
 
         private Dictionary<Type, List<object>> _modifyEntityDic;
 
-        private Dictionary<Type, string> _specialTypeKeyDic = new Dictionary<Type, string>()
+        /// <summary>
+        /// some special key name for entities like identityuserrole
+        /// </summary>
+        private readonly Dictionary<Type, string> _specialTypeKeyDic = new Dictionary<Type, string>()
         {
             { typeof(IdentityUserRole<int>), "UserId"}
         };
@@ -120,7 +123,7 @@ namespace SnippetAdmin.Data.Cache
         /// <summary>
         /// get entity from tracker
         /// </summary>
-        private Dictionary<Type, List<object>> ExtractEntityDic(IEnumerable<EntityEntry> entries,
+        private static Dictionary<Type, List<object>> ExtractEntityDic(IEnumerable<EntityEntry> entries,
             EntityState entityState)
         {
             return entries

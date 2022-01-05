@@ -8,12 +8,12 @@ namespace SnippetAdmin.Data
 {
     public static class DbContextInitializer
     {
-        public static Action<SnippetAdminDbContext, UserManager<SnippetAdminUser>,
+        private static Action<SnippetAdminDbContext, UserManager<SnippetAdminUser>,
             RoleManager<SnippetAdminRole>, ILogger<SnippetAdminDbContext>>
-            InitialSnippetAdminDbContext = (dbContext, userManager, roleManager, logger) =>
+            _initialSnippetAdminDbContext = (dbContext, userManager, roleManager, logger) =>
             {
                 logger.LogInformation("开始执行初始化操作。");
-                dbContext.Database.EnsureDeleted();
+                //dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
@@ -61,6 +61,11 @@ namespace SnippetAdmin.Data
                 logger.LogInformation("初始化用户角色完成。");
                 logger.LogInformation("初始化数据操作执行完毕。");
             };
+
+        public static Action<SnippetAdminDbContext, UserManager<SnippetAdminUser>, RoleManager<SnippetAdminRole>, ILogger<SnippetAdminDbContext>> InitialSnippetAdminDbContext
+        {
+            get => _initialSnippetAdminDbContext;
+        }
 
         public static void InitialDatabase<TDbContext>(TDbContext dbContext,
             ILogger<TDbContext> logger) where TDbContext : DbContext

@@ -38,13 +38,19 @@ namespace SnippetAdmin.Core.Method
         {
             foreach (var keySelector in keySelectors)
             {
-                queryable = queryable is not IOrderedQueryable<T> ?
-                    keySelector.Item2 ?
+                if (queryable is IOrderedQueryable<T>)
+                {
+                    queryable = keySelector.Item2 ?
+                           (queryable as IOrderedQueryable<T>).ThenBy(keySelector.Item1) :
+                           (queryable as IOrderedQueryable<T>).ThenByDescending(keySelector.Item1);
+                }
+                else
+                {
+                    queryable = keySelector.Item2 ?
                         queryable.OrderBy(keySelector.Item1) :
-                        queryable.OrderByDescending(keySelector.Item1) :
-                    keySelector.Item2 ?
-                        (queryable as IOrderedQueryable<T>).ThenBy(keySelector.Item1) :
-                        (queryable as IOrderedQueryable<T>).ThenByDescending(keySelector.Item1);
+                        queryable.OrderByDescending(keySelector.Item1);
+
+                }
             }
             return queryable;
         }

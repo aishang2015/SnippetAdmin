@@ -12,15 +12,17 @@ namespace SnippetAdmin.Data.Cache
                     .Where(property =>
                         property.PropertyType.IsGenericType && (
                         typeof(DbSet<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition()) ||
-                        property.PropertyType.GetInterface(typeof(DbSet<>).FullName) != null));
+                        property.PropertyType.GetInterface(typeof(DbSet<>).FullName) != null))
+                    .ToList();
 
                 var toListMethod = typeof(MemoryCacheInitializer).GetMethod("GetDataList");
-                foreach (var dbSetProperty in dbSetPropertyTypes)
+
+                dbSetPropertyTypes.ForEach(dbSetProperty =>
                 {
                     var method = toListMethod.MakeGenericMethod(dbSetProperty.PropertyType.GetGenericArguments()[0]);
                     var data = method.Invoke(new MemoryCacheInitializer(), new object[] { dbcontext });
                     memoryCache.Set(dbSetProperty.PropertyType.GetGenericArguments()[0].FullName, data);
-                }
+                });
             };
 
         public List<T> GetDataList<T>(SnippetAdminDbContext dbContext) where T : class

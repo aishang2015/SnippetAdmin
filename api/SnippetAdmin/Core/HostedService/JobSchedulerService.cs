@@ -1,4 +1,5 @@
 ﻿using Cronos;
+using SnippetAdmin.Core.HostedService.Exceptions;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Enums;
@@ -52,7 +53,7 @@ namespace SnippetAdmin.Core.HostedService
                     // 如果取不到下次时间，则直接抛出异常
                     if (nextTime == null)
                     {
-                        throw new Exception($"Job '{job.Name}' can not get the next run time from the cron expression.");
+                        throw new WrongCronException($"Job '{job.Name}' can not get the next run time from the cron expression.");
                     }
 
                     var delay = nextTime?.Subtract(now);

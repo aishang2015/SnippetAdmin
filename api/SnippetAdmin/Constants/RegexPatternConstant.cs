@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Constants
 {
-    public class RegexPatternConstant
+    public static class RegexPatternConstant
     {
         public const string NumberRegex = @"^[0-9]*$";                              // 数字
         public const string IntRegex = @"^(0|[1-9][0-9]*)$";                        // 整数

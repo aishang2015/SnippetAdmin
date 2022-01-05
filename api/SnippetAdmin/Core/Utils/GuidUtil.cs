@@ -2,7 +2,7 @@
 
 namespace SnippetAdmin.Core.Utils
 {
-    public class GuidUtil
+    public static class GuidUtil
     {
         private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
 
