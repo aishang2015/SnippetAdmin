@@ -1,19 +1,20 @@
 using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
-using SnippetAdmin.Business;
+using SnippetAdmin.Business.Hubs;
+using SnippetAdmin.Business.Jobs;
 using SnippetAdmin.Core;
 using SnippetAdmin.Core.Authentication;
-using SnippetAdmin.Core.Cache;
-using SnippetAdmin.Core.HostedService;
 using SnippetAdmin.Core.Middleware;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.TextJson;
-using SnippetAdmin.Core.UserAccessor;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Models;
 using System.Reflection;
+using Orleans;
+using Orleans.Hosting;
+using SnippetAdmin.Business.Grains.Implements;
 
 Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
 
@@ -24,12 +25,10 @@ try
 
     // 分别是数据库 缓存 内存缓存 jwt automapper oauth 用户访问器
     builder.Services.AddDatabase(builder.Configuration);
-    builder.Services.AddDistributeCache(builder.Configuration);
     builder.Services.AddMemoryCache();
     builder.Services.AddCustomAuthentication(builder.Configuration);
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
     builder.Services.AddOauth(builder.Configuration);
-    builder.Services.AddUserAccessor();
 
     // 配置FluentValidation并改变默认modelstate的返回形式
     builder.Services.AddControllers().AddFluentValidation().AddTextJsonOptions();
@@ -38,8 +37,8 @@ try
     // 添加signalr
     builder.Services.AddSignalR();
 
-    // 添加调度器
-    builder.Services.AddSchedulerService();
+    // 添加定时任务调度器
+    builder.Services.AddJobScheduler();
 
     // 配置swagger权限访问
     builder.Services.AddCustomSwaggerGen();
@@ -66,9 +65,7 @@ try
         options.RouteBasePath = "/profiler";
     }).AddEntityFramework();
 
-    // 添加业务处理
-    builder.Services.AddBusiness();
-
+    // 使用serilog
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         // 读取appsetting内的日志配置
@@ -121,6 +118,14 @@ try
                        retainedFileCountLimit: 30);
                    config.Filter.ByIncludingOnly(Matching.FromSource("Serilog.AspNetCore"));
                });
+    });
+
+    // 使用orleans
+    builder.Host.UseOrleans((ctx, builder) =>
+    {
+        builder.UseLocalhostClustering();
+        builder.AddMemoryGrainStorage("SnippetAdminSilo");
+        builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(TestGrain).Assembly).WithReferences());
     });
 
     var app = builder.Build();

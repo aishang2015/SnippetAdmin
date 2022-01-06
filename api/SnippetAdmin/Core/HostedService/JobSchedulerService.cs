@@ -104,7 +104,7 @@ namespace SnippetAdmin.Core.HostedService
         }
 
         /// <summary>
-        /// run job in task
+        /// 在task中执行任务
         /// </summary>
         private void RunJob(Job job, TimeSpan? delay, TriggerMode triggerMode = TriggerMode.Auto)
         {
@@ -173,7 +173,7 @@ namespace SnippetAdmin.Core.HostedService
         }
 
         /// <summary>
-        /// get jobs could run 
+        /// 取得配置中能够运行的任务
         /// </summary>
         private async Task<List<Job>> GetJobsAsync(CancellationToken stoppingToken)
         {
@@ -187,7 +187,7 @@ namespace SnippetAdmin.Core.HostedService
         }
 
         /// <summary>
-        /// add a job to run imeditaly
+        /// 立即执行一个任务
         /// </summary>
         /// <param name="job"></param>
         public static void ActiveJobOnce(Job job)

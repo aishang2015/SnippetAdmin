@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
 using SnippetAdmin.Core.Authentication;
-using SnippetAdmin.Core.Method;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Oauth.Models;
-using SnippetAdmin.Core.UserAccessor;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Data.Entity.System;
@@ -29,11 +28,9 @@ namespace SnippetAdmin.Controllers
 
         private readonly IMapper _mapper;
 
-        private readonly IDistributedCache _cache;
-
         private readonly JwtOption _jwtOption;
 
-        private readonly IUserAccessor _userAccessor;
+        private readonly IMemoryCache _memoryCache;
 
         private readonly SnippetAdminDbContext _dbContext;
 
@@ -41,17 +38,15 @@ namespace SnippetAdmin.Controllers
             UserManager<SnippetAdminUser> userManager,
             IJwtFactory jwtFactory,
             IMapper mapper,
-            IDistributedCache cache,
             IOptions<JwtOption> options,
-            IUserAccessor userAccessor,
+            IMemoryCache memoryCache,
             SnippetAdminDbContext dbContext)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _mapper = mapper;
-            _cache = cache;
             _jwtOption = options.Value;
-            _userAccessor = userAccessor;
+            _memoryCache = memoryCache;
             _dbContext = dbContext;
         }
 
@@ -92,7 +87,7 @@ namespace SnippetAdmin.Controllers
         public async Task<CommonResult> GetCurrentUserInfo()
         {
             // 查找自己的信息
-            var user = await _userManager.FindByNameAsync(_userAccessor.UserName);
+            var user = await _userManager.FindByNameAsync(User.UserName());
 
             // 返回结果
             return this.SuccessCommonResult(MessageConstant.EMPTYTUPLE,
@@ -117,10 +112,7 @@ namespace SnippetAdmin.Controllers
                     {
                         // 将第三方用户信息存入缓存
                         var key = Guid.NewGuid().ToString("N");
-                        await _cache.SetObjectAsync(key, githubUserInfo, new DistributedCacheEntryOptions
-                        {
-                            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                        });
+                        _memoryCache.Set(key, githubUserInfo, TimeSpan.FromMinutes(5));
 
                         // 让前端进入账号绑定页面
                         return this.SuccessCommonResult(MessageConstant.ACCOUNT_INFO_0002,
@@ -145,10 +137,7 @@ namespace SnippetAdmin.Controllers
                     {
                         // 将第三方用户信息存入缓存
                         var key = Guid.NewGuid().ToString("N");
-                        await _cache.SetObjectAsync(key, baiduUserInfo, new DistributedCacheEntryOptions
-                        {
-                            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                        });
+                        _memoryCache.Set(key, baiduUserInfo, TimeSpan.FromMinutes(5));
 
                         // 让前端进入账号绑定页面
                         return this.SuccessCommonResult(MessageConstant.ACCOUNT_INFO_0002,
@@ -202,7 +191,7 @@ namespace SnippetAdmin.Controllers
             switch (inputModel.ThirdPartyType)
             {
                 case CommonConstant.Github:
-                    var githubUserInfo = await _cache.GetObjectAsync<GithubUserInfo>(inputModel.ThirdPartyInfoCacheKey);
+                    var githubUserInfo = _memoryCache.Get<GithubUserInfo>(inputModel.ThirdPartyInfoCacheKey);
                     if (githubUserInfo != null)
                     {
                         user.GithubId = githubUserInfo.id;
@@ -215,7 +204,7 @@ namespace SnippetAdmin.Controllers
                     }
 
                 case CommonConstant.Baidu:
-                    var baiduUserInfo = await _cache.GetObjectAsync<BaiduUserInfo>(inputModel.ThirdPartyInfoCacheKey);
+                    var baiduUserInfo = _memoryCache.Get<BaiduUserInfo>(inputModel.ThirdPartyInfoCacheKey);
                     if (baiduUserInfo != null)
                     {
                         user.BaiduId = baiduUserInfo.openid;

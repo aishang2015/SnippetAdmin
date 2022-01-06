@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SnippetAdmin.Constants;
-using SnippetAdmin.Core.UserAccessor;
 using SnippetAdmin.Data.Entity.RBAC;
 
 namespace SnippetAdmin.Data.Auth
@@ -11,31 +10,30 @@ namespace SnippetAdmin.Data.Auth
     {
         private readonly SnippetAdminDbContext _dbContext;
 
-        private readonly IUserAccessor _userAccessor;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public SnippetAdminAuthorizeFilter(
             SnippetAdminDbContext dbContext,
-            IUserAccessor userAccessor,
             IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
-            _userAccessor = userAccessor;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             // user not exist or is not actived
-            if (!_dbContext.CacheSet<SnippetAdminUser>().Any(u => u.UserName == _userAccessor.UserName && u.IsActive))
+            if (!_dbContext.CacheSet<SnippetAdminUser>().Any(u =>
+                u.UserName == _httpContextAccessor.HttpContext.User.UserName() && u.IsActive))
             {
                 context.Result = new StatusCodeResult(403);
                 return;
             }
 
             // get all user role
-            var userId = _dbContext.CacheSet<SnippetAdminUser>().First(u => u.UserName == _userAccessor.UserName).Id;
+            var userId = _dbContext.CacheSet<SnippetAdminUser>().First(u =>
+                u.UserName == _httpContextAccessor.HttpContext.User.UserName()).Id;
             var userRoles = _dbContext.CacheSet<IdentityUserRole<int>>().Where(ur => ur.UserId == userId);
             if (userRoles == null || !userRoles.Any())
             {

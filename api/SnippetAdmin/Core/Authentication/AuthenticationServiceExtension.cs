@@ -59,7 +59,6 @@ namespace SnippetAdmin.Core.Authentication
             // 注入token工厂
             services.AddScoped<IJwtFactory, JwtFactory>();
             services.AddHttpContextAccessor();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
             return services;
         }
     }

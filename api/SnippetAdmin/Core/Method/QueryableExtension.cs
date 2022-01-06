@@ -8,7 +8,7 @@ namespace SnippetAdmin.Core.Method
         /// <summary>
         /// 拼接条件(直接拼接）
         /// </summary>
-        public static IQueryable<T> AndIf<T>(this IQueryable<T> queryable, Expression<Func<T, bool>> predicate) where T : class
+        public static IQueryable<T> And<T>(this IQueryable<T> queryable, Expression<Func<T, bool>> predicate) where T : class
             => queryable.Where(predicate);
 
         /// <summary>

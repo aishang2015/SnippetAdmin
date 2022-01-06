@@ -1,14 +1,13 @@
-﻿namespace SnippetAdmin.Core.HostedService
+﻿namespace SnippetAdmin.Business.BackgroundServices
 {
-    public static class IServiceCollectionExtensions
+    public static class IServiceCollectionExtension
     {
-        public static IServiceCollection AddSchedulerService(this IServiceCollection services)
-        {
-            services.AddBackgroundService<JobSchedulerService>();
-
-            return services;
-        }
-
+        /// <summary>
+        /// 将backgroundservice注册为后端服务，并可以直接通过类型获得注入实例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static IServiceCollection AddBackgroundService<T>(this IServiceCollection services)
             where T : BackgroundService
         {

@@ -1,7 +1,8 @@
-﻿using SnippetAdmin.Core.Utils;
+﻿using SnippetAdmin.Core.HostedService;
+using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 
-namespace SnippetAdmin.Core.HostedService
+namespace SnippetAdmin.Business.Jobs
 {
     public static class JobInitializer
     {
@@ -38,15 +39,17 @@ namespace SnippetAdmin.Core.HostedService
                            CreateTime = DateTime.Now,
                        });
                    }
-                   else
-                   {
-                       findJob.Cron = schedulerAttribute.Cron;
-                       findJob.Describe = schedulerAttribute.Describe;
-                       findJob.IsActive = schedulerAttribute.IsActive;
-                       findJob.Name = jobType.FullName;
-                       findJob.CreateTime = DateTime.Now;
-                       dbcontext.Jobs.Update(findJob);
-                   }
+
+                   // 即使代码attribute发生变化也以数据库储存的job信息为准
+                   //else
+                   //{
+                   //    findJob.Cron = schedulerAttribute.Cron;
+                   //    findJob.Describe = schedulerAttribute.Describe;
+                   //    findJob.IsActive = schedulerAttribute.IsActive;
+                   //    findJob.Name = jobType.FullName;
+                   //    findJob.CreateTime = DateTime.Now;
+                   //    dbcontext.Jobs.Update(findJob);
+                   //}
                    dbcontext.SaveChanges();
                }
 

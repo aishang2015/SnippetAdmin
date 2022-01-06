@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using SnippetAdmin.Business.Hubs;
 
-namespace SnippetAdmin.Business.Workers
+namespace SnippetAdmin.Business.BackgroundServices
 {
-    public class BroadcastWorker : BackgroundService
+    public class BroadcastBackgroundService : BackgroundService
     {
         private readonly IHubContext<BroadcastHub, IBroadcastClient> _broadcastHub;
 
-        public BroadcastWorker(IHubContext<BroadcastHub, IBroadcastClient> broadcastHub)
+        public BroadcastBackgroundService(IHubContext<BroadcastHub, IBroadcastClient> broadcastHub)
         {
             _broadcastHub = broadcastHub;
         }
