@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.RBAC
 {
+    [Comment("系统角色")]
+    [Table("T_RBAC_Role")]
+    [Cachable]
     public class SnippetAdminRole : IdentityRole<int>
     {
         [Comment("编码")]

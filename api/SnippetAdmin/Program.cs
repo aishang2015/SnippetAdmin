@@ -1,6 +1,9 @@
+using Orleans;
+using Orleans.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
+using SnippetAdmin.Business.Grains.Implements;
 using SnippetAdmin.Business.Hubs;
 using SnippetAdmin.Business.Jobs;
 using SnippetAdmin.Core;
@@ -12,9 +15,6 @@ using SnippetAdmin.Data;
 using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Models;
 using System.Reflection;
-using Orleans;
-using Orleans.Hosting;
-using SnippetAdmin.Business.Grains.Implements;
 
 Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
 
@@ -163,8 +163,8 @@ try
         endpoints.MapControllers();
     });
 
-    app.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
     app.Initialize(MemoryCacheInitializer.InitialCache);
+    app.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
     app.Initialize(JobInitializer.InitialJob);
     app.Run();
 }

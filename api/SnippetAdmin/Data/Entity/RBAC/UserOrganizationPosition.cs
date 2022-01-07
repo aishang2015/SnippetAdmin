@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.RBAC
 {
     [Comment("用户组织职位表")]
     [Table("T_RBAC_USER_ORGANIZATION_POSITION")]
+    [Cachable]
     public class UserOrganizationPosition
     {
         [Comment("主键")]

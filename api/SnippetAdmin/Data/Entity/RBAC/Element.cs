@@ -2,6 +2,7 @@
 // 生成时间 2021-09-01 11:06:40
 //------------------------------------------------------------------------------
 using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,6 +10,7 @@ namespace SnippetAdmin.Data.Entity.RBAC
 {
     [Comment("元素树")]
     [Table("T_RBAC_Element")]
+    [Cachable]
     public class Element
     {
         [Comment("主键")]

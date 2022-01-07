@@ -142,7 +142,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.UserRoles.RemoveRange(ur);
                 foreach (var role in inputModel.Roles)
                 {
-                    _dbContext.UserRoles.Add(new IdentityUserRole<int> { UserId = user.Id, RoleId = role });
+                    _dbContext.UserRoles.Add(new SnippetAdminUserRole { UserId = user.Id, RoleId = role });
                 }
             }
             else
@@ -154,7 +154,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 {
                     foreach (var role in inputModel.Roles)
                     {
-                        _dbContext.UserRoles.Add(new IdentityUserRole<int> { UserId = user.Id, RoleId = role });
+                        _dbContext.UserRoles.Add(new SnippetAdminUserRole { UserId = user.Id, RoleId = role });
                     }
                 }
             }

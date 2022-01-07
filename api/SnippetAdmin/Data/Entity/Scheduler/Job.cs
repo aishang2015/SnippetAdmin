@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Scheduler
 {
     [Comment("任务定义")]
     [Table("T_Scheduler_Job")]
+    [Cachable]
     public class Job
     {
         public int Id { get; set; }

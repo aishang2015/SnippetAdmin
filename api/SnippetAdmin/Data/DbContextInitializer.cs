@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
+using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.Enums;
 using SnippetAdmin.Data.Entity.RBAC;
+using System.Collections.Concurrent;
 
 namespace SnippetAdmin.Data
 {
@@ -12,20 +14,21 @@ namespace SnippetAdmin.Data
             RoleManager<SnippetAdminRole>, ILogger<SnippetAdminDbContext>>
             _initialSnippetAdminDbContext = (dbContext, userManager, roleManager, logger) =>
             {
-                logger.LogInformation("开始执行初始化操作。");
-                dbContext.Database.EnsureDeleted();
+                logger.LogInformation("开始执行数据库初始化操作。");
+                //dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
                 {
+                    logger.LogInformation("数据库创建完毕，开始添加数据。");
+
                     // 初始化权限
-                    logger.LogInformation("初始化权限。");
+                    logger.LogInformation("初始化权限数据。");
                     InitialElements(dbContext).Wait();
-                    logger.LogInformation("初始化权限完成。");
+                    logger.LogInformation("初始化权限数据完成。");
 
                     // 初始化用户角色
-                    logger.LogInformation("初始化用户角色。");
-                    logger.LogInformation("数据库初始化完毕，开始添加数据。");
+                    logger.LogInformation("初始化用户角色数据。");
                     var user = new SnippetAdminUser
                     {
                         UserName = "admin",
@@ -47,32 +50,24 @@ namespace SnippetAdmin.Data
                     // 赋予管理员权限
                     foreach (var e in dbContext.Elements)
                     {
-                        dbContext.RoleClaims.Add(new IdentityRoleClaim<int>
+                        dbContext.RoleClaims.Add(new SnippetAdminRoleClaim
                         {
                             RoleId = 1,
                             ClaimType = ClaimConstant.RoleRight,
                             ClaimValue = e.Id.ToString(),
                         });
                     }
+                    logger.LogInformation("初始化用户角色完成。");
                     dbContext.SaveChanges();
-                    logger.LogInformation("数据创建完毕。");
+
                 }
 
-                logger.LogInformation("初始化用户角色完成。");
                 logger.LogInformation("初始化数据操作执行完毕。");
             };
 
         public static Action<SnippetAdminDbContext, UserManager<SnippetAdminUser>, RoleManager<SnippetAdminRole>, ILogger<SnippetAdminDbContext>> InitialSnippetAdminDbContext
         {
             get => _initialSnippetAdminDbContext;
-        }
-
-        public static void InitialDatabase<TDbContext>(TDbContext dbContext,
-            ILogger<TDbContext> logger) where TDbContext : DbContext
-        {
-            logger.LogInformation("开始执行初始化数据操作。");
-            dbContext.Database.EnsureCreated();
-            logger.LogInformation("初始化数据操作执行完毕。");
         }
 
         public static async Task InitialElements(SnippetAdminDbContext _dbContext)

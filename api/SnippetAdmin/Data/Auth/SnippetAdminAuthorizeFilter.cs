@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data.Entity.RBAC;
@@ -34,7 +33,7 @@ namespace SnippetAdmin.Data.Auth
             // get all user role
             var userId = _dbContext.CacheSet<SnippetAdminUser>().First(u =>
                 u.UserName == _httpContextAccessor.HttpContext.User.UserName()).Id;
-            var userRoles = _dbContext.CacheSet<IdentityUserRole<int>>().Where(ur => ur.UserId == userId);
+            var userRoles = _dbContext.CacheSet<SnippetAdminUserRole>().Where(ur => ur.UserId == userId);
             if (userRoles == null || !userRoles.Any())
             {
                 context.Result = new StatusCodeResult(403);
@@ -47,7 +46,7 @@ namespace SnippetAdmin.Data.Auth
                  .Select(r => r.Id);
 
             // get role elements id
-            var elementIds = _dbContext.CacheSet<IdentityRoleClaim<int>>()
+            var elementIds = _dbContext.CacheSet<SnippetAdminRoleClaim>()
                 .Where(rc => rc.ClaimType == ClaimConstant.RoleRight && roleIds.Contains(rc.RoleId))
                 .Select(rc => int.Parse(rc.ClaimValue));
 

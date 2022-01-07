@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.RBAC
 {
+    [Comment("系统用户")]
+    [Table("T_RBAC_User")]
+    [Cachable]
     public class SnippetAdminUser : IdentityUser<int>
     {
         [Comment("头像")]

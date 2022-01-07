@@ -121,7 +121,7 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 inputModel.Rights.ToList().ForEach(r =>
                 {
-                    _dbContext.RoleClaims.Add(new Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>
+                    _dbContext.RoleClaims.Add(new SnippetAdminRoleClaim
                     {
                         RoleId = role.Id,
                         ClaimType = ClaimConstant.RoleRight,

@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
 
 namespace SnippetAdmin.Data
 {
-    public class SnippetAdminDbContext : IdentityDbContext<SnippetAdminUser, SnippetAdminRole, int>
+    public class SnippetAdminDbContext : IdentityDbContext<SnippetAdminUser, SnippetAdminRole, int,
+        SnippetAdminUserClaim, SnippetAdminUserRole, SnippetAdminUserLogin, SnippetAdminRoleClaim, SnippetAdminUserToken>
     {
         private readonly IMemoryCache _memoryCache;
 
@@ -47,13 +48,6 @@ namespace SnippetAdmin.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<SnippetAdminUser>().ToTable("T_RBAC_User");
-            builder.Entity<SnippetAdminRole>().ToTable("T_RBAC_Role");
-            builder.Entity<IdentityUserRole<int>>().ToTable("T_RBAC_UserRole");
-            builder.Entity<IdentityUserClaim<int>>().ToTable("T_RBAC_UserClaim");
-            builder.Entity<IdentityRoleClaim<int>>().ToTable("T_RBAC_RoleClaim");
-            builder.Entity<IdentityUserLogin<int>>().ToTable("T_RBAC_UserLogin");
-            builder.Entity<IdentityUserToken<int>>().ToTable("T_RBAC_UserToken");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -64,9 +58,16 @@ namespace SnippetAdmin.Data
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
-        public List<T> CacheSet<T>()
+        public IEnumerable<T> CacheSet<T>() where T : class
         {
-            return _memoryCache.Get(typeof(T).FullName) as List<T>;
+            if (MemoryCacheInitializer.CacheAbleDic[typeof(T)])
+            {
+                return _memoryCache.Get(typeof(T).FullName) as List<T>;
+            }
+            else
+            {
+                return Set<T>().AsQueryable();
+            }
         }
     }
 }

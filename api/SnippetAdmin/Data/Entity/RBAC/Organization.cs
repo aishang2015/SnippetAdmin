@@ -2,12 +2,14 @@
 // 生成时间 2021-09-01 09:56:26
 //------------------------------------------------------------------------------
 using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.RBAC
 {
     [Comment("组织")]
     [Table("T_RBAC_Organization")]
+    [Cachable]
     public class Organization
     {
         [Comment("主键")]

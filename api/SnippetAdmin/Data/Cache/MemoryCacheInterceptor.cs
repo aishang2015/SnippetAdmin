@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
+using SnippetAdmin.Data.Entity.RBAC;
 
 namespace SnippetAdmin.Data.Cache
 {
@@ -21,7 +21,7 @@ namespace SnippetAdmin.Data.Cache
         /// </summary>
         private readonly Dictionary<Type, string> _specialTypeKeyDic = new Dictionary<Type, string>()
         {
-            { typeof(IdentityUserRole<int>), "UserId"}
+            { typeof(SnippetAdminUserRole), "UserId"}
         };
 
         public MemoryCacheInterceptor(IMemoryCache memoryCache)
@@ -75,18 +75,6 @@ namespace SnippetAdmin.Data.Cache
         /// </summary>
         private void CacheEntityDic()
         {
-            _addEntityDic.ToList().ForEach(kv =>
-            {
-                var data = _memoryCache.Get(kv.Key.FullName);
-                if (data != null)
-                {
-                    var addMethod = data.GetType().GetMethod("Add");
-                    foreach (var obj in kv.Value)
-                    {
-                        addMethod.Invoke(data, new object[] { Convert.ChangeType(obj, kv.Key) });
-                    }
-                }
-            });
             _modifyEntityDic.ToList().ForEach(kv =>
             {
                 var modifyDataIds = kv.Value.Select(d => d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
@@ -118,6 +106,18 @@ namespace SnippetAdmin.Data.Cache
                     removeMethod.Invoke(data, new object[] { action });
                 }
             });
+            _addEntityDic.ToList().ForEach(kv =>
+            {
+                var data = _memoryCache.Get(kv.Key.FullName);
+                if (data != null)
+                {
+                    var addMethod = data.GetType().GetMethod("Add");
+                    foreach (var obj in kv.Value)
+                    {
+                        addMethod.Invoke(data, new object[] { Convert.ChangeType(obj, kv.Key) });
+                    }
+                }
+            });
         }
 
         /// <summary>
@@ -130,6 +130,7 @@ namespace SnippetAdmin.Data.Cache
                 .Where(entry => entry.State == entityState)
                 .Select(entry => entry.Entity)
                 .GroupBy(entity => entity.GetType())
+                .Where(entityGroup => MemoryCacheInitializer.CacheAbleDic[entityGroup.Key])
                 .ToDictionary(entityGroup => entityGroup.Key, entityGroup => entityGroup.ToList());
         }
 
