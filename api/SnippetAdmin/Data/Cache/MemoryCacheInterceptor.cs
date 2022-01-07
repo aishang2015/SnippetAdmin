@@ -130,7 +130,7 @@ namespace SnippetAdmin.Data.Cache
                 .Where(entry => entry.State == entityState)
                 .Select(entry => entry.Entity)
                 .GroupBy(entity => entity.GetType())
-                .Where(entityGroup => MemoryCacheInitializer.CacheAbleDic[entityGroup.Key])
+                .Where(entityGroup => DbContextInitializer.CacheAbleDic[entityGroup.Key])
                 .ToDictionary(entityGroup => entityGroup.Key, entityGroup => entityGroup.ToList());
         }
 

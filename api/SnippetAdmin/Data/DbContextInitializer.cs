@@ -10,12 +10,30 @@ namespace SnippetAdmin.Data
 {
     public static class DbContextInitializer
     {
+        public static ConcurrentDictionary<Type, bool> CacheAbleDic = new ConcurrentDictionary<Type, bool>();
+
         private static Action<SnippetAdminDbContext, UserManager<SnippetAdminUser>,
             RoleManager<SnippetAdminRole>, ILogger<SnippetAdminDbContext>>
             _initialSnippetAdminDbContext = (dbContext, userManager, roleManager, logger) =>
             {
                 logger.LogInformation("开始执行数据库初始化操作。");
-                //dbContext.Database.EnsureDeleted();
+
+                // 取得dbcontext的所有实体的缓存特性
+                var dbSetPropertyTypes = dbContext.GetType().GetProperties()
+                    .Where(property =>
+                        property.PropertyType.IsGenericType && (
+                        typeof(DbSet<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition()) ||
+                        property.PropertyType.GetInterface(typeof(DbSet<>).FullName) != null))
+                    .ToList();
+                dbSetPropertyTypes.ForEach(dbSetProperty =>
+                {
+                    // 判断实体的cacheable特性
+                    var entityType = dbSetProperty.PropertyType.GetGenericArguments()[0];
+                    var cacheAttribute = entityType.GetCustomAttributes(typeof(CachableAttribute), false).FirstOrDefault();
+                    CacheAbleDic.TryAdd(entityType, cacheAttribute != null && (cacheAttribute as CachableAttribute).CacheAble);
+                });
+
+                dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())

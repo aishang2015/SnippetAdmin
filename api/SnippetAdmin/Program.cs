@@ -163,8 +163,8 @@ try
         endpoints.MapControllers();
     });
 
-    app.Initialize(MemoryCacheInitializer.InitialCache);
     app.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
+    app.Initialize(MemoryCacheInitializer.InitialCache);
     app.Initialize(JobInitializer.InitialJob);
     app.Run();
 }

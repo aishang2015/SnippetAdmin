@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.RBAC;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
@@ -48,6 +47,15 @@ namespace SnippetAdmin.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<SnippetAdminUser>().ToTable("T_RBAC_User");
+            builder.Entity<SnippetAdminRole>().ToTable("T_RBAC_Role");
+            builder.Entity<SnippetAdminUserRole>().ToTable("T_RBAC_UserRole");
+            builder.Entity<SnippetAdminUserClaim>().ToTable("T_RBAC_UserClaim");
+            builder.Entity<SnippetAdminRoleClaim>().ToTable("T_RBAC_RoleClaim");
+            builder.Entity<SnippetAdminUserLogin>().ToTable("T_RBAC_UserLogin");
+            builder.Entity<SnippetAdminUserToken>().ToTable("T_RBAC_UserToken");
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -60,7 +68,7 @@ namespace SnippetAdmin.Data
 
         public IEnumerable<T> CacheSet<T>() where T : class
         {
-            if (MemoryCacheInitializer.CacheAbleDic[typeof(T)])
+            if (DbContextInitializer.CacheAbleDic[typeof(T)])
             {
                 return _memoryCache.Get(typeof(T).FullName) as List<T>;
             }
