@@ -297,6 +297,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 Title = o.Name,
                 Key = o.Id,
                 Icon = o.Icon,
+                IconId = o.IconId,
                 Children = new List<GetOrganizationTreeOutputModel>()
             }).ToList();
 

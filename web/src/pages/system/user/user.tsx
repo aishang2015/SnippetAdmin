@@ -334,16 +334,16 @@ export default function User() {
                 </div>
                 <div id="user-list-container">
                     <Form form={searchForm} layout="inline" onFinish={searchSubmit}>
-                        <Form.Item name="userName" label="账号" labelCol={{ style: { width: '60px' } }}>
+                        <Form.Item name="userName" label="账号" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
                             <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
                         </Form.Item>
-                        <Form.Item name="realname" label="姓名" labelCol={{ style: { width: '60px' } }}>
+                        <Form.Item name="realname" label="姓名" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
                             <Input className="searchInput" autoComplete="off2" placeholder="请输入姓名" />
                         </Form.Item>
-                        <Form.Item name="phoneNumber" label="电话" labelCol={{ style: { width: '60px' } }}>
+                        <Form.Item name="phoneNumber" label="电话" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
                             <Input className="searchInput" autoComplete="off2" placeholder="请输入电话" />
                         </Form.Item>
-                        <Form.Item name="role" label="角色" labelCol={{ style: { width: '60px' } }}>
+                        <Form.Item name="role" label="角色" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
                             <Select allowClear={true} className="searchInput" placeholder="请选择角色">
                                 {
                                     roleOptions.map(o => (

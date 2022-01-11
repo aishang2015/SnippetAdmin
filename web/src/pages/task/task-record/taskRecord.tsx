@@ -60,7 +60,7 @@ export default function TaskRecord(props: any) {
 
     useEffect(() => {
         initial();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // 初始化
     async function initial() {

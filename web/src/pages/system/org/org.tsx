@@ -21,7 +21,8 @@ export default function Org() {
     const [orgEditVisible, setOrgEditVisible] = useState(false);
     const [orgForm] = useForm();
 
-    const [orgIcon, setOrgIcon] = useState("🏟");
+    const [orgIcon, setOrgIcon] = useState("🏢");
+    const [orgIconId, setOrgIconId] = useState("office");
     const [emojiModalVisible, setEmojiModalVisible] = useState(false);
 
     const [treeData, setTreeData] = useState<Array<any>>([]);
@@ -44,7 +45,8 @@ export default function Org() {
 
     // 创建新组织
     function createOrg() {
-        setOrgIcon("🏟");
+        setOrgIcon("🏢");
+        setOrgIconId("office");
         setOrgEditVisible(true);
     }
 
@@ -58,6 +60,7 @@ export default function Org() {
             orgAddress: orgDetail?.address
         });
         setOrgIcon(orgDetail!.icon);
+        setOrgIconId(orgDetail!.iconId);
 
         setOrgEditVisible(true);
     }
@@ -95,6 +98,7 @@ export default function Org() {
                 name: values["orgName"],
                 code: values["orgCode"],
                 icon: orgIcon,
+                iconId: orgIconId,
                 phone: values["orgPhone"],
                 address: values["orgAddress"],
             });
@@ -110,6 +114,7 @@ export default function Org() {
                 name: values["orgName"],
                 code: values["orgCode"],
                 icon: orgIcon,
+                iconId: orgIconId,
                 phone: values["orgPhone"],
                 address: values["orgAddress"],
             });
@@ -296,9 +301,26 @@ export default function Org() {
 
             <Modal width={390} visible={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
                 onCancel={() => setEmojiModalVisible(false)} >
-                <Picker native={true} onSelect={(e: any) => {
+                <Picker native={true} autoFocus={true} emoji={orgIconId} onSelect={(e: any) => {
                     setOrgIcon(e.native);
+                    setOrgIconId(e.id);
                     setEmojiModalVisible(false);
+                }} i18n={{
+                    search: '搜索',
+                    notfound: '没找到您想要的Emoji',
+                    categories: {
+                        search: '搜索结果',
+                        recent: '经常使用',
+                        people: '人',
+                        nature: '动物和自然',
+                        foods: '食品和饮料',
+                        activity: '活动',
+                        places: '旅行和地点',
+                        objects: '物体',
+                        symbols: '符号',
+                        flags: '旗帜',
+                        custom: '自定义',
+                    }
                 }} />
             </Modal>
 

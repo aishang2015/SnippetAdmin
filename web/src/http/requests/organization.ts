@@ -8,6 +8,7 @@ export type getOrganizationResult = {
     name: string,
     code: string,
     icon: string,
+    iconId: string,
     phone: string,
     address: string,
     upPositions: Array<string>,
@@ -30,6 +31,7 @@ export type createOrganizationInput = {
     name: string,
     code: string,
     icon: string,
+    iconId: string,
     phone: string,
     address: string
 }
@@ -40,6 +42,7 @@ export type updateOrganizationInput = {
     name: string,
     code: string,
     icon: string,
+    iconId: string,
     phone: string,
     address: string
 }

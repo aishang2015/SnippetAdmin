@@ -28,6 +28,10 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Column("icon")]
         public string Icon { get; set; }
 
+        [Comment("图标Id")]
+        [Column("iconId")]
+        public string IconId { get; set; }
+
         [Comment("电话")]
         [Column("phone")]
         public string Phone { get; set; }

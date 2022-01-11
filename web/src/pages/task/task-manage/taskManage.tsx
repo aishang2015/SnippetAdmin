@@ -65,7 +65,7 @@ export default function TaskManage(props: any) {
 
     useEffect(() => {
         initial();
-    }, []);
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     async function initial() {
 
