@@ -15,6 +15,11 @@ namespace SnippetAdmin.Data
         public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options,
             IMemoryCache memoryCache) : base(options)
         {
+            // 迁移命令
+            // Add-Migration DataMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
+            // 应用迁移
+            // Update-Database DataMigration
+
             // 更改默认不跟踪所有实体
             // ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
             // 相同的对象

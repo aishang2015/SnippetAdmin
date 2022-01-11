@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.RBAC
 {
     [Comment("用户组织职位表")]
-    [Table("T_RBAC_USER_ORGANIZATION_POSITION")]
+    [Table("T_RBAC_USERORGPOS")]
     [Cachable]
     public class UserOrganizationPosition
     {

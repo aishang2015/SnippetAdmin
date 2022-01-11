@@ -33,6 +33,8 @@ namespace SnippetAdmin.Data
                     CacheAbleDic.TryAdd(entityType, cacheAttribute != null && (cacheAttribute as CachableAttribute).CacheAble);
                 });
 
+                //dbContext.Database.Migrate();
+
                 dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
