@@ -12,6 +12,8 @@ namespace SnippetAdmin.Models.RBAC.Organization
 
         public string Code { get; set; }
 
+        public string Type { get; set; }
+
         public string Icon { get; set; }
 
         public string IconId { get; set; }

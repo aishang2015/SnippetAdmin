@@ -35,7 +35,7 @@ namespace SnippetAdmin.Data
 
                 //dbContext.Database.Migrate();
 
-                dbContext.Database.EnsureDeleted();
+                //dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
@@ -120,9 +120,11 @@ namespace SnippetAdmin.Data
             _dbContext.Elements.Add(new Element { Id = 31, Name = "用户激活", Identity = "active-user", Type = ElementType.ButtonLink, AccessApi = "api/User/ActiveUser" });
             _dbContext.Elements.Add(new Element { Id = 32, Name = "页面", Identity = "user-page", Type = ElementType.ButtonLink, AccessApi = "api/Organization/GetOrganizationTree,api/Role/GetRoleDic,api/User/SearchUser,api/User/GetUser" });
             _dbContext.Elements.Add(new Element { Id = 33, Name = "页面", Identity = "role-page", Type = ElementType.ButtonLink, AccessApi = "api/Role/GetRoles,api/Element/GetElementTree,api/Role/GetRole" });
-            _dbContext.Elements.Add(new Element { Id = 35, Name = "页面", Identity = "org-page", Type = ElementType.ButtonLink, AccessApi = "api/Organization/GetOrganization,api/Organization/GetOrganizationTree" });
+            _dbContext.Elements.Add(new Element { Id = 35, Name = "页面", Identity = "org-page", Type = ElementType.ButtonLink, AccessApi = "api/Organization/GetOrganization,api/Organization/GetOrganizationTree,api/Organization/GetOrganizationTypes" });
             _dbContext.Elements.Add(new Element { Id = 36, Name = "页面", Identity = "right-page", Type = ElementType.ButtonLink, AccessApi = "api/ApiInfo/GetApiPaths,api/Element/GetElement,api/Element/GetElementTree" });
             _dbContext.Elements.Add(new Element { Id = 37, Name = "激活角色", Identity = "active-role", Type = ElementType.ButtonLink, AccessApi = "api/Role/ActiveRole" });
+            _dbContext.Elements.Add(new Element { Id = 38, Name = "创建或编辑组织类型", Identity = "add-update-org-type", Type = ElementType.ButtonLink, AccessApi = "api/Organization/AddOrUpdateOrganizationType" });
+            _dbContext.Elements.Add(new Element { Id = 39, Name = "删除组织类型", Identity = "remove-org-type", Type = ElementType.ButtonLink, AccessApi = "api/Organization/RemoveOrganizationType" });
 
             // 元素树数据
             _dbContext.ElementTrees.Add(new ElementTree { Id = 1, Ancestor = 1, Descendant = 1, Length = 0 });
@@ -215,6 +217,12 @@ namespace SnippetAdmin.Data
             _dbContext.ElementTrees.Add(new ElementTree { Id = 88, Ancestor = 2, Descendant = 37, Length = 2 });
             _dbContext.ElementTrees.Add(new ElementTree { Id = 89, Ancestor = 9, Descendant = 37, Length = 1 });
             _dbContext.ElementTrees.Add(new ElementTree { Id = 90, Ancestor = 37, Descendant = 37, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 91, Ancestor = 2, Descendant = 38, Length = 2 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 92, Ancestor = 10, Descendant = 38, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 93, Ancestor = 38, Descendant = 38, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 94, Ancestor = 2, Descendant = 39, Length = 2 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 95, Ancestor = 10, Descendant = 39, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 96, Ancestor = 39, Descendant = 39, Length = 0 });
             await _dbContext.SaveChangesAsync();
         }
     }

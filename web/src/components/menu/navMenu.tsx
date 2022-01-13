@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import DynamicAntdTheme from 'dynamic-antd-theme';
 import { Constants } from "../../common/constants";
 import { EventService } from "../../common/event";
-import { RightElement } from "../right/rightElement";
 import { StorageService } from "../../common/storage";
 
 interface INavMenuProps {

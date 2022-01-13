@@ -24,6 +24,10 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Column("code")]
         public string Code { get; set; }
 
+        [Comment("组织类型编码")]
+        [Column("type")]
+        public string Type { get; set; }
+
         [Comment("图标")]
         [Column("icon")]
         public string Icon { get; set; }

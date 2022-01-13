@@ -7,6 +7,8 @@ export type getOrganizationResult = {
     upId: number,
     name: string,
     code: string,
+    type: string,
+    typeName: string,
     icon: string,
     iconId: string,
     phone: string,
@@ -30,6 +32,7 @@ export type createOrganizationInput = {
     upId: number,
     name: string,
     code: string,
+    type: string,
     icon: string,
     iconId: string,
     phone: string,
@@ -41,6 +44,7 @@ export type updateOrganizationInput = {
     id: number,
     name: string,
     code: string,
+    type: string,
     icon: string,
     iconId: string,
     phone: string,
@@ -59,6 +63,27 @@ export type setPositionInput = {
 export type getPositionResult = {
     key: number,
     value: string
+}
+
+export type AddOrUpdateOrganizationTypeInput = {
+    id: number,
+    name: string,
+    code: string
+}
+
+export type GetOrganizationTypesInput = {
+    page: number;
+    size: number;
+}
+
+export type GetOrganizationTypesOutput = {
+    id: number,
+    name: string,
+    code: string
+}
+
+export type RemoveOrganizationTypeInput = {
+    id: number,
 }
 
 export class OrganizationService {
@@ -89,5 +114,17 @@ export class OrganizationService {
 
     static GetPositionDic(params: { id: number }) {
         return Axios.instance.post<CommonResult<Array<getPositionResult>>>('api/organization/getPositionDic', params);
+    }
+
+    static GetOrganizationTypes() {
+        return Axios.instance.post<CommonResult<Array<GetOrganizationTypesOutput>>>('api/organization/getOrganizationTypes', null);
+    }
+
+    static AddOrUpdateOrganizationType(params: AddOrUpdateOrganizationTypeInput) {
+        return Axios.instance.post<CommonResultNoData>('api/organization/addOrUpdateOrganizationType', params);
+    }
+
+    static RemoveOrganizationType(params: RemoveOrganizationTypeInput) {
+        return Axios.instance.post<CommonResultNoData>('api/organization/removeOrganizationType', params);
     }
 }

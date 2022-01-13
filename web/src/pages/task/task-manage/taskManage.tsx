@@ -46,7 +46,7 @@ export default function TaskManage(props: any) {
             ),
         },
         {
-            title: '操作', key: 'operate', align: 'center', width: '120px',
+            title: '操作', key: 'operate', align: 'center', width: '120px',fixed: 'right',
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <Tooltip title="编辑任务">

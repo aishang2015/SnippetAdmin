@@ -26,6 +26,8 @@ namespace SnippetAdmin.Controllers.RBAC
             _dbContext = dbContext;
         }
 
+        #region 组织处理
+
         /// <summary>
         /// 获取组织机构详细信息
         /// </summary>
@@ -36,6 +38,7 @@ namespace SnippetAdmin.Controllers.RBAC
         {
             var org = await _dbContext.Organizations.FindAsync(inputModel.Id);
             var result = mapper.Map<GetOrganizationOutputModel>(org);
+            result.TypeName = _dbContext.OrganizationTypes.FirstOrDefault(t => t.Code == result.Type)?.Name;
             result.UpPositions = (from p in _dbContext.Positions
                                   join t in _dbContext.OrganizationTrees on p.OrganizationId equals t.Ancestor
                                   where t.Descendant == inputModel.Id && t.Length > 0 && p.IsLowerVisible
@@ -87,7 +90,8 @@ namespace SnippetAdmin.Controllers.RBAC
             [FromServices] IMapper mapper)
         {
             // 校验组织编码重复
-            if (_dbContext.Organizations.Any(o => o.Code == inputModel.Code))
+            if (!string.IsNullOrEmpty(inputModel.Code) &&
+                _dbContext.Organizations.Any(o => o.Code == inputModel.Code))
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
             }
@@ -146,7 +150,8 @@ namespace SnippetAdmin.Controllers.RBAC
             [FromServices] IMapper mapper)
         {
             // 校验组织编码重复
-            if (_dbContext.Organizations.Any(o => o.Code == inputModel.Code && o.Id != inputModel.Id))
+            if (!string.IsNullOrEmpty(inputModel.Code) &&
+                _dbContext.Organizations.Any(o => o.Code == inputModel.Code && o.Id != inputModel.Id))
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
             }
@@ -202,6 +207,10 @@ namespace SnippetAdmin.Controllers.RBAC
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0003);
         }
+
+        #endregion
+
+        #region 职位处理
 
         [HttpPost]
         [CommonResultResponseType]
@@ -283,6 +292,84 @@ namespace SnippetAdmin.Controllers.RBAC
 
             return this.SuccessCommonResult(upPositions.Concat(positions));
         }
+
+        #endregion
+
+        #region 组织类型管理
+
+        /// <summary>
+        /// 查询组织类型列表
+        /// </summary>
+        [HttpPost]
+        [CommonResultResponseType(typeof(List<GetOrganizationTypesOutputModel>))]
+        public CommonResult GetOrganizationTypes(
+            [FromServices] IMapper mapper)
+        {
+            return this.SuccessCommonResult(
+                mapper.Map<List<GetOrganizationTypesOutputModel>>(
+                    _dbContext.OrganizationTypes.ToList()));
+        }
+
+        /// <summary>
+        /// 添加或更新组织类型
+        /// </summary>
+        /// <param name="inputModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [CommonResultResponseType]
+        public async Task<CommonResult> AddOrUpdateOrganizationType(
+            [FromBody] AddOrUpdateOrganizationTypeInputModel inputModel)
+        {
+            if (_dbContext.OrganizationTypes.Any(ot => ot.Code == inputModel.Code && ot.Id != inputModel.Id))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0007);
+            }
+
+            if (_dbContext.OrganizationTypes.Any(ot => ot.Name == inputModel.Name && ot.Id != inputModel.Id))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0008);
+            }
+
+            if (inputModel.Id != null)
+            {
+                var orgType = _dbContext.OrganizationTypes.Find(inputModel.Id);
+                orgType.Name = inputModel.Name;
+                orgType.Code = inputModel.Code;
+                _dbContext.OrganizationTypes.Update(orgType);
+            }
+            else
+            {
+                _dbContext.OrganizationTypes.Add(new OrganizationType()
+                {
+                    Name = inputModel.Name,
+                    Code = inputModel.Code,
+                });
+            }
+            await _dbContext.SaveChangesAsync();
+
+            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0005);
+        }
+
+        /// <summary>
+        /// 删除组织类型
+        /// </summary>
+        /// <param name="inputModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [CommonResultResponseType]
+        public async Task<CommonResult> RemoveOrganizationType(
+            RemoveOrganizationTypeInputModel inputModel)
+        {
+            var orgType = _dbContext.OrganizationTypes.Find(inputModel.Id);
+            _dbContext.OrganizationTypes.Remove(orgType);
+            var orgs = _dbContext.Organizations.Where(org => org.Type == orgType.Code).ToList();
+            orgs.ForEach(org => org.Type = null);
+            _dbContext.Organizations.UpdateRange(orgs);
+            await _dbContext.SaveChangesAsync();
+            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0002);
+        }
+
+        #endregion
 
         /// <summary>
         /// 生成树数据

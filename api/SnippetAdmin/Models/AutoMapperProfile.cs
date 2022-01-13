@@ -31,6 +31,8 @@ namespace SnippetAdmin.Models
             CreateMap<SnippetAdminUser, GetUserOutputModel>();
 
             CreateMap<Job, GetJobsOutputModel>();
+
+            CreateMap<OrganizationType, GetOrganizationTypesOutputModel>();
         }
     }
 }

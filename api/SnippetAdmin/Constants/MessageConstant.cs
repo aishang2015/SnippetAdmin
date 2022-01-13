@@ -53,6 +53,7 @@
         public static readonly (string, string) ORGANIZATION_INFO_0002 = ("ORGANIZATION_INFO_0002", "删除成功！");
         public static readonly (string, string) ORGANIZATION_INFO_0003 = ("ORGANIZATION_INFO_0003", "更新成功！");
         public static readonly (string, string) ORGANIZATION_INFO_0004 = ("ORGANIZATION_INFO_0004", "职位编辑成功！");
+        public static readonly (string, string) ORGANIZATION_INFO_0005 = ("ORGANIZATION_INFO_0005", "操作成功！");
 
         public static readonly (string, string) ORGANIZATION_ERROR_0001 = ("ORGANIZATION_ERROR_0001", "请输入组织名称！");
         public static readonly (string, string) ORGANIZATION_ERROR_0002 = ("ORGANIZATION_ERROR_0002", "组织名称过长！");
@@ -60,6 +61,8 @@
         public static readonly (string, string) ORGANIZATION_ERROR_0004 = ("ORGANIZATION_ERROR_0004", "组织编码重复！");
         public static readonly (string, string) ORGANIZATION_ERROR_0005 = ("ORGANIZATION_ERROR_0005", "职位编码重复！");
         public static readonly (string, string) ORGANIZATION_ERROR_0006 = ("ORGANIZATION_ERROR_0006", "职位名称重复！");
+        public static readonly (string, string) ORGANIZATION_ERROR_0007 = ("ORGANIZATION_ERROR_0007", "组织类型编码重复！");
+        public static readonly (string, string) ORGANIZATION_ERROR_0008 = ("ORGANIZATION_ERROR_0008", "组织类型名称重复！");
 
         #endregion OrganizationController
 

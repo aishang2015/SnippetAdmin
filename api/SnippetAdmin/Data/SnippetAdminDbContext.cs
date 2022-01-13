@@ -39,6 +39,8 @@ namespace SnippetAdmin.Data
 
         public DbSet<OrganizationTree> OrganizationTrees { get; set; }
 
+        public DbSet<OrganizationType> OrganizationTypes { get; set; }
+
         public DbSet<Position> Positions { get; set; }
 
         public DbSet<UserOrganizationPosition> UserOrganizationPositions { get; set; }

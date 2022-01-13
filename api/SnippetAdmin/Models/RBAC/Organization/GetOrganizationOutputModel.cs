@@ -10,6 +10,10 @@
 
         public string Code { get; set; }
 
+        public string Type { get; set; }
+
+        public string TypeName { get; set; }
+
         public string Icon { get; set; }
 
         public string IconId { get; set; }
