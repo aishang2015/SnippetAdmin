@@ -26,21 +26,21 @@ class App extends React.Component<any, app> {
 
   render() {
 
-    // 客户端判断token是否过期，过期则清理登录信息
-    let isOutOfDate = false;
-    let expireString = StorageService.getExpire();
-    if (expireString) {
-      let expireTime = new Date(expireString);
-      if (expireTime < new Date()) {
-        isOutOfDate = true;
-      }
-    } else {
-      isOutOfDate = true;
-    }
+    // // 客户端判断token是否过期，过期则清理登录信息
+    // let isOutOfDate = false;
+    // let expireString = StorageService.getExpire();
+    // if (expireString) {
+    //   let expireTime = new Date(expireString);
+    //   if (expireTime < new Date()) {
+    //     isOutOfDate = true;
+    //   }
+    // } else {
+    //   isOutOfDate = true;
+    // }
 
-    if (isOutOfDate) {
-      StorageService.clearLoginStore();
-    }
+    // if (isOutOfDate) {
+    //   StorageService.clearLoginStore();
+    // }
 
     const HomePage = React.lazy(() => import('./pages/home/home'));
     const AboutPage = React.lazy(() => import('./pages/about/about'));
