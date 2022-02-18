@@ -52,6 +52,7 @@ class App extends React.Component<any, app> {
     const RolePage = React.lazy(() => import('./pages/system/role/role'));
     const PagePage = React.lazy(() => import('./pages/system/page/page'));
     const OrgPage = React.lazy(() => import('./pages/system/org/org'));
+    const PosPage = React.lazy(() => import('./pages/system/pos/position'));
     const StatePage = React.lazy(() => import('./pages/system/state/state'));
 
     const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
@@ -76,6 +77,7 @@ class App extends React.Component<any, app> {
                   <Route exact={true} path="/role"><Suspense fallback="加载中..."><RolePage /></Suspense></Route>
                   <Route exact={true} path="/page"><Suspense fallback="加载中..."><PagePage /></Suspense></Route>
                   <Route exact={true} path="/org"><Suspense fallback="加载中..."><OrgPage /></Suspense></Route>
+                  <Route exact={true} path="/pos"><Suspense fallback="加载中..."><PosPage /></Suspense></Route>
                   <Route exact={true} path="/state"><Suspense fallback="加载中..."><StatePage /></Suspense></Route>
 
                   <Route exact={true} path="/taskMange"><Suspense fallback="加载中..."><TaskManagePage /></Suspense></Route>

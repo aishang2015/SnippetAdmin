@@ -13,5 +13,7 @@ namespace SnippetAdmin.Models.RBAC.User
         public int? Role { get; set; }
 
         public int? Org { get; set; }
+
+        public int? Position { get; set; }
     }
 }

@@ -12,13 +12,7 @@ export type getOrganizationResult = {
     icon: string,
     iconId: string,
     phone: string,
-    address: string,
-    upPositions: Array<string>,
-    positions: {
-        visibleToChild: boolean,
-        name: string,
-        code: string
-    }[]
+    address: string
 }
 
 export type getOrganizationTreeResult = {
@@ -31,7 +25,6 @@ export type getOrganizationTreeResult = {
 export type createOrganizationInput = {
     upId: number,
     name: string,
-    code: string,
     type: string,
     icon: string,
     iconId: string,
@@ -43,26 +36,11 @@ export type updateOrganizationInput = {
     upId: number,
     id: number,
     name: string,
-    code: string,
     type: string,
     icon: string,
     iconId: string,
     phone: string,
     address: string
-}
-
-export type setPositionInput = {
-    organizationId: number,
-    positions: {
-        visibleToChild: boolean,
-        name: string,
-        code: string
-    }[]
-}
-
-export type getPositionResult = {
-    key: number,
-    value: string
 }
 
 export type AddOrUpdateOrganizationTypeInput = {
@@ -106,14 +84,6 @@ export class OrganizationService {
 
     static updateOrganization(params: updateOrganizationInput) {
         return Axios.instance.post<CommonResultNoData>('api/organization/updateOrganization', params);
-    }
-
-    static setPosition(params: setPositionInput) {
-        return Axios.instance.post<CommonResultNoData>('api/organization/setPosition', params);
-    }
-
-    static GetPositionDic(params: { id: number }) {
-        return Axios.instance.post<CommonResult<Array<getPositionResult>>>('api/organization/getPositionDic', params);
     }
 
     static GetOrganizationTypes() {

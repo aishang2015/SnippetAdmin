@@ -13,5 +13,9 @@
         public string PhoneNumber { get; set; }
 
         public int[] Roles { get; set; }
+
+        public int[] Organizations { get; set; }
+
+        public int[] Positions { get; set; }
     }
 }

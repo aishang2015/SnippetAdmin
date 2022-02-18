@@ -18,7 +18,9 @@
 
         public RoleInfo[] Roles { get; set; }
 
-        public OrgPositionOutputModel[] OrgPositions { get; set; }
+        public string[] Organizations { get; set; }
+
+        public string[] Positions { get; set; }
     }
 
     public class RoleInfo
@@ -26,12 +28,5 @@
         public string RoleName { get; set; }
 
         public bool IsActive { get; set; }
-    }
-
-    public class OrgPositionOutputModel
-    {
-        public string Org { get; set; }
-
-        public string Position { get; set; }
     }
 }

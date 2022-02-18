@@ -35,7 +35,7 @@ namespace SnippetAdmin.Data
 
                 //dbContext.Database.Migrate();
 
-                dbContext.Database.EnsureDeleted();
+                //dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
@@ -125,6 +125,11 @@ namespace SnippetAdmin.Data
             _dbContext.Elements.Add(new Element { Id = 37, Name = "激活角色", Identity = "active-role", Type = ElementType.ButtonLink, AccessApi = "api/Role/ActiveRole" });
             _dbContext.Elements.Add(new Element { Id = 38, Name = "创建或编辑组织类型", Identity = "add-update-org-type", Type = ElementType.ButtonLink, AccessApi = "api/Organization/AddOrUpdateOrganizationType" });
             _dbContext.Elements.Add(new Element { Id = 39, Name = "删除组织类型", Identity = "remove-org-type", Type = ElementType.ButtonLink, AccessApi = "api/Organization/RemoveOrganizationType" });
+            _dbContext.Elements.Add(new Element { Id = 40, Name = "职位信息", Identity = "position", Type = ElementType.Menu, AccessApi = "" });
+            _dbContext.Elements.Add(new Element { Id = 41, Name = "页面", Identity = "position-page", Type = ElementType.ButtonLink, AccessApi = "api/Position/GetPositions" });
+            _dbContext.Elements.Add(new Element { Id = 42, Name = "添加", Identity = "add-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/AddOrUpdatePosition" });
+            _dbContext.Elements.Add(new Element { Id = 45, Name = "编辑 ", Identity = "edit-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/AddOrUpdatePosition" });
+            _dbContext.Elements.Add(new Element { Id = 46, Name = "删除", Identity = "delete-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/DeletePosition" });
 
             // 元素树数据
             _dbContext.ElementTrees.Add(new ElementTree { Id = 1, Ancestor = 1, Descendant = 1, Length = 0 });
@@ -223,7 +228,24 @@ namespace SnippetAdmin.Data
             _dbContext.ElementTrees.Add(new ElementTree { Id = 94, Ancestor = 2, Descendant = 39, Length = 2 });
             _dbContext.ElementTrees.Add(new ElementTree { Id = 95, Ancestor = 10, Descendant = 39, Length = 1 });
             _dbContext.ElementTrees.Add(new ElementTree { Id = 96, Ancestor = 39, Descendant = 39, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 97, Ancestor = 2, Descendant = 40, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 98, Ancestor = 40, Descendant = 40, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 99, Ancestor = 2, Descendant = 41, Length = 2 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 100, Ancestor = 40, Descendant = 41, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 101, Ancestor = 41, Descendant = 41, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 102, Ancestor = 2, Descendant = 42, Length = 2 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 103, Ancestor = 40, Descendant = 42, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 104, Ancestor = 42, Descendant = 42, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 105, Ancestor = 43, Descendant = 43, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 106, Ancestor = 44, Descendant = 44, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 107, Ancestor = 2, Descendant = 45, Length = 2 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 108, Ancestor = 40, Descendant = 45, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 109, Ancestor = 45, Descendant = 45, Length = 0 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 110, Ancestor = 2, Descendant = 46, Length = 2 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 111, Ancestor = 40, Descendant = 46, Length = 1 });
+            _dbContext.ElementTrees.Add(new ElementTree { Id = 112, Ancestor = 46, Descendant = 46, Length = 0 });
             await _dbContext.SaveChangesAsync();
+
         }
     }
 }

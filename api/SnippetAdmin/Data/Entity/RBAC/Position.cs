@@ -16,10 +16,6 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Column("id")]
         public int Id { get; set; }
 
-        [Comment("所属组织Id")]
-        [Column("organization_id")]
-        public int OrganizationId { get; set; }
-
         [Comment("名称")]
         [Column("name")]
         public string Name { get; set; }
@@ -27,9 +23,5 @@ namespace SnippetAdmin.Data.Entity.RBAC
         [Comment("编码")]
         [Column("code")]
         public string Code { get; set; }
-
-        [Comment("下级是否可见")]
-        [Column("is_lower_visible")]
-        public bool IsLowerVisible { get; set; }
     }
 }

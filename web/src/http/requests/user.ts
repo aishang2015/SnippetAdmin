@@ -17,11 +17,8 @@ export type SearchUserResult = {
                 roleName: string,
                 isActive: boolean
             }>,
-            orgPositions: Array<
-                {
-                    org: string,
-                    position: string
-                }>
+            organizations: Array<string>,
+            positions: Array<string>
         }
     ]
 }
@@ -32,7 +29,9 @@ export type GetUserResult = {
     realName: string,
     gender: number,
     phoneNumber: string,
-    roles: Array<number>
+    roles: Array<number>,
+    organizations: Array<number>
+    positions: Array<number>
 }
 
 
@@ -59,7 +58,8 @@ export class UserService {
         realName?: string,
         phone?: string,
         role?: number,
-        org?: number
+        org?: number,
+        position?: number
     }) {
         return Axios.instance.post<CommonResult<SearchUserResult>>('api/user/searchUser', params);
     }
@@ -70,7 +70,9 @@ export class UserService {
         realName: string,
         gender: number,
         phoneNumber: string,
-        roles: Array<number>
+        roles: Array<number>,
+        organizations: Array<number>,
+        positions: Array<number>
     }) {
         return Axios.instance.post<CommonResultNoData>('api/user/addOrUpdateUser', params);
     }

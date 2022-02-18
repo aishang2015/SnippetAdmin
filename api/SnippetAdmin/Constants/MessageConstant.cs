@@ -66,6 +66,16 @@
 
         #endregion OrganizationController
 
+        #region PositionController
+
+        public static readonly (string, string) POSITION_INFO_0001 = ("POSITION_INFO_0001", "保存成功！");
+        public static readonly (string, string) POSITION_INFO_0002 = ("POSITION_INFO_0002", "删除成功！");
+        public static readonly (string, string) POSITION_INFO_0003 = ("POSITION_INFO_0003", "状态设置成功！");
+
+        public static readonly (string, string) POSITION_ERROR_0001 = ("POSITION_ERROR_0001", "职位名重复！");
+
+        #endregion
+
         #region RoleController
 
         public static readonly (string, string) ROLE_INFO_0001 = ("ROLE_INFO_0001", "保存成功！");

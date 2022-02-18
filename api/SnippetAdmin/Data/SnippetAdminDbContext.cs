@@ -43,8 +43,6 @@ namespace SnippetAdmin.Data
 
         public DbSet<Position> Positions { get; set; }
 
-        public DbSet<UserOrganizationPosition> UserOrganizationPositions { get; set; }
-
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public DbSet<Job> Jobs { get; set; }

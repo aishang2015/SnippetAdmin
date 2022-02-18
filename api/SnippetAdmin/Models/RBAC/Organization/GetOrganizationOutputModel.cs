@@ -21,18 +21,5 @@
         public string Phone { get; set; }
 
         public string Address { get; set; }
-
-        public string[] UpPositions { get; set; }
-
-        public PositionInfo[] Positions { get; set; }
-    }
-
-    public class PositionInfo
-    {
-        public string Name { get; set; }
-
-        public string Code { get; set; }
-
-        public bool VisibleToChild { get; set; }
     }
 }

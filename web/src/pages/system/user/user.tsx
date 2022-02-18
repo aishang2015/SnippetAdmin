@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tooltip, Tree } from 'antd';
+import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tooltip, Tree, TreeSelect } from 'antd';
 import {
     PlusOutlined, ManOutlined, WomanOutlined, UserOutlined,
     SearchOutlined, ClearOutlined, EditOutlined, DeleteOutlined, KeyOutlined,
@@ -13,6 +13,7 @@ import { UserService } from '../../../http/requests/user';
 import { OrganizationService } from '../../../http/requests/organization';
 import { RoleService } from '../../../http/requests/role';
 import { RightElement } from '../../../components/right/rightElement';
+import { PositionService } from '../../../http/requests/position';
 
 export default function User() {
 
@@ -80,10 +81,18 @@ export default function User() {
             ),
         },
         {
-            title: '部门/职位', dataIndex: "orgPositions", align: 'center',
+            title: '部门', dataIndex: "organizations", align: 'center',
             render: (array: any, record: any) => (
                 array?.map((s: any) => (
-                    <Tag key={s.org + s.position} style={{ marginBottom: '5px' }} color="#f50">{s.org + "/" + s.position}</Tag>)
+                    <Tag key={s} style={{ marginBottom: '5px' }} color="#87d068">{s}</Tag>)
+                )
+            ),
+        },
+        {
+            title: '职位', dataIndex: "positions", align: 'center',
+            render: (array: any, record: any) => (
+                array?.map((s: any) => (
+                    <Tag key={s} style={{ marginBottom: '5px' }} color="gold">{s}</Tag>)
                 )
             ),
         },
@@ -134,6 +143,7 @@ export default function User() {
         await getOrgTree();
         await getRoles();
         await getUsers();
+        await getPositions();
     }
 
     async function getUsers() {
@@ -144,7 +154,8 @@ export default function User() {
             realName: searchOption.current?.realName,
             phone: searchOption.current?.phoneNumber,
             role: searchOption.current?.role,
-            org: searchOption.current?.org
+            org: searchOption.current?.org,
+            position: searchOption.current?.position
         });
         userResponse.data.data.data.forEach((d: any) => d.key = d.id);
         setUserTableData(userResponse.data.data.data);
@@ -174,6 +185,11 @@ export default function User() {
         setRoleOptions(roleDicResponse.data.data);
     }
 
+    async function getPositions() {
+        let response = await PositionService.getPositionDic();
+        setPositionOptions(response.data.data);
+    }
+
     async function activeChange(checked: boolean, id: number) {
         await UserService.activeUser({ id: id, isActive: checked });
     }
@@ -188,8 +204,6 @@ export default function User() {
 
     // 添加组织成员
     async function setOrgMember() {
-        let response = await OrganizationService.GetPositionDic({ id: selectedOrg! });
-        setPositionOptions(response.data.data);
         setOrgAddVisible(true);
     }
 
@@ -205,6 +219,7 @@ export default function User() {
         searchOption.current.realName = values['realName'];
         searchOption.current.phoneNumber = values['phoneNumber'];
         searchOption.current.role = values['role'];
+        searchOption.current.position = values['position'];
         await getUsers();
     }
 
@@ -248,7 +263,9 @@ export default function User() {
             realName: userResponse.data.data.realName,
             gender: userResponse.data.data.gender,
             phoneNumber: userResponse.data.data.phoneNumber,
-            roles: userResponse.data.data.roles
+            roles: userResponse.data.data.roles,
+            organizations: userResponse.data.data.organizations,
+            positions: userResponse.data.data.positions
         });
         await getUsers();
         setUserEditVisible(true);
@@ -293,7 +310,9 @@ export default function User() {
             realName: values["realName"],
             gender: values["gender"],
             phoneNumber: values["phoneNumber"],
-            roles: values["roles"]
+            roles: values["roles"],
+            organizations: values["organizations"],
+            positions: values["positions"]
         });
         setUserEditVisible(false);
         await getUsers();
@@ -352,6 +371,15 @@ export default function User() {
                                 }
                             </Select>
                         </Form.Item>
+                        <Form.Item name="position" label="职位" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
+                            <Select allowClear={true} className="searchInput" placeholder="请选择职位">
+                                {
+                                    positionOptions.map(o => (
+                                        <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
+                                    ))
+                                }
+                            </Select>
+                        </Form.Item>
                     </Form>
                     <Space style={{ marginTop: "10px" }}>
                         <Button icon={<SearchOutlined />} onClick={searchUser}>查找</Button>
@@ -378,15 +406,6 @@ export default function User() {
                         ]
                     }>
                         <DebounceSelect mode="multiple" fetchOptions={loadUser} placeholder="请选择成员" />
-                    </Form.Item>
-                    <Form.Item label="职位" name="positions" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
-                        <Select mode="multiple" placeholder="请选择职位" >
-                            {
-                                positionOptions.map(o => (
-                                    <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
-                                ))
-                            }
-                        </Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
                         <Button type="primary" htmlType="submit">确定</Button>
@@ -438,6 +457,18 @@ export default function User() {
                         <Select allowClear={true} placeholder="请选择角色" mode="multiple" >
                             {
                                 roleOptions.map(o => (
+                                    <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
+                                ))
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="organizations" label="组织">
+                        <TreeSelect treeData={treeData} placeholder="请选择组织" allowClear={true} treeLine={true} treeIcon={true} multiple></TreeSelect>
+                    </Form.Item>
+                    <Form.Item name="positions" label="职位">
+                        <Select allowClear={true} placeholder="请选择职位" mode="multiple" >
+                            {
+                                positionOptions.map(o => (
                                     <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
                                 ))
                             }

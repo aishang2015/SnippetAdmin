@@ -11,9 +11,9 @@ import { RightElement } from '../../../components/right/rightElement';
 
 export default function Role() {
 
-    const size = 10;
     const [rightTree, setRightTree] = useState(new Array<any>());
     const [page, setPage] = useState(1);
+    const [size, setSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     const [roleTableData, setRoleTableData] = useState(new Array<any>());
@@ -26,7 +26,7 @@ export default function Role() {
             )
         },
         { title: '名称', dataIndex: "name", align: 'center', width: '220px' },
-        { title: '角色代码', dataIndex: "code", align: 'center', width: '220px' },
+        { title: '角色编码', dataIndex: "code", align: 'center', width: '220px' },
         { title: '备注', dataIndex: "remark", align: 'center' },
         {
             title: '启用', dataIndex: "isActive", align: 'center', width: '90px',
@@ -86,7 +86,7 @@ export default function Role() {
             title: '是否删除该角色?',
             onOk: async () => {
                 await RoleService.removeRole({ id: id });
-                await getRoles();
+                await getRoles(page, size);
             }
         })
     }
@@ -103,11 +103,10 @@ export default function Role() {
         await RoleService.addOrUpdateRole({
             id: values["id"],
             name: values["roleName"],
-            code: values["code"],
             remark: values["remark"],
             rights: values["rights"]
         });
-        await getRoles();
+        await getRoles(page, size);
         setRoleModalVisible(false);
     }
 
@@ -116,11 +115,11 @@ export default function Role() {
     }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     async function init() {
-        await getRoles();
+        await getRoles(page, size);
         await getTreeData();
     }
 
-    async function getRoles() {
+    async function getRoles(page: number, size: number) {
         let result = await RoleService.getRoles({ page: page, size: size });
         setTotal(result.data.data.total);
         setRoleTableData(result.data.data.data);
@@ -146,7 +145,8 @@ export default function Role() {
                 }></RightElement>
                 <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
-                    <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
+                    <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}
+                        onChange={async (p, s) => { setPage(p); setSize(s); await getRoles(p, s); }}></Pagination>
                 }
             </div>
 
@@ -164,15 +164,6 @@ export default function Role() {
                         ]
                     }>
                         <Input autoComplete="off" placeholder="请输入角色名" />
-                    </Form.Item>
-                    <Form.Item name="code" label="角色代码" rules={
-                        [
-                            { required: true, message: "请输入角色代码" },
-                            { max: 40, message: "角色代码过长" },
-                            { pattern: /^[A-Za-z0-9-_]+$/g, message: '角色代码只允许数字字母下划线' },
-                        ]
-                    }>
-                        <Input autoComplete="off" placeholder="请输入角色代码" />
                     </Form.Item>
                     <Form.Item name="remark" label="备注" rules={
                         [

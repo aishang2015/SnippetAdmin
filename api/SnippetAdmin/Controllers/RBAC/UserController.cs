@@ -50,6 +50,14 @@ namespace SnippetAdmin.Controllers.RBAC
             result.Roles = (from ur in _dbContext.UserRoles
                             where ur.UserId == inputModel.Id
                             select ur.RoleId).ToArray();
+            result.Organizations = (from uc in _dbContext.UserClaims
+                                    where uc.UserId == inputModel.Id &&
+                                        uc.ClaimType == ClaimConstant.UserOrganization
+                                    select uc.ClaimValue).ToArray().Select(d => int.Parse(d)).ToArray();
+            result.Positions = (from uc in _dbContext.UserClaims
+                                where uc.UserId == inputModel.Id &&
+                                    uc.ClaimType == ClaimConstant.UserPosition
+                                select uc.ClaimValue).ToArray().Select(d => int.Parse(d)).ToArray();
             return this.SuccessCommonResult(result);
         }
 
@@ -76,8 +84,19 @@ namespace SnippetAdmin.Controllers.RBAC
             if (inputModel.Org != null)
             {
                 query = from u in query
-                        where _dbContext.UserOrganizationPositions.Any(uop =>
-                            uop.UserId == u.Id && uop.OrganizationId == inputModel.Org)
+                        where _dbContext.UserClaims.Any(userClaim =>
+                            userClaim.UserId == u.Id && userClaim.ClaimValue == inputModel.Org.ToString() &&
+                            userClaim.ClaimType == ClaimConstant.UserOrganization)
+                        select u;
+            }
+
+            // 组织过滤
+            if (inputModel.Position != null)
+            {
+                query = from u in query
+                        where _dbContext.UserClaims.Any(userClaim =>
+                            userClaim.UserId == u.Id && userClaim.ClaimValue == inputModel.Position.ToString() &&
+                            userClaim.ClaimType == ClaimConstant.UserPosition)
                         select u;
             }
 
@@ -100,15 +119,14 @@ namespace SnippetAdmin.Controllers.RBAC
                                                RoleName = r.Name,
                                                IsActive = r.IsActive
                                            }).ToArray(),
-                                  OrgPositions = (from uop in _dbContext.UserOrganizationPositions
-                                                  join o in _dbContext.Organizations on uop.OrganizationId equals o.Id
-                                                  join p in _dbContext.Positions on uop.PositionId equals p.Id
-                                                  where uop.UserId == u.Id
-                                                  select new OrgPositionOutputModel
-                                                  {
-                                                      Org = o.Name,
-                                                      Position = p.Name
-                                                  }).ToArray()
+                                  Organizations = (from uc in _dbContext.UserClaims
+                                                   join org in _dbContext.Organizations on uc.ClaimValue equals org.Id.ToString()
+                                                   where uc.UserId == u.Id && uc.ClaimType == ClaimConstant.UserOrganization
+                                                   select org.Name).ToArray(),
+                                  Positions = (from uc in _dbContext.UserClaims
+                                               join pos in _dbContext.Positions on uc.ClaimValue equals pos.Id.ToString()
+                                               where uc.UserId == u.Id && uc.ClaimType == ClaimConstant.UserPosition
+                                               select pos.Name).ToArray()
                               };
 
             var result = new PagedOutputModel<SearchUserOutputModel>
@@ -131,33 +149,47 @@ namespace SnippetAdmin.Controllers.RBAC
             }
 
             using var trans = await _dbContext.Database.BeginTransactionAsync();
+            var user = _dbContext.Users.Find(inputModel.Id);
 
-            if (inputModel.Id != null)
+            if (user != null)
             {
-                var user = _dbContext.Users.Find(inputModel.Id);
                 _mapper.Map(inputModel, user);
                 _dbContext.Users.Update(user);
 
                 var ur = _dbContext.UserRoles.Where(ur => ur.UserId == user.Id).ToList();
                 _dbContext.UserRoles.RemoveRange(ur);
-                foreach (var role in inputModel.Roles)
-                {
-                    _dbContext.UserRoles.Add(new SnippetAdminUserRole { UserId = user.Id, RoleId = role });
-                }
+
+                var ups = _dbContext.UserClaims.Where(uc => uc.UserId == user.Id &&
+                    (uc.ClaimType == ClaimConstant.UserPosition || uc.ClaimType == ClaimConstant.UserOrganization)).ToList();
+                _dbContext.UserClaims.RemoveRange(ups);
+
             }
             else
             {
-                var user = _mapper.Map<SnippetAdminUser>(inputModel);
+                user = _mapper.Map<SnippetAdminUser>(inputModel);
                 await userManager.CreateAsync(user);
                 await userManager.AddPasswordAsync(user, "123456");
-                if (inputModel.Roles != null)
-                {
-                    foreach (var role in inputModel.Roles)
-                    {
-                        _dbContext.UserRoles.Add(new SnippetAdminUserRole { UserId = user.Id, RoleId = role });
-                    }
-                }
             }
+
+            inputModel.Roles?.ToList().ForEach(role =>
+                _dbContext.UserRoles.Add(new SnippetAdminUserRole { UserId = user.Id, RoleId = role })
+            );
+
+            inputModel.Organizations?.ToList().ForEach(organization =>
+                _dbContext.UserClaims.Add(new SnippetAdminUserClaim
+                {
+                    UserId = user.Id,
+                    ClaimValue = organization.ToString(),
+                    ClaimType = ClaimConstant.UserOrganization
+                }));
+            inputModel.Positions?.ToList().ForEach(position =>
+                _dbContext.UserClaims.Add(new SnippetAdminUserClaim
+                {
+                    UserId = user.Id,
+                    ClaimValue = position.ToString(),
+                    ClaimType = ClaimConstant.UserPosition
+                }));
+
             await _dbContext.SaveChangesAsync();
             await trans.CommitAsync();
             return this.SuccessCommonResult(MessageConstant.USER_INFO_0001);
@@ -168,7 +200,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> RemoveUserAsync([FromBody] IntIdInputModel inputModel)
         {
             var user = _dbContext.Users.Find(inputModel.Id);
-            var uops = _dbContext.UserOrganizationPositions.Where(u => u.UserId == inputModel.Id).ToList();
+            var uops = _dbContext.UserClaims.Where(u => u.UserId == inputModel.Id).ToList();
             _dbContext.Remove(user);
             _dbContext.RemoveRange(uops);
             await _dbContext.SaveChangesAsync();
@@ -195,29 +227,14 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<CommonResult> AddOrgMemberAsync([FromBody] AddOrgMemberInputModel inputModel)
         {
-            foreach (var user in inputModel.UserIds)
+            foreach (var userId in inputModel.UserIds)
             {
-                if (inputModel.Positions != null)
+                _dbContext.UserClaims.Add(new SnippetAdminUserClaim
                 {
-                    foreach (var position in inputModel.Positions)
-                    {
-                        _dbContext.UserOrganizationPositions.Add(new UserOrganizationPosition
-                        {
-                            UserId = user,
-                            OrganizationId = inputModel.OrgId,
-                            PositionId = position
-                        });
-                    }
-                }
-                else
-                {
-                    _dbContext.UserOrganizationPositions.Add(new UserOrganizationPosition
-                    {
-                        UserId = user,
-                        OrganizationId = inputModel.OrgId,
-                        PositionId = null
-                    });
-                }
+                    UserId = userId,
+                    ClaimType = ClaimConstant.UserOrganization,
+                    ClaimValue = inputModel.OrgId.ToString(),
+                });
             }
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.USER_INFO_0004);
@@ -227,9 +244,9 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<CommonResult> RemoveOrgMemberAsync([FromBody] RemoveOrgMemberInputModel inputModel)
         {
-            var uops = _dbContext.UserOrganizationPositions.Where(uop => uop.OrganizationId == inputModel.OrgId &&
-                uop.UserId == inputModel.UserId).ToList();
-            _dbContext.UserOrganizationPositions.RemoveRange(uops);
+            var uops = _dbContext.UserClaims.Where(uop => uop.ClaimValue == inputModel.OrgId.ToString() &&
+                uop.UserId == inputModel.UserId && uop.ClaimType == ClaimConstant.UserOrganization).ToList();
+            _dbContext.RemoveRange(uops);
             await _dbContext.SaveChangesAsync();
 
             return this.SuccessCommonResult(MessageConstant.USER_INFO_0004);

@@ -9,8 +9,6 @@ namespace SnippetAdmin.Models.RBAC.User
         public int OrgId { get; set; }
 
         public int[] UserIds { get; set; }
-
-        public int[] Positions { get; set; }
     }
 
     public class AddOrgMemberInputModelValidator : AbstractValidator<AddOrgMemberInputModel>

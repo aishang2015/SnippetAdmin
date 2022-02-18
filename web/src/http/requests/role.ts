@@ -49,7 +49,6 @@ export class RoleService {
     static addOrUpdateRole(param: {
         id: number,
         name: string,
-        code: string,
         remark: string,
         rights: Array<number>,
     }) {

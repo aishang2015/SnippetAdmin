@@ -68,7 +68,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(DicOutputModel))]
+        [CommonResultResponseType(typeof(List<DicOutputModel>))]
         public async Task<CommonResult> GetRoleDic()
         {
             var result = await _dbContext.Roles.Select(r => new DicOutputModel
@@ -88,10 +88,6 @@ namespace SnippetAdmin.Controllers.RBAC
             if (_dbContext.Roles.Any(r => r.Id != inputModel.Id && r.Name == inputModel.Name))
             {
                 return this.FailCommonResult(MessageConstant.ROLE_ERROR_0007);
-            }
-            if (_dbContext.Roles.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
-            {
-                return this.FailCommonResult(MessageConstant.ROLE_ERROR_0008);
             }
 
             using var trans = await _dbContext.Database.BeginTransactionAsync();
