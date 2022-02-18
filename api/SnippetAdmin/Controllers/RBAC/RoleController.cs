@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
+using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;
@@ -97,11 +98,14 @@ namespace SnippetAdmin.Controllers.RBAC
             if (role != null)
             {
                 _mapper.Map(inputModel, role);
+                _dbContext.Entry(role).Property(r => r.Code).IsModified = false;
                 _dbContext.Roles.Update(role);
             }
             else
             {
-                role = _dbContext.Roles.Add(_mapper.Map<SnippetAdminRole>(inputModel)).Entity;
+                role = _mapper.Map<SnippetAdminRole>(inputModel);
+                role.Code = GuidUtil.NewSequentialGuid().ToString("N");
+                role = _dbContext.Roles.Add(role).Entity;
             }
             await _dbContext.SaveChangesAsync();
 

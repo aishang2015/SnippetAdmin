@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
+using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;
@@ -81,7 +82,9 @@ namespace SnippetAdmin.Controllers.RBAC
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
             // 保存节点
-            var entity = await _dbContext.Organizations.AddAsync(mapper.Map<Organization>(inputModel));
+            var newOrg = mapper.Map<Organization>(inputModel);
+            newOrg.Code = GuidUtil.NewSequentialGuid().ToString("N");
+            var entity = await _dbContext.Organizations.AddAsync(newOrg);
             await _dbContext.SaveChangesAsync();
 
             // 保存节点关系
@@ -177,6 +180,7 @@ namespace SnippetAdmin.Controllers.RBAC
             }
 
             var organization = mapper.Map<Organization>(inputModel);
+            _dbContext.Entry(organization).Property(o => o.Code).IsModified = false;
             _dbContext.Organizations.Update(organization);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0003);
@@ -218,7 +222,6 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 var orgType = _dbContext.OrganizationTypes.Find(inputModel.Id);
                 orgType.Name = inputModel.Name;
-                //orgType.Code = inputModel.Code;
                 _dbContext.OrganizationTypes.Update(orgType);
             }
             else
@@ -226,7 +229,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.OrganizationTypes.Add(new OrganizationType()
                 {
                     Name = inputModel.Name,
-                    //Code = inputModel.Code,
+                    Code = GuidUtil.NewSequentialGuid().ToString("N")
                 });
             }
             await _dbContext.SaveChangesAsync();

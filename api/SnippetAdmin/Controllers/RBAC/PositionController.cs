@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
+using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;
@@ -42,7 +43,11 @@ namespace SnippetAdmin.Controllers.RBAC
             var position = _dbContext.Positions.Find(inputModel.Id);
             if (position == null)
             {
-                _dbContext.Positions.Add(new Position() { Name = inputModel.Name });
+                _dbContext.Positions.Add(new Position()
+                {
+                    Name = inputModel.Name,
+                    Code = GuidUtil.NewSequentialGuid().ToString("N")
+                });
             }
             else
             {
