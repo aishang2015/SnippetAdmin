@@ -118,7 +118,7 @@ namespace SnippetAdmin.Data
             _dbContext.Elements.Add(new Element { Id = 29, Name = "删除元素", Identity = "remove-element", Type = ElementType.ButtonLink, AccessApi = "api/Element/DeleteElement" });
             _dbContext.Elements.Add(new Element { Id = 30, Name = "设定密码", Identity = "set-password", Type = ElementType.ButtonLink, AccessApi = "api/User/SetUserPassword" });
             _dbContext.Elements.Add(new Element { Id = 31, Name = "用户激活", Identity = "active-user", Type = ElementType.ButtonLink, AccessApi = "api/User/ActiveUser" });
-            _dbContext.Elements.Add(new Element { Id = 32, Name = "页面", Identity = "user-page", Type = ElementType.ButtonLink, AccessApi = "api/Organization/GetOrganizationTree,api/Role/GetRoleDic,api/User/SearchUser,api/User/GetUser" });
+            _dbContext.Elements.Add(new Element { Id = 32, Name = "页面", Identity = "user-page", Type = ElementType.ButtonLink, AccessApi = "api/Organization/GetOrganizationTree,api/Role/GetRoleDic,api/User/SearchUser,api/User/GetUser,api/Position/GetPositionDic" });
             _dbContext.Elements.Add(new Element { Id = 33, Name = "页面", Identity = "role-page", Type = ElementType.ButtonLink, AccessApi = "api/Role/GetRoles,api/Element/GetElementTree,api/Role/GetRole" });
             _dbContext.Elements.Add(new Element { Id = 35, Name = "页面", Identity = "org-page", Type = ElementType.ButtonLink, AccessApi = "api/Organization/GetOrganization,api/Organization/GetOrganizationTree,api/Organization/GetOrganizationTypes" });
             _dbContext.Elements.Add(new Element { Id = 36, Name = "页面", Identity = "right-page", Type = ElementType.ButtonLink, AccessApi = "api/ApiInfo/GetApiPaths,api/Element/GetElement,api/Element/GetElementTree" });
@@ -245,6 +245,7 @@ namespace SnippetAdmin.Data
             _dbContext.ElementTrees.Add(new ElementTree { Id = 111, Ancestor = 40, Descendant = 46, Length = 1 });
             _dbContext.ElementTrees.Add(new ElementTree { Id = 112, Ancestor = 46, Descendant = 46, Length = 0 });
             await _dbContext.SaveChangesAsync();
+
 
         }
     }
