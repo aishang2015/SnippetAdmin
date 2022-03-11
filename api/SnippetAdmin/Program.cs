@@ -3,12 +3,14 @@ using Orleans.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
+using SnippetAdmin.Business.BackgroundServices;
 using SnippetAdmin.Business.Grains.Implements;
 using SnippetAdmin.Business.Hubs;
 using SnippetAdmin.Business.Jobs;
 using SnippetAdmin.Core;
 using SnippetAdmin.Core.Authentication;
 using SnippetAdmin.Core.Middleware;
+using SnippetAdmin.Core.Monitor;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
@@ -64,6 +66,12 @@ try
         // 历史会默认保存30分钟
         options.RouteBasePath = "/profiler";
     }).AddEntityFramework();
+
+    // 添加系统指标监听器
+    builder.Services.AddMetricEventListener();
+
+    // 添加指标广播
+    builder.Services.AddBackgroundService<MetricsBackgroundService>();
 
     // 使用serilog
     builder.Host.UseSerilog((context, services, configuration) =>
