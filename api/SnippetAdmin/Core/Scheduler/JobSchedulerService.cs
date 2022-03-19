@@ -1,5 +1,5 @@
 ﻿using Cronos;
-using SnippetAdmin.Core.HostedService.Exceptions;
+using SnippetAdmin.Core.Scheduler.Exceptions;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Enums;
@@ -7,7 +7,7 @@ using SnippetAdmin.Data.Entity.Scheduler;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace SnippetAdmin.Core.HostedService
+namespace SnippetAdmin.Core.Scheduler
 {
     /// <summary>
     /// 任务创建类

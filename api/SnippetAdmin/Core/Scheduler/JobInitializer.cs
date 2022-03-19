@@ -1,8 +1,7 @@
-﻿using SnippetAdmin.Core.HostedService;
-using SnippetAdmin.Core.Utils;
+﻿using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 
-namespace SnippetAdmin.Business.Jobs
+namespace SnippetAdmin.Core.Scheduler
 {
     public static class JobInitializer
     {

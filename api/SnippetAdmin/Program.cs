@@ -6,12 +6,14 @@ using Serilog.Filters;
 using SnippetAdmin.Business.BackgroundServices;
 using SnippetAdmin.Business.Grains.Implements;
 using SnippetAdmin.Business.Hubs;
-using SnippetAdmin.Business.Jobs;
 using SnippetAdmin.Core;
 using SnippetAdmin.Core.Authentication;
+using SnippetAdmin.Core.Background;
+using SnippetAdmin.Core.Dynamic;
 using SnippetAdmin.Core.Middleware;
 using SnippetAdmin.Core.Monitor;
 using SnippetAdmin.Core.Oauth;
+using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Cache;
@@ -33,7 +35,10 @@ try
     builder.Services.AddOauth(builder.Configuration);
 
     // 配置FluentValidation并改变默认modelstate的返回形式
-    builder.Services.AddControllers().AddFluentValidation().AddTextJsonOptions();
+    var mvcBuilder = builder.Services.AddControllers();
+    mvcBuilder.AddFluentValidation().AddTextJsonOptions();
+    mvcBuilder.AddDynamicController();
+
     builder.Services.ConfigureApiBehavior();
 
     // 添加signalr

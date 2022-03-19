@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Business.BackgroundServices
+﻿namespace SnippetAdmin.Core.Background
 {
     public static class IServiceCollectionExtension
     {

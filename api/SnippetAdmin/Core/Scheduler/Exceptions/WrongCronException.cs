@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Core.HostedService.Exceptions
+﻿namespace SnippetAdmin.Core.Scheduler.Exceptions
 {
     public class WrongCronException : Exception
     {

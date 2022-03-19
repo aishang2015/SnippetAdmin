@@ -3,7 +3,7 @@ using Cronos;
 using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attribute;
-using SnippetAdmin.Core.HostedService;
+using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Data;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;

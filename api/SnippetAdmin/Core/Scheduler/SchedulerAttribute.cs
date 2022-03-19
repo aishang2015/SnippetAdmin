@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Core.HostedService
+﻿namespace SnippetAdmin.Core.Scheduler
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class SchedulerAttribute : System.Attribute

@@ -9,8 +9,8 @@ namespace SnippetAdmin.Core.Monitor
 
         protected override void OnEventSourceCreated(EventSource eventSource)
         {
-            Console.WriteLine(eventSource.Name);
-            if (eventSource.Name.Equals("Microsoft.EntityFrameworkCore")||
+            //Console.WriteLine(eventSource.Name);
+            if (eventSource.Name.Equals("Microsoft.EntityFrameworkCore") ||
                 eventSource.Name.Equals("System.Runtime"))
             {
                 EnableEvents(eventSource, EventLevel.Verbose, EventKeywords.All, new Dictionary<string, string>()

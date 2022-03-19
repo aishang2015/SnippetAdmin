@@ -19,6 +19,7 @@ namespace SnippetAdmin.Business.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await Task.Delay(1000);
             while (!stoppingToken.IsCancellationRequested)
             {
                 // 调用客户端HandleMessage处理方法

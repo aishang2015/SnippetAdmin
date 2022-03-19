@@ -1,4 +1,4 @@
-﻿using SnippetAdmin.Core.HostedService;
+﻿using SnippetAdmin.Core.Scheduler;
 
 namespace SnippetAdmin.Business.Jobs
 {
