@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using SnippetAdmin.Core.Dynamic.Attributes;
+using SnippetAdmin.Core.Utils;
 using System.Reflection;
 
 namespace SnippetAdmin.Core.Dynamic
@@ -11,46 +13,99 @@ namespace SnippetAdmin.Core.Dynamic
         {
             var controllerTemplate = @$"
 using Microsoft.AspNetCore.Mvc;
-using SnippetAdmin.Models;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using SnippetAdmin.Constants;
+using SnippetAdmin.Data;
+using SnippetAdmin.Models;
+using SnippetAdmin.Models.Common;
+using {{Namespace}};
 
 namespace SnippetAdmin.Controllers
 {{
-    [Route(""api /[controller]"")]
+    [Route(""api/[controller]"")]
     [ApiController]
     [ApiExplorerSettings(GroupName = ""dynamic-v1"")]
-    public class NetController: ControllerBase
+    public class {{Entity}}Controller: ControllerBase
     {{
-        [HttpGet]
-        public async Task<CommonResult> GetNet()
+
+        private readonly SnippetAdminDbContext _snippetAdminDbContext;
+
+        public {{Entity}}Controller(SnippetAdminDbContext snippetAdminDbContext)
         {{
-            return this.SuccessCommonResult(""Ok"");
+            _snippetAdminDbContext = snippetAdminDbContext;
+        }}
+        
+        [HttpPost(""FindOne"")]
+        public async Task<CommonResult> FindOne([FromBody] IntIdInputModel inputModel)
+        {{
+            var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
+            return this.SuccessCommonResult(result);
+        }}
+
+        [HttpPost(""GetMany"")]
+        public async Task<CommonResult> GetMany([FromBody] PagedInputModel inputModel)
+        {{
+            var result = _snippetAdminDbContext.Set<{{Entity}}>().Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList();
+            return this.SuccessCommonResult(result);
+        }}
+
+        [HttpPost(""DeleteOne"")]
+        public async Task<CommonResult> DeleteOne([FromBody] IntIdInputModel inputModel)
+        {{
+            var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
+            _snippetAdminDbContext.Remove(result);
+            await _snippetAdminDbContext.SaveChangesAsync();
+            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_001);
+        }}
+
+        [HttpPost(""UpdateOne"")]
+        public async Task<CommonResult> UpdateOne([FromBody] {{Entity}} entity)
+        {{
+            _snippetAdminDbContext.Set<{{Entity}}>().Update(entity);
+            await _snippetAdminDbContext.SaveChangesAsync();
+            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_002);
         }}
     }}
 }}
 ";
-            var tree = SyntaxFactory.ParseSyntaxTree(controllerTemplate);
-            var compilation = CSharpCompilation.Create(
-                 syntaxTrees: new[] { tree },
-                 assemblyName: $"assemblytest.dll",
-                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-                 references: AppDomain.CurrentDomain.GetAssemblies().Select(x => MetadataReference.CreateFromFile(x.Location)));
+            var classes = ReflectionUtil.GetAssemblyTypes()
+                .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null).ToList();
 
-            Assembly compiledAssembly;
-            using (var stream = new MemoryStream())
+            var syntaxTreeList = new List<SyntaxTree>();
+
+            if (classes.Any())
             {
-                // 检测脚本代码是否有误
-                var compileResult = compilation.Emit(stream);
-                if (compileResult.Success)
+                foreach (var classType in classes)
                 {
-                    compiledAssembly = Assembly.Load(stream.GetBuffer());
+                    var source = controllerTemplate.Replace("{Namespace}", classType.Namespace);
+                    source = source.Replace("{Entity}", classType.Name);
+                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(source));
+                }
 
-                    builder.ConfigureApplicationPartManager(apm =>
+
+                var compilation = CSharpCompilation.Create(
+                     syntaxTrees: syntaxTreeList,
+                     assemblyName: $"assemblytest.dll",
+                     options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                     references: AppDomain.CurrentDomain.GetAssemblies().Select(x => MetadataReference.CreateFromFile(x.Location)));
+
+                Assembly compiledAssembly;
+                using (var stream = new MemoryStream())
+                {
+                    // 检测脚本代码是否有误
+                    var compileResult = compilation.Emit(stream);
+                    if (compileResult.Success)
                     {
-                        var assemblyPart = new AssemblyPart(compiledAssembly);
-                        apm.ApplicationParts.Add(assemblyPart);
-                    });
+                        compiledAssembly = Assembly.Load(stream.GetBuffer());
+
+                        builder.ConfigureApplicationPartManager(apm =>
+                        {
+                            var assemblyPart = new AssemblyPart(compiledAssembly);
+                            apm.ApplicationParts.Add(assemblyPart);
+                        });
+                    }
                 }
             }
             return builder;

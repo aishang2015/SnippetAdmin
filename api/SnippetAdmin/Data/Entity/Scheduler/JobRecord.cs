@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Core.Dynamic.Attributes;
 using SnippetAdmin.Data.Entity.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,6 +7,7 @@ namespace SnippetAdmin.Data.Entity.Scheduler
 {
     [Comment("任务记录")]
     [Table("T_Scheduler_JobRecord")]
+    [DynamicApi]
     public class JobRecord
     {
         public int Id { get; set; }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using SnippetAdmin.Constants;
-using SnippetAdmin.Core.Attribute;
+using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Authentication;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Oauth.Models;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Models;
 
-namespace SnippetAdmin.Core.Attribute
+namespace SnippetAdmin.Core.Attributes
 {
     public class CommonResultResponseTypeAttribute : ProducesResponseTypeAttribute
     {

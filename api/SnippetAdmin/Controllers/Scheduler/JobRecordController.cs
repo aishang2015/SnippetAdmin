@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using SnippetAdmin.Core.Attribute;
+using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Method;
 using SnippetAdmin.Data;
 using SnippetAdmin.Models;

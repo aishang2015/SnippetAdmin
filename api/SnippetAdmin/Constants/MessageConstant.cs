@@ -6,9 +6,11 @@
 
         public static readonly (string, string) EMPTYTUPLE = (string.Empty, string.Empty);
         public static readonly (string, string) SYSTEM_ERROR_001 = ("SYSTEM_ERROR_001", "发生系统错误！请联系管理员！");
+        public static readonly (string, string) SYSTEM_ERROR_002 = ("SYSTEM_ERROR_002", "页码不能小于0！");
+        public static readonly (string, string) SYSTEM_ERROR_003 = ("SYSTEM_ERROR_003", "页面大小不能小于0！");
 
-        public static readonly (string, string) SYSTEM_COMMON_001 = ("SYSTEM_COMMON_001", "页码不能小于0！");
-        public static readonly (string, string) SYSTEM_COMMON_002 = ("SYSTEM_COMMON_002", "页面大小不能小于0！");
+        public static readonly (string, string) SYSTEM_INFO_001 = ("SYSTEM_INFO_001", "删除成功！");
+        public static readonly (string, string) SYSTEM_INFO_002 = ("SYSTEM_INFO_002", "更新成功！");
 
         #endregion Common
 

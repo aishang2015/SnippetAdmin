@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
-using SnippetAdmin.Core.Attribute;
+using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
