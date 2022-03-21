@@ -149,7 +149,8 @@ try
         app.UseSwaggerUI(c =>
         {
             c.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream("SnippetAdmin.Swagger.index.html");
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "SnippetAdmin v1");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "web端业务接口-v1");
+            c.SwaggerEndpoint("/swagger/dynamic-v1/swagger.json", "动态接口-v1");
         });
 
         app.UseMiniProfiler();

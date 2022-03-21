@@ -8,6 +8,7 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class ApiInfoController : ControllerBase
     {
         /// <summary>

@@ -20,6 +20,7 @@ namespace SnippetAdmin.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<SnippetAdminUser> _userManager;

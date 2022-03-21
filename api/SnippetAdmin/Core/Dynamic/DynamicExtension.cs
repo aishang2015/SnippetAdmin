@@ -13,11 +13,13 @@ namespace SnippetAdmin.Core.Dynamic
 using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SnippetAdmin.Controllers
 {{
     [Route(""api /[controller]"")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = ""dynamic-v1"")]
     public class NetController: ControllerBase
     {{
         [HttpGet]

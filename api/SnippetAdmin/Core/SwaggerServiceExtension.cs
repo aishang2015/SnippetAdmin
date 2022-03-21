@@ -9,6 +9,7 @@ namespace SnippetAdmin.Core
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SnippetAdmin", Version = "v1" });
+                c.SwaggerDoc("dynamic-v1", new OpenApiInfo { Title = "动态接口", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {

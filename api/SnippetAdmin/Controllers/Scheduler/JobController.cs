@@ -13,6 +13,7 @@ namespace SnippetAdmin.Controllers.Scheduler
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class JobController : ControllerBase
     {
         private readonly SnippetAdminDbContext _dbContext;

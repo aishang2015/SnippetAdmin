@@ -17,6 +17,7 @@ namespace SnippetAdmin.Controllers.RBAC
     [ApiController]
     [Authorize]
     [SnippetAdminAuthorize]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class ElementController : ControllerBase
     {
         private readonly SnippetAdminDbContext _dbContext;
