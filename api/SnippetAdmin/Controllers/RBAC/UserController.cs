@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
-using SnippetAdmin.Core.Method;
+using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.RBAC;

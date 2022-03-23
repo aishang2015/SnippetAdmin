@@ -47,7 +47,13 @@ namespace SnippetAdmin.Controllers
         [HttpPost(""GetMany"")]
         public async Task<CommonResult> GetMany([FromBody] PagedInputModel inputModel)
         {{
-            var result = _snippetAdminDbContext.Set<{{Entity}}>().Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList();
+            var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
+            dataQuery = inputModel.GetSortExpression(dataQuery);
+            var result = new PagedOutputModel<{{Entity}}>
+            {{
+                Total = dataQuery.Count(),
+                Data = dataQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
+            }};            
             return this.SuccessCommonResult(result);
         }}
 
@@ -84,10 +90,9 @@ namespace SnippetAdmin.Controllers
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(source));
                 }
 
-
                 var compilation = CSharpCompilation.Create(
                      syntaxTrees: syntaxTreeList,
-                     assemblyName: $"assemblytest.dll",
+                     assemblyName: $"dynamicController.dll",
                      options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                      references: AppDomain.CurrentDomain.GetAssemblies().Select(x => MetadataReference.CreateFromFile(x.Location)));
 

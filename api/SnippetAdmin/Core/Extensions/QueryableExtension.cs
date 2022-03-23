@@ -1,7 +1,7 @@
-﻿using SnippetAdmin.Core.Method;
+﻿using SnippetAdmin.Core.Extensions;
 using System.Linq.Expressions;
 
-namespace SnippetAdmin.Core.Method
+namespace SnippetAdmin.Core.Extensions
 {
     public static class QueryableExtension
     {

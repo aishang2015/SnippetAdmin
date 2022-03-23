@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace SnippetAdmin.Core.Method
+namespace SnippetAdmin.Core.Extensions
 {
     public static class MemoryCacheExtension
     {

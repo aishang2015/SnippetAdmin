@@ -91,10 +91,13 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(PagedOutputModel<GetPositionsOutputModel>))]
         public async Task<CommonResult> GetPositions([FromBody] PagedInputModel inputModel)
         {
+            var query = _dbContext.Positions.AsQueryable();
+            query = inputModel.GetSortExpression(query);
+
             var result = new PagedOutputModel<GetPositionsOutputModel>()
             {
-                Total = _dbContext.Positions.Count(),
-                Data = await _dbContext.Positions.Select(p => new GetPositionsOutputModel()
+                Total = query.Count(),
+                Data = await query.Select(p => new GetPositionsOutputModel()
                 {
                     Id = p.Id,
                     Name = p.Name,

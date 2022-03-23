@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using SnippetAdmin.Constants;
+using SnippetAdmin.Core.Exceptions;
 using SnippetAdmin.Models;
 using System.Text.Json;
 
@@ -22,9 +23,18 @@ namespace SnippetAdmin.Core.Middleware
                         var result = new CommonResult
                         {
                             IsSuccess = false,
-                            Code = MessageConstant.SYSTEM_ERROR_001.Item1,
-                            Message = MessageConstant.SYSTEM_ERROR_001.Item2,
                         };
+                        if (ex is ErrorSortPropertyException)
+                        {
+                            result.Code = MessageConstant.SYSTEM_ERROR_004.Item1;
+                            result.Message = MessageConstant.SYSTEM_ERROR_004.Item2;
+                        }
+                        else
+                        {
+                            result.Code = MessageConstant.SYSTEM_ERROR_001.Item1;
+                            result.Message = MessageConstant.SYSTEM_ERROR_001.Item2;
+                        }
+
                         await JsonSerializer.SerializeAsync(httpContext.Response.Body, result, new JsonSerializerOptions
                         {
                             // 首字母小写
