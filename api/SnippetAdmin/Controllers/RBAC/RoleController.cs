@@ -75,7 +75,7 @@ namespace SnippetAdmin.Controllers.RBAC
         {
             var result = await _dbContext.Roles.Select(r => new DicOutputModel
             {
-                Key = r.Id,
+                Key = r.Id.ToString(),
                 Value = r.Name
             }).ToListAsync();
 

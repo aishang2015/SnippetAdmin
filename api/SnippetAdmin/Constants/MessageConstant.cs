@@ -12,6 +12,7 @@
 
         public static readonly (string, string) SYSTEM_INFO_001 = ("SYSTEM_INFO_001", "删除成功！");
         public static readonly (string, string) SYSTEM_INFO_002 = ("SYSTEM_INFO_002", "更新成功！");
+        public static readonly (string, string) SYSTEM_INFO_003 = ("SYSTEM_INFO_003", "添加成功！");
 
         #endregion Common
 

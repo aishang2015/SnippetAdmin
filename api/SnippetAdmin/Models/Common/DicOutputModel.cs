@@ -2,7 +2,7 @@
 {
     public class DicOutputModel
     {
-        public int Key { get; set; }
+        public string Key { get; set; }
 
         public string Value { get; set; }
     }

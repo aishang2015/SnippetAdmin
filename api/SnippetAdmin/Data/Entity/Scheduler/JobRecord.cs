@@ -10,9 +10,11 @@ namespace SnippetAdmin.Data.Entity.Scheduler
     [DynamicApi]
     public class JobRecord
     {
+        [DynamicDicKey]
         public int Id { get; set; }
 
         [Comment("任务Id")]
+        [DynamicDicValue]
         public int JobId { get; set; }
 
         [Comment("触发方式")]

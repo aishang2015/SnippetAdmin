@@ -13,13 +13,16 @@ namespace SnippetAdmin.Core.Dynamic
         {
             var controllerTemplate = @$"
 using Microsoft.AspNetCore.Mvc;
+
 using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
+
 using {{Namespace}};
 
 namespace SnippetAdmin.Controllers
@@ -57,13 +60,20 @@ namespace SnippetAdmin.Controllers
             return this.SuccessCommonResult(result);
         }}
 
-        [HttpPost(""DeleteOne"")]
-        public async Task<CommonResult> DeleteOne([FromBody] IntIdInputModel inputModel)
+        [HttpPost(""AddOne"")]
+        public async Task<CommonResult> AddOne([FromBody] {{Entity}} entity)
         {{
-            var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
-            _snippetAdminDbContext.Remove(result);
+            _snippetAdminDbContext.Set<{{Entity}}>().Add(entity);
             await _snippetAdminDbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_001);
+            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_003);
+        }}
+
+        [HttpPost(""AddMany"")]
+        public async Task<CommonResult> AddOne([FromBody] IEnumerable<{{Entity}}> data)
+        {{
+            _snippetAdminDbContext.Set<{{Entity}}>().AddRange(data);
+            await _snippetAdminDbContext.SaveChangesAsync();
+            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_003);
         }}
 
         [HttpPost(""UpdateOne"")]
@@ -73,9 +83,34 @@ namespace SnippetAdmin.Controllers
             await _snippetAdminDbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_002);
         }}
+
+        [HttpPost(""DeleteOne"")]
+        public async Task<CommonResult> DeleteOne([FromBody] IntIdInputModel inputModel)
+        {{
+            var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
+            _snippetAdminDbContext.Remove(result);
+            await _snippetAdminDbContext.SaveChangesAsync();
+            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_001);
+        }}
+
+        {{dicAction}}
     }}
 }}
 ";
+            var dicActionTemplate = @$"
+
+        [HttpPost(""GetDic"")]
+        public async Task<CommonResult> GetDic()
+        {{
+            var query = _snippetAdminDbContext.Set<{{Entity}}>().Select(d=> new DicOutputModel{{
+                Key = d.{{KeyProperty}}.ToString(),
+                Value = d.{{ValueProperty}}.ToString()
+            }}).Distinct();
+            return this.SuccessCommonResult(query.ToList());
+        }}
+";
+
+
             var classes = ReflectionUtil.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null).ToList();
 
@@ -85,7 +120,24 @@ namespace SnippetAdmin.Controllers
             {
                 foreach (var classType in classes)
                 {
-                    var source = controllerTemplate.Replace("{Namespace}", classType.Namespace);
+                    var source = controllerTemplate;
+
+                    // 查找字典,生成字典请求
+                    var dicKeyProperty = classType.GetProperties().FirstOrDefault(p => p.GetCustomAttribute(typeof(DynamicDicKeyAttribute)) != null);
+                    var dicValueProperty = classType.GetProperties().FirstOrDefault(p => p.GetCustomAttribute(typeof(DynamicDicValueAttribute)) != null);
+                    if (dicKeyProperty != null && dicValueProperty != null)
+                    {
+                        var dicAction = dicActionTemplate
+                            .Replace("{KeyProperty}", dicKeyProperty.Name)
+                            .Replace("{ValueProperty}", dicValueProperty.Name);
+                        source = source.Replace("{dicAction}", dicAction);
+                    }
+                    else
+                    {
+                        source = source.Replace("{dicAction}", string.Empty);
+                    }
+
+                    source = source.Replace("{Namespace}", classType.Namespace);
                     source = source.Replace("{Entity}", classType.Name);
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(source));
                 }
