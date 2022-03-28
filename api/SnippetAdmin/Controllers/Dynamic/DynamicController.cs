@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Dynamic.Attributes;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data.Auth;
@@ -20,7 +22,7 @@ namespace SnippetAdmin.Controllers.Dynamic
         /// 获取程序所有动态接口信息
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(CommonResult<List<GetDynamicInfoOutputModel>>), 200)]
+        [CommonResultResponseType(typeof(CommonResult<List<GetDynamicInfoOutputModel>>))]
         //[Authorize]
         //[SnippetAdminAuthorize]
         public CommonResult GetDynamicInfo()
@@ -43,6 +45,25 @@ namespace SnippetAdmin.Controllers.Dynamic
                     EntityName = gdata.EntityName,
                     Name = gdata.Name
                 }).ToList()
+            });
+            return this.SuccessCommonResult(result);
+        }
+
+        /// <summary>
+        /// 获取动态实体列信息
+        /// </summary>
+        [HttpPost]
+        [CommonResultResponseType(typeof(CommonResult<List<GetColumnsOutputModel>>))]
+        public CommonResult GetColumns([FromBody] GetColumnsInputModel inputModel)
+        {
+            var entityType = ReflectionUtil.GetAssemblyTypes()
+                .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null &&
+                    t.Name == inputModel.EntityName)
+                .FirstOrDefault();
+            var result = entityType.GetProperties().Select(p => new GetColumnsOutputModel
+            {
+                PropertyName = p.Name,
+                PropertyDescribe = (p.GetCustomAttribute(typeof(CommentAttribute)) as CommentAttribute)?.Comment ?? p.Name
             });
             return this.SuccessCommonResult(result);
         }

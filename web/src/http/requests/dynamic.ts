@@ -15,6 +15,14 @@ export class DynamicService {
         return Axios.instance.post<CommonResult<Array<getApiInfoResult>>>('api/Dynamic/GetDynamicInfo', {});
     }
 
+    static getColumnInfo(entityName: string) {
+        type getColumnInfoResult = {
+            propertyName: string,
+            propertyDescribe: string,
+        };
+        return Axios.instance.post<CommonResult<Array<getColumnInfoResult>>>('api/Dynamic/getColumns', {EntityName:entityName});
+    }
+
     static findOne(entityName: string, id: number) {
         return Axios.instance.post<CommonResult<any>>(`api/${entityName}/FindOne`, { Id: id });
     }

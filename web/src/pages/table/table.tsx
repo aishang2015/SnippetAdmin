@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react';
 import { cloneDeep, sortBy } from 'lodash';
 import { FilterOutlined, EyeOutlined, CheckSquareOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import './table.less';
+import { DynamicService } from '../../http/requests/dynamic';
 
 
 export default function TablePage(props: any) {
+
+    const entityName = "JobRecord";
 
     // 表格
     const [allColumns, setAllColumns] = useState(new Array<any>());
@@ -33,48 +36,73 @@ export default function TablePage(props: any) {
 
     useEffect(() => {
 
-        const propertyColumns: any[] = [
-            { title: '属性1', dataIndex: "p1", align: 'center', width: '100px', sorter: { multiple: 1 }, isDisplay: true, displayIndex: 1, filterType: 'string' },
-            { title: '属性2', dataIndex: "p2", align: 'center', width: '100px', sorter: { multiple: 2 }, isDisplay: true, displayIndex: 2, filterType: 'number' },
-            { title: '属性3', dataIndex: "p3", align: 'center', width: '100px', sorter: { multiple: 3 }, isDisplay: true, displayIndex: 3, filterType: 'date' },
-            { title: '属性4', dataIndex: "p4", align: 'center', width: '100px', sorter: { multiple: 4 }, isDisplay: true, displayIndex: 4, filterType: 'dictionary' },
-            { title: '属性5', dataIndex: "p5", align: 'center', width: '100px', sorter: { multiple: 5 }, isDisplay: true, displayIndex: 5, filterType: 'bool' },
-            { title: '属性6', dataIndex: "p6", align: 'center', width: '100px', sorter: { multiple: 6 }, isDisplay: true, displayIndex: 6 },
-            { title: '属性7', dataIndex: "p7", align: 'center', width: '100px', sorter: { multiple: 7 }, isDisplay: true, displayIndex: 7 },
-            { title: '属性8', dataIndex: "p8", align: 'center', width: '100px', sorter: { multiple: 8 }, isDisplay: true, displayIndex: 9 },
-            { title: '属性9', dataIndex: "p9", align: 'center', width: '100px', sorter: { multiple: 9 }, isDisplay: true, displayIndex: 8 },
-        ];
-        setDisplayProps(propertyColumns);
+        async function initialAsync() {
 
-        const allColumns: any[] = [
-            { title: '序号', dataIndex: "num", align: 'center', width: '100px', isDisplay: true, displayIndex: 0 },
-            ...sortBy(propertyColumns, o => o.displayIndex),
-            {
-                title: '操作', key: 'operate', align: 'center', isDisplay: true, displayIndex: 999,
-                render: (text: any, record: any) => (
-                    <Space size="middle">
-                        <a>编辑</a>
-                        <a>删除</a>
-                    </Space>
-                ),
-            },
-        ];
-        setDisplayColumns(allColumns);
-        setAllColumns(allColumns);
-
-        let data = new Array<any>();
-        for (let i = 0; i < 15; i++) {
-            data.push({
-                key: i + 1, num: i + 1, p1: `p1-${i + 1}`, p2: `p2-${i + 1}`, p3: `p3-${i + 1}`, p4: `p4-${i + 1}`, p5: `p5-${i + 1}`, p6: `p6-${i + 1}`, p7: `p7-${i + 1}`
+            let columns = await DynamicService.getColumnInfo(entityName);
+            const propertyColumns = columns.data.data.map((d, index) => {
+                return {
+                    title: d.propertyDescribe,
+                    dataIndex: d.propertyName.replace(/^\S/, s => s.toLocaleLowerCase()),
+                    align: 'center',
+                    width: '100px',
+                    sorter: { multiple: index + 1 },
+                    isDisplay: true,
+                    displayIndex: index + 1,
+                }
             });
-        }
-        setTableData(data);
-        setPage(1);
-        setTotal(15);
 
-        // 初始化过滤组输入属性值
-        initFilterGroupInputProperty(allColumns);
+            setDisplayProps(propertyColumns);
+
+            const allColumns: any[] = [
+                {
+                    title: '序号', dataIndex: 'num', align: 'center', width: '100px', isDisplay: true, displayIndex: 0
+                },
+                ...sortBy(propertyColumns, o => o.displayIndex),
+                {
+                    title: '操作', key: 'operate', align: 'center', isDisplay: true, displayIndex: 999,
+                    render: (text: any, record: any) => (
+                        <Space size="middle">
+                            <a>编辑</a>
+                            <a>删除</a>
+                        </Space>
+                    ),
+                },
+            ];
+            setDisplayColumns(allColumns);
+            setAllColumns(allColumns);
+
+            // let data = new Array<any>();
+            // for (let i = 0; i < 15; i++) {
+            //     data.push({
+            //         key: i + 1, num: i + 1, p1: `p1-${i + 1}`, p2: `p2-${i + 1}`, p3: `p3-${i + 1}`, p4: `p4-${i + 1}`, p5: `p5-${i + 1}`, p6: `p6-${i + 1}`, p7: `p7-${i + 1}`
+            //     });
+            // }
+            await loadData(page, size);
+
+            // 初始化过滤组输入属性值
+            initFilterGroupInputProperty(allColumns);
+
+        }
+
+        initialAsync();
+
     }, []);
+
+    async function loadData(currentpage: number, currentsize: number, sorts: any = null) {
+
+        let result = await DynamicService.getMany(entityName, {
+            page: currentpage,
+            size: currentsize,
+            sorts: sorts
+        });
+
+        // 添加序号
+        result.data.data.data.forEach((element: any, index: number) => {
+            element.num = currentsize * (currentpage - 1) + index + 1;
+        });
+        setTableData(result.data.data.data);
+        setTotal(result.data.data.total);
+    }
 
     // 清理选择
     function cleanSelect() {
@@ -354,18 +382,38 @@ export default function TablePage(props: any) {
     }
 
     // 排序发生变化
-    function tableChange(pagination: any, filters: any, sorter: any, extra: any) {
+    async function tableChange(pagination: any, filters: any, sorter: any, extra: any) {
+
+        let sortData: any = new Array<any>();
+        if (sorter instanceof Array) {
+            sorter.forEach(d => {
+                sortData.push({
+                    propertyName: d.field.replace(/^\S/, (s: string) => s.toLocaleUpperCase()),
+                    IsAsc: d.order === "ascend"
+                });
+            });
+        } else {
+            if (sorter.order === undefined) {
+                sortData = null;
+            } else {
+                sortData.push({
+                    propertyName: sorter.field.replace(/^\S/, (s: string) => s.toLocaleUpperCase()),
+                    IsAsc: sorter.order === "ascend"
+                });
+            }
+
+        }
+        await loadData(page, size, sortData);
     }
 
     // 分页码发生变化
-    function pageChange(page: number) {
-        setPage(page);
-    }
-
-    // 分页大小发生变化
-    function sizeChange(current: number, size: number) {
-        setPage(1);
-        setSize(size);
+    async function pageChange(newpage: number, newsize: number) {
+        if (size !== newsize) {
+            newpage = 1;
+        }
+        await loadData(newpage, newsize);
+        setPage(newpage);
+        setSize(newsize);
     }
 
     return (
@@ -383,7 +431,7 @@ export default function TablePage(props: any) {
             <Table style={{ marginTop: '10px' }} columns={displayColumns} pagination={false} rowSelection={rowSelection}
                 dataSource={tableData} bordered={true} size='small' onChange={tableChange}></Table>
             <Pagination defaultCurrent={1} pageSize={size} total={total} current={page} style={{ marginTop: '10px' }}
-                showSizeChanger={true} onChange={pageChange} onShowSizeChange={sizeChange} />
+                showSizeChanger={true} onChange={pageChange} />
         </>
     );
 }

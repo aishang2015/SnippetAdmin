@@ -1,4 +1,4 @@
-import { faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faHome, faInfo, faSitemap, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export class Constants {
@@ -29,19 +29,14 @@ export class Constants {
         { path: '/about', name: '关于', identify: 'about', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
         // {
         //     path: '', name: '临时', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
-        //         { path: '/flow', name: '流程图', identify: 'user', icon: <FontAwesomeIcon icon={faProjectDiagram} fixedWidth /> },
+        //         //{ path: '/flow', name: '流程图', identify: 'user', icon: <FontAwesomeIcon icon={faProjectDiagram} fixedWidth /> },
         //         { path: '/table', name: '表格', identify: 'user', icon: <FontAwesomeIcon icon={faTable} fixedWidth /> },
-        //         { path: '/chat', name: '聊天', identify: 'user', icon: <FontAwesomeIcon icon={faChalkboardTeacher} fixedWidth /> },
+        //         //{ path: '/chat', name: '聊天', identify: 'user', icon: <FontAwesomeIcon icon={faChalkboardTeacher} fixedWidth /> },
         //     ]
         // },
     ];
 
-    static FlatRouteInfo = [
-        ...Constants.RouteInfo,
-        ...Constants.RouteInfo[1].children!,
-        ...Constants.RouteInfo[2].children!,
-        //...Constants.RouteInfo[5].children!
-    ];
+    static FlatRouteInfo = Constants.RouteInfo.flat(); 
 
     static ElementTypeArray = [
         { key: 1, value: '菜单' },
