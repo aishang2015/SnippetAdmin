@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Dynamic.Attributes;
 using SnippetAdmin.Core.Utils;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Dynamic;
 using System.Reflection;
@@ -63,7 +59,37 @@ namespace SnippetAdmin.Controllers.Dynamic
             var result = entityType.GetProperties().Select(p => new GetColumnsOutputModel
             {
                 PropertyName = p.Name,
-                PropertyDescribe = (p.GetCustomAttribute(typeof(CommentAttribute)) as CommentAttribute)?.Comment ?? p.Name
+                PropertyDescribe = (p.GetCustomAttribute(typeof(CommentAttribute)) as CommentAttribute)?.Comment ?? p.Name,
+                PropertyType = p.PropertyType switch
+                {
+                    Type proType when proType == typeof(short) => "number",
+                    Type proType when proType == typeof(int) => "number",
+                    Type proType when proType == typeof(long) => "number",
+                    Type proType when proType == typeof(double) => "number",
+                    Type proType when proType == typeof(float) => "number",
+                    Type proType when proType == typeof(decimal) => "number",
+
+                    Type proType when proType == typeof(short?) => "number",
+                    Type proType when proType == typeof(int?) => "number",
+                    Type proType when proType == typeof(long?) => "number",
+                    Type proType when proType == typeof(double?) => "number",
+                    Type proType when proType == typeof(float?) => "number",
+                    Type proType when proType == typeof(decimal?) => "number",
+
+                    Type proType when proType == typeof(string) => "string",
+
+                    Type proType when proType == typeof(DateTime) => "date",
+                    Type proType when proType == typeof(DateTime?) => "date",
+
+                    Type proType when proType == typeof(bool) => "bool",
+                    Type proType when proType == typeof(bool?) => "bool",
+
+                    Type proType when proType.IsEnum => "enum",
+                    Type proType when Nullable.GetUnderlyingType(proType) != null &&
+                        Enum.GetUnderlyingType(proType).IsEnum => "enum",
+
+                    _ => string.Empty
+                }
             });
             return this.SuccessCommonResult(result);
         }

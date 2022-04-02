@@ -19,8 +19,9 @@ export class DynamicService {
         type getColumnInfoResult = {
             propertyName: string,
             propertyDescribe: string,
+            propertyType: string
         };
-        return Axios.instance.post<CommonResult<Array<getColumnInfoResult>>>('api/Dynamic/getColumns', {EntityName:entityName});
+        return Axios.instance.post<CommonResult<Array<getColumnInfoResult>>>('api/Dynamic/getColumns', { EntityName: entityName });
     }
 
     static findOne(entityName: string, id: number) {

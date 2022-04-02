@@ -5,6 +5,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+		<!--无法生成的原因可能是需要将生成器打包并指定输出类型为Analysis-->
+		<!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>-->
 	</PropertyGroup>
 
 	<ItemGroup>

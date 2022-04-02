@@ -1,5 +1,6 @@
 import { faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { constants } from 'buffer';
 
 export class Constants {
 
@@ -36,7 +37,20 @@ export class Constants {
         // },
     ];
 
-    static FlatRouteInfo = Constants.RouteInfo.flat(); 
+    static flatRoute = function (array: any) {
+        let result = new Array<any>();
+        if (array.length > 0) {
+            array.forEach((route: any) => {
+                result = result.concat(route);
+                if (route.children && route.children.length > 0) {
+                    result = result.concat(Constants.flatRoute(route.children));
+                }
+            });
+        }
+        return result;
+    }
+
+    static FlatRouteInfo: Array<any> = Constants.flatRoute(Constants.RouteInfo);
 
     static ElementTypeArray = [
         { key: 1, value: '菜单' },

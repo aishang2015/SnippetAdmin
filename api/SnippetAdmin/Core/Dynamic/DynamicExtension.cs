@@ -23,9 +23,9 @@ using System.Collections.Generic;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data;
 using SnippetAdmin.Models;
+using SnippetAdmin.Models.Dynamic;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Core.Extensions;
-using SnippetAdmin.Models.{{Entity}};
 
 using {{Namespace}};
 
@@ -52,10 +52,10 @@ namespace SnippetAdmin.Controllers
         }}
 
         [HttpPost(""GetMany"")]
-        public async Task<CommonResult> GetMany([FromBody] Get{{Entity}}InputModel inputModel)
+        public async Task<CommonResult> GetMany([FromBody] DynamicSearchInputModel inputModel)
         {{
             var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
-            dataQuery = dataQuery{{QueryCondition}};
+            dataQuery = inputModel.GetFilterExpression(dataQuery);
             dataQuery = inputModel.GetSortExpression(dataQuery);
             var result = new PagedOutputModel<{{Entity}}>
             {{
@@ -115,19 +115,19 @@ namespace SnippetAdmin.Controllers
         }}
 ";
 
-            var searchModelTemplate = @$"
+//            var searchModelTemplate = @$"
 
-using System;
-using SnippetAdmin.Models.Common;
+//using System;
+//using SnippetAdmin.Models.Common;
 
-namespace SnippetAdmin.Models.{{Entity}}
-{{    
-    public class Get{{Entity}}InputModel: PagedInputModel
-    {{
-        {{Properties}}
-    }}
-}}
-";
+//namespace SnippetAdmin.Models.{{Entity}}
+//{{    
+//    public class Get{{Entity}}InputModel: PagedInputModel
+//    {{
+//        {{Properties}}
+//    }}
+//}}
+//";
 
             var classes = ReflectionUtil.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null).ToList();
@@ -156,71 +156,77 @@ namespace SnippetAdmin.Models.{{Entity}}
                     }
 
                     // 生成查找模型
-                    var propertyBuilder = new StringBuilder();
-                    var conditinBuilder = new StringBuilder();
-                    foreach (var property in classType.GetProperties())
-                    {
-                        if (property.Name == "Id")
-                        {
-                            continue;
-                        }
-                        if (property.PropertyType == typeof(short) ||
-                            property.PropertyType == typeof(int) ||
-                            property.PropertyType == typeof(long) ||
-                            property.PropertyType == typeof(double) ||
-                            property.PropertyType == typeof(float) ||
-                            property.PropertyType == typeof(decimal) ||
-                            property.PropertyType == typeof(DateTime))
-                        {
-                            propertyBuilder.Append($"public {property.PropertyType.Name}? Upper{property.Name}{{get;set;}}");
-                            propertyBuilder.Append($"public {property.PropertyType.Name}? Lower{property.Name}{{get;set;}}");
-                            propertyBuilder.Append($"public {property.PropertyType.Name}? Equal{property.Name}{{get;set;}}");
+                    //var propertyBuilder = new StringBuilder();
+                    //var conditinBuilder = new StringBuilder();
+                    //foreach (var property in classType.GetProperties())
+                    //{
+                    //    if (property.Name == "Id")
+                    //    {
+                    //        continue;
+                    //    }
+                    //    if (property.PropertyType == typeof(short) ||
+                    //        property.PropertyType == typeof(int) ||
+                    //        property.PropertyType == typeof(long) ||
+                    //        property.PropertyType == typeof(double) ||
+                    //        property.PropertyType == typeof(float) ||
+                    //        property.PropertyType == typeof(decimal) ||
+                    //        property.PropertyType == typeof(DateTime))
+                    //    {
+                    //        propertyBuilder.Append($"public {property.PropertyType.Name}? Upper{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public {property.PropertyType.Name}? Lower{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public {property.PropertyType.Name}? Equal{property.Name}{{get;set;}}");
 
-                            conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                        }
-                        if (property.PropertyType == typeof(short?) ||
-                            property.PropertyType == typeof(int?) ||
-                            property.PropertyType == typeof(long?) ||
-                            property.PropertyType == typeof(double?) ||
-                            property.PropertyType == typeof(float?) ||
-                            property.PropertyType == typeof(decimal?) ||
-                            property.PropertyType == typeof(DateTime?))
-                        {
-                            var propertyTypeName = property.PropertyType.GenericTypeArguments[0].Name;
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
+                    //    }
+                    //    else if (property.PropertyType == typeof(short?) ||
+                    //            property.PropertyType == typeof(int?) ||
+                    //            property.PropertyType == typeof(long?) ||
+                    //            property.PropertyType == typeof(double?) ||
+                    //            property.PropertyType == typeof(float?) ||
+                    //            property.PropertyType == typeof(decimal?) ||
+                    //            property.PropertyType == typeof(DateTime?))
+                    //    {
+                    //        var propertyTypeName = property.PropertyType.GenericTypeArguments[0].Name;
 
-                            propertyBuilder.Append($"public {propertyTypeName}? Upper{property.Name}{{get;set;}}");
-                            propertyBuilder.Append($"public {propertyTypeName}? Lower{property.Name}{{get;set;}}");
-                            propertyBuilder.Append($"public {propertyTypeName}? Equal{property.Name}{{get;set;}}");
-                            propertyBuilder.Append($"public bool? NotNull{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public {propertyTypeName}? Upper{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public {propertyTypeName}? Lower{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public {propertyTypeName}? Equal{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public bool? NotNull{property.Name}{{get;set;}}");
 
-                            conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                            conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}!=null)");
-                            conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && !inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}==null)");
-                        }
-                        else if (property.PropertyType == typeof(string))
-                        {
-                            propertyBuilder.Append($"public string Contained{property.Name}{{get;set;}}");
-                            propertyBuilder.Append($"public string Equal{property.Name}{{get;set;}}");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
+                    //        conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}!=null)");
+                    //        conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && !inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}==null)");
+                    //    }
+                    //    else if (property.PropertyType == typeof(string))
+                    //    {
+                    //        propertyBuilder.Append($"public string Contained{property.Name}{{get;set;}}");
+                    //        propertyBuilder.Append($"public string Equal{property.Name}{{get;set;}}");
 
-                            conditinBuilder.Append($".AndIfExist(inputModel.Contained{property.Name},d=>d.{property.Name}.Contains(inputModel.Contained{property.Name}))");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                        }
-                        else if (property.PropertyType == typeof(bool))
-                        {
-                            propertyBuilder.Append($"public bool? Equal{property.Name}{{get;set;}}");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Contained{property.Name},d=>d.{property.Name}.Contains(inputModel.Contained{property.Name}))");
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
+                    //    }
+                    //    else if (property.PropertyType == typeof(bool))
+                    //    {
+                    //        propertyBuilder.Append($"public bool? Equal{property.Name}{{get;set;}}");
 
-                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                        }
-                    }
-                    var searchModel = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
-                    searchModel = searchModel.Replace("{Entity}", classType.Name);
-                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModel));
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
+                    //    }
+                    //    else if (property.PropertyType.IsEnum)
+                    //    {
+                    //        propertyBuilder.Append($"public {property.PropertyType}? Equal{property.Name}{{get;set;}}");
 
-                    source = source.Replace("{QueryCondition}", conditinBuilder.ToString());
+                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
+                    //    }
+                    //}
+                    //var searchModel = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
+                    //searchModel = searchModel.Replace("{Entity}", classType.Name);
+                    //syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModel));
+
+                    //source = source.Replace("{QueryCondition}", conditinBuilder.ToString());
                     source = source.Replace("{Namespace}", classType.Namespace);
                     source = source.Replace("{Entity}", classType.Name);
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(source));
