@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Convience.Util.Extension
 {
@@ -477,5 +475,5 @@ namespace Convience.Util.Extension
         }
 
         #endregion
-}
+    }
 }

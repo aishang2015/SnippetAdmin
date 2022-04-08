@@ -26,6 +26,7 @@ using SnippetAdmin.Models;
 using SnippetAdmin.Models.Dynamic;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Core.Extensions;
+using SnippetAdmin.Models.{{Entity}};
 
 using {{Namespace}};
 
@@ -45,17 +46,31 @@ namespace SnippetAdmin.Controllers
         }}
         
         [HttpPost(""FindOne"")]
-        public async Task<CommonResult> FindOne([FromBody] IntIdInputModel inputModel)
+        public CommonResult FindOne([FromBody] IntIdInputModel inputModel)
         {{
             var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
             return this.SuccessCommonResult(result);
         }}
 
         [HttpPost(""GetMany"")]
-        public async Task<CommonResult> GetMany([FromBody] DynamicSearchInputModel inputModel)
+        public CommonResult GetMany([FromBody] DynamicSearchInputModel inputModel)
         {{
             var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
             dataQuery = inputModel.GetFilterExpression(dataQuery);
+            dataQuery = inputModel.GetSortExpression(dataQuery);
+            var result = new PagedOutputModel<{{Entity}}>
+            {{
+                Total = dataQuery.Count(),
+                Data = dataQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
+            }};            
+            return this.SuccessCommonResult(result);
+        }}
+
+        [HttpPost(""GetMany2"")]
+        public CommonResult GetMany2([FromBody] Get{{Entity}}InputModel inputModel)
+        {{
+            var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
+            dataQuery = dataQuery{{QueryCondition}};
             dataQuery = inputModel.GetSortExpression(dataQuery);
             var result = new PagedOutputModel<{{Entity}}>
             {{
@@ -105,7 +120,7 @@ namespace SnippetAdmin.Controllers
             var dicActionTemplate = @$"
 
         [HttpPost(""GetDic"")]
-        public async Task<CommonResult> GetDic()
+        public CommonResult GetDic()
         {{
             var query = _snippetAdminDbContext.Set<{{Entity}}>().Select(d=> new DicOutputModel{{
                 Key = d.{{KeyProperty}}.ToString(),
@@ -115,19 +130,19 @@ namespace SnippetAdmin.Controllers
         }}
 ";
 
-//            var searchModelTemplate = @$"
+            var searchModelTemplate = @$"
 
-//using System;
-//using SnippetAdmin.Models.Common;
+using System;
+using SnippetAdmin.Models.Common;
 
-//namespace SnippetAdmin.Models.{{Entity}}
-//{{    
-//    public class Get{{Entity}}InputModel: PagedInputModel
-//    {{
-//        {{Properties}}
-//    }}
-//}}
-//";
+namespace SnippetAdmin.Models.{{Entity}}
+{{    
+    public class Get{{Entity}}InputModel: PagedInputModel
+    {{
+        {{Properties}}
+    }}
+}}
+";
 
             var classes = ReflectionUtil.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null).ToList();
@@ -155,78 +170,81 @@ namespace SnippetAdmin.Controllers
                         source = source.Replace("{dicAction}", string.Empty);
                     }
 
+                    #region 生成getmany2接口用
+
                     // 生成查找模型
-                    //var propertyBuilder = new StringBuilder();
-                    //var conditinBuilder = new StringBuilder();
-                    //foreach (var property in classType.GetProperties())
-                    //{
-                    //    if (property.Name == "Id")
-                    //    {
-                    //        continue;
-                    //    }
-                    //    if (property.PropertyType == typeof(short) ||
-                    //        property.PropertyType == typeof(int) ||
-                    //        property.PropertyType == typeof(long) ||
-                    //        property.PropertyType == typeof(double) ||
-                    //        property.PropertyType == typeof(float) ||
-                    //        property.PropertyType == typeof(decimal) ||
-                    //        property.PropertyType == typeof(DateTime))
-                    //    {
-                    //        propertyBuilder.Append($"public {property.PropertyType.Name}? Upper{property.Name}{{get;set;}}");
-                    //        propertyBuilder.Append($"public {property.PropertyType.Name}? Lower{property.Name}{{get;set;}}");
-                    //        propertyBuilder.Append($"public {property.PropertyType.Name}? Equal{property.Name}{{get;set;}}");
+                    var propertyBuilder = new StringBuilder();
+                    var conditinBuilder = new StringBuilder();
+                    foreach (var property in classType.GetProperties())
+                    {
+                        if (property.Name == "Id")
+                        {
+                            continue;
+                        }
+                        if (property.PropertyType == typeof(short) ||
+                            property.PropertyType == typeof(int) ||
+                            property.PropertyType == typeof(long) ||
+                            property.PropertyType == typeof(double) ||
+                            property.PropertyType == typeof(float) ||
+                            property.PropertyType == typeof(decimal) ||
+                            property.PropertyType == typeof(DateTime))
+                        {
+                            propertyBuilder.Append($"public {property.PropertyType.Name}? Upper{property.Name}{{get;set;}}\n        ");
+                            propertyBuilder.Append($"public {property.PropertyType.Name}? Lower{property.Name}{{get;set;}}\n        ");
+                            propertyBuilder.Append($"public {property.PropertyType.Name}? Equal{property.Name}{{get;set;}}\n        ");
 
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})");
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})");
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                    //    }
-                    //    else if (property.PropertyType == typeof(short?) ||
-                    //            property.PropertyType == typeof(int?) ||
-                    //            property.PropertyType == typeof(long?) ||
-                    //            property.PropertyType == typeof(double?) ||
-                    //            property.PropertyType == typeof(float?) ||
-                    //            property.PropertyType == typeof(decimal?) ||
-                    //            property.PropertyType == typeof(DateTime?))
-                    //    {
-                    //        var propertyTypeName = property.PropertyType.GenericTypeArguments[0].Name;
+                            conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})\n        ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})\n        ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n        ");
+                        }
+                        else if (property.PropertyType == typeof(short?) ||
+                                property.PropertyType == typeof(int?) ||
+                                property.PropertyType == typeof(long?) ||
+                                property.PropertyType == typeof(double?) ||
+                                property.PropertyType == typeof(float?) ||
+                                property.PropertyType == typeof(decimal?) ||
+                                property.PropertyType == typeof(DateTime?))
+                        {
+                            var propertyTypeName = property.PropertyType.GenericTypeArguments[0].Name;
 
-                    //        propertyBuilder.Append($"public {propertyTypeName}? Upper{property.Name}{{get;set;}}");
-                    //        propertyBuilder.Append($"public {propertyTypeName}? Lower{property.Name}{{get;set;}}");
-                    //        propertyBuilder.Append($"public {propertyTypeName}? Equal{property.Name}{{get;set;}}");
-                    //        propertyBuilder.Append($"public bool? NotNull{property.Name}{{get;set;}}");
+                            propertyBuilder.Append($"public {propertyTypeName}? Upper{property.Name}{{get;set;}}\n        ");
+                            propertyBuilder.Append($"public {propertyTypeName}? Lower{property.Name}{{get;set;}}\n        ");
+                            propertyBuilder.Append($"public {propertyTypeName}? Equal{property.Name}{{get;set;}}\n        ");
+                            propertyBuilder.Append($"public bool? NotNull{property.Name}{{get;set;}}\n        ");
 
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})");
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})");
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                    //        conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}!=null)");
-                    //        conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && !inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}==null)");
-                    //    }
-                    //    else if (property.PropertyType == typeof(string))
-                    //    {
-                    //        propertyBuilder.Append($"public string Contained{property.Name}{{get;set;}}");
-                    //        propertyBuilder.Append($"public string Equal{property.Name}{{get;set;}}");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})\n                ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})\n                ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
+                            conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}!=null)\n                ");
+                            conditinBuilder.Append($".AndIf(inputModel.NotNull{property.Name}!=null && !inputModel.NotNull{property.Name}.Value,d=>d.{property.Name}==null)\n                ");
+                        }
+                        else if (property.PropertyType == typeof(string))
+                        {
+                            propertyBuilder.Append($"public string Contained{property.Name}{{get;set;}}\n        ");
+                            propertyBuilder.Append($"public string Equal{property.Name}{{get;set;}}\n        ");
 
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Contained{property.Name},d=>d.{property.Name}.Contains(inputModel.Contained{property.Name}))");
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                    //    }
-                    //    else if (property.PropertyType == typeof(bool))
-                    //    {
-                    //        propertyBuilder.Append($"public bool? Equal{property.Name}{{get;set;}}");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Contained{property.Name},d=>d.{property.Name}.Contains(inputModel.Contained{property.Name}))\n                ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
+                        }
+                        else if (property.PropertyType == typeof(bool))
+                        {
+                            propertyBuilder.Append($"public bool? Equal{property.Name}{{get;set;}}\n        ");
 
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                    //    }
-                    //    else if (property.PropertyType.IsEnum)
-                    //    {
-                    //        propertyBuilder.Append($"public {property.PropertyType}? Equal{property.Name}{{get;set;}}");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
+                        }
+                        else if (property.PropertyType.IsEnum)
+                        {
+                            propertyBuilder.Append($"public {property.PropertyType}? Equal{property.Name}{{get;set;}}\n        ");
 
-                    //        conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})");
-                    //    }
-                    //}
-                    //var searchModel = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
-                    //searchModel = searchModel.Replace("{Entity}", classType.Name);
-                    //syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModel));
+                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
+                        }
+                    }
+                    var searchModel = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
+                    searchModel = searchModel.Replace("{Entity}", classType.Name);
+                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModel));
+                    source = source.Replace("{QueryCondition}", conditinBuilder.ToString());
+                    #endregion
 
-                    //source = source.Replace("{QueryCondition}", conditinBuilder.ToString());
                     source = source.Replace("{Namespace}", classType.Namespace);
                     source = source.Replace("{Entity}", classType.Name);
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(source));
