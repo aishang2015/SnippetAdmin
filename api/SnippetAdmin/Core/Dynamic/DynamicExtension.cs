@@ -153,7 +153,7 @@ namespace SnippetAdmin.Models.{{Entity}}
             {
                 foreach (var classType in classes)
                 {
-                    var source = controllerTemplate;
+                    var controllerSource = controllerTemplate;
 
                     // 查找字典相关的属性,生成一个获取字典的请求
                     var dicKeyProperty = classType.GetProperties().FirstOrDefault(p => p.GetCustomAttribute(typeof(DynamicDicKeyAttribute)) != null);
@@ -163,11 +163,11 @@ namespace SnippetAdmin.Models.{{Entity}}
                         var dicAction = dicActionTemplate
                             .Replace("{KeyProperty}", dicKeyProperty.Name)
                             .Replace("{ValueProperty}", dicValueProperty.Name);
-                        source = source.Replace("{dicAction}", dicAction);
+                        controllerSource = controllerSource.Replace("{dicAction}", dicAction);
                     }
                     else
                     {
-                        source = source.Replace("{dicAction}", string.Empty);
+                        controllerSource = controllerSource.Replace("{dicAction}", string.Empty);
                     }
 
                     #region 生成getmany2接口用
@@ -193,9 +193,9 @@ namespace SnippetAdmin.Models.{{Entity}}
                             propertyBuilder.Append($"public {property.PropertyType.Name}? Lower{property.Name}{{get;set;}}\n        ");
                             propertyBuilder.Append($"public {property.PropertyType.Name}? Equal{property.Name}{{get;set;}}\n        ");
 
-                            conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})\n        ");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})\n        ");
-                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n        ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Upper{property.Name},d=>d.{property.Name}<=inputModel.Upper{property.Name})\n                ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Lower{property.Name},d=>d.{property.Name}>=inputModel.Lower{property.Name})\n                ");
+                            conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
                         }
                         else if (property.PropertyType == typeof(short?) ||
                                 property.PropertyType == typeof(int?) ||
@@ -239,15 +239,18 @@ namespace SnippetAdmin.Models.{{Entity}}
                             conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
                         }
                     }
-                    var searchModel = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
-                    searchModel = searchModel.Replace("{Entity}", classType.Name);
-                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModel));
-                    source = source.Replace("{QueryCondition}", conditinBuilder.ToString());
+                    var searchModelSource = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
+                    searchModelSource = searchModelSource.Replace("{Entity}", classType.Name);
+                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModelSource));
+                    controllerSource = controllerSource.Replace("{QueryCondition}", conditinBuilder.ToString());
                     #endregion
 
-                    source = source.Replace("{Namespace}", classType.Namespace);
-                    source = source.Replace("{Entity}", classType.Name);
-                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(source));
+                    controllerSource = controllerSource.Replace("{Namespace}", classType.Namespace);
+                    controllerSource = controllerSource.Replace("{Entity}", classType.Name);
+                    syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(controllerSource));
+
+                    FileUtil.WriteToFile("Dynamic", $"{classType.Name}Controller.cs", controllerSource);
+                    FileUtil.WriteToFile("Dynamic", $"Get{classType.Name}InputModel.cs", searchModelSource);
                 }
 
                 var compilation = CSharpCompilation.Create(
