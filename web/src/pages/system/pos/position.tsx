@@ -58,10 +58,11 @@ export default function () {
     }
 
     async function editPosition(id: any) {
-        let position = await PositionService.getPosition({id});
+        let position = await PositionService.getPosition({ id });
         positionEditForm.setFieldsValue({
             id: position.data.data.id,
             name: position.data.data.name,
+            code: position.data.data.code
         });
         setPositionModalVisible(true);
     }
@@ -79,7 +80,8 @@ export default function () {
     async function positionSubmit(values: any) {
         await PositionService.addOrUpdatePosition({
             id: values["id"],
-            name: values["name"]
+            name: values["name"],
+            code: values["code"]
         });
         await getPositions(page, size);
         setPositionModalVisible(false);
@@ -114,7 +116,15 @@ export default function () {
                             { max: 30, message: "职位名称过长" },
                         ]
                     }>
-                        <Input autoComplete="off" placeholder="请输入职位名称" />
+                        <Input autoComplete="off2" placeholder="请输入职位名称" />
+                    </Form.Item>
+                    <Form.Item name="code" label="职位编码" rules={
+                        [
+                            { required: true, message: "请输入职位编码" },
+                            { max: 32, message: "职位编码过长" },
+                        ]
+                    }>
+                        <Input autoComplete="off2" placeholder="请输入职位编码" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
                         <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>

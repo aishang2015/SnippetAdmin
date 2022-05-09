@@ -40,6 +40,10 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 return this.FailCommonResult(MessageConstant.POSITION_ERROR_0001);
             }
+            if (_dbContext.Positions.Any(p => p.Id != inputModel.Id && p.Code == inputModel.Code))
+            {
+                return this.FailCommonResult(MessageConstant.POSITION_ERROR_0002);
+            }
 
             var position = _dbContext.Positions.Find(inputModel.Id);
             if (position == null)
@@ -47,12 +51,13 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.Positions.Add(new Position()
                 {
                     Name = inputModel.Name,
-                    Code = GuidUtil.NewSequentialGuid().ToString("N")
+                    Code = inputModel.Code
                 });
             }
             else
             {
                 position.Name = inputModel.Name;
+                position.Code = inputModel.Code;
                 _dbContext.Positions.Update(position);
             }
             await _dbContext.SaveChangesAsync();
@@ -83,7 +88,8 @@ namespace SnippetAdmin.Controllers.RBAC
             return this.SuccessCommonResult(new GetPositionOutputModel
             {
                 Id = positoin.Id,
-                Name = positoin.Name
+                Name = positoin.Name,
+                Code = positoin.Code
             });
         }
 

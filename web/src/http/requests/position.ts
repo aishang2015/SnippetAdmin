@@ -31,7 +31,8 @@ export class PositionService {
 
 export type addOrUpdatePositionInput = {
     id: number | null,
-    name: string
+    name: string,
+    code: string
 }
 
 export type deletePositionInput = {
@@ -50,6 +51,7 @@ export type getPositionInput = {
 export type getPositionOutput = {
     id: number,
     name: string,
+    code: string,
 }
 
 export type getPositionsOutput = {

@@ -103,6 +103,7 @@ export default function Role() {
         await RoleService.addOrUpdateRole({
             id: values["id"],
             name: values["roleName"],
+            code: values["code"],
             remark: values["remark"],
             rights: values["rights"]
         });
@@ -164,6 +165,14 @@ export default function Role() {
                         ]
                     }>
                         <Input autoComplete="off" placeholder="请输入角色名" />
+                    </Form.Item>
+                    <Form.Item name="code" label="角色编码" rules={
+                        [
+                            { required: true, message: "请输入角色编码" },
+                            { max: 32, message: "角色编码过长" },
+                        ]
+                    }>
+                        <Input autoComplete="off" placeholder="请输入角色编码" />
                     </Form.Item>
                     <Form.Item name="remark" label="备注" rules={
                         [

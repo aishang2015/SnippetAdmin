@@ -34,7 +34,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取组织机构详细信息
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(GetOrganizationOutputModel))]
+        [CommonResultResponseType(typeof(CommonResult<GetOrganizationOutputModel>))]
         public async Task<CommonResult> GetOrganization([FromBody] IntIdInputModel inputModel,
             [FromServices] IMapper mapper)
         {
@@ -79,12 +79,17 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> CreateOrganization([FromBody] CreateOrganizationInputModel inputModel,
             [FromServices] IMapper mapper)
         {
+            // 组织编码重复
+            if (_dbContext.Organizations.Any(r => r.Code == inputModel.Code))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
+            }
+
             // 开启事务
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
             // 保存节点
             var newOrg = mapper.Map<Organization>(inputModel);
-            newOrg.Code = GuidUtil.NewSequentialGuid().ToString("N");
             var entity = await _dbContext.Organizations.AddAsync(newOrg);
             await _dbContext.SaveChangesAsync();
 
@@ -134,6 +139,25 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> UpdateOrganization([FromBody] UpdateOrganizationInputModel inputModel,
             [FromServices] IMapper mapper)
         {
+            // 组织编码重复
+            if (_dbContext.Organizations.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
+            }
+
+            // 组织不能移入自己树下的组织
+            var isChildNode = from orgTree in _dbContext.OrganizationTrees
+                              where orgTree.Ancestor == inputModel.Id && orgTree.Descendant == inputModel.UpId
+                              select orgTree;
+            if (isChildNode.Any())
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0009);
+            }
+
+            // 更新组织节点
+            var organization = mapper.Map<Organization>(inputModel);
+            _dbContext.Organizations.Update(organization);
+
             // 判断树节点是否被移动
             var upNode = (from orgTree in _dbContext.OrganizationTrees
                           where orgTree.Descendant == inputModel.Id &&
@@ -180,9 +204,6 @@ namespace SnippetAdmin.Controllers.RBAC
                 }
             }
 
-            var organization = mapper.Map<Organization>(inputModel);
-            _dbContext.Entry(organization).Property(o => o.Code).IsModified = false;
-            _dbContext.Organizations.Update(organization);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0003);
         }

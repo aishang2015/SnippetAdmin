@@ -25,6 +25,7 @@ export type getOrganizationTreeResult = {
 export type createOrganizationInput = {
     upId: number,
     name: string,
+    code: string,
     type: string,
     icon: string,
     iconId: string,
@@ -36,6 +37,7 @@ export type updateOrganizationInput = {
     upId: number,
     id: number,
     name: string,
+    code: string,
     type: string,
     icon: string,
     iconId: string,

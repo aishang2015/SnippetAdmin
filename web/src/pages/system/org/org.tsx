@@ -125,6 +125,7 @@ export default function Org() {
                 id: values["id"],
                 upId: values["upOrg"],
                 name: values["orgName"],
+                code: values["orgCode"],
                 type: values["orgType"],
                 icon: orgIcon,
                 iconId: orgIconId,
@@ -141,6 +142,7 @@ export default function Org() {
             await OrganizationService.createOrganization({
                 upId: values["upOrg"],
                 name: values["orgName"],
+                code: values["orgCode"],
                 type: values["orgType"],
                 icon: orgIcon,
                 iconId: orgIconId,
@@ -281,6 +283,14 @@ export default function Org() {
                         ]
                     }>
                         <Input placeholder="请输入组织名称" allowClear={true} autoComplete="off"></Input>
+                    </Form.Item>
+                    <Form.Item name="orgCode" label="组织编码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} required rules={
+                        [
+                            { required: true, message: "请输入组织编码" },
+                            { max: 32, message: "组织编码过长" },
+                        ]
+                    }>
+                        <Input placeholder="请输入组织编码" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="orgType" label="组织类型" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
                         <Select placeholder="请选择组织类型" allowClear={true}>

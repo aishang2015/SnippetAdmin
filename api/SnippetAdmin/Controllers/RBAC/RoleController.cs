@@ -91,6 +91,10 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 return this.FailCommonResult(MessageConstant.ROLE_ERROR_0007);
             }
+            if (_dbContext.Roles.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
+            {
+                return this.FailCommonResult(MessageConstant.ROLE_ERROR_0008);
+            }
 
             using var trans = await _dbContext.Database.BeginTransactionAsync();
 
@@ -99,13 +103,11 @@ namespace SnippetAdmin.Controllers.RBAC
             if (role != null)
             {
                 _mapper.Map(inputModel, role);
-                _dbContext.Entry(role).Property(r => r.Code).IsModified = false;
                 _dbContext.Roles.Update(role);
             }
             else
             {
                 role = _mapper.Map<SnippetAdminRole>(inputModel);
-                role.Code = GuidUtil.NewSequentialGuid().ToString("N");
                 role = _dbContext.Roles.Add(role).Entity;
             }
             await _dbContext.SaveChangesAsync();

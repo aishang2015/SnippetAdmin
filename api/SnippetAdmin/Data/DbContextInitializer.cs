@@ -126,7 +126,7 @@ namespace SnippetAdmin.Data
             _dbContext.Elements.Add(new Element { Id = 38, Name = "创建或编辑组织类型", Identity = "add-update-org-type", Type = ElementType.ButtonLink, AccessApi = "api/Organization/AddOrUpdateOrganizationType" });
             _dbContext.Elements.Add(new Element { Id = 39, Name = "删除组织类型", Identity = "remove-org-type", Type = ElementType.ButtonLink, AccessApi = "api/Organization/RemoveOrganizationType" });
             _dbContext.Elements.Add(new Element { Id = 40, Name = "职位信息", Identity = "position", Type = ElementType.Menu, AccessApi = "" });
-            _dbContext.Elements.Add(new Element { Id = 41, Name = "页面", Identity = "position-page", Type = ElementType.ButtonLink, AccessApi = "api/Position/GetPositions" });
+            _dbContext.Elements.Add(new Element { Id = 41, Name = "页面", Identity = "position-page", Type = ElementType.ButtonLink, AccessApi = "api/Position/GetPositions,api/Position/GetPosition" });
             _dbContext.Elements.Add(new Element { Id = 42, Name = "添加", Identity = "add-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/AddOrUpdatePosition" });
             _dbContext.Elements.Add(new Element { Id = 45, Name = "编辑 ", Identity = "edit-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/AddOrUpdatePosition" });
             _dbContext.Elements.Add(new Element { Id = 46, Name = "删除", Identity = "delete-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/DeletePosition" });
