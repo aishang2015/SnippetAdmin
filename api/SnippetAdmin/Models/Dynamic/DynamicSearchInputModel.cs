@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace SnippetAdmin.Models.Dynamic
 {
-    public class DynamicSearchInputModel : PagedInputModel
+    public record DynamicSearchInputModel : PagedInputModel
     {
         public List<DynamicFilter> Filters { get; set; }
 

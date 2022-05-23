@@ -4,7 +4,7 @@ using SnippetAdmin.Core;
 
 namespace SnippetAdmin.Models.RBAC.User
 {
-    public class AddOrgMemberInputModel
+    public record AddOrgMemberInputModel
     {
         public int OrgId { get; set; }
 

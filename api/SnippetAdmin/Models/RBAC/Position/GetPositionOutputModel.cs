@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Position
 {
-    public class GetPositionOutputModel
+    public record GetPositionOutputModel
     {
         public int Id { get; set; }
 

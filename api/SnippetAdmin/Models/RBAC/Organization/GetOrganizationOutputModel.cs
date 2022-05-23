@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Organization
 {
-    public class GetOrganizationOutputModel
+    public record GetOrganizationOutputModel
     {
         public int Id { get; set; }
 

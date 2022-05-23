@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Scheduler.Job
 {
-    public class AddJobInputModel
+    public record AddJobInputModel
     {
 
         public string Name { get; set; }

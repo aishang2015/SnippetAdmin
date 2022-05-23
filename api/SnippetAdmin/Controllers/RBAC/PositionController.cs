@@ -98,7 +98,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> GetPositions([FromBody] PagedInputModel inputModel)
         {
             var query = _dbContext.Positions.AsQueryable();
-            query = inputModel.GetSortExpression(query);
+            query = query.Sort(inputModel.Sorts);
 
             var result = new PagedOutputModel<GetPositionsOutputModel>()
             {

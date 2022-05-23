@@ -57,7 +57,7 @@ namespace SnippetAdmin.Controllers
         {{
             var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
             dataQuery = inputModel.GetFilterExpression(dataQuery);
-            dataQuery = inputModel.GetSortExpression(dataQuery);
+            dataQuery = dataQuery.Sort(inputModel.Sorts);
             var result = new PagedOutputModel<{{Entity}}>
             {{
                 Total = dataQuery.Count(),
@@ -71,7 +71,7 @@ namespace SnippetAdmin.Controllers
         {{
             var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
             dataQuery = dataQuery{{QueryCondition}};
-            dataQuery = inputModel.GetSortExpression(dataQuery);
+            dataQuery = dataQuery.Sort(inputModel.Sorts);
             var result = new PagedOutputModel<{{Entity}}>
             {{
                 Total = dataQuery.Count(),
@@ -137,7 +137,7 @@ using SnippetAdmin.Models.Common;
 
 namespace SnippetAdmin.Models.{{Entity}}
 {{    
-    public class Get{{Entity}}InputModel: PagedInputModel
+    public record Get{{Entity}}InputModel: PagedInputModel
     {{
         {{Properties}}
     }}

@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Position
 {
-    public class AddOrUpdatePositionInputModel
+    public record AddOrUpdatePositionInputModel
     {
         public int? Id { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Scheduler.JobRecord
 {
-    public class RemoveJobRecordsInputModel
+    public record RemoveJobRecordsInputModel
     {
         public int[] RecordIds { get; set; }
     }

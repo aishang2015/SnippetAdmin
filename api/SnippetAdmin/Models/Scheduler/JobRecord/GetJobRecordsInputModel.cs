@@ -2,7 +2,7 @@
 
 namespace SnippetAdmin.Models.Scheduler.JobRecord
 {
-    public class GetJobRecordsInputModel : PagedInputModel
+    public record GetJobRecordsInputModel : PagedInputModel
     {
         public int? JobState { get; set; }
 

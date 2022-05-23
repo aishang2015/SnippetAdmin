@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Common
 {
-    public class DicOutputModel
+    public record DicOutputModel
     {
         public string Key { get; set; }
 

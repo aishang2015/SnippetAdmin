@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.User
 {
-    public class GetUserOutputModel
+    public record GetUserOutputModel
     {
         public int Id { get; set; }
 

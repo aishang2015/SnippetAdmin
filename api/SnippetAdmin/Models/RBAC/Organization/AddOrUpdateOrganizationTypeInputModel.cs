@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Organization
 {
-    public class AddOrUpdateOrganizationTypeInputModel
+    public record AddOrUpdateOrganizationTypeInputModel
     {
         public int? Id { get; set; }
 

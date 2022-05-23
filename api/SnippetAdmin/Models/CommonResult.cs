@@ -3,7 +3,7 @@
     /// <summary>
     /// 通用action返回模型
     /// </summary>
-    public class CommonResult
+    public record CommonResult
     {
         /// <summary>
         /// 业务处理结果
@@ -24,7 +24,7 @@
     /// <summary>
     /// 通用action返回模型泛型
     /// </summary>
-    public class CommonResult<T> : CommonResult where T : class
+    public record CommonResult<T> : CommonResult where T : class
     {
         /// <summary>
         /// 处理返回数据

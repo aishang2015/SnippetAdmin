@@ -4,7 +4,7 @@ using SnippetAdmin.Core;
 
 namespace SnippetAdmin.Models.RBAC.Organization
 {
-    public class UpdateOrganizationInputModel
+    public record UpdateOrganizationInputModel
     {
         public int? UpId { get; set; }
 

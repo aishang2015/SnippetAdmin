@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Organization
 {
-    public class GetOrganizationTreeOutputModel
+    public record GetOrganizationTreeOutputModel
     {
         public string Title { get; set; }
 

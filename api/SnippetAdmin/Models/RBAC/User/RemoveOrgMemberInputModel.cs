@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.User
 {
-    public class RemoveOrgMemberInputModel
+    public record RemoveOrgMemberInputModel
     {
         public int OrgId { get; set; }
 

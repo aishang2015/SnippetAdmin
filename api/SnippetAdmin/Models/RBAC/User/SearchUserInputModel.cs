@@ -2,7 +2,7 @@
 
 namespace SnippetAdmin.Models.RBAC.User
 {
-    public class SearchUserInputModel : PagedInputModel
+    public record SearchUserInputModel : PagedInputModel
     {
         public string UserName { get; set; }
 

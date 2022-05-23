@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Common
 {
-    public class IntIdInputModel
+    public record IntIdInputModel
     {
         public int Id { get; set; }
     }

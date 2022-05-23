@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Position
 {
-    public class DeletePositionInputModel
+    public record DeletePositionInputModel
     {
         public int Id { get; set; }
     }

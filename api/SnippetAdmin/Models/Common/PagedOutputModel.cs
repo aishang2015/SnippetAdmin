@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Common
 {
-    public class PagedOutputModel<T>
+    public record PagedOutputModel<T>
     {
         public int Total { get; set; }
 

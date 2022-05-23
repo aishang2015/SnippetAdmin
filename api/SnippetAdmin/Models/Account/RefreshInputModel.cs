@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Account
 {
-    public class RefreshInputModel
+    public record RefreshInputModel
     {
         public string UserName { get; set; }
 

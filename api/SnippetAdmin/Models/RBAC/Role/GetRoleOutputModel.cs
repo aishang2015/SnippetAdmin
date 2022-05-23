@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Role
 {
-    public class GetRoleOutputModel
+    public record GetRoleOutputModel
     {
         public int Id { get; set; }
 

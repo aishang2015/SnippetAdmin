@@ -4,7 +4,7 @@ using SnippetAdmin.Core;
 
 namespace SnippetAdmin.Models.RBAC.Element
 {
-    public class CreateElementInputModel
+    public record CreateElementInputModel
     {
         public int? UpId { get; set; }
 

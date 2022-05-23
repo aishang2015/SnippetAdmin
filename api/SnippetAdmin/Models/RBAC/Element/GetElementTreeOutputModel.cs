@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.RBAC.Element
 {
-    public class GetElementTreeOutputModel
+    public record GetElementTreeOutputModel
     {
         public string Title { get; set; }
 

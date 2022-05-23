@@ -4,7 +4,7 @@ using SnippetAdmin.Core;
 
 namespace SnippetAdmin.Models.RBAC.User
 {
-    public class AddOrUpdateUserInputModel
+    public record AddOrUpdateUserInputModel
     {
         public int? Id { get; set; }
 
