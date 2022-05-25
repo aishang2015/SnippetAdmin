@@ -12,9 +12,10 @@ import { Axios } from './http/request';
 import { ReduxStore } from './redux/reduxStore';
 import { ConfigProvider } from 'antd';
 import { OauthService } from './common/oauth';
+import { RefreshService } from './service/refreshService';
 
 Configuration.init().then(
-  success => {
+  async success => {
 
     // 初始化axio实例
     Axios.initAxiosInstance();
@@ -24,6 +25,9 @@ Configuration.init().then(
 
     // 初始化redux
     const store = ReduxStore.initReduxStore();
+
+    // 刷新token
+    await RefreshService.refreshTokenAsync();
 
     ReactDOM.render(
       <React.StrictMode>

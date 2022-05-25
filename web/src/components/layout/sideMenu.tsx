@@ -1,18 +1,18 @@
 import Sider from "antd/lib/layout/Sider";
 import React from "react";
 import { Link } from 'react-router-dom';
-import { Menu } from "antd";
+import { Button, Menu } from "antd";
 import { connect } from "react-redux";
 import DynamicAntdTheme from 'dynamic-antd-theme';
 import { Constants } from "../../common/constants";
 import { EventService } from "../../common/event";
 import { StorageService } from "../../common/storage";
 
-interface INavMenuProps {
+interface ISideMenuProps {
     collapsed: boolean;
 }
 
-class NavMenu extends React.Component<INavMenuProps, any>{
+class SideMenu extends React.Component<ISideMenuProps, any>{
 
     constructor(props: any) {
         super(props);
@@ -94,4 +94,4 @@ export default connect(
     (state: any) => ({
         collapsed: state.NavCollapsedReducer.collapsed
     })
-)(NavMenu);
+)(SideMenu);

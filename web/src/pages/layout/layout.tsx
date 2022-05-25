@@ -1,8 +1,8 @@
 import { Layout, Space, Tabs } from 'antd';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import NavMenu from '../../components/menu/navMenu';
-import NavHeader from '../../components/header/navHeader';
+import SideMenu from '../../components/layout/sideMenu';
+import NavHeader from '../../components/layout/navHeader';
 import { Configuration } from '../../common/config';
 import './layout.less';
 import { connect } from 'react-redux';
@@ -10,6 +10,9 @@ import { Dispatch } from 'redux';
 import { onReceiveMessage } from '../../redux/notification/notificationCreator';
 import { Constants } from '../../common/constants';
 import { EventService } from '../../common/event';
+import { refresh } from '../../http/requests/account';
+import { StorageService } from '../../common/storage';
+import { RefreshService } from '../../service/refreshService';
 
 const signalR = require("@microsoft/signalr");
 
@@ -22,6 +25,9 @@ class BasicLayout extends React.Component<any, any> {
     initialPanes = [
         { title: '主页', key: '/home', closable: false }
     ];
+
+    // 刷新token
+    backInterval: any = null;
 
     constructor(props: any) {
         super(props);
@@ -56,6 +62,16 @@ class BasicLayout extends React.Component<any, any> {
         connection.onclose(startFun);
 
         await startFun();
+
+        this.backInterval = setInterval(async () => {
+
+            await RefreshService.refreshTokenAsync();
+
+        }, 1000 * 60 * 10)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.backInterval);
     }
 
     componentDidUpdate() {
@@ -133,11 +149,11 @@ class BasicLayout extends React.Component<any, any> {
 
     render = () => (
         <Layout style={{ minHeight: '100vh', maxHeight: '100vh' }}>
-            <NavMenu />
+            <SideMenu />
             <Layout>
                 <NavHeader />
                 <Content>
-                    <Content className="tab_container">
+                    {/*                     <Content className="tab_container">
                         <Tabs type="editable-card" hideAdd={true} onChange={this.onChange} activeKey={this.state.activeKey}
                             onEdit={this.onEdit}>
                             {this.state.panes.map((pane: any) => (
@@ -149,7 +165,7 @@ class BasicLayout extends React.Component<any, any> {
                                 </Tabs.TabPane>
                             ))}
                         </Tabs>
-                    </Content>
+                    </Content> */}
                     <Content className="screen_container">
                         {this.props.children}
                     </Content>

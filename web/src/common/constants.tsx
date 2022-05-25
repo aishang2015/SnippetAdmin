@@ -1,4 +1,4 @@
-import { faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { constants } from 'buffer';
 
@@ -7,11 +7,11 @@ export class Constants {
     static RouteInfo = [
         { path: '/home', name: '主页', identify: 'home', icon: <FontAwesomeIcon icon={faHome} fixedWidth /> },
         {
-            path: '', name: 'RBAC管理', identify: 'rbac', icon: <FontAwesomeIcon icon={faUniversalAccess} fixedWidth />, children: [
+            path: '', name: '权限管理', identify: 'rbac', icon: <FontAwesomeIcon icon={faUsers} fixedWidth />, children: [
                 { path: '/user', name: '用户信息', identify: 'user', icon: <FontAwesomeIcon icon={faUser} fixedWidth /> },
                 { path: '/role', name: '角色信息', identify: 'role', icon: <FontAwesomeIcon icon={faUserTag} fixedWidth /> },
                 { path: '/org', name: '组织信息', identify: 'org', icon: <FontAwesomeIcon icon={faSitemap} fixedWidth /> },
-                { path: '/pos', name: '职位信息', identify: 'org', icon: <FontAwesomeIcon icon={faUsers} fixedWidth /> },
+                { path: '/pos', name: '职位信息', identify: 'org', icon: <FontAwesomeIcon icon={faUserFriends} fixedWidth /> },
                 { path: '/page', name: '页面权限', identify: 'permission', icon: <FontAwesomeIcon icon={faColumns} fixedWidth /> },
             ]
         },

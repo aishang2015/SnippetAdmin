@@ -89,6 +89,16 @@ namespace SnippetAdmin.Controllers.Scheduler
         [CommonResultResponseType]
         public async Task<CommonResult> UpdateJob(UpdateJobInputModel inputModel)
         {
+            var now = DateTime.UtcNow;
+            var nextTime = CronExpression.Parse(inputModel.Cron, CronFormat.IncludeSeconds)
+                .GetNextOccurrence(now, TimeZoneInfo.Local);
+
+            // 如果取不到下次时间，则直接抛出异常
+            if (nextTime == null)
+            {
+                return this.FailCommonResult(MessageConstant.JOB_ERROR_0002);
+            }
+
             _dbContext.Jobs.Update(new Data.Entity.Scheduler.Job
             {
                 Id = inputModel.Id,

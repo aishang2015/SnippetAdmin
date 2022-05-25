@@ -130,6 +130,7 @@
         public static readonly (string, string) JOB_INFO_0006 = ("JOB_INFO_0006", "任务开始执行！");
 
         public static readonly (string, string) JOB_ERROR_0001 = ("JOB_ERROR_0001", "没有找到该任务！");
+        public static readonly (string, string) JOB_ERROR_0002 = ("JOB_ERROR_0002", "Cron表达式错误！");
 
         #endregion UserController
     }

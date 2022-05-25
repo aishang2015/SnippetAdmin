@@ -28,7 +28,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         {
             var q = from jr in _dbContext.JobRecords
                     join j in _dbContext.Jobs on jr.JobId equals j.Id
-                    orderby jr.BeginTime descending
+                    orderby jr.Id descending
                     select new GetJobRecordsOutputModel
                     {
                         Id = jr.Id,

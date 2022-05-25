@@ -220,9 +220,6 @@ namespace SnippetAdmin.Controllers
                 default:
                     return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
             }
-
-
-
         }
 
         /// <summary>
@@ -266,9 +263,9 @@ namespace SnippetAdmin.Controllers
                 var token = _jwtFactory.GenerateJwtToken(user.UserName);
                 var identifies = await GetUserFrontRightsAsync(user);
                 return this.SuccessCommonResult(
-                    MessageConstant.ACCOUNT_INFO_0001,
+                    string.Empty, string.Empty,
                     new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies, refreshToken.Content)
-                );
+                ); ;
             }
             return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
         }
