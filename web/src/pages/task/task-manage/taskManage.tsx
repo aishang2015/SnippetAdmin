@@ -41,7 +41,7 @@ export default function TaskManage(props: any) {
             render: (data: any, record: any) => (
                 <Switch defaultChecked={data}
                     checkedChildren="启动"
-                    unCheckedChildren="禁用"
+                    unCheckedChildren="暂停"
                     onChange={(checked, event) => activeChange(checked, record.id)}></Switch>
             ),
         },

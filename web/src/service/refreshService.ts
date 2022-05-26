@@ -13,14 +13,21 @@ export class RefreshService {
 
         if (token && expires && userName && refreshToken) {
 
-            let response = await refresh(userName, token, refreshToken);
+            try {
+                let response = await refresh(userName, token, refreshToken);
 
-            if (response.data.isSuccess) {
-                let result = response.data.data;
+                if (response.data.isSuccess) {
+                    let result = response.data.data;
 
-                // 保存登录信息
-                StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(),
-                    result.identifies, result.refreshToken);
+                    // 保存登录信息
+                    StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(),
+                        result.identifies, result.refreshToken);
+                }
+            } catch (e) {
+
+                // 清空登录信息
+                StorageService.clearLoginStore();
+                window.location.reload();
             }
         }
     }

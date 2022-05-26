@@ -18,9 +18,14 @@ namespace SnippetAdmin.Controllers.Scheduler
     {
         private readonly SnippetAdminDbContext _dbContext;
 
-        public JobController(SnippetAdminDbContext dbContext)
+        private readonly JobSchedulerService _jobSchedulerService;
+
+        public JobController(
+            SnippetAdminDbContext dbContext,
+            JobSchedulerService jobSchedulerService)
         {
             _dbContext = dbContext;
+            _jobSchedulerService = jobSchedulerService;
         }
 
         [HttpPost]
@@ -66,6 +71,16 @@ namespace SnippetAdmin.Controllers.Scheduler
             job.IsActive = inputModel.IsActive;
             _dbContext.Update(job);
             await _dbContext.SaveChangesAsync();
+
+            if (inputModel.IsActive)
+            {
+                _jobSchedulerService.ActivateJob(job.Name);
+            }
+            else
+            {
+                _jobSchedulerService.PauseJob(job.Name);
+            }
+
             return this.SuccessCommonResult(inputModel.IsActive ?
                 MessageConstant.JOB_INFO_0004 :
                 MessageConstant.JOB_INFO_0005);
@@ -119,6 +134,10 @@ namespace SnippetAdmin.Controllers.Scheduler
             _dbContext.Jobs.Remove(job);
             _dbContext.JobRecords.RemoveRange(jobRecords);
             await _dbContext.SaveChangesAsync();
+
+            _jobSchedulerService.CancelJob(job.Name);
+
+            // 删除后把任务取消
             return this.SuccessCommonResult(MessageConstant.JOB_INFO_0002);
         }
 
@@ -141,7 +160,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         public async Task<CommonResult> RunJob(RunJobInputModel inputModel)
         {
             var job = await _dbContext.Jobs.FindAsync(inputModel.Id);
-            JobSchedulerService.ActiveJobOnce(job);
+            _jobSchedulerService.ActiveJobOnce(job);
             return this.SuccessCommonResult(MessageConstant.JOB_INFO_0006);
         }
 

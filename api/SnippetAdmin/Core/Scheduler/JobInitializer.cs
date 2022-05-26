@@ -18,8 +18,8 @@ namespace SnippetAdmin.Core.Scheduler
 
                    // 查看ijob的特性定义
                    var attributeObj = jobType.GetCustomAttributes(typeof(SchedulerAttribute), false)
-                        .FirstOrDefault();
-                   if (attributeObj == null)
+                        .FirstOrDefault() as SchedulerAttribute;
+                   if (attributeObj == null || attributeObj.IsIgnore)
                    {
                        continue;
                    }

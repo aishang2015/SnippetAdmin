@@ -35,7 +35,7 @@ export class Axios {
             baseURL: Configuration.BaseUrl,
         });
 
-        // 添加检测token过期时间拦截器
+       /*  // 添加检测token过期时间拦截器
         Axios.instance.interceptors.request.use(
             async config => {
                 let userName = localStorage.getItem("user-name");
@@ -73,7 +73,7 @@ export class Axios {
             error => {
                 return Promise.reject(error);
             }
-        );
+        ); */
 
 
         // 添加认证头拦截器

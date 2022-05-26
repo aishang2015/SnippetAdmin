@@ -100,7 +100,17 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
     showFullScreen() {
 
         let element: any = document.documentElement;
-        if (!this.state.isExpand) {
+
+        let doc = document as any;
+        let isFullScreen = (
+            doc.fullscreenElement ||
+            doc.mozFullscreenElement ||
+            doc.msFullscreenElement ||
+            doc.webkitFullscreenElement ||
+            null
+        )
+
+        if (!isFullScreen) {
             if (element.requestFullscreen) {
                 element.requestFullscreen();
             } else if (element.msRequestFullscreen) {
@@ -122,7 +132,7 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
                 doc.webkitExitFullscreen();
             }
         }
-        this.setState({ isExpand: !this.state.isExpand });
+        this.setState({ isExpand: !isFullScreen });
     }
 
     logout() {

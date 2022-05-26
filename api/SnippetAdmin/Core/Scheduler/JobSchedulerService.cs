@@ -1,4 +1,5 @@
 ﻿using Cronos;
+using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Core.Scheduler.Exceptions;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
@@ -14,13 +15,16 @@ namespace SnippetAdmin.Core.Scheduler
     /// </summary>
     public class JobSchedulerService : BackgroundService
     {
-        private static BlockingCollection<Job> _jobQueue = new BlockingCollection<Job>();
+        private BlockingCollection<Job> _jobQueue = new BlockingCollection<Job>();
 
+        /// <summary>
+        /// job和对应的实体类的字典
+        /// </summary>
         private readonly Dictionary<string, Type> _typeDic = new();
 
-        private readonly ConcurrentDictionary<string, DateTime> _lockDic = new();
+        private readonly ConcurrentDictionary<string, ManualResetEvent> _resetEventDic = new();
 
-        private readonly ConcurrentDictionary<int, CancellationToken> _cancelTokenDic = new();
+        private readonly ConcurrentDictionary<string, CancellationTokenSource> _jobCancelTokenDic = new();
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -38,13 +42,20 @@ namespace SnippetAdmin.Core.Scheduler
 
             jobs.ForEach(job =>
             {
+                _jobCancelTokenDic.TryAdd(job.Name, new CancellationTokenSource());
                 Task.Factory.StartNew(async () =>
                 {
+                    // 判断是否激活的任务
+                    _resetEventDic[job.Name].WaitOne();
+
                     // 列表里有旧任务先执行旧任务
                     RunOldJob(job);
 
-                    while (true)
+                    while (!_jobCancelTokenDic[job.Name].Token.IsCancellationRequested)
                     {
+                        // 判断是否激活的任务
+                        _resetEventDic[job.Name].WaitOne();
+
                         // 取得当前任务的下次执行的时间
                         var now = DateTime.UtcNow;
                         var nextTime = CronExpression.Parse(job.Cron, CronFormat.IncludeSeconds)
@@ -77,60 +88,6 @@ namespace SnippetAdmin.Core.Scheduler
 
                 }, TaskCreationOptions.LongRunning);
             });
-
-            //while (!stoppingToken.IsCancellationRequested)
-            //{
-            //    jobs.AsParallel().ForAll(job =>
-            //    {
-            //        // 取得当前任务的下次执行的时间
-            //        var now = DateTime.UtcNow;
-            //        var nextTime = CronExpression.Parse(job.Cron, CronFormat.IncludeSeconds)
-            //            .GetNextOccurrence(now, TimeZoneInfo.Local);
-
-            //        // 如果取不到下次时间，则直接抛出异常
-            //        if (nextTime == null)
-            //        {
-            //            throw new WrongCronException($"Job '{job.Name}' can not get the next run time from the cron expression.");
-            //        }
-
-            //        var delay = nextTime?.Subtract(now);
-
-            //        // 距离下次执行时间小于30秒，才会创建任务进入等待状态
-            //        if (delay?.Seconds > 30 * 1000)
-            //        {
-            //            return;
-            //        }
-
-            //        // 没有执行过，则执行最近一次
-            //        if (!_lockDic.ContainsKey(job.Name))
-            //        {
-            //            _lockDic.TryAdd(job.Name, nextTime.Value);
-            //        }
-            //        else
-            //        {
-            //            // 判断此次任务是否已经执行
-            //            if (_lockDic[job.Name] == nextTime)
-            //            {
-            //                return;
-            //            }
-
-            //            // 标记此次任务开始执行
-            //            _lockDic[job.Name] = nextTime.Value;
-            //        }
-
-            //        // 这里虽然失去引用但是task会一直运行到结束，并不会被GC
-            //        // https://stackoverflow.com/questions/2782802/can-net-task-instances-go-out-of-scope-during-run
-            //        // https://stackoverflow.com/questions/18091002/what-gotchas-exist-with-tasks-and-garbage-collection
-            //        // 创建异步任务
-            //        RunNewJob(job, delay);
-            //    });
-
-            //    // 运行及时任务
-            //    while (_jobQueue.TryTake(out Job job))
-            //    {
-            //        RunNewJob(job, TimeSpan.Zero, TriggerMode.Manual);
-            //    }
-            //}
         }
 
         /// <summary>
@@ -144,9 +101,10 @@ namespace SnippetAdmin.Core.Scheduler
                 using var scope = _serviceProvider.CreateScope();
                 using var taskDbcontext = scope.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
                 var record = taskDbcontext.JobRecords.FirstOrDefault(jobRecord =>
-                    jobRecord.JobId == job.Id && jobRecord.JobState == JobState.Prepared);
+                    jobRecord.JobId == job.Id &&
+                    (jobRecord.JobState == JobState.Prepared || jobRecord.JobState == JobState.IsRunning));
 
-                if(record != null)
+                if (record != null)
                 {
                     // 执行任务,并计时
                     var jobInstance = scope.ServiceProvider.GetRequiredService(_typeDic[job.Name]) as IJob;
@@ -154,12 +112,8 @@ namespace SnippetAdmin.Core.Scheduler
                     var sw = new Stopwatch();
                     try
                     {
-                        // 保存取消token
-                        var source = new CancellationTokenSource();
-                        _cancelTokenDic.TryAdd(record.Id, source.Token);
-
                         sw.Start();
-                        await jobInstance.DoAsync(source.Token);
+                        await jobInstance.DoAsync(_jobCancelTokenDic[job.Name].Token);
                         sw.Stop();
 
                         // 结束时保存执行时长
@@ -182,9 +136,6 @@ namespace SnippetAdmin.Core.Scheduler
                         record.Duration = sw.ElapsedMilliseconds;
                         taskDbcontext.JobRecords.Update(record);
                         await taskDbcontext.SaveChangesAsync();
-
-                        // 用完了移出
-                        _cancelTokenDic.TryRemove(record.Id, out var token);
                     }
                 }
             }).Start();
@@ -195,6 +146,10 @@ namespace SnippetAdmin.Core.Scheduler
         /// </summary>
         private void RunNewJob(Job job, TimeSpan? delay, TriggerMode triggerMode = TriggerMode.Auto)
         {
+            // task被gc回收的问题
+            // https://stackoverflow.com/questions/2782802/can-net-task-instances-go-out-of-scope-during-run
+            // https://stackoverflow.com/questions/18091002/what-gotchas-exist-with-tasks-and-garbage-collection
+
             new Task(async () =>
             {
                 using var scope = _serviceProvider.CreateScope();
@@ -209,31 +164,30 @@ namespace SnippetAdmin.Core.Scheduler
                     JobState = JobState.Prepared,
                     TriggerMode = triggerMode
                 });
-                await taskDbcontext.SaveChangesAsync();
 
-                // 延迟执行
-                await Task.Delay(delay.Value);
-
-                // 开始执行,记录开始时间
-                var startTime = DateTime.Now;
-                record.Entity.JobState = JobState.IsRunning;
-                record.Entity.BeginTime = startTime;
-                taskDbcontext.JobRecords.Update(record.Entity);
-                await taskDbcontext.SaveChangesAsync();
-
-                // 执行任务,并计时
+                // 计时器
                 var sw = new Stopwatch();
+                var startTime = DateTime.Now;
                 try
                 {
-                    // 保存取消token
-                    var source = new CancellationTokenSource();
-                    _cancelTokenDic.TryAdd(record.Entity.Id, source.Token);
+                    await taskDbcontext.SaveChangesAsync();
+
+                    // 延迟执行
+                    await Task.Delay(delay.Value);
+
+                    // 开始执行,记录开始时间
+                    startTime = DateTime.Now;
+                    record.Entity.JobState = JobState.IsRunning;
+                    record.Entity.BeginTime = startTime;
+                    taskDbcontext.JobRecords.Update(record.Entity);
+                    await taskDbcontext.SaveChangesAsync();
 
                     sw.Start();
-                    await jobInstance.DoAsync(source.Token);
+                    await jobInstance.DoAsync(_jobCancelTokenDic[job.Name].Token);
                     sw.Stop();
 
                     // 结束时保存执行时长
+                    record.Entity.Duration = sw.ElapsedMilliseconds;
                     record.Entity.JobState = JobState.Successed;
                 }
                 catch (Exception e)
@@ -248,13 +202,8 @@ namespace SnippetAdmin.Core.Scheduler
                     var jobInfo = taskDbcontext.Jobs.Find(job.Id);
                     jobInfo.LastTime = startTime;
                     taskDbcontext.Jobs.Update(jobInfo);
-
-                    record.Entity.Duration = sw.ElapsedMilliseconds;
                     taskDbcontext.JobRecords.Update(record.Entity);
                     await taskDbcontext.SaveChangesAsync();
-
-                    // 用完了移出
-                    _cancelTokenDic.TryRemove(record.Entity.Id, out var token);
                 }
             }).Start();
         }
@@ -270,12 +219,15 @@ namespace SnippetAdmin.Core.Scheduler
             await Task.Delay(3 * 1000, stoppingToken);
 
             var dbContext = scope.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-            var jobs = dbContext.CacheSet<Job>().Where(j => j.IsActive).ToList();
+            var jobs = dbContext.CacheSet<Job>().ToList();
 
             jobs.ForEach(j =>
             {
                 var type = ReflectionUtil.GetAssemblyTypes().First(t => t.FullName == j.Name);
                 _typeDic.TryAdd(j.Name, type);
+
+                var resetEvent = new ManualResetEvent(j.IsActive);
+                _resetEventDic.TryAdd(j.Name, resetEvent);
             });
 
             return jobs;
@@ -285,9 +237,39 @@ namespace SnippetAdmin.Core.Scheduler
         /// 立即执行一个任务
         /// </summary>
         /// <param name="job"></param>
-        public static void ActiveJobOnce(Job job)
+        public void ActiveJobOnce(Job job)
         {
             _jobQueue.Add(job);
+        }
+
+        /// <summary>
+        /// 激活任务
+        /// </summary>
+        public void ActivateJob(string jobName)
+        {
+            // 设置为有信号
+            _resetEventDic[jobName].Set();
+        }
+
+        /// <summary>
+        /// 暂停任务
+        /// </summary>
+        public void PauseJob(string jobName)
+        {
+            // 设置为无信号
+            _resetEventDic[jobName].Reset();
+        }
+
+        /// <summary>
+        /// 取消任务
+        /// </summary>
+        /// <param name="jobName"></param>
+        public void CancelJob(string jobName)
+        {
+            if (!_jobCancelTokenDic[jobName].IsCancellationRequested)
+            {
+                _jobCancelTokenDic[jobName].Cancel();
+            }
         }
     }
 }

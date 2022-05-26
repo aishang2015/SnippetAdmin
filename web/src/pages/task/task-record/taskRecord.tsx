@@ -25,13 +25,6 @@ export default function TaskRecord(props: any) {
         {
             title: '编号', dataIndex: "id", align: 'center', width: '100px',
         },
-        { title: '任务名', dataIndex: "name", align: 'center', width: '300px' },
-        { title: '任务描述', dataIndex: "describe", align: 'center' },
-        { title: '执行时长', dataIndex: "duration", align: 'center', width: '180px' },
-        {
-            title: '执行时间', dataIndex: "beginTime", align: 'center', width: '180px',
-            render: (date: any) => dateFormat(date)
-        },
         {
             title: '状态', dataIndex: "jobState", align: 'center', width: '120px',
             render: (text: any, record: any) => {
@@ -45,6 +38,13 @@ export default function TaskRecord(props: any) {
                     return (<Tag color="red">失败</Tag>);
                 }
             },
+        },
+        { title: '任务名', dataIndex: "name", align: 'center', width: '300px' },
+        { title: '任务描述', dataIndex: "describe", align: 'center' },
+        { title: '执行时长', dataIndex: "duration", align: 'center', width: '180px' },
+        {
+            title: '执行时间', dataIndex: "beginTime", align: 'center', width: '180px',
+            render: (date: any) => dateFormat(date)
         },
         {
             title: '操作', key: 'operate', align: 'center', width: '120px',

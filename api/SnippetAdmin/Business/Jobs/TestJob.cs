@@ -2,7 +2,7 @@
 
 namespace SnippetAdmin.Business.Jobs
 {
-    [Scheduler("0/30 * * * * ? ", "测试任务", true)]
+    [Scheduler("0/30 * * * * ? ", "测试任务", true, false)]
     public class TestJob : IJob
     {
         public Task DoAsync(CancellationToken stoppingToken)
