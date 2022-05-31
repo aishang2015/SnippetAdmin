@@ -15,10 +15,18 @@ namespace SnippetAdmin.Data
         public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options,
             IMemoryCache memoryCache) : base(options)
         {
-            // 迁移命令
-            // Add-Migration DataMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
+            // 执行迁移命令之前需要暂时注释掉Program.cs中的mvcBuilder.AddDynamicController();
+            // 迁移命令,生成一个【FirstMigration】的迁移
+            // Add-Migration FirstMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
             // 应用迁移
-            // Update-Database DataMigration
+            // Update-Database
+            // 删除迁移
+            // Remove-Migration
+            // 列出迁移
+            // Get-Migration
+            // 生成脚本，生成一个AddElementSortingMigration到RemoveElementSortingMigration变化的脚本
+            // 如果不加from或to则生成一个初始到最后迁移的脚本
+            // Script-Migration AddElementSortingMigration RemoveElementSortingMigration 
 
             // 更改默认不跟踪所有实体
             // ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回

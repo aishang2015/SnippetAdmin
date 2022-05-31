@@ -30,8 +30,7 @@ namespace SnippetAdmin.Data
                             builder.UseRelationalNulls();
                         }),
 
-                        // mysql版本填写具体版本例如8.0.21
-                        "MySQL" => option.UseMySql(databaseOption.Connection, new MySqlServerVersion(new Version(databaseOption.Version)), builder =>
+                        "MySQL" => option.UseMySql(databaseOption.Connection, ServerVersion.AutoDetect(databaseOption.Connection), builder =>
                         {
                             builder.UseRelationalNulls();
                         }),
@@ -88,8 +87,7 @@ namespace SnippetAdmin.Data
                             builder.UseRelationalNulls();
                         }),
 
-                        // mysql版本填写具体版本例如8.0.21
-                        "MySQL" => option.UseMySql(databaseOption.Connection, new MySqlServerVersion(new Version(databaseOption.Version)), builder =>
+                        "MySQL" => option.UseMySql(databaseOption.Connection, ServerVersion.AutoDetect(databaseOption.Connection), builder =>
                         {
                             builder.UseRelationalNulls();
                         }),

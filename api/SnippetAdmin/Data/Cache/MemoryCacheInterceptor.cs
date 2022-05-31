@@ -1,28 +1,34 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Convience.Util.Extension;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Data.Entity.RBAC;
+using System.Collections.Concurrent;
+using System.Dynamic;
+using System.Reflection;
 
 namespace SnippetAdmin.Data.Cache
 {
     public class MemoryCacheInterceptor : ISaveChangesInterceptor
     {
+        private class CachedEntry
+        {
+            public object Entity { get; set; }
+            public EntityState State { get; set; }
+            public IEntityType Metadata { get; set; }
+        }
+
         private readonly IMemoryCache _memoryCache;
 
-        private Dictionary<Type, List<object>> _addEntityDic;
+        private List<CachedEntry> _entryList;
 
-        private Dictionary<Type, List<object>> _deleteEntityDic;
+        private static ConcurrentDictionary<string, MethodInfo> _addMethodInfoDic = new();
 
-        private Dictionary<Type, List<object>> _modifyEntityDic;
+        private static ConcurrentDictionary<string, MethodInfo> _removeAllMethodInfoDic = new();
 
-        /// <summary>
-        /// some special key name for entities like identityuserrole
-        /// </summary>
-        private readonly Dictionary<Type, string> _specialTypeKeyDic = new Dictionary<Type, string>()
-        {
-            { typeof(SnippetAdminUserRole), "UserId"}
-        };
+        private static AutoResetEvent autoResetEvent = new AutoResetEvent(true);
 
         public MemoryCacheInterceptor(IMemoryCache memoryCache)
         {
@@ -34,109 +40,138 @@ namespace SnippetAdmin.Data.Cache
         public Task SaveChangesFailedAsync(DbContextErrorEventData eventData, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
+        public InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        {
+            TempCacheTrackerData(eventData);
+            return result;
+        }
+
+        public async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        {
+            TempCacheTrackerData(eventData);
+            return result;
+        }
+
         public int SavedChanges(SaveChangesCompletedEventData eventData, int result)
         {
-            CacheEntityDic();
+            CacheTrackerDataToMemory();
             return result;
         }
 
         public ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
         {
-            CacheEntityDic();
+            CacheTrackerDataToMemory();
             return new ValueTask<int>(result);
         }
 
-        public InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
-        {
-            MakeEntityDic(eventData);
-            return result;
-        }
-
-        public ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
-        {
-            MakeEntityDic(eventData);
-            return new ValueTask<InterceptionResult<int>>(result);
-        }
-
         /// <summary>
-        /// save all entity that need to be cache
+        /// 将savechange之前的数据进行保存
         /// </summary>
         /// <param name="eventData"></param>
-        private void MakeEntityDic(DbContextEventData eventData)
+        private void TempCacheTrackerData(DbContextEventData eventData)
         {
-            var entries = eventData.Context.ChangeTracker.Entries();
-            _addEntityDic = ExtractEntityDic(entries, EntityState.Added);
-            _deleteEntityDic = ExtractEntityDic(entries, EntityState.Deleted);
-            _modifyEntityDic = ExtractEntityDic(entries, EntityState.Modified);
+            // OrderBy的目的是为了先删除再添加缓存，否则像是USERROlE表会出问题
+            _entryList = eventData.Context.ChangeTracker.Entries().Select(e => new CachedEntry
+            {
+                Entity = e.Entity,
+                State = e.State,
+                Metadata = e.Metadata
+            }).OrderBy(e => e.State).ToList();
         }
 
         /// <summary>
         /// cache all dic
         /// </summary>
-        private void CacheEntityDic()
+        private void CacheTrackerDataToMemory()
         {
-            _modifyEntityDic.ToList().ForEach(kv =>
+            autoResetEvent.WaitOne();
+            _entryList.Where(entry => DbContextInitializer.CacheAbleDic[entry.Entity.GetType()]).ToList().ForEach(entry =>
             {
-                var modifyDataIds = kv.Value.Select(d => d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
-                var data = _memoryCache.Get(kv.Key.FullName);
+                var typeName = entry.Entity.GetType().FullName;
+                var dataList = _memoryCache.Get(typeName);
 
-                if (data != null)
+                // 方法信息
+                var addMethod = _addMethodInfoDic.GetOrAdd(typeName, dataList.GetType().GetMethod("Add"));
+                var removeAllMethod = _removeAllMethodInfoDic.GetOrAdd(typeName, dataList.GetType().GetMethod("RemoveAll"));
+                switch (entry.State)
                 {
-                    // remove all modified entity
-                    var removeMethod = data.GetType().GetMethod("RemoveAll");
-                    Predicate<object> action = d => modifyDataIds.Contains(d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
-                    removeMethod.Invoke(data, new object[] { action });
+                    case EntityState.Added:
 
-                    // re add 
-                    var addMethod = data.GetType().GetMethod("Add");
-                    foreach (var obj in kv.Value)
-                    {
-                        addMethod.Invoke(data, new object[] { Convert.ChangeType(obj, kv.Key) });
-                    }
+                        // 添加
+                        addMethod.Invoke(dataList, new object[] { entry.Entity });
+                        break;
+                    case EntityState.Deleted:
+
+                        // 删除
+                        var idProperties = entry.Metadata.FindPrimaryKey().Properties
+                            .Select(p => p.PropertyInfo).ToArray();
+                        var predicate = GetPredicate(idProperties, entry);
+                        removeAllMethod.Invoke(dataList, new object[] { predicate });
+
+                        break;
+                    case EntityState.Modified:
+
+                        // 删除
+                        idProperties = entry.Metadata.FindPrimaryKey().Properties
+                            .Select(p => p.PropertyInfo).ToArray();
+                        predicate = GetPredicate(idProperties, entry);
+                        removeAllMethod.Invoke(dataList, new object[] { predicate });
+
+                        // 添加
+                        addMethod.Invoke(dataList, new object[] { entry.Entity });
+                        break;
                 }
             });
-            _deleteEntityDic.ToList().ForEach(kv =>
-            {
-                var deleteDataIds = kv.Value.Select(d => d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
-                var data = _memoryCache.Get(kv.Key.FullName);
-                if (data != null)
-                {
-                    var removeMethod = data.GetType().GetMethod("RemoveAll");
-                    Predicate<object> action = d => deleteDataIds.Contains(d.GetType().GetProperty(GetKeyPropertyName(d.GetType())).GetValue(d));
-                    removeMethod.Invoke(data, new object[] { action });
-                }
-            });
-            _addEntityDic.ToList().ForEach(kv =>
-            {
-                var data = _memoryCache.Get(kv.Key.FullName);
-                if (data != null)
-                {
-                    var addMethod = data.GetType().GetMethod("Add");
-                    foreach (var obj in kv.Value)
-                    {
-                        addMethod.Invoke(data, new object[] { Convert.ChangeType(obj, kv.Key) });
-                    }
-                }
-            });
+            autoResetEvent.Set();
         }
 
-        /// <summary>
-        /// get entity from tracker
-        /// </summary>
-        private static Dictionary<Type, List<object>> ExtractEntityDic(IEnumerable<EntityEntry> entries,
-            EntityState entityState)
+        private static Predicate<Object> GetPredicate(PropertyInfo[] idProperties, CachedEntry entry)
         {
-            return entries
-                .Where(entry => entry.State == entityState)
-                .Select(entry => entry.Entity)
-                .GroupBy(entity => entity.GetType())
-                .Where(entityGroup => DbContextInitializer.CacheAbleDic[entityGroup.Key])
-                .ToDictionary(entityGroup => entityGroup.Key, entityGroup => entityGroup.ToList());
-        }
+            // 表达式树方式
+            //var predicate = ExpressionExtension.TrueExpression<object>();
+            //foreach (var idProperty in idProperties)
+            //{
+            //    var idValue = idProperty.GetValue(entry.Entity).ToString();
+            //    ExpressionExtension.AndAll(predicate, o => idProperty.GetValue(o).ToString() == idValue);
+            //}
+            //var lambda = predicate.Compile();
+            //Predicate<object> p = o => lambda(o);
 
-        private string GetKeyPropertyName(Type t)
-        {
-            return _specialTypeKeyDic.ContainsKey(t) ? _specialTypeKeyDic[t] : "Id";
+            Func<int, object, string> tValueGetter = (index, obj) => idProperties[index].GetValue(obj).ToString();
+            Func<int, string> pValueGetter = (index) => idProperties[index].GetValue(entry.Entity).ToString();
+
+            // 暴力枚举😁
+            return idProperties.Count() switch
+            {
+                1 => o => tValueGetter(0, o) == pValueGetter(0),
+
+                2 => o => tValueGetter(0, o) == pValueGetter(0) &&
+                        tValueGetter(1, o) == pValueGetter(1),
+
+                3 => o => tValueGetter(0, o) == pValueGetter(0) &&
+                        tValueGetter(1, o) == pValueGetter(1) &&
+                        tValueGetter(2, o) == pValueGetter(2),
+
+                4 => o => tValueGetter(0, o) == pValueGetter(0) &&
+                        tValueGetter(1, o) == pValueGetter(1) &&
+                        tValueGetter(2, o) == pValueGetter(2) &&
+                        tValueGetter(3, o) == pValueGetter(3),
+
+                5 => o => tValueGetter(0, o) == pValueGetter(0) &&
+                        tValueGetter(1, o) == pValueGetter(1) &&
+                        tValueGetter(2, o) == pValueGetter(2) &&
+                        tValueGetter(3, o) == pValueGetter(3) &&
+                        tValueGetter(4, o) == pValueGetter(4),
+
+                6 => o => tValueGetter(0, o) == pValueGetter(0) &&
+                        tValueGetter(1, o) == pValueGetter(1) &&
+                        tValueGetter(2, o) == pValueGetter(2) &&
+                        tValueGetter(3, o) == pValueGetter(3) &&
+                        tValueGetter(4, o) == pValueGetter(4) &&
+                        tValueGetter(5, o) == pValueGetter(5),
+
+                _ => o => false
+            };
         }
     }
 }
