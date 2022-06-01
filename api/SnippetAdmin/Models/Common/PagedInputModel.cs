@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core;
-using SnippetAdmin.Core.Exceptions;
-using System.Linq.Expressions;
 
 namespace SnippetAdmin.Models.Common
 {
@@ -18,7 +16,7 @@ namespace SnippetAdmin.Models.Common
 
         public SortModel[] Sorts { get; set; }
 
-        
+
     }
 
     public class PagedInputModelValidator : AbstractValidator<PagedInputModel>

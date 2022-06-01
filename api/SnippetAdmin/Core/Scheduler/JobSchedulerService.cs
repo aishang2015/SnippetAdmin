@@ -1,6 +1,4 @@
 ﻿using Cronos;
-using Microsoft.EntityFrameworkCore;
-using SnippetAdmin.Core.Scheduler.Exceptions;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Enums;

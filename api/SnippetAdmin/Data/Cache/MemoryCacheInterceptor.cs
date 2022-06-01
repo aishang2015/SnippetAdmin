@@ -1,17 +1,14 @@
-﻿using Convience.Util.Extension;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Caching.Memory;
-using SnippetAdmin.Data.Entity.RBAC;
 using System.Collections.Concurrent;
-using System.Dynamic;
+using System.Data.Common;
 using System.Reflection;
 
 namespace SnippetAdmin.Data.Cache
 {
-    public class MemoryCacheInterceptor : ISaveChangesInterceptor
+    public class MemoryCacheInterceptor : DbTransactionInterceptor, ISaveChangesInterceptor
     {
         private class CachedEntry
         {
@@ -21,8 +18,6 @@ namespace SnippetAdmin.Data.Cache
         }
 
         private readonly IMemoryCache _memoryCache;
-
-        private List<CachedEntry> _entryList;
 
         private static ConcurrentDictionary<string, MethodInfo> _addMethodInfoDic = new();
 
@@ -46,22 +41,32 @@ namespace SnippetAdmin.Data.Cache
             return result;
         }
 
-        public async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        public ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             TempCacheTrackerData(eventData);
-            return result;
+            return new ValueTask<InterceptionResult<int>>(result);
         }
 
         public int SavedChanges(SaveChangesCompletedEventData eventData, int result)
         {
-            CacheTrackerDataToMemory();
             return result;
         }
 
         public ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
         {
-            CacheTrackerDataToMemory();
             return new ValueTask<int>(result);
+        }
+
+        public override void TransactionCommitted(DbTransaction transaction, TransactionEndEventData eventData)
+        {
+            CacheTrackerDataToMemory(eventData.Context.ContextId.InstanceId);
+            base.TransactionCommitted(transaction, eventData);
+        }
+
+        public override Task TransactionCommittedAsync(DbTransaction transaction, TransactionEndEventData eventData, CancellationToken cancellationToken = default)
+        {
+            CacheTrackerDataToMemory(eventData.Context.ContextId.InstanceId);
+            return base.TransactionCommittedAsync(transaction, eventData, cancellationToken);
         }
 
         /// <summary>
@@ -70,22 +75,41 @@ namespace SnippetAdmin.Data.Cache
         /// <param name="eventData"></param>
         private void TempCacheTrackerData(DbContextEventData eventData)
         {
+            var contextId = eventData.Context.ContextId.InstanceId;
+
             // OrderBy的目的是为了先删除再添加缓存，否则像是USERROlE表会出问题
-            _entryList = eventData.Context.ChangeTracker.Entries().Select(e => new CachedEntry
+            var entryList = eventData.Context.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Deleted || e.State == EntityState.Modified)
+                .Select(e => new CachedEntry
+                {
+                    Entity = e.Entity,
+                    State = e.State,
+                    Metadata = e.Metadata
+                }).OrderBy(e => e.State).ToList();
+
+            var cachedEntryList = _memoryCache.Get<List<CachedEntry>>(contextId);
+            if (cachedEntryList != null)
             {
-                Entity = e.Entity,
-                State = e.State,
-                Metadata = e.Metadata
-            }).OrderBy(e => e.State).ToList();
+                cachedEntryList.AddRange(entryList);
+            }
+            else
+            {
+                _memoryCache.Set(contextId, entryList);
+            }
         }
 
         /// <summary>
-        /// cache all dic
+        /// 将所有变更写入内存缓存
         /// </summary>
-        private void CacheTrackerDataToMemory()
+        /// <param name="contextId">dbconext的id</param>
+        private void CacheTrackerDataToMemory(Guid contextId)
         {
+            // 暂时先这样写
             autoResetEvent.WaitOne();
-            _entryList.Where(entry => DbContextInitializer.CacheAbleDic[entry.Entity.GetType()]).ToList().ForEach(entry =>
+
+            var entryList = _memoryCache.Get<List<CachedEntry>>(contextId);
+            entryList?.Where(entry => DbContextInitializer.CacheAbleDic[entry.Entity.GetType()])
+                .OrderBy(e => e.State).ToList().ForEach(entry =>
             {
                 var typeName = entry.Entity.GetType().FullName;
                 var dataList = _memoryCache.Get(typeName);
@@ -122,10 +146,11 @@ namespace SnippetAdmin.Data.Cache
                         break;
                 }
             });
+
             autoResetEvent.Set();
         }
 
-        private static Predicate<Object> GetPredicate(PropertyInfo[] idProperties, CachedEntry entry)
+        private static Predicate<object> GetPredicate(PropertyInfo[] idProperties, CachedEntry entry)
         {
             // 表达式树方式
             //var predicate = ExpressionExtension.TrueExpression<object>();
@@ -137,39 +162,19 @@ namespace SnippetAdmin.Data.Cache
             //var lambda = predicate.Compile();
             //Predicate<object> p = o => lambda(o);
 
-            Func<int, object, string> tValueGetter = (index, obj) => idProperties[index].GetValue(obj).ToString();
-            Func<int, string> pValueGetter = (index) => idProperties[index].GetValue(entry.Entity).ToString();
+            Func<int, object, bool> equalFun = (index, obj) =>
+                idProperties[index].GetValue(obj).ToString() ==
+                idProperties[index].GetValue(entry.Entity).ToString();
 
             // 暴力枚举😁
             return idProperties.Count() switch
             {
-                1 => o => tValueGetter(0, o) == pValueGetter(0),
-
-                2 => o => tValueGetter(0, o) == pValueGetter(0) &&
-                        tValueGetter(1, o) == pValueGetter(1),
-
-                3 => o => tValueGetter(0, o) == pValueGetter(0) &&
-                        tValueGetter(1, o) == pValueGetter(1) &&
-                        tValueGetter(2, o) == pValueGetter(2),
-
-                4 => o => tValueGetter(0, o) == pValueGetter(0) &&
-                        tValueGetter(1, o) == pValueGetter(1) &&
-                        tValueGetter(2, o) == pValueGetter(2) &&
-                        tValueGetter(3, o) == pValueGetter(3),
-
-                5 => o => tValueGetter(0, o) == pValueGetter(0) &&
-                        tValueGetter(1, o) == pValueGetter(1) &&
-                        tValueGetter(2, o) == pValueGetter(2) &&
-                        tValueGetter(3, o) == pValueGetter(3) &&
-                        tValueGetter(4, o) == pValueGetter(4),
-
-                6 => o => tValueGetter(0, o) == pValueGetter(0) &&
-                        tValueGetter(1, o) == pValueGetter(1) &&
-                        tValueGetter(2, o) == pValueGetter(2) &&
-                        tValueGetter(3, o) == pValueGetter(3) &&
-                        tValueGetter(4, o) == pValueGetter(4) &&
-                        tValueGetter(5, o) == pValueGetter(5),
-
+                1 => o => equalFun(0, o),
+                2 => o => equalFun(0, o) && equalFun(1, o),
+                3 => o => equalFun(0, o) && equalFun(1, o) && equalFun(2, o),
+                4 => o => equalFun(0, o) && equalFun(1, o) && equalFun(2, o) && equalFun(3, o),
+                5 => o => equalFun(0, o) && equalFun(1, o) && equalFun(2, o) && equalFun(3, o) && equalFun(4, o),
+                6 => o => equalFun(0, o) && equalFun(1, o) && equalFun(2, o) && equalFun(3, o) && equalFun(4, o) && equalFun(5, o),
                 _ => o => false
             };
         }
