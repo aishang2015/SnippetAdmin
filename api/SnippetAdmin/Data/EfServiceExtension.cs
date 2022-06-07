@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Data.Cache;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Exceptions;
 
 namespace SnippetAdmin.Data
@@ -14,6 +14,7 @@ namespace SnippetAdmin.Data
             var databaseOption = configuration.GetSection(optionKey).Get<DatabaseOption>();
             if (databaseOption != null)
             {
+                // 添加缓存拦截器
                 services.AddScoped<MemoryCacheInterceptor>();
 
                 services.AddDbContext<SnippetAdminDbContext>((provider, option) =>
@@ -50,7 +51,7 @@ namespace SnippetAdmin.Data
                     };
 
                     option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor>());
-                }).AddIdentity<SnippetAdminUser, SnippetAdminRole>(option =>
+                }).AddIdentity<RbacUser, RbacRole>(option =>
                 {
                     // 密码强度设置
                     option.Password.RequireDigit = false;

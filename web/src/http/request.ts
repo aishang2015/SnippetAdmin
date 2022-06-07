@@ -110,7 +110,7 @@ export class Axios {
             err => {
                 console.error(err);
                 if (!err.response) {
-                    message.error(`请求失败！可能原因：服务器已经下线，跨域访问被禁止等`);
+                    message.error(`请求失败！服务器已经下线`);
                 } else {
                     let errorStatus = err.response.status;
                     if (!errorStatus) {

@@ -7,7 +7,7 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.User;
@@ -66,8 +66,15 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(PagedOutputModel<SearchUserOutputModel>))]
         public CommonResult SearchUser([FromBody] SearchUserInputModel inputModel)
         {
+            var userQuery = _dbContext.CacheSet<RbacUser>().AsQueryable().OrderBy(u => u.Id);
+            var roleQuery = _dbContext.CacheSet<RbacRole>().AsQueryable().OrderBy(u => u.Id);
+            var userRoleQuery = _dbContext.CacheSet<RbacUserRole>().AsQueryable();
+            var userClaimQuery = _dbContext.CacheSet<RbacUserClaim>().AsQueryable();
+            var organizationQuery = _dbContext.CacheSet<RbacOrganization>().AsQueryable();
+            var positionQuery = _dbContext.CacheSet<RbacPosition>().AsQueryable();
+
             // 普通条件
-            var query = _dbContext.Users
+            var query = userQuery
                 .AndIfExist(inputModel.UserName, u => u.UserName.Contains(inputModel.UserName))
                 .AndIfExist(inputModel.RealName, u => u.RealName.Contains(inputModel.RealName))
                 .AndIfExist(inputModel.Phone, u => u.PhoneNumber.Contains(inputModel.Phone));
@@ -76,7 +83,7 @@ namespace SnippetAdmin.Controllers.RBAC
             if (inputModel.Role != null)
             {
                 query = from u in query
-                        join ur in _dbContext.UserRoles on u.Id equals ur.UserId
+                        join ur in userRoleQuery on u.Id equals ur.UserId
                         where ur.RoleId == inputModel.Role
                         select u;
             }
@@ -85,7 +92,7 @@ namespace SnippetAdmin.Controllers.RBAC
             if (inputModel.Org != null)
             {
                 query = from u in query
-                        where _dbContext.UserClaims.Any(userClaim =>
+                        where userClaimQuery.Any(userClaim =>
                             userClaim.UserId == u.Id && userClaim.ClaimValue == inputModel.Org.ToString() &&
                             userClaim.ClaimType == ClaimConstant.UserOrganization)
                         select u;
@@ -95,7 +102,7 @@ namespace SnippetAdmin.Controllers.RBAC
             if (inputModel.Position != null)
             {
                 query = from u in query
-                        where _dbContext.UserClaims.Any(userClaim =>
+                        where userClaimQuery.Any(userClaim =>
                             userClaim.UserId == u.Id && userClaim.ClaimValue == inputModel.Position.ToString() &&
                             userClaim.ClaimType == ClaimConstant.UserPosition)
                         select u;
@@ -112,20 +119,20 @@ namespace SnippetAdmin.Controllers.RBAC
                                   PhoneNumber = u.PhoneNumber,
                                   RealName = u.RealName,
                                   UserName = u.UserName,
-                                  Roles = (from ur in _dbContext.UserRoles
-                                           join r in _dbContext.Roles on ur.RoleId equals r.Id
+                                  Roles = (from ur in userRoleQuery
+                                           join r in roleQuery on ur.RoleId equals r.Id
                                            where ur.UserId == u.Id
                                            select new RoleInfo
                                            {
                                                RoleName = r.Name,
                                                IsActive = r.IsActive
                                            }).ToArray(),
-                                  Organizations = (from uc in _dbContext.UserClaims
-                                                   join org in _dbContext.Organizations on uc.ClaimValue equals org.Id.ToString()
+                                  Organizations = (from uc in userClaimQuery
+                                                   join org in organizationQuery on uc.ClaimValue equals org.Id.ToString()
                                                    where uc.UserId == u.Id && uc.ClaimType == ClaimConstant.UserOrganization
                                                    select org.Name).ToArray(),
-                                  Positions = (from uc in _dbContext.UserClaims
-                                               join pos in _dbContext.Positions on uc.ClaimValue equals pos.Id.ToString()
+                                  Positions = (from uc in userClaimQuery
+                                               join pos in positionQuery on uc.ClaimValue equals pos.Id.ToString()
                                                where uc.UserId == u.Id && uc.ClaimType == ClaimConstant.UserPosition
                                                select pos.Name).ToArray()
                               };
@@ -142,7 +149,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [HttpPost]
         [CommonResultResponseType]
         public async Task<CommonResult> AddOrUpdateUserAsync([FromBody] AddOrUpdateUserInputModel inputModel,
-            [FromServices] UserManager<SnippetAdminUser> userManager)
+            [FromServices] UserManager<RbacUser> userManager)
         {
             if (_dbContext.Users.Any(u => u.UserName == inputModel.UserName && u.Id != inputModel.Id))
             {
@@ -163,28 +170,28 @@ namespace SnippetAdmin.Controllers.RBAC
                 var ups = _dbContext.UserClaims.Where(uc => uc.UserId == user.Id &&
                     (uc.ClaimType == ClaimConstant.UserPosition || uc.ClaimType == ClaimConstant.UserOrganization)).ToList();
                 _dbContext.UserClaims.RemoveRange(ups);
-
+                await _dbContext.SaveChangesAsync();
             }
             else
             {
-                user = _mapper.Map<SnippetAdminUser>(inputModel);
+                user = _mapper.Map<RbacUser>(inputModel);
                 await userManager.CreateAsync(user);
                 await userManager.AddPasswordAsync(user, "123456");
             }
 
             inputModel.Roles?.ToList().ForEach(role =>
-                _dbContext.UserRoles.Add(new SnippetAdminUserRole { UserId = user.Id, RoleId = role })
+                _dbContext.UserRoles.Add(new RbacUserRole { UserId = user.Id, RoleId = role })
             );
 
             inputModel.Organizations?.ToList().ForEach(organization =>
-                _dbContext.UserClaims.Add(new SnippetAdminUserClaim
+                _dbContext.UserClaims.Add(new RbacUserClaim
                 {
                     UserId = user.Id,
                     ClaimValue = organization.ToString(),
                     ClaimType = ClaimConstant.UserOrganization
                 }));
             inputModel.Positions?.ToList().ForEach(position =>
-                _dbContext.UserClaims.Add(new SnippetAdminUserClaim
+                _dbContext.UserClaims.Add(new RbacUserClaim
                 {
                     UserId = user.Id,
                     ClaimValue = position.ToString(),
@@ -211,7 +218,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [HttpPost]
         [CommonResultResponseType]
         public async Task<CommonResult> SetUserPasswordAsync([FromBody] SetUserPasswordInputModel inputModel,
-            [FromServices] UserManager<SnippetAdminUser> userManager)
+            [FromServices] UserManager<RbacUser> userManager)
         {
             if (inputModel.Password != inputModel.ConfirmPassword)
             {
@@ -230,7 +237,7 @@ namespace SnippetAdmin.Controllers.RBAC
         {
             foreach (var userId in inputModel.UserIds)
             {
-                _dbContext.UserClaims.Add(new SnippetAdminUserClaim
+                _dbContext.UserClaims.Add(new RbacUserClaim
                 {
                     UserId = userId,
                     ClaimType = ClaimConstant.UserOrganization,

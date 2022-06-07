@@ -85,7 +85,7 @@ namespace SnippetAdmin.Data.Cache
                     Entity = e.Entity,
                     State = e.State,
                     Metadata = e.Metadata
-                }).OrderBy(e => e.State).ToList();
+                }).ToList();
 
             var cachedEntryList = _memoryCache.Get<List<CachedEntry>>(contextId);
             if (cachedEntryList != null)
@@ -109,7 +109,7 @@ namespace SnippetAdmin.Data.Cache
 
             var entryList = _memoryCache.Get<List<CachedEntry>>(contextId);
             entryList?.Where(entry => DbContextInitializer.CacheAbleDic[entry.Entity.GetType()])
-                .OrderBy(e => e.State).ToList().ForEach(entry =>
+                .ToList().ForEach(entry =>
             {
                 var typeName = entry.Entity.GetType().FullName;
                 var dataList = _memoryCache.Get(typeName);
@@ -146,6 +146,9 @@ namespace SnippetAdmin.Data.Cache
                         break;
                 }
             });
+
+            // 事务结束后清理掉
+            _memoryCache.Remove(contextId);
 
             autoResetEvent.Set();
         }

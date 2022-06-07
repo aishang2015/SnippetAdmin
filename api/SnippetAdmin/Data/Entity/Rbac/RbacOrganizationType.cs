@@ -2,12 +2,12 @@
 using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SnippetAdmin.Data.Entity.RBAC
+namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Comment("组织类型")]
-    [Table("T_RBAC_OrganizationType")]
+    [Table("T_Rbac_OrganizationType")]
     [Cachable]
-    public class OrganizationType
+    public class RbacOrganizationType
     {
         [Comment("主键")]
         [Column("id")]

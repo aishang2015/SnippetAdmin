@@ -6,7 +6,7 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.Position;
@@ -35,19 +35,19 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> AddOrUpdatePositionAsync(AddOrUpdatePositionInputModel inputModel)
         {
             // validate
-            if (_dbContext.Positions.Any(p => p.Id != inputModel.Id && p.Name == inputModel.Name))
+            if (_dbContext.RbacPositions.Any(p => p.Id != inputModel.Id && p.Name == inputModel.Name))
             {
                 return this.FailCommonResult(MessageConstant.POSITION_ERROR_0001);
             }
-            if (_dbContext.Positions.Any(p => p.Id != inputModel.Id && p.Code == inputModel.Code))
+            if (_dbContext.RbacPositions.Any(p => p.Id != inputModel.Id && p.Code == inputModel.Code))
             {
                 return this.FailCommonResult(MessageConstant.POSITION_ERROR_0002);
             }
 
-            var position = _dbContext.Positions.Find(inputModel.Id);
+            var position = _dbContext.RbacPositions.Find(inputModel.Id);
             if (position == null)
             {
-                _dbContext.Positions.Add(new Position()
+                _dbContext.RbacPositions.Add(new RbacPosition()
                 {
                     Name = inputModel.Name,
                     Code = inputModel.Code
@@ -57,7 +57,7 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 position.Name = inputModel.Name;
                 position.Code = inputModel.Code;
-                _dbContext.Positions.Update(position);
+                _dbContext.RbacPositions.Update(position);
             }
             await _dbContext.SaveChangesAsync();
 
@@ -68,7 +68,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<CommonResult> DeletePositionAsync(DeletePositionInputModel inputModel)
         {
-            var position = _dbContext.Positions.Find(inputModel.Id);
+            var position = _dbContext.RbacPositions.Find(inputModel.Id);
             var userClaims = _dbContext.UserClaims.Where(uc => uc.ClaimValue == inputModel.Id.ToString() &&
                 uc.ClaimType == ClaimConstant.UserPosition);
 
@@ -83,7 +83,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(GetPositionOutputModel))]
         public CommonResult GetPosition([FromBody] IntIdInputModel inputModel)
         {
-            var positoin = _dbContext.Positions.Find(inputModel.Id);
+            var positoin = _dbContext.RbacPositions.Find(inputModel.Id);
             return this.SuccessCommonResult(new GetPositionOutputModel
             {
                 Id = positoin.Id,
@@ -96,7 +96,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(PagedOutputModel<GetPositionsOutputModel>))]
         public async Task<CommonResult> GetPositions([FromBody] PagedInputModel inputModel)
         {
-            var query = _dbContext.Positions.AsQueryable();
+            var query = _dbContext.RbacPositions.AsQueryable();
             query = query.Sort(inputModel.Sorts);
 
             var result = new PagedOutputModel<GetPositionsOutputModel>()
@@ -113,12 +113,12 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(List<DicOutputModel>))]
+        [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
         public async Task<CommonResult> GetPositionDic()
         {
-            var result = await _dbContext.Positions.Select(r => new DicOutputModel
+            var result = await _dbContext.RbacPositions.Select(r => new DicOutputModel<int>
             {
-                Key = r.Id.ToString(),
+                Key = r.Id,
                 Value = r.Name
             }).ToListAsync();
 

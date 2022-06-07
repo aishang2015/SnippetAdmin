@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Data.Entity.Enums
+﻿namespace SnippetAdmin.Data.Enums
 {
     public enum Gender
     {

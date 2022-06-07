@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SnippetAdmin.Data.Entity.RBAC
+namespace SnippetAdmin.Data.Entity.Rbac
 {
-    [Comment("元素树")]
-    [Table("T_RBAC_ElementTree")]
+    [Comment("组织树")]
+    [Table("T_Rbac_OrganizationTree")]
     [Cachable]
-    public class ElementTree
+    public class RbacOrganizationTree
     {
         [Comment("主键")]
         [Column("id")]

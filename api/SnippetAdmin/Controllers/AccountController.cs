@@ -11,7 +11,7 @@ using SnippetAdmin.Core.Authentication;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Account;
@@ -23,7 +23,7 @@ namespace SnippetAdmin.Controllers
     [ApiExplorerSettings(GroupName = "v1")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<SnippetAdminUser> _userManager;
+        private readonly UserManager<RbacUser> _userManager;
 
         private readonly IJwtFactory _jwtFactory;
 
@@ -36,7 +36,7 @@ namespace SnippetAdmin.Controllers
         private readonly SnippetAdminDbContext _dbContext;
 
         public AccountController(
-            UserManager<SnippetAdminUser> userManager,
+            UserManager<RbacUser> userManager,
             IJwtFactory jwtFactory,
             IMapper mapper,
             IOptions<JwtOption> options,
@@ -273,7 +273,7 @@ namespace SnippetAdmin.Controllers
         /// <summary>
         /// 生成token返回结果
         /// </summary>
-        private async Task<CommonResult> MakeLoginResultAsync(SnippetAdminUser user)
+        private async Task<CommonResult> MakeLoginResultAsync(RbacUser user)
         {
             // 生成刷新token,移除旧token
             var refreshToken = _dbContext.RefreshTokens.FirstOrDefault(token => token.UserName == user.UserName);
@@ -300,12 +300,12 @@ namespace SnippetAdmin.Controllers
             );
         }
 
-        private async Task<string[]> GetUserFrontRightsAsync(SnippetAdminUser user)
+        private async Task<string[]> GetUserFrontRightsAsync(RbacUser user)
         {
             // 取得前端页面元素权限
             var roles = await _userManager.GetRolesAsync(user);
             var elementIds = (from role in _dbContext.Roles
-                              from element in _dbContext.Elements
+                              from element in _dbContext.RbacElements
                               from rc in _dbContext.RoleClaims
                               where
                                  role.IsActive &&
@@ -315,8 +315,8 @@ namespace SnippetAdmin.Controllers
                                  roles.Contains(role.Name)
                               select element.Id).Distinct().ToList();
 
-            return (from element in _dbContext.Elements
-                    from elementTree in _dbContext.ElementTrees
+            return (from element in _dbContext.RbacElements
+                    from elementTree in _dbContext.RbacElementTrees
                     where element.Id == elementTree.Ancestor &&
                           elementIds.Contains(elementTree.Descendant)
                     select element.Identity).Distinct().ToArray();

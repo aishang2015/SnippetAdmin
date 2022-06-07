@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
 
 namespace SnippetAdmin.Data
 {
-    public class SnippetAdminDbContext : IdentityDbContext<SnippetAdminUser, SnippetAdminRole, int,
-        SnippetAdminUserClaim, SnippetAdminUserRole, SnippetAdminUserLogin, SnippetAdminRoleClaim, SnippetAdminUserToken>
+    public class SnippetAdminDbContext : IdentityDbContext<RbacUser, RbacRole, int,
+        RbacUserClaim, RbacUserRole, RbacUserLogin, RbacRoleClaim, RbacUserToken>
     {
         private readonly IMemoryCache _memoryCache;
 
@@ -39,17 +39,17 @@ namespace SnippetAdmin.Data
             _memoryCache = memoryCache;
         }
 
-        public DbSet<Element> Elements { get; set; }
+        public DbSet<RbacElement> RbacElements { get; set; }
 
-        public DbSet<ElementTree> ElementTrees { get; set; }
+        public DbSet<RbacElementTree> RbacElementTrees { get; set; }
 
-        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<RbacOrganization> RbacOrganizations { get; set; }
 
-        public DbSet<OrganizationTree> OrganizationTrees { get; set; }
+        public DbSet<RbacOrganizationTree> RbacOrganizationTrees { get; set; }
 
-        public DbSet<OrganizationType> OrganizationTypes { get; set; }
+        public DbSet<RbacOrganizationType> RbacOrganizationTypes { get; set; }
 
-        public DbSet<Position> Positions { get; set; }
+        public DbSet<RbacPosition> RbacPositions { get; set; }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
@@ -61,13 +61,13 @@ namespace SnippetAdmin.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<SnippetAdminUser>().ToTable("T_RBAC_User");
-            builder.Entity<SnippetAdminRole>().ToTable("T_RBAC_Role");
-            builder.Entity<SnippetAdminUserRole>().ToTable("T_RBAC_UserRole");
-            builder.Entity<SnippetAdminUserClaim>().ToTable("T_RBAC_UserClaim");
-            builder.Entity<SnippetAdminRoleClaim>().ToTable("T_RBAC_RoleClaim");
-            builder.Entity<SnippetAdminUserLogin>().ToTable("T_RBAC_UserLogin");
-            builder.Entity<SnippetAdminUserToken>().ToTable("T_RBAC_UserToken");
+            builder.Entity<RbacUser>().ToTable("T_RBAC_User");
+            builder.Entity<RbacRole>().ToTable("T_RBAC_Role");
+            builder.Entity<RbacUserRole>().ToTable("T_RBAC_UserRole");
+            builder.Entity<RbacUserClaim>().ToTable("T_RBAC_UserClaim");
+            builder.Entity<RbacRoleClaim>().ToTable("T_RBAC_RoleClaim");
+            builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
+            builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
 
         }
 

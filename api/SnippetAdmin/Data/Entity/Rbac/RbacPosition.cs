@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SnippetAdmin.Data.Entity.RBAC
+namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Comment("职位")]
-    [Table("T_RBAC_Position")]
+    [Table("T_Rbac_Position")]
     [Cachable]
-    public class Position
+    public class RbacPosition
     {
         [Comment("主键")]
         [Column("id")]

@@ -7,7 +7,7 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Utils;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.Organization;
@@ -38,10 +38,10 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> GetOrganization([FromBody] IntIdInputModel inputModel,
             [FromServices] IMapper mapper)
         {
-            var org = await _dbContext.Organizations.FindAsync(inputModel.Id);
+            var org = await _dbContext.RbacOrganizations.FindAsync(inputModel.Id);
             var result = mapper.Map<GetOrganizationOutputModel>(org);
-            result.TypeName = _dbContext.OrganizationTypes.FirstOrDefault(t => t.Code == result.Type)?.Name;
-            result.UpId = (from tree in _dbContext.OrganizationTrees
+            result.TypeName = _dbContext.RbacOrganizationTypes.FirstOrDefault(t => t.Code == result.Type)?.Name;
+            result.UpId = (from tree in _dbContext.RbacOrganizationTrees
                            where tree.Descendant == inputModel.Id && tree.Length == 1
                            select tree).FirstOrDefault()?.Ancestor;
             return this.SuccessCommonResult(result);
@@ -54,8 +54,8 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(List<GetOrganizationTreeOutputModel>))]
         public async Task<CommonResult> GetOrganizationTree()
         {
-            var orgs = await _dbContext.Organizations.ToListAsync();
-            var orgTrees = await _dbContext.OrganizationTrees.ToListAsync();
+            var orgs = await _dbContext.RbacOrganizations.ToListAsync();
+            var orgTrees = await _dbContext.RbacOrganizationTrees.ToListAsync();
 
             // 找到最上层,即只做为自己的子节点
             var topOrgKeys = from ot in orgTrees
@@ -80,7 +80,7 @@ namespace SnippetAdmin.Controllers.RBAC
             [FromServices] IMapper mapper)
         {
             // 组织编码重复
-            if (_dbContext.Organizations.Any(r => r.Code == inputModel.Code))
+            if (_dbContext.RbacOrganizations.Any(r => r.Code == inputModel.Code))
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
             }
@@ -89,22 +89,22 @@ namespace SnippetAdmin.Controllers.RBAC
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
             // 保存节点
-            var newOrg = mapper.Map<Organization>(inputModel);
-            var entity = await _dbContext.Organizations.AddAsync(newOrg);
+            var newOrg = mapper.Map<RbacOrganization>(inputModel);
+            var entity = await _dbContext.RbacOrganizations.AddAsync(newOrg);
             await _dbContext.SaveChangesAsync();
 
             // 保存节点关系
-            var treeData = _dbContext.OrganizationTrees.Where(t => t.Descendant == inputModel.UpId);
+            var treeData = _dbContext.RbacOrganizationTrees.Where(t => t.Descendant == inputModel.UpId);
             foreach (var treeNode in treeData)
             {
-                await _dbContext.OrganizationTrees.AddAsync(new OrganizationTree
+                await _dbContext.RbacOrganizationTrees.AddAsync(new RbacOrganizationTree
                 {
                     Ancestor = treeNode.Ancestor,
                     Descendant = entity.Entity.Id,
                     Length = treeNode.Length + 1
                 });
             }
-            await _dbContext.OrganizationTrees.AddAsync(new OrganizationTree
+            await _dbContext.RbacOrganizationTrees.AddAsync(new RbacOrganizationTree
             {
                 Ancestor = entity.Entity.Id,
                 Descendant = entity.Entity.Id,
@@ -122,11 +122,11 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<CommonResult> DeleteOrganization([FromBody] IntIdInputModel inputModel)
         {
-            var organizations = from org in _dbContext.Organizations
-                                join orgTree in _dbContext.OrganizationTrees on org.Id equals orgTree.Descendant
+            var organizations = from org in _dbContext.RbacOrganizations
+                                join orgTree in _dbContext.RbacOrganizationTrees on org.Id equals orgTree.Descendant
                                 where orgTree.Ancestor == inputModel.Id
                                 select org;
-            _dbContext.Organizations.RemoveRange(organizations);
+            _dbContext.RbacOrganizations.RemoveRange(organizations);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0002);
         }
@@ -140,13 +140,13 @@ namespace SnippetAdmin.Controllers.RBAC
             [FromServices] IMapper mapper)
         {
             // 组织编码重复
-            if (_dbContext.Organizations.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
+            if (_dbContext.RbacOrganizations.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
             }
 
             // 组织不能移入自己树下的组织
-            var isChildNode = from orgTree in _dbContext.OrganizationTrees
+            var isChildNode = from orgTree in _dbContext.RbacOrganizationTrees
                               where orgTree.Ancestor == inputModel.Id && orgTree.Descendant == inputModel.UpId
                               select orgTree;
             if (isChildNode.Any())
@@ -155,11 +155,11 @@ namespace SnippetAdmin.Controllers.RBAC
             }
 
             // 更新组织节点
-            var organization = mapper.Map<Organization>(inputModel);
-            _dbContext.Organizations.Update(organization);
+            var organization = mapper.Map<RbacOrganization>(inputModel);
+            _dbContext.RbacOrganizations.Update(organization);
 
             // 判断树节点是否被移动
-            var upNode = (from orgTree in _dbContext.OrganizationTrees
+            var upNode = (from orgTree in _dbContext.RbacOrganizationTrees
                           where orgTree.Descendant == inputModel.Id &&
                                orgTree.Length == 1
                           select orgTree).FirstOrDefault();
@@ -168,11 +168,11 @@ namespace SnippetAdmin.Controllers.RBAC
             if (upNode?.Ancestor != inputModel.UpId)
             {
                 // 找到上一步祖先节点和后代节点之间的所有关系
-                var treeNodes = from orgTree in _dbContext.OrganizationTrees
-                                let parentNodeIds = (from parentTree in _dbContext.OrganizationTrees
+                var treeNodes = from orgTree in _dbContext.RbacOrganizationTrees
+                                let parentNodeIds = (from parentTree in _dbContext.RbacOrganizationTrees
                                                      where parentTree.Descendant == inputModel.Id && parentTree.Length > 0
                                                      select parentTree.Ancestor).ToList()
-                                let childNodeIds = (from childTree in _dbContext.OrganizationTrees
+                                let childNodeIds = (from childTree in _dbContext.RbacOrganizationTrees
                                                     where childTree.Ancestor == inputModel.Id
                                                     select childTree.Descendant).ToList()
                                 where parentNodeIds.Contains(orgTree.Ancestor) && childNodeIds.Contains(orgTree.Descendant)
@@ -180,12 +180,12 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.RemoveRange(treeNodes);
 
                 // 当前文件夹的子树
-                var childNodes = (from ft in _dbContext.OrganizationTrees
+                var childNodes = (from ft in _dbContext.RbacOrganizationTrees
                                   where ft.Ancestor == inputModel.Id
                                   select ft).ToList();
 
                 // 找到新父节点的全部祖先
-                var newParents = (from ft in _dbContext.OrganizationTrees
+                var newParents = (from ft in _dbContext.RbacOrganizationTrees
                                   where ft.Descendant == inputModel.UpId
                                   select ft).ToList();
 
@@ -194,7 +194,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 {
                     foreach (var node in childNodes)
                     {
-                        await _dbContext.OrganizationTrees.AddAsync(new OrganizationTree
+                        await _dbContext.RbacOrganizationTrees.AddAsync(new RbacOrganizationTree
                         {
                             Ancestor = parent.Ancestor,
                             Descendant = node.Descendant,
@@ -222,7 +222,7 @@ namespace SnippetAdmin.Controllers.RBAC
         {
             return this.SuccessCommonResult(
                 mapper.Map<List<GetOrganizationTypesOutputModel>>(
-                    _dbContext.OrganizationTypes.ToList()));
+                    _dbContext.RbacOrganizationTypes.ToList()));
         }
 
         /// <summary>
@@ -235,20 +235,20 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> AddOrUpdateOrganizationType(
             [FromBody] AddOrUpdateOrganizationTypeInputModel inputModel)
         {
-            if (_dbContext.OrganizationTypes.Any(ot => ot.Name == inputModel.Name && ot.Id != inputModel.Id))
+            if (_dbContext.RbacOrganizationTypes.Any(ot => ot.Name == inputModel.Name && ot.Id != inputModel.Id))
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0008);
             }
 
             if (inputModel.Id != null)
             {
-                var orgType = _dbContext.OrganizationTypes.Find(inputModel.Id);
+                var orgType = _dbContext.RbacOrganizationTypes.Find(inputModel.Id);
                 orgType.Name = inputModel.Name;
-                _dbContext.OrganizationTypes.Update(orgType);
+                _dbContext.RbacOrganizationTypes.Update(orgType);
             }
             else
             {
-                _dbContext.OrganizationTypes.Add(new OrganizationType()
+                _dbContext.RbacOrganizationTypes.Add(new RbacOrganizationType()
                 {
                     Name = inputModel.Name,
                     Code = GuidUtil.NewSequentialGuid().ToString("N")
@@ -269,11 +269,11 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> RemoveOrganizationType(
             RemoveOrganizationTypeInputModel inputModel)
         {
-            var orgType = _dbContext.OrganizationTypes.Find(inputModel.Id);
-            _dbContext.OrganizationTypes.Remove(orgType);
-            var orgs = _dbContext.Organizations.Where(org => org.Type == orgType.Code).ToList();
+            var orgType = _dbContext.RbacOrganizationTypes.Find(inputModel.Id);
+            _dbContext.RbacOrganizationTypes.Remove(orgType);
+            var orgs = _dbContext.RbacOrganizations.Where(org => org.Type == orgType.Code).ToList();
             orgs.ForEach(org => org.Type = null);
-            _dbContext.Organizations.UpdateRange(orgs);
+            _dbContext.RbacOrganizations.UpdateRange(orgs);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0002);
         }
@@ -284,9 +284,9 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 生成树数据
         /// </summary>
         private List<GetOrganizationTreeOutputModel> MakeTreeData(
-            List<Organization> orgs,
-            List<OrganizationTree> orgTrees,
-            List<Organization> childOrgs)
+            List<RbacOrganization> orgs,
+            List<RbacOrganizationTree> orgTrees,
+            List<RbacOrganization> childOrgs)
         {
             var outputModels = childOrgs.Select(o => new GetOrganizationTreeOutputModel
             {

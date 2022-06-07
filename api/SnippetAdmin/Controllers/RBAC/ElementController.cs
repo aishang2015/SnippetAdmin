@@ -6,7 +6,7 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.Element;
@@ -35,7 +35,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> GetElement([FromBody] IntIdInputModel inputModel,
             [FromServices] IMapper mapper)
         {
-            var element = await _dbContext.Elements.FindAsync(inputModel.Id);
+            var element = await _dbContext.RbacElements.FindAsync(inputModel.Id);
             return this.SuccessCommonResult(mapper.Map<GetElementOutputModel>(element));
         }
 
@@ -46,8 +46,8 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(List<GetElementTreeOutputModel>))]
         public async Task<CommonResult> GetElementTree()
         {
-            var elements = await _dbContext.Elements.ToListAsync();
-            var elementTrees = await _dbContext.ElementTrees.ToListAsync();
+            var elements = await _dbContext.RbacElements.ToListAsync();
+            var elementTrees = await _dbContext.RbacElementTrees.ToListAsync();
 
             // 找到最上层,即只做为自己的子节点
             var topElementKeys = from et in elementTrees
@@ -75,21 +75,21 @@ namespace SnippetAdmin.Controllers.RBAC
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
             // 保存节点
-            var entity = await _dbContext.Elements.AddAsync(mapper.Map<Element>(inputModel));
+            var entity = await _dbContext.RbacElements.AddAsync(mapper.Map<RbacElement>(inputModel));
             await _dbContext.SaveChangesAsync();
 
             // 保存节点关系
-            var treeData = _dbContext.ElementTrees.Where(t => t.Descendant == inputModel.UpId);
+            var treeData = _dbContext.RbacElementTrees.Where(t => t.Descendant == inputModel.UpId);
             foreach (var treeNode in treeData)
             {
-                await _dbContext.ElementTrees.AddAsync(new ElementTree
+                await _dbContext.RbacElementTrees.AddAsync(new RbacElementTree
                 {
                     Ancestor = treeNode.Ancestor,
                     Descendant = entity.Entity.Id,
                     Length = treeNode.Length + 1
                 });
             }
-            await _dbContext.ElementTrees.AddAsync(new ElementTree
+            await _dbContext.RbacElementTrees.AddAsync(new RbacElementTree
             {
                 Ancestor = entity.Entity.Id,
                 Descendant = entity.Entity.Id,
@@ -107,11 +107,11 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<CommonResult> DeleteElement([FromBody] IntIdInputModel inputModel)
         {
-            var elements = from e in _dbContext.Elements
-                           join et in _dbContext.ElementTrees on e.Id equals et.Descendant
+            var elements = from e in _dbContext.RbacElements
+                           join et in _dbContext.RbacElementTrees on e.Id equals et.Descendant
                            where et.Ancestor == inputModel.Id
                            select e;
-            _dbContext.Elements.RemoveRange(elements);
+            _dbContext.RbacElements.RemoveRange(elements);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ELEMENT_INFO_0002);
         }
@@ -124,8 +124,8 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel,
             [FromServices] IMapper mapper)
         {
-            var element = mapper.Map<Element>(inputModel);
-            _dbContext.Elements.Update(element);
+            var element = mapper.Map<RbacElement>(inputModel);
+            _dbContext.RbacElements.Update(element);
             await _dbContext.SaveChangesAsync();
             return this.SuccessCommonResult(MessageConstant.ELEMENT_INFO_0003);
         }
@@ -137,8 +137,8 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType]
         public async Task<IActionResult> ExportElementData()
         {
-            var elements = await _dbContext.Elements.ToListAsync();
-            var elementTrees = await _dbContext.ElementTrees.ToListAsync();
+            var elements = await _dbContext.RbacElements.ToListAsync();
+            var elementTrees = await _dbContext.RbacElementTrees.ToListAsync();
 
             var ms = new MemoryStream(2048);
             var sw = new StreamWriter(ms)
@@ -164,8 +164,8 @@ namespace SnippetAdmin.Controllers.RBAC
             return File(ms, "text/plain", "element.txt");
         }
 
-        private List<GetElementTreeOutputModel> MakeTreeData(List<Element> elements, List<ElementTree> elementTrees,
-            List<Element> childElements)
+        private List<GetElementTreeOutputModel> MakeTreeData(List<RbacElement> elements, List<RbacElementTree> elementTrees,
+            List<RbacElement> childElements)
         {
             var outputModels = childElements.Select(e => new GetElementTreeOutputModel
             {

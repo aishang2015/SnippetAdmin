@@ -6,7 +6,7 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
 using SnippetAdmin.Models.RBAC.Role;
@@ -69,12 +69,12 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(List<DicOutputModel>))]
+        [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
         public async Task<CommonResult> GetRoleDic()
         {
-            var result = await _dbContext.Roles.Select(r => new DicOutputModel
+            var result = await _dbContext.Roles.Select(r => new DicOutputModel<int>
             {
-                Key = r.Id.ToString(),
+                Key = r.Id,
                 Value = r.Name
             }).ToListAsync();
 
@@ -106,7 +106,7 @@ namespace SnippetAdmin.Controllers.RBAC
             }
             else
             {
-                role = _mapper.Map<SnippetAdminRole>(inputModel);
+                role = _mapper.Map<RbacRole>(inputModel);
                 role = _dbContext.Roles.Add(role).Entity;
             }
             await _dbContext.SaveChangesAsync();
@@ -123,7 +123,7 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 inputModel.Rights.ToList().ForEach(r =>
                 {
-                    _dbContext.RoleClaims.Add(new SnippetAdminRoleClaim
+                    _dbContext.RoleClaims.Add(new RbacRoleClaim
                     {
                         RoleId = role.Id,
                         ClaimType = ClaimConstant.RoleRight,

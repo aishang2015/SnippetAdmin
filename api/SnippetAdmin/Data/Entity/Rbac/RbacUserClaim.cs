@@ -2,9 +2,9 @@
 using SnippetAdmin.Data.Cache;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SnippetAdmin.Data.Entity.RBAC
+namespace SnippetAdmin.Data.Entity.Rbac
 {
-    [Table("T_RBAC_UserRole")]
+    [Table("T_Rbac_UserClaim")]
     [Cachable]
-    public class SnippetAdminUserRole : IdentityUserRole<int> { }
+    public class RbacUserClaim : IdentityUserClaim<int> { }
 }

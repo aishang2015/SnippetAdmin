@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Models.Account;
 using SnippetAdmin.Models.RBAC.Element;
@@ -14,25 +14,25 @@ namespace SnippetAdmin.Models
     {
         public AutoMapperProfile()
         {
-            CreateMap<SnippetAdminUser, UserInfoOutputModel>().ReverseMap();
+            CreateMap<RbacUser, UserInfoOutputModel>().ReverseMap();
 
-            CreateMap<Element, GetElementOutputModel>();
-            CreateMap<CreateElementInputModel, Element>();
-            CreateMap<UpdateElementInputModel, Element>();
+            CreateMap<RbacElement, GetElementOutputModel>();
+            CreateMap<CreateElementInputModel, RbacElement>();
+            CreateMap<UpdateElementInputModel, RbacElement>();
 
-            CreateMap<Organization, GetOrganizationOutputModel>();
-            CreateMap<CreateOrganizationInputModel, Organization>();
-            CreateMap<UpdateOrganizationInputModel, Organization>();
+            CreateMap<RbacOrganization, GetOrganizationOutputModel>();
+            CreateMap<CreateOrganizationInputModel, RbacOrganization>();
+            CreateMap<UpdateOrganizationInputModel, RbacOrganization>();
 
-            CreateMap<SnippetAdminRole, GetRoleOutputModel>();
-            CreateMap<AddOrUpdateRoleInputModel, SnippetAdminRole>();
+            CreateMap<RbacRole, GetRoleOutputModel>();
+            CreateMap<AddOrUpdateRoleInputModel, RbacRole>();
 
-            CreateMap<AddOrUpdateUserInputModel, SnippetAdminUser>();
-            CreateMap<SnippetAdminUser, GetUserOutputModel>();
+            CreateMap<AddOrUpdateUserInputModel, RbacUser>();
+            CreateMap<RbacUser, GetUserOutputModel>();
 
             CreateMap<Job, GetJobsOutputModel>();
 
-            CreateMap<OrganizationType, GetOrganizationTypesOutputModel>();
+            CreateMap<RbacOrganizationType, GetOrganizationTypesOutputModel>();
         }
     }
 }

@@ -16,7 +16,6 @@ using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Models;
 using System.Reflection;
 
@@ -178,7 +177,6 @@ try
     });
 
     app.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
-    app.Initialize(MemoryCacheInitializer.InitialCache);
     app.Initialize(JobInitializer.InitialJob);
     app.Run();
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SnippetAdmin.Constants;
-using SnippetAdmin.Data.Entity.RBAC;
+using SnippetAdmin.Data.Entity.Rbac;
 
 namespace SnippetAdmin.Data.Auth
 {
@@ -23,7 +23,7 @@ namespace SnippetAdmin.Data.Auth
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             // user not exist or is not actived
-            if (!_dbContext.CacheSet<SnippetAdminUser>().Any(u =>
+            if (!_dbContext.CacheSet<RbacUser>().Any(u =>
                 u.UserName == _httpContextAccessor.HttpContext.User.UserName() && u.IsActive))
             {
                 context.Result = new StatusCodeResult(403);
@@ -31,9 +31,9 @@ namespace SnippetAdmin.Data.Auth
             }
 
             // get all user role
-            var userId = _dbContext.CacheSet<SnippetAdminUser>().First(u =>
+            var userId = _dbContext.CacheSet<RbacUser>().First(u =>
                 u.UserName == _httpContextAccessor.HttpContext.User.UserName()).Id;
-            var userRoles = _dbContext.CacheSet<SnippetAdminUserRole>().Where(ur => ur.UserId == userId);
+            var userRoles = _dbContext.CacheSet<RbacUserRole>().Where(ur => ur.UserId == userId);
             if (userRoles == null || !userRoles.Any())
             {
                 context.Result = new StatusCodeResult(403);
@@ -41,17 +41,17 @@ namespace SnippetAdmin.Data.Auth
             }
 
             // get actived roles
-            var roleIds = _dbContext.CacheSet<SnippetAdminRole>()
+            var roleIds = _dbContext.CacheSet<RbacRole>()
                  .Where(r => userRoles.Select(ur => ur.RoleId).Contains(r.Id) && r.IsActive)
                  .Select(r => r.Id);
 
             // get role elements id
-            var elementIds = _dbContext.CacheSet<SnippetAdminRoleClaim>()
+            var elementIds = _dbContext.CacheSet<RbacRoleClaim>()
                 .Where(rc => rc.ClaimType == ClaimConstant.RoleRight && roleIds.Contains(rc.RoleId))
                 .Select(rc => int.Parse(rc.ClaimValue));
 
             // get all api that could access
-            var apiList = _dbContext.CacheSet<Element>()
+            var apiList = _dbContext.CacheSet<RbacElement>()
                 .Where(e => elementIds.Contains(e.Id))
                 .Select(e => e.AccessApi.ToLower().Split(",").ToList())
                 .SelectMany(e => e)

@@ -1,8 +1,8 @@
 ﻿namespace SnippetAdmin.Models.Common
 {
-    public record DicOutputModel
+    public record DicOutputModel<T>
     {
-        public string Key { get; set; }
+        public T Key { get; set; }
 
         public string Value { get; set; }
     }
