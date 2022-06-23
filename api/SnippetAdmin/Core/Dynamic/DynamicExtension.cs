@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SnippetAdmin.Core.Dynamic.Attributes;
-using SnippetAdmin.Core.Utils;
+using SnippetAdmin.Core.Helpers;
 using System.Reflection;
 using System.Text;
 
@@ -144,7 +144,7 @@ namespace SnippetAdmin.Models.{{Entity}}
 }}
 ";
 
-            var classes = ReflectionUtil.GetAssemblyTypes()
+            var classes = ReflectionHelper.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null).ToList();
 
             var syntaxTreeList = new List<SyntaxTree>();
@@ -249,8 +249,8 @@ namespace SnippetAdmin.Models.{{Entity}}
                     controllerSource = controllerSource.Replace("{Entity}", classType.Name);
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(controllerSource));
 
-                    FileUtil.WriteToFile("Dynamic", $"{classType.Name}Controller.cs", controllerSource);
-                    FileUtil.WriteToFile("Dynamic", $"Get{classType.Name}InputModel.cs", searchModelSource);
+                    FileHelper.WriteToFile("Dynamic", $"{classType.Name}Controller.cs", controllerSource);
+                    FileHelper.WriteToFile("Dynamic", $"Get{classType.Name}InputModel.cs", searchModelSource);
                 }
 
                 var compilation = CSharpCompilation.Create(

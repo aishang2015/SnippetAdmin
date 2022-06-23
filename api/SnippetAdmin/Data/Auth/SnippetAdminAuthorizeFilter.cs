@@ -9,7 +9,6 @@ namespace SnippetAdmin.Data.Auth
     {
         private readonly SnippetAdminDbContext _dbContext;
 
-
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public SnippetAdminAuthorizeFilter(
@@ -24,7 +23,7 @@ namespace SnippetAdmin.Data.Auth
         {
             // user not exist or is not actived
             if (!_dbContext.CacheSet<RbacUser>().Any(u =>
-                u.UserName == _httpContextAccessor.HttpContext.User.UserName() && u.IsActive))
+                u.UserName == _httpContextAccessor.HttpContext.User.GetUserName() && u.IsActive))
             {
                 context.Result = new StatusCodeResult(403);
                 return;
@@ -32,7 +31,7 @@ namespace SnippetAdmin.Data.Auth
 
             // get all user role
             var userId = _dbContext.CacheSet<RbacUser>().First(u =>
-                u.UserName == _httpContextAccessor.HttpContext.User.UserName()).Id;
+                u.UserName == _httpContextAccessor.HttpContext.User.GetUserName()).Id;
             var userRoles = _dbContext.CacheSet<RbacUserRole>().Where(ur => ur.UserId == userId);
             if (userRoles == null || !userRoles.Any())
             {

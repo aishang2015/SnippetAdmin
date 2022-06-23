@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
-using SnippetAdmin.Core.Utils;
+using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
@@ -251,7 +251,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.RbacOrganizationTypes.Add(new RbacOrganizationType()
                 {
                     Name = inputModel.Name,
-                    Code = GuidUtil.NewSequentialGuid().ToString("N")
+                    Code = GuidHelper.NewSequentialGuid().ToString("N")
                 });
             }
             await _dbContext.SaveChangesAsync();

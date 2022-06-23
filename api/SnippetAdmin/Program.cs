@@ -3,19 +3,17 @@ using Orleans.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
-using SnippetAdmin.Business.BackgroundServices;
-using SnippetAdmin.Business.Grains.Implements;
-using SnippetAdmin.Business.Hubs;
-using SnippetAdmin.Core;
+using SnippetAdmin.Background;
 using SnippetAdmin.Core.Authentication;
-using SnippetAdmin.Core.Background;
 using SnippetAdmin.Core.Dynamic;
+using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Core.Middleware;
 using SnippetAdmin.Core.Monitor;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
+using SnippetAdmin.Grains;
 using SnippetAdmin.Models;
 using System.Reflection;
 
@@ -74,8 +72,9 @@ try
     // 添加系统指标监听器
     builder.Services.AddMetricEventListener();
 
-    // 添加指标广播
-    builder.Services.AddBackgroundService<MetricsBackgroundService>();
+    // 记录访问日志
+    builder.Services.AddBackgroundService<AccessedLogBackgroundService>();
+    builder.Services.AddBackgroundService<ExceptionLogBackgroundService>();
 
     // 使用serilog
     builder.Host.UseSerilog((context, services, configuration) =>
@@ -155,8 +154,8 @@ try
         app.UseMiniProfiler();
     }
 
-    // serilog提供的一个用来记录请求信息的日志中间件，所有请求的基本信息会被输出到日志中
-    app.UseCustomSerilogRequestLogging(500, "/broadcast");
+    // record accessed information
+    app.UseAccessedLogMiddleware("/api/*");
 
     // 处理异常
     app.UseCustomExceptionHandler();
@@ -172,7 +171,7 @@ try
     // 配置signalr路径
     app.UseEndpoints(endpoints =>
     {
-        endpoints.MapHubs();
+        endpoints.MapMetricHub();
         endpoints.MapControllers();
     });
 

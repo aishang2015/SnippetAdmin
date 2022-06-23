@@ -1,5 +1,5 @@
 ﻿using Cronos;
-using SnippetAdmin.Core.Utils;
+using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Enums;
@@ -221,7 +221,7 @@ namespace SnippetAdmin.Core.Scheduler
 
             jobs.ForEach(j =>
             {
-                var type = ReflectionUtil.GetAssemblyTypes().First(t => t.FullName == j.Name);
+                var type = ReflectionHelper.GetAssemblyTypes().First(t => t.FullName == j.Name);
                 _typeDic.TryAdd(j.Name, type);
 
                 var resetEvent = new ManualResetEvent(j.IsActive);

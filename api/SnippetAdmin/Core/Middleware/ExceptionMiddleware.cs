@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Exceptions;
+using SnippetAdmin.Core.Helpers;
+using SnippetAdmin.Data;
+using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.Models;
 using System.Text.Json;
 
@@ -18,6 +21,18 @@ namespace SnippetAdmin.Core.Middleware
                     var ex = exceptionHandlerPathFeature?.Error;
                     if (ex != null)
                     {
+                        var log = new SysExceptionLog
+                        {
+                            Type = ex.GetType().FullName,
+                            Message = ex.Message,
+                            Source = ex.Source,
+                            StackTrace = ex.StackTrace,
+                            Username = httpContext.User.GetUserName(),
+                            Path = httpContext.Request.Path,
+                            HappenedTime = DateTime.Now
+                        };
+                        await ChannelHelper<SysExceptionLog>.Instance.Writer.WriteAsync(log);
+
                         httpContext.Response.StatusCode = StatusCodes.Status200OK;
                         httpContext.Response.ContentType = "application/json; charset=utf-8";
                         var result = new CommonResult

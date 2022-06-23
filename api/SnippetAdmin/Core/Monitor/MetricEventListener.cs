@@ -5,7 +5,7 @@ namespace SnippetAdmin.Core.Monitor
 {
     public class MetricEventListener : EventListener
     {
-        public Metrics Metrics { get; private set; } = new Metrics();
+        public AllMetrics Metrics { get; private set; } = new AllMetrics();
 
         protected override void OnEventSourceCreated(EventSource eventSource)
         {

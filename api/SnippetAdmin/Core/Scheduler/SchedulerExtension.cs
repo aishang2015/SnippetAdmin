@@ -1,4 +1,4 @@
-﻿using SnippetAdmin.Core.Utils;
+﻿using SnippetAdmin.Core.Helpers;
 
 namespace SnippetAdmin.Core.Scheduler
 {
@@ -22,7 +22,7 @@ namespace SnippetAdmin.Core.Scheduler
             });
 
             // 查找全局的ijob定义,并将其注入
-            var types = ReflectionUtil.GetAssemblyTypes()
+            var types = ReflectionHelper.GetAssemblyTypes()
                  .Where(t => typeof(IJob).IsAssignableFrom(t) && t.IsClass)
                  .ToList();
             types.ForEach(j => services.AddScoped(j));

@@ -88,7 +88,7 @@ namespace SnippetAdmin.Controllers
         public async Task<CommonResult> GetCurrentUserInfo()
         {
             // 查找自己的信息
-            var user = await _userManager.FindByNameAsync(User.UserName());
+            var user = await _userManager.FindByNameAsync(User.GetUserName());
 
             // 返回结果
             return this.SuccessCommonResult(MessageConstant.EMPTYTUPLE,
@@ -230,7 +230,7 @@ namespace SnippetAdmin.Controllers
         public async Task<CommonResult> Refresh([FromBody] RefreshInputModel inputModel)
         {
             // 查找刷新凭证
-            var refreshToken = _dbContext.RefreshTokens.FirstOrDefault(token => token.UserName == inputModel.UserName);
+            var refreshToken = _dbContext.SysRefreshTokens.FirstOrDefault(token => token.UserName == inputModel.UserName);
             if (refreshToken == null)
             {
                 return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0008);
@@ -276,13 +276,13 @@ namespace SnippetAdmin.Controllers
         private async Task<CommonResult> MakeLoginResultAsync(RbacUser user)
         {
             // 生成刷新token,移除旧token
-            var refreshToken = _dbContext.RefreshTokens.FirstOrDefault(token => token.UserName == user.UserName);
+            var refreshToken = _dbContext.SysRefreshTokens.FirstOrDefault(token => token.UserName == user.UserName);
             if (refreshToken != null)
             {
                 _dbContext.Remove(refreshToken);
             }
             var tokenContent = Guid.NewGuid().ToString("N");
-            _dbContext.RefreshTokens.Add(new RefreshToken
+            _dbContext.SysRefreshTokens.Add(new SysRefreshToken
             {
                 UserName = user.UserName,
                 Content = tokenContent,

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Dynamic.Attributes;
-using SnippetAdmin.Core.Utils;
+using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Dynamic;
 using System.Reflection;
@@ -23,7 +23,7 @@ namespace SnippetAdmin.Controllers.Dynamic
         //[SnippetAdminAuthorize]
         public CommonResult GetDynamicInfo()
         {
-            var classes = ReflectionUtil.GetAssemblyTypes()
+            var classes = ReflectionHelper.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null)
                 .Select(c =>
                 new
@@ -52,7 +52,7 @@ namespace SnippetAdmin.Controllers.Dynamic
         [CommonResultResponseType(typeof(CommonResult<List<GetColumnsOutputModel>>))]
         public CommonResult GetColumns([FromBody] GetColumnsInputModel inputModel)
         {
-            var entityType = ReflectionUtil.GetAssemblyTypes()
+            var entityType = ReflectionHelper.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null &&
                     t.Name == inputModel.EntityName)
                 .FirstOrDefault();

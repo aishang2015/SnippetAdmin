@@ -41,27 +41,27 @@ class BasicLayout extends React.Component<any, any> {
     }
 
     async componentDidMount() {
-        let connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${Configuration.BaseUrl}/broadcast`, { accessTokenFactory: () => localStorage.getItem("token") })
-            .configureLogging(signalR.LogLevel.Warning)
-            .build();
+        // let connection = new signalR.HubConnectionBuilder()
+        //     .withUrl(`${Configuration.BaseUrl}/broadcast`, { accessTokenFactory: () => localStorage.getItem("token") })
+        //     .configureLogging(signalR.LogLevel.Warning)
+        //     .build();
 
-        let startFun = async () => {
-            try {
-                await connection.start();
-            } catch (err) {
-                console.log(err);
-                setTimeout(startFun, 5000);
-            }
-        }
+        // let startFun = async () => {
+        //     try {
+        //         await connection.start();
+        //     } catch (err) {
+        //         console.log(err);
+        //         setTimeout(startFun, 5000);
+        //     }
+        // }
 
-        connection.on("HandleMessage", (message: string) => {
-            this.props.receiveMessage(message);
-        });
+        // connection.on("HandleMessage", (message: string) => {
+        //     this.props.receiveMessage(message);
+        // });
 
-        connection.onclose(startFun);
+        // connection.onclose(startFun);
 
-        await startFun();
+        // await startFun();
 
         this.backInterval = setInterval(async () => {
 

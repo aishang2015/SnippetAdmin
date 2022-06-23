@@ -6,7 +6,7 @@ namespace SnippetAdmin.Core.Middleware
     public static class SerilogRequestLogging
     {
         /// <summary>
-        /// 输出所有请求的日志
+        /// serilog提供的一个用来记录请求信息的日志中间件，所有请求的基本信息会被输出到日志中。
         /// </summary>
         /// <param name="warningElapsed">超过这个时间的日志级别会变为warning否则为debug</param>
         /// <param name="ignorePathes">忽略的请求路径</param>

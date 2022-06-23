@@ -1,4 +1,4 @@
-﻿using SnippetAdmin.Core.Utils;
+﻿using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
 
 namespace SnippetAdmin.Core.Scheduler
@@ -11,7 +11,7 @@ namespace SnippetAdmin.Core.Scheduler
            (dbcontext) =>
            {
                // 查找全局的ijob定义
-               var jobTypes = ReflectionUtil.GetAssemblyTypes()
+               var jobTypes = ReflectionHelper.GetAssemblyTypes()
                     .Where(t => typeof(IJob).IsAssignableFrom(t));
                foreach (var jobType in jobTypes)
                {

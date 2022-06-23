@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Orleans;
-using SnippetAdmin.Business.Grains.Interfaces;
+using SnippetAdmin.Grains;
 using SnippetAdmin.Models;
 
 namespace SnippetAdmin.Controllers
