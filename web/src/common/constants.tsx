@@ -1,4 +1,4 @@
-import { faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { constants } from 'buffer';
 
@@ -26,7 +26,12 @@ export class Constants {
         //         { path: '/state', name: '登录管理', icon: <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> },
         //     ]
         // },
-        { path: '/setting', name: '系统设置', identify: 'about', icon: <FontAwesomeIcon icon={faCog} fixedWidth /> },
+        {
+            path: '', name: '系统设置', identify: 'about', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
+                { path: '/access', name: '访问记录', identify: 'user', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
+                { path: '/exception', name: '异常记录', identify: 'role', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
+            ]
+        },
         { path: '/about', name: '关于', identify: 'about', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
         // {
         //     path: '', name: '临时', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [

@@ -150,7 +150,7 @@ export default function TaskRecord(props: any) {
                 <Button onClick={deleteRecords}><Space><FontAwesomeIcon icon={faTrash} />删除记录</Space></Button>
             </div>
             <Table style={{ marginBottom: '10px' }} columns={taskTableColumns} dataSource={taskTableData} pagination={false}
-                bordered scroll={{ x: 1600 }} rowSelection={{ type: "checkbox", onChange: rowSelectChange }}></Table>
+                bordered scroll={{ x: 1600 }} rowSelection={{ type: "checkbox", onChange: rowSelectChange }} size="small"></Table>
             <Pagination pageSize={size} total={total} current={page} showSizeChanger={true} onChange={pageChange} />
         </>
     );

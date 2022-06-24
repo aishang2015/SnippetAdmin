@@ -122,7 +122,7 @@ namespace SnippetAdmin.Controllers
         [HttpPost(""GetDic"")]
         public CommonResult GetDic()
         {{
-            var query = _snippetAdminDbContext.Set<{{Entity}}>().Select(d=> new DicOutputModel{{
+            var query = _snippetAdminDbContext.Set<{{Entity}}>().Select(d=> new DicOutputModel<string>{{
                 Key = d.{{KeyProperty}}.ToString(),
                 Value = d.{{ValueProperty}}.ToString()
             }}).Distinct();

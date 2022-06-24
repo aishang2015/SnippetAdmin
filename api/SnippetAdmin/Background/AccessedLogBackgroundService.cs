@@ -20,7 +20,7 @@ namespace SnippetAdmin.Background
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var log = await ChannelHelper<SysApiAccessLog>.Instance.Reader.ReadAsync();
+                var log = await ChannelHelper<SysAccessLog>.Instance.Reader.ReadAsync();
                 using var scope = _provider.CreateScope();
                 using var db = scope.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
                 await db.SysApiAccessLogs.AddAsync(log);

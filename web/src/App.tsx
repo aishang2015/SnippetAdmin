@@ -48,17 +48,21 @@ class App extends React.Component<any, app> {
     const FlowPage = React.lazy(() => import('./pages/flow/flow'));
     const ChatPage = React.lazy(() => import('./pages/chat/chat'));
 
-    const UserPage = React.lazy(() => import('./pages/system/user/user'));
-    const RolePage = React.lazy(() => import('./pages/system/role/role'));
-    const PagePage = React.lazy(() => import('./pages/system/page/page'));
-    const OrgPage = React.lazy(() => import('./pages/system/org/org'));
-    const PosPage = React.lazy(() => import('./pages/system/pos/position'));
-    const StatePage = React.lazy(() => import('./pages/system/state/state'));
+    const UserPage = React.lazy(() => import('./pages/rbac/user/user'));
+    const RolePage = React.lazy(() => import('./pages/rbac/role/role'));
+    const PagePage = React.lazy(() => import('./pages/rbac/page/page'));
+    const OrgPage = React.lazy(() => import('./pages/rbac/org/org'));
+    const PosPage = React.lazy(() => import('./pages/rbac/pos/position'));
+    const StatePage = React.lazy(() => import('./pages/rbac/state/state'));
 
     const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
     const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
 
-    const SettingPage = React.lazy(()=>import('./pages/setting/setting'));
+    const SettingPage = React.lazy(() => import('./pages/system/setting/setting'));
+    const AccessLogPage = React.lazy(() => import('./pages/system/access/access'));
+    const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
+
+    const loadingContent = "加载中...";
 
     return (
       <Router>
@@ -67,21 +71,24 @@ class App extends React.Component<any, app> {
             ({ location }) => localStorage.getItem('token') ? (
               <BasicLayout>
                 <Switch>
-                  <Route exact={true} path="/home"><Suspense fallback="加载中..."><HomePage /></Suspense></Route>
-                  <Route exact={true} path="/table"><Suspense fallback="加载中..."><TablePage /></Suspense></Route>
-                  <Route exact={true} path="/flow"><Suspense fallback="加载中..."><FlowPage /></Suspense></Route>
-                  <Route exact={true} path="/chat"><Suspense fallback="加载中..."><ChatPage /></Suspense></Route>
-                  <Route exact={true} path="/about"><Suspense fallback="加载中..."><AboutPage /></Suspense></Route>
+                  <Route exact={true} path="/home"><Suspense fallback={loadingContent}><HomePage /></Suspense></Route>
+                  <Route exact={true} path="/table"><Suspense fallback={loadingContent}><TablePage /></Suspense></Route>
+                  <Route exact={true} path="/flow"><Suspense fallback={loadingContent}><FlowPage /></Suspense></Route>
+                  <Route exact={true} path="/chat"><Suspense fallback={loadingContent}><ChatPage /></Suspense></Route>
+                  <Route exact={true} path="/about"><Suspense fallback={loadingContent}><AboutPage /></Suspense></Route>
 
-                  <Route exact={true} path="/user"><Suspense fallback="加载中..."><UserPage /></Suspense></Route>
-                  <Route exact={true} path="/role"><Suspense fallback="加载中..."><RolePage /></Suspense></Route>
-                  <Route exact={true} path="/page"><Suspense fallback="加载中..."><PagePage /></Suspense></Route>
-                  <Route exact={true} path="/org"><Suspense fallback="加载中..."><OrgPage /></Suspense></Route>
-                  <Route exact={true} path="/pos"><Suspense fallback="加载中..."><PosPage /></Suspense></Route>
-                  <Route exact={true} path="/state"><Suspense fallback="加载中..."><StatePage /></Suspense></Route>
+                  <Route exact={true} path="/user"><Suspense fallback={loadingContent}><UserPage /></Suspense></Route>
+                  <Route exact={true} path="/role"><Suspense fallback={loadingContent}><RolePage /></Suspense></Route>
+                  <Route exact={true} path="/page"><Suspense fallback={loadingContent}><PagePage /></Suspense></Route>
+                  <Route exact={true} path="/org"><Suspense fallback={loadingContent}><OrgPage /></Suspense></Route>
+                  <Route exact={true} path="/pos"><Suspense fallback={loadingContent}><PosPage /></Suspense></Route>
+                  <Route exact={true} path="/state"><Suspense fallback={loadingContent}><StatePage /></Suspense></Route>
 
-                  <Route exact={true} path="/taskMange"><Suspense fallback="加载中..."><TaskManagePage /></Suspense></Route>
-                  <Route exact={true} path="/taskRecord"><Suspense fallback="加载中..."><TaskRecordPage /></Suspense></Route>
+                  <Route exact={true} path="/taskMange"><Suspense fallback={loadingContent}><TaskManagePage /></Suspense></Route>
+                  <Route exact={true} path="/taskRecord"><Suspense fallback={loadingContent}><TaskRecordPage /></Suspense></Route>
+
+                  <Route exact={true} path="/access"><Suspense fallback={loadingContent}><AccessLogPage /></Suspense></Route>
+                  <Route exact={true} path="/exception"><Suspense fallback={loadingContent}><ExceptionedPage /></Suspense></Route>
 
                   <Route path="*">
                     <Redirect to="/home"></Redirect>

@@ -3,7 +3,6 @@ import { SaveOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SearchOutline
 
 import './role.less';
 import { useEffect, useState } from 'react';
-import TextArea from 'antd/lib/input/TextArea';
 import { useForm } from 'antd/lib/form/Form';
 import { RoleService } from '../../../http/requests/role';
 import { ElementService } from '../../../http/requests/element';
@@ -15,6 +14,8 @@ export default function Role() {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [total, setTotal] = useState(0);
+    
+    const { TextArea } = Input;
 
     const [roleTableData, setRoleTableData] = useState(new Array<any>());
 
@@ -179,7 +180,7 @@ export default function Role() {
                             { max: 200, message: "备注过长" }
                         ]
                     }>
-                        <TextArea placeholder="请输入备注" />
+                        <TextArea/>
                     </Form.Item>
                     <Form.Item name="rights" label="页面权限">
                         <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true} showCheckedStrategy="SHOW_ALL"></TreeSelect>

@@ -7,7 +7,6 @@ namespace SnippetAdmin.Data.Entity.Scheduler
 {
     [Comment("任务记录")]
     [Table("T_Scheduler_JobRecord")]
-    [DynamicApi("任务记录")]
     public class JobRecord
     {
         [DynamicDicKey]

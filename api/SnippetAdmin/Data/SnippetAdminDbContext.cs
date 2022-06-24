@@ -53,7 +53,7 @@ namespace SnippetAdmin.Data
 
         public DbSet<SysRefreshToken> SysRefreshTokens { get; set; }
 
-        public DbSet<SysApiAccessLog> SysApiAccessLogs { get; set; }
+        public DbSet<SysAccessLog> SysApiAccessLogs { get; set; }
 
         public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
 

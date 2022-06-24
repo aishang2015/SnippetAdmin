@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.Core.Dynamic.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.System
 {
+    [DynamicApi("异常信息")]
     [Comment("异常信息")]
     [Table("T_Sys_ExceptionLog")]
     [Index(nameof(Type))]

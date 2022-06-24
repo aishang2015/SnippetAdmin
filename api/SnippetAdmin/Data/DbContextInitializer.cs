@@ -73,14 +73,12 @@ namespace SnippetAdmin.Data
 
                 //dbContext.Database.Migrate();
 
-                InitialCache(memoryCache, dbContext);
-
                 dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
                 {
-                    logger.LogInformation("数据库创建完毕，开始添加数据。");
+                    // 这里是为了确保数据库表存在，防止delete库之后表不存在的问题
                     InitialCache(memoryCache, dbContext);
 
                     // 初始化权限
@@ -90,10 +88,14 @@ namespace SnippetAdmin.Data
 
                     // 初始化用户角色
                     logger.LogInformation("初始化用户角色数据。");
-                    InitialUserRoles(dbContext, userManager, roleManager);
+                    InitialUserRoles(dbContext, userManager, roleManager).Wait();
                     logger.LogInformation("初始化用户角色完成。");
-
                 }
+                else
+                {
+                    InitialCache(memoryCache, dbContext);
+                }
+
 
                 logger.LogInformation("初始化数据操作执行完毕。");
             };
@@ -273,7 +275,7 @@ namespace SnippetAdmin.Data
         /// <param name="dbContext"></param>
         /// <param name="userManager"></param>
         /// <param name="roleManager"></param>
-        private static void InitialUserRoles(SnippetAdminDbContext dbContext, UserManager<RbacUser> userManager, RoleManager<RbacRole> roleManager)
+        private static  async Task InitialUserRoles(SnippetAdminDbContext dbContext, UserManager<RbacUser> userManager, RoleManager<RbacRole> roleManager)
         {
             var user = new RbacUser
             {
@@ -289,9 +291,9 @@ namespace SnippetAdmin.Data
                 Code = "Administrator",
                 IsActive = true
             };
-            userManager.CreateAsync(user, "admin").Wait();
-            roleManager.CreateAsync(role).Wait();
-            userManager.AddToRoleAsync(user, "管理员").Wait();
+            await userManager.CreateAsync(user, "admin");
+            await roleManager.CreateAsync(role);
+            await userManager.AddToRoleAsync(user, "管理员");
 
             // 赋予管理员权限
             foreach (var e in dbContext.RbacElements)
@@ -303,7 +305,7 @@ namespace SnippetAdmin.Data
                     ClaimValue = e.Id.ToString(),
                 });
             }
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         public List<T> GetDataList<T>(SnippetAdminDbContext dbContext) where T : class

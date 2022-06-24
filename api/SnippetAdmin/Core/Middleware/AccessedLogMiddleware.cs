@@ -18,13 +18,13 @@ namespace SnippetAdmin.Core.Middleware
             {
                 if ((pathMatches.Length != 0 && isMatchAny(context.Request.Path)) || pathMatches.Length == 0)
                 {
-                    if (context.Request.Method == "OPTIONS")
+                    if (context.Request.Method == "OPTIONS" || context.Request.Path.StartsWithSegments("/api/SysAccessLog"))
                     {
                         await next.Invoke();
                     }
                     else
                     {
-                        var log = new SysApiAccessLog();
+                        var log = new SysAccessLog();
                         context.Request.EnableBuffering();
 
                         var stopWatch = new Stopwatch();
@@ -60,7 +60,7 @@ namespace SnippetAdmin.Core.Middleware
                         log.Username = context.User.GetUserName();
                         log.AccessedTime = DateTime.Now;
 
-                        await ChannelHelper<SysApiAccessLog>.Instance.Writer.WriteAsync(log);
+                        await ChannelHelper<SysAccessLog>.Instance.Writer.WriteAsync(log);
                     }
                 }
                 else

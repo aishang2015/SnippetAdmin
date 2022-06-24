@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
 import './taskManage.less';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import InfoCircleOutlined from '@ant-design/icons/lib/icons/InfoCircleOutlined';
 import { JobService } from '../../../http/requests/job';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 export default function TaskManage(props: any) {
@@ -132,7 +132,7 @@ export default function TaskManage(props: any) {
                     <Space><FontAwesomeIcon icon={faPlus} fixedWidth></FontAwesomeIcon>创建新任务</Space></Button>
             </div>
             <Table columns={taskTableColumns} dataSource={taskTableData} pagination={{ position: ["bottomLeft"], pageSize: 10 }}
-                bordered scroll={{ x: 1600 }}></Table>
+                bordered scroll={{ x: 1600 }} size="small"></Table>
 
             <Modal visible={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
                 footer={null} title="任务信息编辑">
