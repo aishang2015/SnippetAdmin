@@ -11,5 +11,8 @@
         public string Identity { get; set; }
 
         public string AccessApi { get; set; }
+
+
+        public int Sorting { get; set; }
     }
 }

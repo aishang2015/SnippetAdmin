@@ -32,4 +32,8 @@ public class RbacElement
     [Comment("访问接口")]
     [Column("access_api")]
     public string AccessApi { get; set; }
+
+    [Comment("排序")]
+    [Column("sorting")]
+    public int Sorting { get; set; }
 }

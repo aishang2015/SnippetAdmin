@@ -10,6 +10,7 @@ export class ElementService {
             type: number;
             identity: string;
             accessApi: string;
+            sorting: number;
         };
         return Axios.instance.post<CommonResult<getElementResult>>('api/element/getElement', { id: id });
     }
@@ -29,7 +30,8 @@ export class ElementService {
         name: string,
         type: number,
         identity: string,
-        accessApi: string
+        accessApi: string,
+        sorting: number
     }) {
         return Axios.instance.post<CommonResultNoData>('api/element/createElement', param);
     }
@@ -43,7 +45,8 @@ export class ElementService {
         name: string,
         type: number,
         identity: string,
-        accessApi: string
+        accessApi: string,
+        sorting: number
     }) {
         return Axios.instance.post<CommonResultNoData>('api/element/updateElement', param);
     }

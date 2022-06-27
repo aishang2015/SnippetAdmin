@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Orleans;
 using Orleans.Hosting;
 using Serilog;
@@ -13,6 +15,7 @@ using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
+using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Grains;
 using SnippetAdmin.Models;
 using System.Reflection;
@@ -30,6 +33,13 @@ try
     builder.Services.AddCustomAuthentication(builder.Configuration);
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
     builder.Services.AddOauth(builder.Configuration);
+
+    // 自定义授权策略
+    builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IAuthorizationHandler, AccessApiAuthorizationHandler>());
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AccessApi", policy => policy.Requirements.Add(new AccessApiRequirement()));
+    });
 
     // 配置FluentValidation并改变默认modelstate的返回形式
     var mvcBuilder = builder.Services.AddControllers();

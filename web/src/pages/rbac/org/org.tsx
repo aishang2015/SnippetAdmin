@@ -1,19 +1,15 @@
-import './org.less';
-import 'emoji-mart/css/emoji-mart.css';
 import { Picker } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
+import './org.less';
 
-import { Modal, Button, Descriptions, Divider, Form, Tag, Tree, Input, Space, Checkbox, TreeSelect, message, Table, Tooltip, Select } from 'antd';
-import {
-    PlusOutlined, EditOutlined, DeleteOutlined, ContactsOutlined, MinusCircleOutlined,
-    SaveOutlined
-} from "@ant-design/icons";
-import { useEffect, useState } from 'react';
-import { useForm } from 'antd/lib/form/Form';
-import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
-import { uniq } from 'lodash';
-import { RightElement } from '../../../components/right/rightElement';
-import { faObjectGroup, faObjectUngroup, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
+import { faObjectGroup, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Space, Table, Tooltip, Tree, TreeSelect } from 'antd';
+import { useForm } from 'antd/lib/form/Form';
+import { useEffect, useState } from 'react';
+import { RightElement } from '../../../components/right/rightElement';
+import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
 
 export default function Org() {
 
@@ -95,7 +91,8 @@ export default function Org() {
             orgCode: orgDetail?.code,
             orgType: orgDetail?.type,
             orgPhone: orgDetail?.phone,
-            orgAddress: orgDetail?.address
+            orgAddress: orgDetail?.address,
+            sorting: orgDetail?.sorting
         });
         setOrgIcon(orgDetail!.icon);
         setOrgIconId(orgDetail!.iconId);
@@ -131,6 +128,7 @@ export default function Org() {
                 iconId: orgIconId,
                 phone: values["orgPhone"],
                 address: values["orgAddress"],
+                sorting: values["sorting"]
             });
             await getTreeData();
             let response = await OrganizationService.getOrganization(orgDetail!.id);
@@ -148,6 +146,7 @@ export default function Org() {
                 iconId: orgIconId,
                 phone: values["orgPhone"],
                 address: values["orgAddress"],
+                sorting: values["sorting"]
             });
             await getTreeData();
         }
@@ -202,6 +201,7 @@ export default function Org() {
     // 将后端数据转为树格式
     function makeTreeData(data: any) {
         for (const d of data) {
+            d.value = d.key;
             d.icon = (<>{d.icon}</>);
             if (d.children.length === 0) {
                 d.switcherIcon = (<></>)
@@ -261,6 +261,7 @@ export default function Org() {
                                 <Descriptions.Item label="组织类型编码" span={3}>{orgDetail.typeName}</Descriptions.Item>
                                 <Descriptions.Item label="电话" span={3}>{orgDetail.phone}</Descriptions.Item>
                                 <Descriptions.Item label="地址" span={3}>{orgDetail.address}</Descriptions.Item>
+                                <Descriptions.Item label="排序" span={3}>{orgDetail.sorting}</Descriptions.Item>
                             </Descriptions>
                         </>
                     }
@@ -309,6 +310,13 @@ export default function Org() {
                     </Form.Item>
                     <Form.Item name="orgAddress" label="地址" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
                         <Input placeholder="请输入地址" allowClear={true} autoComplete="off2"></Input>
+                    </Form.Item>
+                    <Form.Item name="sorting" label="排序" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} rules={
+                        [
+                            { required: true, message: "请输入排序值" },
+                        ]
+                    } >
+                        <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
@@ -365,6 +373,14 @@ export default function Org() {
                         ]
                     }>
                         <Input placeholder="请输入组织类型名称" allowClear={true} autoComplete="off2"></Input>
+                    </Form.Item>
+                    <Form.Item name="code" label="组织类型编码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} required rules={
+                        [
+                            { required: true, message: "请输入组织类型编码" },
+                            { max: 50, message: "组织类型编码过长" },
+                        ]
+                    }>
+                        <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off2"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>

@@ -23,5 +23,9 @@ namespace SnippetAdmin.Data.Entity.Rbac
         [Comment("编码")]
         [Column("code")]
         public string Code { get; set; }
+
+        [Comment("排序")]
+        [Column("sorting")]
+        public int Sorting { get; set; }
     }
 }

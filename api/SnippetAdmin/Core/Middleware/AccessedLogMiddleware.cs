@@ -18,7 +18,9 @@ namespace SnippetAdmin.Core.Middleware
             {
                 if ((pathMatches.Length != 0 && isMatchAny(context.Request.Path)) || pathMatches.Length == 0)
                 {
-                    if (context.Request.Method == "OPTIONS" || context.Request.Path.StartsWithSegments("/api/SysAccessLog"))
+                    if (context.Request.Method == "OPTIONS" || 
+                        context.Request.Path.StartsWithSegments("/api/SysAccessLog")||
+                        context.Request.Path.StartsWithSegments("/api/account"))
                     {
                         await next.Invoke();
                     }

@@ -15,8 +15,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
-    [SnippetAdminAuthorize]
+    [Authorize(Policy = "AccessApi")]
+    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class PositionController : ControllerBase
     {
@@ -50,13 +50,15 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.RbacPositions.Add(new RbacPosition()
                 {
                     Name = inputModel.Name,
-                    Code = inputModel.Code
+                    Code = inputModel.Code,
+                    Sorting = inputModel.Sorting
                 });
             }
             else
             {
                 position.Name = inputModel.Name;
                 position.Code = inputModel.Code;
+                position.Sorting = inputModel.Sorting;
                 _dbContext.RbacPositions.Update(position);
             }
             await _dbContext.SaveChangesAsync();
@@ -88,7 +90,8 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 Id = positoin.Id,
                 Name = positoin.Name,
-                Code = positoin.Code
+                Code = positoin.Code,
+                Sorting = positoin.Sorting,
             });
         }
 
@@ -96,7 +99,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(PagedOutputModel<GetPositionsOutputModel>))]
         public async Task<CommonResult> GetPositions([FromBody] PagedInputModel inputModel)
         {
-            var query = _dbContext.RbacPositions.AsQueryable();
+            var query = _dbContext.RbacPositions.OrderBy(p => p.Sorting).AsQueryable();
             query = query.Sort(inputModel.Sorts);
 
             var result = new PagedOutputModel<GetPositionsOutputModel>()
@@ -107,6 +110,7 @@ namespace SnippetAdmin.Controllers.RBAC
                     Id = p.Id,
                     Name = p.Name,
                     Code = p.Code,
+                    Sorting = p.Sorting
                 }).Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToListAsync()
             };
             return this.SuccessCommonResult(result);

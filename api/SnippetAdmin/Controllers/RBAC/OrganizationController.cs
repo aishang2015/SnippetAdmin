@@ -16,8 +16,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
-    [SnippetAdminAuthorize]
+    [Authorize(Policy = "AccessApi")]
+    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class OrganizationController : ControllerBase
     {
@@ -54,7 +54,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(List<GetOrganizationTreeOutputModel>))]
         public async Task<CommonResult> GetOrganizationTree()
         {
-            var orgs = await _dbContext.RbacOrganizations.ToListAsync();
+            var orgs = await _dbContext.RbacOrganizations.OrderBy(org => org.Sorting).ToListAsync();
             var orgTrees = await _dbContext.RbacOrganizationTrees.ToListAsync();
 
             // 找到最上层,即只做为自己的子节点
@@ -235,6 +235,11 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> AddOrUpdateOrganizationType(
             [FromBody] AddOrUpdateOrganizationTypeInputModel inputModel)
         {
+            if (_dbContext.RbacOrganizationTypes.Any(ot => ot.Code == inputModel.Code && ot.Id != inputModel.Id))
+            {
+                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0007);
+            }
+
             if (_dbContext.RbacOrganizationTypes.Any(ot => ot.Name == inputModel.Name && ot.Id != inputModel.Id))
             {
                 return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0008);
@@ -244,6 +249,7 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 var orgType = _dbContext.RbacOrganizationTypes.Find(inputModel.Id);
                 orgType.Name = inputModel.Name;
+                orgType.Code = inputModel.Code;
                 _dbContext.RbacOrganizationTypes.Update(orgType);
             }
             else
@@ -251,7 +257,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 _dbContext.RbacOrganizationTypes.Add(new RbacOrganizationType()
                 {
                     Name = inputModel.Name,
-                    Code = GuidHelper.NewSequentialGuid().ToString("N")
+                    Code = inputModel.Code
                 });
             }
             await _dbContext.SaveChangesAsync();
@@ -279,6 +285,8 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         #endregion
+
+        #region 私有方法
 
         /// <summary>
         /// 生成树数据
@@ -310,5 +318,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
             return outputModels;
         }
+
+        #endregion
     }
 }

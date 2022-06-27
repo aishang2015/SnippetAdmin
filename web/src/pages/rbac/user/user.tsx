@@ -25,6 +25,8 @@ export default function User() {
 
     const [orgAddVisible, setOrgAddVisible] = useState(false);
     const [orgSettingForm] = useForm();
+
+    const [searchVisible, setSearchVisible] = useState(false);
     const [searchForm] = useForm();
 
     const [userEditVisible, setUserEditVisible] = useState(false);
@@ -215,6 +217,7 @@ export default function User() {
 
     // 搜索提交
     async function searchSubmit(values: any) {
+        setSearchVisible(false);
         searchOption.current.userName = values['userName'];
         searchOption.current.realName = values['realName'];
         searchOption.current.phoneNumber = values['phoneNumber'];
@@ -237,7 +240,8 @@ export default function User() {
 
     // 点击搜索按钮
     function searchUser() {
-        searchForm.submit();
+        // searchForm.submit();
+        setSearchVisible(false);
     }
 
     // 点击重置搜索按钮
@@ -337,6 +341,11 @@ export default function User() {
         getUsers();
     }, [page, size]); // 
 
+    // 搜索用户
+    function openSearchModal() {
+        setSearchVisible(true);
+    }
+
     return (
         <>
             <div id="user-container">
@@ -344,7 +353,7 @@ export default function User() {
                     <RightElement identify="add-member" child={
                         <>
                             <div>
-                                <Button icon={<PlusOutlined />} onClick={setOrgMember} disabled={selectedOrg === null}>添加成员</Button>
+                                <Button icon={<PlusOutlined />} onClick={setOrgMember} disabled={selectedOrg === null}>绑定成员</Button>
                             </div>
                             <Divider style={{ margin: "10px 0" }} />
                         </>
@@ -352,43 +361,13 @@ export default function User() {
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys: any, event: any) => orgSelect(keys, event)} />
                 </div>
                 <div id="user-list-container">
-                    <Form form={searchForm} layout="inline" onFinish={searchSubmit}>
-                        <Form.Item name="userName" label="账号" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
-                            <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
-                        </Form.Item>
-                        <Form.Item name="realName" label="姓名" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
-                            <Input className="searchInput" autoComplete="off2" placeholder="请输入姓名" />
-                        </Form.Item>
-                        <Form.Item name="phoneNumber" label="电话" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
-                            <Input className="searchInput" autoComplete="off2" placeholder="请输入电话" />
-                        </Form.Item>
-                        <Form.Item name="role" label="角色" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
-                            <Select allowClear={true} className="searchInput" placeholder="请选择角色">
-                                {
-                                    roleOptions.map(o => (
-                                        <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
-                                    ))
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item name="position" label="职位" labelCol={{ style: { width: '60px', marginBottom: '5px' } }}>
-                            <Select allowClear={true} className="searchInput" placeholder="请选择职位">
-                                {
-                                    positionOptions.map(o => (
-                                        <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
-                                    ))
-                                }
-                            </Select>
-                        </Form.Item>
-                    </Form>
                     <Space style={{ marginTop: "10px" }}>
-                        <Button icon={<SearchOutlined />} onClick={searchUser}>查找</Button>
-                        <Button icon={<ClearOutlined />} onClick={resetSearchForm}>重置</Button>
                         <RightElement identify="create-user" child={
                             <>
                                 <Button icon={<PlusOutlined />} onClick={createUser}>创建</Button>
                             </>
                         }></RightElement>
+                        <Button icon={<SearchOutlined />} onClick={openSearchModal}>查找</Button>
                     </Space>
                     <Divider style={{ margin: "10px 0" }} />
                     <Table size="small" columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1700 }} pagination={false}></Table>
@@ -396,6 +375,43 @@ export default function User() {
                         onChange={pageChange}></Pagination>
                 </div>
             </div>
+
+            <Modal visible={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
+                <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
+                    <Form.Item name="userName" label="账号">
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
+                    </Form.Item>
+                    <Form.Item name="realName" label="姓名" >
+                        <Input className="searchInput" autoComplete="off2" placeholder="请输入姓名" />
+                    </Form.Item>
+                    <Form.Item name="phoneNumber" label="电话">
+                        <Input className="searchInput" autoComplete="off2" placeholder="请输入电话" />
+                    </Form.Item>
+                    <Form.Item name="role" label="角色">
+                        <Select allowClear={true} className="searchInput" placeholder="请选择角色">
+                            {
+                                roleOptions.map(o => (
+                                    <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
+                                ))
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="position" label="职位">
+                        <Select allowClear={true} className="searchInput" placeholder="请选择职位">
+                            {
+                                positionOptions.map(o => (
+                                    <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
+                                ))
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
+                        <Button type="primary" htmlType="submit">确定</Button>
+                        <Button style={{ marginLeft: '10px' }} onClick={() => resetSearchForm()}>重置</Button>
+                        <Button style={{ marginLeft: '10px' }} onClick={() => setSearchVisible(false)}>取消</Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
 
             <Modal visible={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
                 destroyOnClose={true}>

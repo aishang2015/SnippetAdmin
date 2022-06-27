@@ -21,5 +21,7 @@
         public string Phone { get; set; }
 
         public string Address { get; set; }
+
+        public int Sorting { get; set; }
     }
 }

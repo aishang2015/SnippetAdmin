@@ -15,6 +15,8 @@ namespace SnippetAdmin.Models.RBAC.Element
         public string Identity { get; set; }
 
         public string AccessApi { get; set; }
+
+        public int Sorting { get; set; }
     }
 
     public class UpdateElementInputModelValidator : AbstractValidator<UpdateElementInputModel>

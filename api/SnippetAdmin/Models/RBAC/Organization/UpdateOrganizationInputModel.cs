@@ -23,6 +23,8 @@ namespace SnippetAdmin.Models.RBAC.Organization
         public string Phone { get; set; }
 
         public string Address { get; set; }
+
+        public int Sorting { get; set; }
     }
 
     public class UpdateOrganizationInputModelValidator : AbstractValidator<UpdateOrganizationInputModel>

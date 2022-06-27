@@ -15,8 +15,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
-    [SnippetAdminAuthorize]
+    [Authorize(Policy = "AccessApi")]
+    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class ElementController : ControllerBase
     {
@@ -46,7 +46,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [CommonResultResponseType(typeof(List<GetElementTreeOutputModel>))]
         public async Task<CommonResult> GetElementTree()
         {
-            var elements = await _dbContext.RbacElements.ToListAsync();
+            var elements = await _dbContext.RbacElements.OrderBy(e => e.Sorting).ToListAsync();
             var elementTrees = await _dbContext.RbacElementTrees.ToListAsync();
 
             // 找到最上层,即只做为自己的子节点
@@ -149,14 +149,14 @@ namespace SnippetAdmin.Controllers.RBAC
             sw.WriteLine("// 元素数据");
             foreach (var e in elements)
             {
-                sw.WriteLine($"_dbContext.Elements.Add(new Element {{ Id = {e.Id}, Name = \"{e.Name}\", Identity = \"{e.Identity}\", Type = ElementType.{e.Type}, AccessApi = \"{e.AccessApi}\" }});");
+                sw.WriteLine($"_dbContext.RbacElements.Add(new RbacElement {{ Id = {e.Id}, Name = \"{e.Name}\", Identity = \"{e.Identity}\", Type = ElementType.{e.Type}, AccessApi = \"{e.AccessApi}\", Sorting = {e.Sorting} }});");
             }
 
             sw.WriteLine();
             sw.WriteLine("// 元素树数据");
             foreach (var e in elementTrees)
             {
-                sw.WriteLine($"_dbContext.ElementTrees.Add(new ElementTree {{ Id = {e.Id}, Ancestor = {e.Ancestor}, Descendant = {e.Descendant} ,Length = {e.Length} }});");
+                sw.WriteLine($"_dbContext.RbacElementTrees.Add(new RbacElementTree {{ Id = {e.Id}, Ancestor = {e.Ancestor}, Descendant = {e.Descendant} ,Length = {e.Length} }});");
             }
             sw.WriteLine("await _dbContext.SaveChangesAsync();");
 

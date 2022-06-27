@@ -16,9 +16,9 @@ export class Constants {
             ]
         },
         {
-            path: '', name: '任务调度', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
-                { path: '/taskMange', name: '任务管理', identify: 'user', icon: <FontAwesomeIcon icon={faThumbtack} fixedWidth /> },
-                { path: '/taskRecord', name: '任务记录', identify: 'role', icon: <FontAwesomeIcon icon={faClipboardCheck} fixedWidth /> },
+            path: '', name: '任务调度', identify: 'task', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
+                { path: '/taskMange', name: '任务管理', identify: 'taskManage', icon: <FontAwesomeIcon icon={faThumbtack} fixedWidth /> },
+                { path: '/taskRecord', name: '任务记录', identify: 'taskRecord', icon: <FontAwesomeIcon icon={faClipboardCheck} fixedWidth /> },
             ]
         },
         // {
@@ -27,9 +27,9 @@ export class Constants {
         //     ]
         // },
         {
-            path: '', name: '系统设置', identify: 'about', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
-                { path: '/access', name: '访问记录', identify: 'user', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
-                { path: '/exception', name: '异常记录', identify: 'role', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
+            path: '', name: '系统设置', identify: 'system', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
+                { path: '/access', name: '访问记录', identify: 'accessRecord', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
+                { path: '/exception', name: '异常记录', identify: 'exceptionRecord', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
             ]
         },
         { path: '/about', name: '关于', identify: 'about', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },

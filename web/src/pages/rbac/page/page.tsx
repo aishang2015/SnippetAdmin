@@ -1,7 +1,7 @@
 
 import './page.less';
 
-import { Button, Descriptions, Divider, Form, Input, Modal, Select, Tag, Tree, TreeSelect } from 'antd';
+import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Tag, Tree, TreeSelect } from 'antd';
 import { DeleteOutlined, EditOutlined, ExportOutlined, LinkOutlined, MenuOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
@@ -56,7 +56,8 @@ export default function Page() {
             elementName: elementDetail.name,
             elementType: elementDetail.type,
             elementIdentity: elementDetail.identity,
-            elementInterfaces: elementDetail.accessApi ? split(elementDetail.accessApi, ',') : []
+            elementInterfaces: elementDetail.accessApi ? split(elementDetail.accessApi, ',') : [],
+            sorting: elementDetail.sorting
         });
     }
 
@@ -88,7 +89,8 @@ export default function Page() {
                 name: values['elementName'],
                 type: values['elementType'],
                 identity: values['elementIdentity'],
-                accessApi: join(values['elementInterfaces'], ',')
+                accessApi: join(values['elementInterfaces'], ','),
+                sorting: values['sorting']
             });
             let response = await ElementService.getElement(elementDetail.id);
             setElementDetail(response.data.data);
@@ -98,7 +100,8 @@ export default function Page() {
                 name: values['elementName'],
                 type: values['elementType'],
                 identity: values['elementIdentity'],
-                accessApi: join(values['elementInterfaces'], ',')
+                accessApi: join(values['elementInterfaces'], ','),
+                sorting: values['sorting']
             });
         }
         setElementEditVisible(false);
@@ -118,6 +121,7 @@ export default function Page() {
     // 将后端数据转为树格式
     function makeTreeData(data: any) {
         for (const d of data) {
+            d.value = d.key;
             if (d.type === 1) {
                 d.icon = (<MenuOutlined />)
             } else if (d.type === 2) {
@@ -142,11 +146,11 @@ export default function Page() {
                                 <Button icon={<PlusOutlined />} style={{ marginRight: '10px' }} onClick={addElement}>添加</Button>
                             </>
                         }></RightElement>
-                        <RightElement identify="export-element" child={
+                        {/* <RightElement identify="export-element" child={
                             <>
                                 <Button icon={<ExportOutlined />} style={{ marginRight: '10px' }} onClick={exportElement}>导出</Button>
                             </>
-                        }></RightElement>
+                        }></RightElement> */}
                     </div>
                     <Divider style={{ margin: "10px 0" }} />
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
@@ -179,6 +183,7 @@ export default function Page() {
                                     ))
                                     }
                                 </Descriptions.Item>
+                                <Descriptions.Item label="元素排序" span={3}>{elementDetail.sorting}</Descriptions.Item>
                             </Descriptions>
                         </>
                     }
@@ -239,6 +244,13 @@ export default function Page() {
                             )
                             }
                         </Select>
+                    </Form.Item>
+                    <Form.Item name="sorting" label="排序" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} rules={
+                        [
+                            { required: true, message: "请输入排序值" },
+                        ]
+                    } >
+                        <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>

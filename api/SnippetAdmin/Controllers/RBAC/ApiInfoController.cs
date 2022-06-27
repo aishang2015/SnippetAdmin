@@ -16,8 +16,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [ProducesResponseType(typeof(CommonResult<List<string>>), 200)]
-        [Authorize]
-        [SnippetAdminAuthorize]
+        [Authorize(Policy = "AccessApi")]
+        //[SnippetAdminAuthorize]
         public CommonResult GetApiPaths([FromServices] IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider)
         {
             var result = apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items

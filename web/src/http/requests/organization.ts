@@ -12,7 +12,8 @@ export type getOrganizationResult = {
     icon: string,
     iconId: string,
     phone: string,
-    address: string
+    address: string,
+    sorting: number
 }
 
 export type getOrganizationTreeResult = {
@@ -30,7 +31,8 @@ export type createOrganizationInput = {
     icon: string,
     iconId: string,
     phone: string,
-    address: string
+    address: string,
+    sorting: number
 }
 
 export type updateOrganizationInput = {
@@ -42,7 +44,8 @@ export type updateOrganizationInput = {
     icon: string,
     iconId: string,
     phone: string,
-    address: string
+    address: string,
+    sorting: number
 }
 
 export type AddOrUpdateOrganizationTypeInput = {

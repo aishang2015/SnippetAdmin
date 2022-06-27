@@ -16,8 +16,8 @@ namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
-    [SnippetAdminAuthorize]
+    [Authorize(Policy = "AccessApi")]
+    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class UserController : ControllerBase
     {

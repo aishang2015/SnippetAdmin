@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, Modal, Pagination, Space, Table, Tooltip } from 'antd';
+import { Button, Divider, Form, Input, InputNumber, Modal, Pagination, Space, Table, Tooltip } from 'antd';
 import { RightElement } from '../../../components/right/rightElement';
 import { SaveOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import './position.less';
@@ -24,6 +24,7 @@ export default function () {
         },
         { title: '名称', dataIndex: "name", align: 'center', width: '220px' },
         { title: '职位编码', dataIndex: "code", align: 'center', width: '220px' },
+        { title: '排序', dataIndex: "sorting", align: 'center', width: '100px' },
         {
             title: '操作', key: 'operate', align: 'center', width: '130px',
             render: (text: any, record: any) => (
@@ -62,7 +63,8 @@ export default function () {
         positionEditForm.setFieldsValue({
             id: position.data.data.id,
             name: position.data.data.name,
-            code: position.data.data.code
+            code: position.data.data.code,
+            sorting: position.data.data.sorting
         });
         setPositionModalVisible(true);
     }
@@ -81,7 +83,8 @@ export default function () {
         await PositionService.addOrUpdatePosition({
             id: values["id"],
             name: values["name"],
-            code: values["code"]
+            code: values["code"],
+            sorting: values["sorting"]
         });
         await getPositions(page, size);
         setPositionModalVisible(false);
@@ -103,7 +106,7 @@ export default function () {
                     <Pagination current={page} total={total} onChange={async (p, s) => { setPage(p); setSize(s); await getPositions(p, s); }} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
                 }
             </div>
-            <Modal visible={positionModalVisible} title="角色信息" footer={null} onCancel={() => setPositionModalVisible(false)}
+            <Modal visible={positionModalVisible} title="职位信息" footer={null} onCancel={() => setPositionModalVisible(false)}
                 destroyOnClose={true}>
                 <Form form={positionEditForm} onFinish={positionSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -125,6 +128,13 @@ export default function () {
                         ]
                     }>
                         <Input autoComplete="off2" placeholder="请输入职位编码" />
+                    </Form.Item>
+                    <Form.Item name="sorting" label="排序" rules={
+                        [
+                            { required: true, message: "请输入排序值" },
+                        ]
+                    } >
+                        <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
                         <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>

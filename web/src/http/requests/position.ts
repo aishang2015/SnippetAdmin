@@ -32,7 +32,8 @@ export class PositionService {
 export type addOrUpdatePositionInput = {
     id: number | null,
     name: string,
-    code: string
+    code: string,
+    sorting: number
 }
 
 export type deletePositionInput = {
@@ -52,6 +53,7 @@ export type getPositionOutput = {
     id: number,
     name: string,
     code: string,
+    sorting: number
 }
 
 export type getPositionsOutput = {
@@ -63,6 +65,7 @@ export type positionResult = {
     id: number,
     name: string,
     code: string,
+    sorting: number
 }
 
 export type getPositionDicOutput = {
