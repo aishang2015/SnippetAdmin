@@ -28,6 +28,8 @@ export default function Org() {
     const [treeData, setTreeData] = useState<Array<any>>([]);
     const [orgDetail, setOrgDetail] = useState<getOrganizationResult | null>(null);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const orgTypeTableColumns: any = [
 
         {
@@ -114,43 +116,49 @@ export default function Org() {
 
     // 组织提交
     async function orgSubmit(values: any) {
+        try {
+            setIsLoading(true);
 
-        if (values['id']) {
+            if (values['id']) {
 
-            // 更新
-            await OrganizationService.updateOrganization({
-                id: values["id"],
-                upId: values["upOrg"],
-                name: values["orgName"],
-                code: values["orgCode"],
-                type: values["orgType"],
-                icon: orgIcon,
-                iconId: orgIconId,
-                phone: values["orgPhone"],
-                address: values["orgAddress"],
-                sorting: values["sorting"]
-            });
-            await getTreeData();
-            let response = await OrganizationService.getOrganization(orgDetail!.id);
-            setOrgDetail(response.data.data);
+                // 更新
+                await OrganizationService.updateOrganization({
+                    id: values["id"],
+                    upId: values["upOrg"],
+                    name: values["orgName"],
+                    code: values["orgCode"],
+                    type: values["orgType"],
+                    icon: orgIcon,
+                    iconId: orgIconId,
+                    phone: values["orgPhone"],
+                    address: values["orgAddress"],
+                    sorting: values["sorting"]
+                });
+                await getTreeData();
+                let response = await OrganizationService.getOrganization(orgDetail!.id);
+                setOrgDetail(response.data.data);
 
-        } else {
+            } else {
 
-            // 创建
-            await OrganizationService.createOrganization({
-                upId: values["upOrg"],
-                name: values["orgName"],
-                code: values["orgCode"],
-                type: values["orgType"],
-                icon: orgIcon,
-                iconId: orgIconId,
-                phone: values["orgPhone"],
-                address: values["orgAddress"],
-                sorting: values["sorting"]
-            });
-            await getTreeData();
+                // 创建
+                await OrganizationService.createOrganization({
+                    upId: values["upOrg"],
+                    name: values["orgName"],
+                    code: values["orgCode"],
+                    type: values["orgType"],
+                    icon: orgIcon,
+                    iconId: orgIconId,
+                    phone: values["orgPhone"],
+                    address: values["orgAddress"],
+                    sorting: values["sorting"]
+                });
+                await getTreeData();
+            }
+            setOrgEditVisible(false);
         }
-        setOrgEditVisible(false);
+        finally {
+            setIsLoading(false);
+        }
     }
 
     // 删除组织类型
@@ -187,15 +195,22 @@ export default function Org() {
     // 组织类型提交
     async function orgTypeSubmit(values: any) {
 
-        // 更新
-        await OrganizationService.AddOrUpdateOrganizationType({
-            id: values["id"],
-            name: values["name"],
-            code: values["code"]
-        });
-        let result = await OrganizationService.GetOrganizationTypes();
-        setOrgTypeData(result.data.data);
-        setOrgTypeEditVisible(false);
+        try {
+            setIsLoading(true);
+
+            // 更新
+            await OrganizationService.AddOrUpdateOrganizationType({
+                id: values["id"],
+                name: values["name"],
+                code: values["code"]
+            });
+            let result = await OrganizationService.GetOrganizationTypes();
+            setOrgTypeData(result.data.data);
+            setOrgTypeEditVisible(false);
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     // 将后端数据转为树格式
@@ -319,7 +334,7 @@ export default function Org() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -383,7 +398,7 @@ export default function Org() {
                         <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off2"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

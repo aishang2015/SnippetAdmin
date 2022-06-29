@@ -67,7 +67,7 @@ class BasicLayout extends React.Component<any, any> {
 
             await RefreshService.refreshTokenAsync();
 
-        }, 1000 * 60 * 10)
+        }, 1000 * 60 * 5)
     }
 
     componentWillUnmount() {

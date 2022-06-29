@@ -44,6 +44,8 @@ export default function User() {
     const [selectedOrg, setSelectedOrg] = useState<number | null>(null);
     const [positionOptions, setPositionOptions] = useState<Array<any>>([]);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const userTableColumns: any = [
         {
             title: '序号', dataIndex: "num", align: 'center', width: '90px', fixed: "left",
@@ -210,9 +212,14 @@ export default function User() {
     }
 
     async function submitOrgMember(values: any) {
-        await UserService.addOrgMember({ orgId: selectedOrg!, userIds: values["members"].map((v: any) => v.value), positions: values["positions"] });
-        setOrgAddVisible(false);
-        await getUsers();
+        try {
+            setIsLoading(true);
+            await UserService.addOrgMember({ orgId: selectedOrg!, userIds: values["members"].map((v: any) => v.value), positions: values["positions"] });
+            setOrgAddVisible(false);
+            await getUsers();
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     // 搜索提交
@@ -308,28 +315,40 @@ export default function User() {
 
     // 提交用户编辑信息
     async function userInfoSubmit(values: any) {
-        await UserService.addOrUpdateUser({
-            id: values["id"],
-            userName: values["userName"],
-            realName: values["realName"],
-            gender: values["gender"],
-            phoneNumber: values["phoneNumber"],
-            roles: values["roles"],
-            organizations: values["organizations"],
-            positions: values["positions"]
-        });
-        setUserEditVisible(false);
-        await getUsers();
+        try {
+            setIsLoading(true);
+            await UserService.addOrUpdateUser({
+                id: values["id"],
+                userName: values["userName"],
+                realName: values["realName"],
+                gender: values["gender"],
+                phoneNumber: values["phoneNumber"],
+                roles: values["roles"],
+                organizations: values["organizations"],
+                positions: values["positions"]
+            });
+            setUserEditVisible(false);
+            await getUsers();
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     // 提交用户密码信息
     async function pwdSubmit(values: any) {
-        await UserService.setUserPassword({
-            id: values['id'],
-            password: values['pwd'],
-            confirmPassword: values['confirmPwd']
-        });
-        setPwdEditVisible(false);
+        try {
+            setIsLoading(true);
+            await UserService.setUserPassword({
+                id: values['id'],
+                password: values['pwd'],
+                confirmPassword: values['confirmPwd']
+            });
+            setPwdEditVisible(false);
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     async function pageChange(page: number, size?: number) {
@@ -424,7 +443,7 @@ export default function User() {
                         <DebounceSelect mode="multiple" fetchOptions={loadUser} placeholder="请选择成员" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
-                        <Button type="primary" htmlType="submit">确定</Button>
+                        <Button type="primary" htmlType="submit" loading={isLoading}>确定</Button>
                         <Button style={{ marginLeft: '10px' }} onClick={() => setOrgAddVisible(false)}>取消</Button>
                     </Form.Item>
                 </Form>
@@ -491,7 +510,7 @@ export default function User() {
                         </Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -519,7 +538,7 @@ export default function User() {
                         <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

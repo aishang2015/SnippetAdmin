@@ -299,6 +299,7 @@ namespace SnippetAdmin.Controllers.RBAC
             var outputModels = childOrgs.Select(o => new GetOrganizationTreeOutputModel
             {
                 Title = o.Name,
+                Value = o.Id,
                 Key = o.Id,
                 Icon = o.Icon,
                 IconId = o.IconId,

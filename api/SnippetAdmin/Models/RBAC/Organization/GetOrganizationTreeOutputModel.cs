@@ -4,6 +4,8 @@
     {
         public string Title { get; set; }
 
+        public int Value { get; set; }
+
         public string Icon { get; set; }
 
         public string IconId { get; set; }

@@ -42,7 +42,7 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <a onClick={() => this.logout()}>
+                    <a>
                         <Space><FontAwesomeIcon icon={faEdit} fixedWidth />个人设置</Space>
                     </a>
                 </Menu.Item>

@@ -19,6 +19,7 @@ export class ElementService {
         type getElementTreeResult = {
             title: string;
             type: number;
+            value: number;
             key: number;
             children: Array<getElementTreeResult>;
         };

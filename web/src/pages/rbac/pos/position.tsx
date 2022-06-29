@@ -15,6 +15,8 @@ export default function () {
     const [positionEditForm] = useForm();
     const [positionTableData, setPositionTableData] = useState(new Array<any>());
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const positionTableColumns: any = [
         {
             title: '序号', dataIndex: "num", align: 'center', width: '90px',
@@ -80,14 +82,20 @@ export default function () {
     }
 
     async function positionSubmit(values: any) {
-        await PositionService.addOrUpdatePosition({
-            id: values["id"],
-            name: values["name"],
-            code: values["code"],
-            sorting: values["sorting"]
-        });
-        await getPositions(page, size);
-        setPositionModalVisible(false);
+        try {
+            setIsLoading(true);
+            await PositionService.addOrUpdatePosition({
+                id: values["id"],
+                name: values["name"],
+                code: values["code"],
+                sorting: values["sorting"]
+            });
+            await getPositions(page, size);
+            setPositionModalVisible(false);
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -137,7 +145,7 @@ export default function () {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

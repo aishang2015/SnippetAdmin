@@ -1,5 +1,5 @@
 import Sider from "antd/lib/layout/Sider";
-import React from "react";
+import React, { createRef } from "react";
 import { Link } from 'react-router-dom';
 import { Button, Menu } from "antd";
 import { connect } from "react-redux";
@@ -34,7 +34,6 @@ class SideMenu extends React.Component<ISideMenuProps, any>{
             selectedKeys: event.selectedKeys
         });
     }
-
 
     render = () => (
 

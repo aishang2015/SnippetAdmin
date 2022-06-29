@@ -14,10 +14,12 @@ export default function Role() {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [total, setTotal] = useState(0);
-    
+
     const { TextArea } = Input;
 
     const [roleTableData, setRoleTableData] = useState(new Array<any>());
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const roleTableColumns: any = [
         {
@@ -101,15 +103,21 @@ export default function Role() {
 
     // 提交角色信息
     async function roleInfoSubmit(values: any) {
-        await RoleService.addOrUpdateRole({
-            id: values["id"],
-            name: values["roleName"],
-            code: values["code"],
-            remark: values["remark"],
-            rights: values["rights"]
-        });
-        await getRoles(page, size);
-        setRoleModalVisible(false);
+        try {
+            setIsLoading(true);
+            await RoleService.addOrUpdateRole({
+                id: values["id"],
+                name: values["roleName"],
+                code: values["code"],
+                remark: values["remark"],
+                rights: values["rights"]
+            });
+            await getRoles(page, size);
+            setRoleModalVisible(false);
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -180,13 +188,13 @@ export default function Role() {
                             { max: 200, message: "备注过长" }
                         ]
                     }>
-                        <TextArea/>
+                        <TextArea />
                     </Form.Item>
                     <Form.Item name="rights" label="页面权限">
                         <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true} showCheckedStrategy="SHOW_ALL"></TreeSelect>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

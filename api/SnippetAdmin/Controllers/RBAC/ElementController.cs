@@ -171,6 +171,7 @@ namespace SnippetAdmin.Controllers.RBAC
             {
                 Title = e.Name,
                 Key = e.Id,
+                Value = e.Id,
                 Type = (int)e.Type,
                 Children = new List<GetElementTreeOutputModel>()
             }).ToList();

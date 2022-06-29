@@ -21,6 +21,8 @@ export default function Page() {
     const [elementEditVisible, setElementEditVisible] = useState(false);
     const [elementForm] = useForm();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         init();
     }, []);// eslint-disable-line react-hooks/exhaustive-deps
@@ -83,29 +85,36 @@ export default function Page() {
     // 元素编辑表单提交
     async function elementFormSubmit(values: any) {
 
-        if (values['id']) {
-            await ElementService.updateElement({
-                id: values['id'],
-                name: values['elementName'],
-                type: values['elementType'],
-                identity: values['elementIdentity'],
-                accessApi: join(values['elementInterfaces'], ','),
-                sorting: values['sorting']
-            });
-            let response = await ElementService.getElement(elementDetail.id);
-            setElementDetail(response.data.data);
-        } else {
-            await ElementService.createElement({
-                upId: values['upId'],
-                name: values['elementName'],
-                type: values['elementType'],
-                identity: values['elementIdentity'],
-                accessApi: join(values['elementInterfaces'], ','),
-                sorting: values['sorting']
-            });
+        try {
+
+            setIsLoading(true);
+            
+            if (values['id']) {
+                await ElementService.updateElement({
+                    id: values['id'],
+                    name: values['elementName'],
+                    type: values['elementType'],
+                    identity: values['elementIdentity'],
+                    accessApi: join(values['elementInterfaces'], ','),
+                    sorting: values['sorting']
+                });
+                let response = await ElementService.getElement(elementDetail.id);
+                setElementDetail(response.data.data);
+            } else {
+                await ElementService.createElement({
+                    upId: values['upId'],
+                    name: values['elementName'],
+                    type: values['elementType'],
+                    identity: values['elementIdentity'],
+                    accessApi: join(values['elementInterfaces'], ','),
+                    sorting: values['sorting']
+                });
+            }
+            setElementEditVisible(false);
+            await getTreeData();
+        } finally {
+            setIsLoading(false);
         }
-        setElementEditVisible(false);
-        await getTreeData();
     }
 
     // 树元素选中
@@ -191,7 +200,7 @@ export default function Page() {
             </div>
 
             <Modal visible={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
-                title="组织信息编辑" width={600}>
+                title="页面元素编辑" width={600}>
                 <Form form={elementForm} onFinish={elementFormSubmit} preserve={false} >
                     <Form.Item name="id" hidden>
                         <Input />
@@ -253,7 +262,7 @@ export default function Page() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
