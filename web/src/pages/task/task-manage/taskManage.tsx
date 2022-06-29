@@ -135,7 +135,7 @@ export default function TaskManage(props: any) {
                 bordered scroll={{ x: 1600 }} size="small"></Table>
 
             <Modal visible={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
-                footer={null} title="任务信息编辑">
+                footer={null} title="任务信息编辑" maskClosable={false}>
                 <Form form={editForm} preserve={false} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}
                     onFinish={submitJob}>
                     <Form.Item name="id" hidden ><Input /></Form.Item>

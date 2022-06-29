@@ -284,7 +284,7 @@ export default function Org() {
             </div>
 
             <Modal visible={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
-                title="组织信息编辑" width={800}>
+                title="组织信息编辑" width={800} maskClosable={false}>
                 <Form preserve={false} form={orgForm} onFinish={orgSubmit}>
                     <Form.Item name="id" hidden>
                         <Input />
@@ -340,7 +340,7 @@ export default function Org() {
             </Modal>
 
             <Modal width={390} visible={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
-                onCancel={() => setEmojiModalVisible(false)} >
+                onCancel={() => setEmojiModalVisible(false)} maskClosable={false}>
                 <Picker native={true} autoFocus={true} emoji={orgIconId} onSelect={(e: any) => {
                     setOrgIcon(e.native);
                     setOrgIconId(e.id);
@@ -374,7 +374,7 @@ export default function Org() {
                 <Table size="small" columns={orgTypeTableColumns} dataSource={orgTypeData} pagination={false}></Table>
             </Modal>
             <Modal width={500} visible={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
-                title="组织类型编辑" >
+                title="组织类型编辑" maskClosable={false}>
 
                 <Form preserve={false} form={orgTypeForm} onFinish={orgTypeSubmit}>
 

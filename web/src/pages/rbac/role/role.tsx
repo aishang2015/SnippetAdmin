@@ -161,7 +161,7 @@ export default function Role() {
             </div>
 
             <Modal visible={roleModalVisible} title="角色信息" footer={null} onCancel={() => setRoleModalVisible(false)}
-                destroyOnClose={true}>
+                destroyOnClose={true} maskClosable={false}>
                 <Form form={roleEditForm} onFinish={roleInfoSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="id" hidden >

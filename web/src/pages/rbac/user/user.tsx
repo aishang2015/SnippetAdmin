@@ -433,7 +433,7 @@ export default function User() {
             </Modal>
 
             <Modal visible={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
-                destroyOnClose={true}>
+                destroyOnClose={true} maskClosable={false}>
                 <Form form={orgSettingForm} onFinish={submitOrgMember} preserve={false}>
                     <Form.Item label="成员" name="members" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} rules={
                         [
@@ -450,7 +450,7 @@ export default function User() {
             </Modal>
 
             <Modal visible={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
-                destroyOnClose={true}>
+                destroyOnClose={true} maskClosable={false}>
                 <Form form={userEditForm} onFinish={userInfoSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="id" hidden >
@@ -516,7 +516,7 @@ export default function User() {
             </Modal>
 
             <Modal visible={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
-                destroyOnClose={true}>
+                destroyOnClose={true} maskClosable={false}>
                 <Form form={pwdEditForm} onFinish={pwdSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="id" hidden >

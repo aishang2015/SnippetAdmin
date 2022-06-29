@@ -115,7 +115,7 @@ export default function () {
                 }
             </div>
             <Modal visible={positionModalVisible} title="职位信息" footer={null} onCancel={() => setPositionModalVisible(false)}
-                destroyOnClose={true}>
+                destroyOnClose={true} maskClosable={false}>
                 <Form form={positionEditForm} onFinish={positionSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="id" hidden >

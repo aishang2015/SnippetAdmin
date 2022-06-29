@@ -88,7 +88,7 @@ export default function Page() {
         try {
 
             setIsLoading(true);
-            
+
             if (values['id']) {
                 await ElementService.updateElement({
                     id: values['id'],
@@ -200,7 +200,7 @@ export default function Page() {
             </div>
 
             <Modal visible={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
-                title="页面元素编辑" width={600}>
+                title="页面元素编辑" width={600} maskClosable={false}>
                 <Form form={elementForm} onFinish={elementFormSubmit} preserve={false} >
                     <Form.Item name="id" hidden>
                         <Input />
