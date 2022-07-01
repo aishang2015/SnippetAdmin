@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -43,7 +42,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetRoleOutputModel))]
-        public async Task<CommonResult> GetRole([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> GetRole([FromBody] IdInputModel<int> inputModel)
         {
             var role = await _dbContext.Roles.FindAsync(inputModel.Id);
             var result = _mapper.Map<GetRoleOutputModel>(role);
@@ -140,7 +139,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> RemoveRoleAsync([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> RemoveRoleAsync([FromBody] IdInputModel<int> inputModel)
         {
             var role = await _dbContext.Roles.FindAsync(inputModel.Id);
             _dbContext.Roles.Remove(role);

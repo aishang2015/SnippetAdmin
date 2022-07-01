@@ -61,6 +61,10 @@ namespace SnippetAdmin.Data
 
         public DbSet<JobRecord> JobRecords { get; set; }
 
+        public DbSet<SysDicType> SysDicTypes { get; set; }
+
+        public DbSet<SysDicValue> SysDicValues { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

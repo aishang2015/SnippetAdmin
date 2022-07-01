@@ -6,7 +6,6 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -44,7 +43,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetUserOutputModel))]
-        public async Task<CommonResult> GetUserAsync([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> GetUserAsync([FromBody] IdInputModel<int> inputModel)
         {
             var user = await _dbContext.Users.FindAsync(inputModel.Id);
             var result = _mapper.Map<GetUserOutputModel>(user);
@@ -205,7 +204,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> RemoveUserAsync([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> RemoveUserAsync([FromBody] IdInputModel<int> inputModel)
         {
             var user = _dbContext.Users.Find(inputModel.Id);
             var uops = _dbContext.UserClaims.Where(u => u.UserId == inputModel.Id).ToList();

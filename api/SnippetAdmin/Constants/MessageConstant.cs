@@ -133,5 +133,23 @@
         public static readonly (string, string) JOB_ERROR_0002 = ("JOB_ERROR_0002", "Cron表达式错误！");
 
         #endregion UserController
+
+
+        #region DicController
+
+        public static readonly (string, string) DICTIONARY_INFO_0001 = ("DICTIONARY_INFO_0001", "字典类型创建成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0002 = ("DICTIONARY_INFO_0002", "字典类型更新成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0003 = ("DICTIONARY_INFO_0003", "字典类型删除成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0004 = ("DICTIONARY_INFO_0004", "字典值创建成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0005 = ("DICTIONARY_INFO_0005", "字典值更新成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0006 = ("DICTIONARY_INFO_0006", "字典值删除成功！");
+
+        public static readonly (string, string) DICTIONARY_ERROR_0001 = ("DICTIONARY_ERROR_0001", "字典类型名称重复！");
+        public static readonly (string, string) DICTIONARY_ERROR_0002 = ("DICTIONARY_ERROR_0002", "字典类型代码重复！");
+        public static readonly (string, string) DICTIONARY_ERROR_0003 = ("DICTIONARY_ERROR_0003", "同一字典类型下字典值名称重复！");
+        public static readonly (string, string) DICTIONARY_ERROR_0004 = ("DICTIONARY_ERROR_0004", "同一字典类型下字典值代码重复！");
+
+
+        #endregion
     }
 }

@@ -307,7 +307,7 @@ namespace SnippetAdmin.Data
         /// <param name="dbContext"></param>
         /// <param name="userManager"></param>
         /// <param name="roleManager"></param>
-        private static  async Task InitialUserRoles(SnippetAdminDbContext dbContext, UserManager<RbacUser> userManager, RoleManager<RbacRole> roleManager)
+        private static async Task InitialUserRoles(SnippetAdminDbContext dbContext, UserManager<RbacUser> userManager, RoleManager<RbacRole> roleManager)
         {
             var user = new RbacUser
             {

@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
-using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -35,7 +33,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(CommonResult<GetOrganizationOutputModel>))]
-        public async Task<CommonResult> GetOrganization([FromBody] IntIdInputModel inputModel,
+        public async Task<CommonResult> GetOrganization([FromBody] IdInputModel<int> inputModel,
             [FromServices] IMapper mapper)
         {
             var org = await _dbContext.RbacOrganizations.FindAsync(inputModel.Id);
@@ -120,7 +118,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteOrganization([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> DeleteOrganization([FromBody] IdInputModel<int> inputModel)
         {
             var organizations = from org in _dbContext.RbacOrganizations
                                 join orgTree in _dbContext.RbacOrganizationTrees on org.Id equals orgTree.Descendant

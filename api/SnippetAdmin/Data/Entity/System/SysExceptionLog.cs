@@ -19,7 +19,7 @@ namespace SnippetAdmin.Data.Entity.System
         public string Type { get; set; }
 
         [Comment("异常消息")]
-        [Column("message", TypeName = "varchar(200)")]
+        [Column("message")]
         public string Message { get; set; }
 
         [Comment("异常源")]

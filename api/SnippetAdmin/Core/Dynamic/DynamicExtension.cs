@@ -46,7 +46,7 @@ namespace SnippetAdmin.Controllers
         }}
         
         [HttpPost(""FindOne"")]
-        public CommonResult FindOne([FromBody] IntIdInputModel inputModel)
+        public CommonResult FindOne([FromBody] IdInputModel<int> inputModel)
         {{
             var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
             return this.SuccessCommonResult(result);
@@ -105,7 +105,7 @@ namespace SnippetAdmin.Controllers
         }}
 
         [HttpPost(""DeleteOne"")]
-        public async Task<CommonResult> DeleteOne([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> DeleteOne([FromBody] IdInputModel<int> inputModel)
         {{
             var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
             _snippetAdminDbContext.Remove(result);

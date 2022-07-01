@@ -2,7 +2,6 @@
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.System;
 using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SnippetAdmin.Core.Middleware
@@ -18,8 +17,8 @@ namespace SnippetAdmin.Core.Middleware
             {
                 if ((pathMatches.Length != 0 && isMatchAny(context.Request.Path)) || pathMatches.Length == 0)
                 {
-                    if (context.Request.Method == "OPTIONS" || 
-                        context.Request.Path.StartsWithSegments("/api/SysAccessLog")||
+                    if (context.Request.Method == "OPTIONS" ||
+                        context.Request.Path.StartsWithSegments("/api/SysAccessLog") ||
                         context.Request.Path.StartsWithSegments("/api/account"))
                     {
                         await next.Invoke();

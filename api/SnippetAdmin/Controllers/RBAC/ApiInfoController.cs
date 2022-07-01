@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Models;
 
 namespace SnippetAdmin.Controllers.RBAC

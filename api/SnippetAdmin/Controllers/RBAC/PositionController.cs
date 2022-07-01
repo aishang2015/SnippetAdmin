@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -83,7 +82,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetPositionOutputModel))]
-        public CommonResult GetPosition([FromBody] IntIdInputModel inputModel)
+        public CommonResult GetPosition([FromBody] IdInputModel<int> inputModel)
         {
             var positoin = _dbContext.RbacPositions.Find(inputModel.Id);
             return this.SuccessCommonResult(new GetPositionOutputModel

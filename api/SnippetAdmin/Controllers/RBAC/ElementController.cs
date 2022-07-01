@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Common;
@@ -32,7 +31,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(GetElementOutputModel))]
-        public async Task<CommonResult> GetElement([FromBody] IntIdInputModel inputModel,
+        public async Task<CommonResult> GetElement([FromBody] IdInputModel<int> inputModel,
             [FromServices] IMapper mapper)
         {
             var element = await _dbContext.RbacElements.FindAsync(inputModel.Id);
@@ -105,7 +104,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteElement([FromBody] IntIdInputModel inputModel)
+        public async Task<CommonResult> DeleteElement([FromBody] IdInputModel<int> inputModel)
         {
             var elements = from e in _dbContext.RbacElements
                            join et in _dbContext.RbacElementTrees on e.Id equals et.Descendant

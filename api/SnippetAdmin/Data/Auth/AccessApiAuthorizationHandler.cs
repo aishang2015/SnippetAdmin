@@ -11,16 +11,16 @@ namespace SnippetAdmin.Data.Auth
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccessApiAuthorizationHandler(
-            SnippetAdminDbContext dbContext, 
+            SnippetAdminDbContext dbContext,
             IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, 
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
             AccessApiRequirement requirement)
-        { 
+        {
             // user not exist or is not actived
             if (!_dbContext.CacheSet<RbacUser>().Any(u =>
                 u.UserName == _httpContextAccessor.HttpContext.User.GetUserName() && u.IsActive))
