@@ -8,7 +8,7 @@ namespace SnippetAdmin.Core.Middleware
 {
     public static class AccessedLogMiddleware
     {
-        public static IApplicationBuilder UseAccessedLogMiddleware(this IApplicationBuilder app,
+        public static IApplicationBuilder UseAccessedLogRecord(this IApplicationBuilder app,
             params string[] pathMatches)
         {
             Func<string, bool> isMatchAny = inputStr => pathMatches.Any(m => Regex.IsMatch(inputStr, m));

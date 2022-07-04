@@ -11,6 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Background\LoginLogBackgroundService.cs~RF14d026d.TMP" />
 		<None Remove="Controllers\RBAC\ElementController.cs~RF4d656a.TMP" />
 		<None Remove="index.html" />
 	</ItemGroup>

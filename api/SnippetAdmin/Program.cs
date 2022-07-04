@@ -71,7 +71,7 @@ try
     // httpcontext服务
     builder.Services.AddHttpContextAccessor();
 
-    // 添加miniprofiler
+    // add miniprofiler
     builder.Services.AddMiniProfiler(options =>
     {
         // 访问地址 http://localhost:29680/profiler/results-index
@@ -79,10 +79,11 @@ try
         options.RouteBasePath = "/profiler";
     }).AddEntityFramework();
 
-    // 添加系统指标监听器
+    // add metric listener
     builder.Services.AddMetricEventListener();
 
-    // 记录访问日志
+    // record some log
+    builder.Services.AddBackgroundService<LoginLogBackgroundService>();
     builder.Services.AddBackgroundService<AccessedLogBackgroundService>();
     builder.Services.AddBackgroundService<ExceptionLogBackgroundService>();
 
@@ -141,7 +142,7 @@ try
                });
     });
 
-    // 使用orleans
+    // use orleans
     builder.Host.UseOrleans((ctx, builder) =>
     {
         builder.UseLocalhostClustering();
@@ -164,13 +165,12 @@ try
         app.UseMiniProfiler();
     }
 
-    // record accessed information
-    app.UseAccessedLogMiddleware("/api/*");
+    // record some information
+    app.UseLoginLogRecorder();
+    app.UseAccessedLogRecord("/api/*");
+    app.UseCustomExceptionRecorder();
 
-    // 处理异常
-    app.UseCustomExceptionHandler();
-
-    // 使用跨域配置
+    // use cors config
     app.UseCors("CorsPolicy");
 
     app.UseRouting();
@@ -178,7 +178,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    // 配置signalr路径
+    // map signalr path
     app.UseEndpoints(endpoints =>
     {
         endpoints.MapMetricHub();

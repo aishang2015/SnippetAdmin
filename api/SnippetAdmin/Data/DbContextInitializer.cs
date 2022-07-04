@@ -112,6 +112,7 @@ namespace SnippetAdmin.Data
         /// <returns></returns>
         private static async Task InitialElements(SnippetAdminDbContext _dbContext)
         {
+
             // 元素数据
             _dbContext.RbacElements.Add(new RbacElement { Id = 1, Name = "主页", Identity = "home", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 2, Name = "权限管理", Identity = "rbac", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
@@ -160,6 +161,8 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElements.Add(new RbacElement { Id = 54, Name = "页面", Identity = "taskRecordPage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 55, Name = "页面", Identity = "accessRecordPage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 56, Name = "页面", Identity = "exceptionRecordPage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 58, Name = "登录记录", Identity = "loginRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 59, Name = "页面", Identity = "loginRecordPage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
 
             // 元素树数据
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 1, Ancestor = 1, Descendant = 1, Length = 0 });
@@ -296,7 +299,14 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 132, Ancestor = 48, Descendant = 56, Length = 2 });
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 133, Ancestor = 52, Descendant = 56, Length = 1 });
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 134, Ancestor = 56, Descendant = 56, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 135, Ancestor = 57, Descendant = 57, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 136, Ancestor = 48, Descendant = 58, Length = 1 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 137, Ancestor = 58, Descendant = 58, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 138, Ancestor = 48, Descendant = 59, Length = 2 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 139, Ancestor = 58, Descendant = 59, Length = 1 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 140, Ancestor = 59, Descendant = 59, Length = 0 });
             await _dbContext.SaveChangesAsync();
+
 
 
         }

@@ -11,7 +11,7 @@ namespace SnippetAdmin.Core.Middleware
 {
     public static class ExceptionMiddleware
     {
-        public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app)
+        public static IApplicationBuilder UseCustomExceptionRecorder(this IApplicationBuilder app)
         {
             app.UseExceptionHandler(configure =>
             {

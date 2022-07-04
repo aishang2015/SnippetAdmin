@@ -30,6 +30,7 @@ export class Constants {
             path: '', name: '系统设置', identify: 'system', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
                 { path: '/access', name: '访问记录', identify: 'accessRecord', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
                 { path: '/exception', name: '异常记录', identify: 'exceptionRecord', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
+                { path: '/loginlog', name: '登录记录', identify: 'loginRecord', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
             ]
         },
         { path: '/about', name: '关于', identify: 'about', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },

@@ -57,6 +57,8 @@ namespace SnippetAdmin.Data
 
         public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
 
+        public DbSet<SysLoginLog> SysLoginLogs { get; set; }
+
         public DbSet<Job> Jobs { get; set; }
 
         public DbSet<JobRecord> JobRecords { get; set; }
