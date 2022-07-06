@@ -152,7 +152,7 @@ export default function Page() {
                     <div>
                         <RightElement identify="add-element" child={
                             <>
-                                <Button icon={<PlusOutlined />} style={{ marginRight: '10px' }} onClick={addElement}>添加</Button>
+                                <Button icon={<PlusOutlined />} style={{ marginRight: '10px' }} onClick={addElement}>创建</Button>
                             </>
                         }></RightElement>
                         {/* <RightElement identify="export-element" child={

@@ -51,7 +51,7 @@ export default function TaskRecord(props: any) {
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <Tooltip title="删除记录">
-                        <a onClick={() => { deleteRecord(record.id) }}><FontAwesomeIcon icon={faTrash} fixedWidth /></a>
+                        <a onClick={() => { deleteRecord(record.id) }}><FontAwesomeIcon icon={faTrash} /></a>
                     </Tooltip>
                 </Space>
             ),

@@ -46,17 +46,17 @@ export default function TaskManage(props: any) {
             ),
         },
         {
-            title: '操作', key: 'operate', align: 'center', width: '120px',fixed: 'right',
+            title: '操作', key: 'operate', align: 'center', width: '120px', fixed: 'right',
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <Tooltip title="编辑任务">
-                        <a onClick={() => { editTask(record.id) }}><FontAwesomeIcon icon={faEdit} fixedWidth /></a>
+                        <a onClick={() => { editTask(record.id) }}><FontAwesomeIcon icon={faEdit} /></a>
                     </Tooltip>
                     <Tooltip title="删除任务">
-                        <a onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} fixedWidth /></a>
+                        <a onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} /></a>
                     </Tooltip>
                     <Tooltip title="立即执行任务">
-                        <a onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} fixedWidth /></a>
+                        <a onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} /></a>
                     </Tooltip>
                 </Space>
             ),
@@ -128,8 +128,7 @@ export default function TaskManage(props: any) {
     return (
         <>
             <div style={{ marginBottom: '10px' }}>
-                <Button type="primary" onClick={addTask}>
-                    <Space><FontAwesomeIcon icon={faPlus} fixedWidth></FontAwesomeIcon>创建新任务</Space></Button>
+                <Button type="primary" onClick={addTask}><FontAwesomeIcon icon={faPlus} fixedWidth></FontAwesomeIcon>创建新任务</Button>
             </div>
             <Table columns={taskTableColumns} dataSource={taskTableData} pagination={{ position: ["bottomLeft"], pageSize: 10 }}
                 bordered scroll={{ x: 1600 }} size="small"></Table>

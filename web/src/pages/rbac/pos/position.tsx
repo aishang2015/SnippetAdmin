@@ -1,10 +1,11 @@
 import { Button, Divider, Form, Input, InputNumber, Modal, Pagination, Space, Table, Tooltip } from 'antd';
 import { RightElement } from '../../../components/right/rightElement';
-import { SaveOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import './position.less';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { PositionService } from '../../../http/requests/position';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function () {
 
@@ -33,12 +34,12 @@ export default function () {
                 <Space size="middle">
                     <RightElement identify="edit-role" child={
                         <>
-                            <Tooltip title="编辑职位"><a onClick={() => editPosition(record.id)}><EditOutlined /></a></Tooltip>
+                            <Tooltip title="编辑职位"><a onClick={() => editPosition(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-role" child={
                         <>
-                            <Tooltip title="删除职位"><a onClick={() => deletePosition(record.id)}><DeleteOutlined /></a></Tooltip>
+                            <Tooltip title="删除职位"><a onClick={() => deletePosition(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
                         </>
                     }></RightElement>
                 </Space>
@@ -104,7 +105,7 @@ export default function () {
                 <RightElement identify="create-role" child={
                     <>
                         <Space style={{ marginTop: "10px" }}>
-                            <Button icon={<PlusOutlined />} onClick={createPosition}>创建</Button>
+                            <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createPosition}>创建</Button>
                         </Space>
                         <Divider style={{ margin: "10px 0" }} />
                     </>
@@ -145,7 +146,7 @@ export default function () {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

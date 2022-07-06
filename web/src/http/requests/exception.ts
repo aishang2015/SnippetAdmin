@@ -10,7 +10,7 @@ export class ExceptionLogService {
     }
 }
 
-// /.*\n.*\n.*\n.*\n.*/ 正则替换掉注解
+// /\*.*\n.*\n.*\n.*\n.*/ 正则替换掉注解
 export interface SysExceptionLogRequest {
     page?: number;
     size?: number;

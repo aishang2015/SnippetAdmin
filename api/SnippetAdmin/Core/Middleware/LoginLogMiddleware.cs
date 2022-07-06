@@ -1,5 +1,4 @@
 ﻿using SnippetAdmin.Core.Helpers;
-using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.Models;
 using SnippetAdmin.Models.Account;

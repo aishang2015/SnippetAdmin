@@ -1,9 +1,4 @@
 import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tooltip, Tree, TreeSelect } from 'antd';
-import {
-    PlusOutlined, ManOutlined, WomanOutlined, UserOutlined,
-    SearchOutlined, ClearOutlined, EditOutlined, DeleteOutlined, KeyOutlined,
-    SaveOutlined, MinusCircleOutlined
-} from "@ant-design/icons";
 
 import './user.less';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +9,8 @@ import { OrganizationService } from '../../../http/requests/organization';
 import { RoleService } from '../../../http/requests/role';
 import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/position';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faKey, faPassport, faPeopleArrows, faPlus, faRemoveFormat, faSave, faSearch, faTrash, faUser, faUserSecret, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function User() {
 
@@ -57,7 +54,7 @@ export default function User() {
             title: '头像', dataIndex: "avatar", align: 'center', width: '80px',
             render: (data: any, record: any) => (
                 data === null ?
-                    <Avatar icon={<UserOutlined />} /> :
+                    <Avatar icon={<FontAwesomeIcon icon={faUser} />} /> :
                     <Avatar src={data} />
             ),
 
@@ -70,9 +67,9 @@ export default function User() {
                 if (text === 0) {
                     return (<span></span>);
                 } else if (text === 1) {
-                    return (<ManOutlined style={{ color: "blue" }} />);
+                    return (<div style={{ color: "blue" }} >男</div>);
                 } else {
-                    return (<WomanOutlined style={{ color: "red" }} />);
+                    return (<div style={{ color: "red" }} >女</div>);
                 }
             },
         },
@@ -116,22 +113,26 @@ export default function User() {
                 <Space size="middle">
                     <RightElement identify="edit-user" child={
                         <>
-                            <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><EditOutlined /></a></Tooltip>
+                            <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-user" child={
                         <>
-                            <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><DeleteOutlined /></a></Tooltip>
+                            <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="set-password" child={
                         <>
-                            <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><KeyOutlined /></a></Tooltip>
+                            <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><FontAwesomeIcon icon={faKey} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="move-out" child={
                         <>
-                            {selectedOrg !== null && <Tooltip title="移出组织"><a onClick={() => moveOutOrg(record.id)}><MinusCircleOutlined /></a></Tooltip>}
+                            {selectedOrg !== null && <Tooltip title="移出组织">
+                                <a onClick={() => moveOutOrg(record.id)}>
+                                    <FontAwesomeIcon icon={faUserSlash} />
+                                </a>
+                            </Tooltip>}
                         </>
                     }></RightElement>
                 </Space>
@@ -372,7 +373,7 @@ export default function User() {
                     <RightElement identify="add-member" child={
                         <>
                             <div>
-                                <Button icon={<PlusOutlined />} onClick={setOrgMember} disabled={selectedOrg === null}>绑定成员</Button>
+                                <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={setOrgMember} disabled={selectedOrg === null}>绑定成员</Button>
                             </div>
                             <Divider style={{ margin: "10px 0" }} />
                         </>
@@ -383,10 +384,10 @@ export default function User() {
                     <Space style={{ marginTop: "10px" }}>
                         <RightElement identify="create-user" child={
                             <>
-                                <Button icon={<PlusOutlined />} onClick={createUser}>创建</Button>
+                                <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createUser}>创建</Button>
                             </>
                         }></RightElement>
-                        <Button icon={<SearchOutlined />} onClick={openSearchModal}>查找</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSearch} />} onClick={openSearchModal}>查找</Button>
                     </Space>
                     <Divider style={{ margin: "10px 0" }} />
                     <Table size="small" columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1700 }} pagination={false}></Table>
@@ -510,7 +511,7 @@ export default function User() {
                         </Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -538,7 +539,7 @@ export default function User() {
                         <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

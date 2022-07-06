@@ -2,21 +2,13 @@ import { Avatar, Badge, Button, Divider, Dropdown, List, Menu, Space } from "ant
 import { Header } from "antd/lib/layout/layout";
 import React from "react";
 import { connect } from "react-redux";
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    UserOutlined,
-    NotificationOutlined,
-    ExpandOutlined,
-    CompressOutlined
-} from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Dispatch } from "redux";
 import { onToggle } from "../../redux/navCollapsed/navCollapsedCreator";
 import { onClearMessage } from "../../redux/notification/notificationCreator";
 import { StorageService } from "../../common/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faOutdent } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight, faBell, faCompress, faEdit, faExpand, faOutdent, faUser } from "@fortawesome/free-solid-svg-icons";
 
 type INavHeaderProps = {
     collapsed: boolean;
@@ -80,15 +72,21 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
 
         return (
             <Header className="site-layout" style={{ padding: 0 }}>
-                {React.createElement(this.props.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                {/* {React.createElement(this.props.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                     className: 'trigger',
                     onClick: this.props.toggle,
-                })}
+                })} */}
+                {this.props.collapsed ?
+                    <FontAwesomeIcon icon={faArrowRight} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={this.props.toggle} /> :
+                    <FontAwesomeIcon icon={faArrowLeft} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={this.props.toggle} />
+                }
                 <div style={{
                     display: 'flex',
                     alignItems: 'center'
                 }}>
-                    <Button icon={this.state.isExpand ? <CompressOutlined /> : <ExpandOutlined />} shape="circle" style={{ marginRight: '10px' }}
+                    <Button icon={this.state.isExpand ?
+                        <FontAwesomeIcon icon={faCompress} /> :
+                        <FontAwesomeIcon icon={faExpand} />} shape="circle" style={{ marginRight: '10px' }}
                         onClick={() => this.showFullScreen()}></Button>
                     <Badge count={this.props.notifications.length}>
                         <Dropdown overlay={message} placement="bottomRight" visible={this.state?.visible}
@@ -99,11 +97,11 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
                                 border: "1px solid gray",
                                 padding: 10
                             }}>
-                            <Button shape="circle" icon={<NotificationOutlined />} style={{ marginRight: '10px' }} />
+                            <Button shape="circle" icon={<FontAwesomeIcon icon={faBell} />} style={{ marginRight: '10px' }} />
                         </Dropdown>
                     </Badge>
                     <Dropdown className="dropdown" overlay={menu} arrow={{ pointAtCenter: false }} trigger={['click']}>
-                        <Avatar icon={<UserOutlined />} style={{ marginRight: '30px' }} />
+                        <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '30px' }} />
                     </Dropdown>
 
                 </div>

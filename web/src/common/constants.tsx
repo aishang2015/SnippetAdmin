@@ -1,4 +1,4 @@
-import { faArrowRight, faBug, faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faHome, faInfo, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faDiceOne, faFileAlt, faHome, faInfo, faRecordVinyl, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { constants } from 'buffer';
 
@@ -27,13 +27,17 @@ export class Constants {
         //     ]
         // },
         {
-            path: '', name: '系统设置', identify: 'system', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
-                { path: '/access', name: '访问记录', identify: 'accessRecord', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
-                { path: '/exception', name: '异常记录', identify: 'exceptionRecord', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
-                { path: '/loginlog', name: '登录记录', identify: 'loginRecord', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
+            path: '', name: '日志中心', identify: 'systemLog', icon: <FontAwesomeIcon icon={faFileAlt} fixedWidth />, children: [
+                { path: '/access', name: '接口日志', identify: 'accessRecord', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
+                { path: '/exception', name: '异常日志', identify: 'exceptionRecord', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
+                { path: '/loginlog', name: '登录日志', identify: 'loginRecord', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
             ]
         },
-        { path: '/about', name: '关于', identify: 'about', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
+        {
+            path: '', name: '系统配置', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
+                { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faDiceOne} fixedWidth /> },
+            ]
+        },
         // {
         //     path: '', name: '临时', identify: 'rbac', icon: <FontAwesomeIcon icon={faTasks} fixedWidth />, children: [
         //         //{ path: '/flow', name: '流程图', identify: 'user', icon: <FontAwesomeIcon icon={faProjectDiagram} fixedWidth /> },

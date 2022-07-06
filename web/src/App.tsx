@@ -62,6 +62,7 @@ class App extends React.Component<any, app> {
     const AccessLogPage = React.lazy(() => import('./pages/system/access/access'));
     const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
     const LoginLogPage = React.lazy(() => import('./pages/system/login/login'));
+    const DictionaryPage = React.lazy(() => import('./pages/system/dictionary/dictionary'));
 
     const loadingContent = "加载中...";
 
@@ -91,6 +92,7 @@ class App extends React.Component<any, app> {
                   <Route exact={true} path="/access"><Suspense fallback={loadingContent}><AccessLogPage /></Suspense></Route>
                   <Route exact={true} path="/exception"><Suspense fallback={loadingContent}><ExceptionedPage /></Suspense></Route>
                   <Route exact={true} path="/loginlog"><Suspense fallback={loadingContent}><LoginLogPage /></Suspense></Route>
+                  <Route exact={true} path="/dictionary"><Suspense fallback={loadingContent}><DictionaryPage /></Suspense></Route>
 
                   <Route path="*">
                     <Redirect to="/home"></Redirect>

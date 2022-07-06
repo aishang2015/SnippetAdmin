@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.Models.Common
 {
-    public record IdInputModel<T> where T : struct
+    public record IdInputModel<T>
     {
         public T Id { get; set; }
     }

@@ -140,15 +140,26 @@
         public static readonly (string, string) DICTIONARY_INFO_0001 = ("DICTIONARY_INFO_0001", "字典类型创建成功！");
         public static readonly (string, string) DICTIONARY_INFO_0002 = ("DICTIONARY_INFO_0002", "字典类型更新成功！");
         public static readonly (string, string) DICTIONARY_INFO_0003 = ("DICTIONARY_INFO_0003", "字典类型删除成功！");
-        public static readonly (string, string) DICTIONARY_INFO_0004 = ("DICTIONARY_INFO_0004", "字典值创建成功！");
-        public static readonly (string, string) DICTIONARY_INFO_0005 = ("DICTIONARY_INFO_0005", "字典值更新成功！");
-        public static readonly (string, string) DICTIONARY_INFO_0006 = ("DICTIONARY_INFO_0006", "字典值删除成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0004 = ("DICTIONARY_INFO_0004", "字典项目创建成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0005 = ("DICTIONARY_INFO_0005", "字典项目更新成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0006 = ("DICTIONARY_INFO_0006", "字典项目删除成功！");
 
         public static readonly (string, string) DICTIONARY_ERROR_0001 = ("DICTIONARY_ERROR_0001", "字典类型名称重复！");
         public static readonly (string, string) DICTIONARY_ERROR_0002 = ("DICTIONARY_ERROR_0002", "字典类型代码重复！");
-        public static readonly (string, string) DICTIONARY_ERROR_0003 = ("DICTIONARY_ERROR_0003", "同一字典类型下字典值名称重复！");
-        public static readonly (string, string) DICTIONARY_ERROR_0004 = ("DICTIONARY_ERROR_0004", "同一字典类型下字典值代码重复！");
+        public static readonly (string, string) DICTIONARY_ERROR_0003 = ("DICTIONARY_ERROR_0003", "同一字典类型下字典项目名称重复！");
+        public static readonly (string, string) DICTIONARY_ERROR_0004 = ("DICTIONARY_ERROR_0004", "同一字典类型下字典项目代码重复！");
 
+        public static readonly (string, string) DICTIONARY_ERROR_0005 = ("DICTIONARY_ERROR_0005", "请输入字典类型名称！");
+        public static readonly (string, string) DICTIONARY_ERROR_0006 = ("DICTIONARY_ERROR_0006", "字典类型名称过长！");
+        public static readonly (string, string) DICTIONARY_ERROR_0007 = ("DICTIONARY_ERROR_0007", "请输入字典类型编码！");
+        public static readonly (string, string) DICTIONARY_ERROR_0008 = ("DICTIONARY_ERROR_0008", "字典类型编码过长！");
+        public static readonly (string, string) DICTIONARY_ERROR_0009 = ("DICTIONARY_ERROR_0009", "字典类型编码只允许数字字母下划线！");
+
+        public static readonly (string, string) DICTIONARY_ERROR_0010 = ("DICTIONARY_ERROR_0010", "请输入字典项目名称！");
+        public static readonly (string, string) DICTIONARY_ERROR_0011 = ("DICTIONARY_ERROR_0011", "字典项目名称过长！");
+        public static readonly (string, string) DICTIONARY_ERROR_0012 = ("DICTIONARY_ERROR_0012", "请输入字典项目编码！");
+        public static readonly (string, string) DICTIONARY_ERROR_0013 = ("DICTIONARY_ERROR_0013", "字典项目编码过长！");
+        public static readonly (string, string) DICTIONARY_ERROR_0014 = ("DICTIONARY_ERROR_0014", "字典项目编码只允许数字字母下划线！");
 
         #endregion
     }

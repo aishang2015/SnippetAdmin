@@ -1,5 +1,4 @@
 import { Button, Divider, Form, Input, Modal, Pagination, Space, Switch, Table, Tooltip, Tree, TreeSelect } from 'antd';
-import { SaveOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 
 import './role.less';
 import { useEffect, useState } from 'react';
@@ -7,6 +6,8 @@ import { useForm } from 'antd/lib/form/Form';
 import { RoleService } from '../../../http/requests/role';
 import { ElementService } from '../../../http/requests/element';
 import { RightElement } from '../../../components/right/rightElement';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faPlus, faSave, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Role() {
 
@@ -43,15 +44,15 @@ export default function Role() {
                 <Space size="middle">
                     <RightElement identify="edit-role" child={
                         <>
-                            <Tooltip title="编辑角色"><a onClick={() => editRole(record.id)}><EditOutlined /></a></Tooltip>
+                            <Tooltip title="编辑角色"><a onClick={() => editRole(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-role" child={
                         <>
-                            <Tooltip title="删除角色"><a onClick={() => deleteRole(record.id)}><DeleteOutlined /></a></Tooltip>
+                            <Tooltip title="删除角色"><a onClick={() => deleteRole(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
                         </>
                     }></RightElement>
-                    <Tooltip title="查看权限"><a onClick={() => viewRight(record.id)}><SearchOutlined /></a></Tooltip>
+                    <Tooltip title="查看权限"><a onClick={() => viewRight(record.id)}><FontAwesomeIcon icon={faSearch} /></a></Tooltip>
                 </Space>
             ),
         }
@@ -148,7 +149,7 @@ export default function Role() {
                 <RightElement identify="create-role" child={
                     <>
                         <Space style={{ marginTop: "10px" }}>
-                            <Button icon={<PlusOutlined />} onClick={createRole}>创建</Button>
+                            <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createRole}>创建</Button>
                         </Space>
                         <Divider style={{ margin: "10px 0" }} />
                     </>
@@ -194,7 +195,7 @@ export default function Role() {
                         <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true} showCheckedStrategy="SHOW_ALL"></TreeSelect>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

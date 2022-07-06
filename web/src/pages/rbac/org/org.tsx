@@ -2,8 +2,7 @@ import { Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import './org.less';
 
-import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
-import { faObjectGroup, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faObjectGroup, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Space, Table, Tooltip, Tree, TreeSelect } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
@@ -47,12 +46,12 @@ export default function Org() {
                 <Space size="middle">
                     <RightElement identify="add-update-org-type" child={
                         <>
-                            <Tooltip title="编辑"><a onClick={() => orgTypeEdit(record)}><EditOutlined /></a></Tooltip>
+                            <Tooltip title="编辑"><a onClick={() => orgTypeEdit(record)}><FontAwesomeIcon fixedWidth icon={faEdit} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-org-type" child={
                         <>
-                            <Tooltip title="删除"><a onClick={() => deleteOrgType(record.id)}><DeleteOutlined /></a></Tooltip>
+                            <Tooltip title="删除"><a onClick={() => deleteOrgType(record.id)}><FontAwesomeIcon fixedWidth icon={faTrash} /></a></Tooltip>
                         </>
                     }></RightElement>
                 </Space>
@@ -259,12 +258,12 @@ export default function Org() {
                             <div>
                                 <RightElement identify="edit-org" child={
                                     <>
-                                        <Button onClick={editOrg} icon={<EditOutlined />} style={{ marginRight: '10px' }}>编辑组织</Button>
+                                        <Button onClick={editOrg} icon={<FontAwesomeIcon fixedWidth icon={faEdit} />} style={{ marginRight: '10px' }}>编辑组织</Button>
                                     </>
                                 }></RightElement>
                                 <RightElement identify="remove-org" child={
                                     <>
-                                        <Button onClick={deleteOrg} icon={<DeleteOutlined />} style={{ marginRight: '10px' }}>删除组织</Button>
+                                        <Button onClick={deleteOrg} icon={<FontAwesomeIcon fixedWidth icon={faTrash} />} style={{ marginRight: '10px' }}>删除组织</Button>
                                     </>
                                 }></RightElement>
                             </div>
@@ -334,7 +333,7 @@ export default function Org() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -398,7 +397,7 @@ export default function Org() {
                         <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off2"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

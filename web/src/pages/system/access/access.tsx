@@ -84,16 +84,16 @@ export default function Access() {
         searchForm.resetFields();
     }
 
-    async function refresh(){
+    async function refresh() {
         await initAsync();
     }
 
     return (
         <>
             <div style={{ marginBottom: 10 }}>
-                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth style={{ marginRight: 10 }} />}
+                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
                     onClick={refresh}>刷新</Button>
-                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faFilter} fixedWidth style={{ marginRight: 10 }} />}
+                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faFilter} fixedWidth />}
                     onClick={openSearchModal}>查找</Button>
             </div>
             <Table bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1230 }}

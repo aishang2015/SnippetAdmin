@@ -101,19 +101,35 @@ namespace SnippetAdmin.Controllers.System
         }
 
         /// <summary>
-        /// 取得字典值列表
+        /// 取得字典项目列表
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(List<GetDicValueListOutputModel>))]
         public CommonResult GetDicValueList(IdInputModel<int> inputModel)
         {
-            var dicValueList = _dbContext.SysDicValues.Where(v => v.TypeId == inputModel.Id).ToList();
+            var dicValueList = _dbContext.SysDicValues.Where(v => v.TypeId == inputModel.Id)
+                .OrderBy(v => v.Sorting).ToList();
             var result = _mapper.Map<List<GetDicValueListOutputModel>>(dicValueList);
             return this.SuccessCommonResult(result);
         }
 
         /// <summary>
-        /// 添加字典值
+        /// 取得字典项目列表
+        /// </summary>
+        [HttpPost]
+        [CommonResultResponseType(typeof(List<GetDicValueListOutputModel>))]
+        public CommonResult GetDicValueListByCode(IdInputModel<string> inputModel)
+        {
+            var dicValueList = from dicType in _dbContext.SysDicTypes
+                               join dicValue in _dbContext.SysDicValues on dicType.Id equals dicValue.TypeId
+                               where dicType.Code == inputModel.Id
+                               select dicValue;
+            var result = _mapper.Map<List<GetDicValueListOutputModel>>(dicValueList);
+            return this.SuccessCommonResult(result);
+        }
+
+        /// <summary>
+        /// 添加字典项目
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
@@ -137,7 +153,7 @@ namespace SnippetAdmin.Controllers.System
         }
 
         /// <summary>
-        /// 更新字典值
+        /// 更新字典项目
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
@@ -165,7 +181,7 @@ namespace SnippetAdmin.Controllers.System
         }
 
         /// <summary>
-        /// 删除字典值
+        /// 删除字典项目
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
