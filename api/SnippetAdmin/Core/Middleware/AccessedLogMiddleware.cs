@@ -11,15 +11,13 @@ namespace SnippetAdmin.Core.Middleware
         public static IApplicationBuilder UseAccessedLogRecord(this IApplicationBuilder app,
             params string[] pathMatches)
         {
-            Func<string, bool> isMatchAny = inputStr => pathMatches.Any(m => Regex.IsMatch(inputStr, m));
+            Func<string, bool> isMatchAny = inputStr => pathMatches.Any(m => Regex.IsMatch(inputStr, m, RegexOptions.IgnoreCase));
 
             app.Use(async (context, next) =>
             {
                 if ((pathMatches.Length != 0 && isMatchAny(context.Request.Path)) || pathMatches.Length == 0)
                 {
-                    if (context.Request.Method == "OPTIONS" ||
-                        context.Request.Path.StartsWithSegments("/api/SysAccessLog") ||
-                        context.Request.Path.StartsWithSegments("/api/account"))
+                    if (context.Request.Method == "OPTIONS")
                     {
                         await next.Invoke();
                     }

@@ -1,10 +1,11 @@
 import { Button, Card, Form, Input } from "antd";
 import React from "react";
-import { GithubOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
 
 import './bind.less';
 import { BindingModel, bindingThirdPartyAccount } from "../../http/requests/account";
 import { StorageService } from "../../common/storage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faKey, faSave } from "@fortawesome/free-solid-svg-icons";
 
 interface BindState {
     thirdUserName?: string;
@@ -40,7 +41,7 @@ export class Bind extends React.Component<any, BindState> {
                 <Card className="bind-card">
                     <div className="logo-contaier">
                         {this.state.thirdType === "github" &&
-                            <GithubOutlined />
+                            <span>Github</span>
                         }
                         {this.state.thirdType === "baidu" &&
                             <span>Baidu</span>
@@ -51,12 +52,12 @@ export class Bind extends React.Component<any, BindState> {
                     <Form name="normal_login" className="login-form" onFinish={this.bindAccount.bind(this)}>
                         <Form.Item name="username"
                             rules={[{ required: true, message: '请输入你的用户名!' }]}>
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />}
+                            <Input prefix={<FontAwesomeIcon fixedWidth icon={faKey} />}
                                 placeholder="用户名" autoComplete="off" />
                         </Form.Item>
                         <Form.Item name="password"
                             rules={[{ required: true, message: '请输入你的密码!' }]}>
-                            <Input prefix={<LockOutlined className="site-form-item-icon" />}
+                            <Input prefix={<FontAwesomeIcon fixedWidth icon={faKey} />}
                                 type="password" placeholder="密码" autoComplete="off" />
                         </Form.Item>
 

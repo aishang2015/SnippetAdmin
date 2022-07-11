@@ -1,12 +1,13 @@
 import { Alert, Button, Checkbox, DatePicker, Form, Input, InputNumber, message, Modal, Pagination, Popover, Select, Space, Switch, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { cloneDeep, sortBy } from 'lodash';
-import { SaveOutlined, PlusOutlined, FilterOutlined, EyeOutlined, CheckSquareOutlined, SearchOutlined, UndoOutlined, ReloadOutlined } from "@ant-design/icons";
 import './table.less';
 import { DynamicService } from '../../http/requests/dynamic';
 import { dateFormat } from '../../common/time';
 import { useForm } from 'antd/lib/form/Form';
 import moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckSquare, faEye, faFilter, faPlus, faRotateLeft, faSave, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function TablePage(props: any) {
@@ -359,8 +360,8 @@ export default function TablePage(props: any) {
                     })
                 }
                 <div style={{ textAlign: "center", padding: "10px 0" }}>
-                    <Button style={{ marginRight: '10px' }} onClick={resetCondition} icon={<UndoOutlined />}>重置</Button>
-                    <Button style={{ marginRight: '10px' }} onClick={searchData} icon={<SearchOutlined />} type="primary">搜索</Button>
+                    <Button style={{ marginRight: '10px' }} onClick={resetCondition} icon={<FontAwesomeIcon fixedWidth icon={faRotateLeft} />}>重置</Button>
+                    <Button style={{ marginRight: '10px' }} onClick={searchData} icon={<FontAwesomeIcon fixedWidth icon={faSearch} />} type="primary">搜索</Button>
                 </div>
             </>
         );
@@ -456,16 +457,16 @@ export default function TablePage(props: any) {
     return (
         <>
             <div style={{ display: 'flex' }}>
-                <Button onClick={() => loadData(page, size)} style={{ marginRight: "10px" }} type="primary" icon={<ReloadOutlined />}>刷新数据</Button>
-                <Button onClick={cleanSelect} style={{ marginRight: "10px" }} type="primary" icon={<CheckSquareOutlined />}>批量选择</Button>
+                <Button onClick={() => loadData(page, size)} style={{ marginRight: "10px" }} type="primary" icon={<FontAwesomeIcon fixedWidth icon={faRotateLeft} />}>刷新数据</Button>
+                <Button onClick={cleanSelect} style={{ marginRight: "10px" }} type="primary" icon={<FontAwesomeIcon fixedWidth icon={faCheckSquare} />}>批量选择</Button>
                 <Popover content={getSelectGroup()} title="属性显示" trigger="click" placement="bottomLeft" overlayStyle={{ width: '200px' }}>
-                    <Button style={{ marginRight: "10px" }} type="primary" icon={<EyeOutlined />}>显示隐藏</Button>
+                    <Button style={{ marginRight: "10px" }} type="primary" icon={<FontAwesomeIcon fixedWidth icon={faEye} />}>显示隐藏</Button>
                 </Popover>
                 <Popover content={getFilterGroup()} title="数据过滤" trigger="click" placement="bottomLeft" overlayStyle={{ width: '800px' }}
                     visible={filterPopoverVisible} onVisibleChange={setFilterPopoverVisible}>
-                    <Button style={{ marginRight: "10px" }} type="primary" icon={<FilterOutlined />}>数据过滤</Button>
+                    <Button style={{ marginRight: "10px" }} type="primary" icon={<FontAwesomeIcon fixedWidth icon={faFilter} />}>数据过滤</Button>
                 </Popover>
-                <Button onClick={() => addRecord()} style={{ marginRight: "10px" }} type="primary" icon={<PlusOutlined />}>创建记录</Button>
+                <Button onClick={() => addRecord()} style={{ marginRight: "10px" }} type="primary" icon={<FontAwesomeIcon fixedWidth icon={faPlus} />}>创建记录</Button>
             </div>
             {batchSelect && <Alert style={{ marginTop: '10px' }} message="所有分页数据都已经被批量选择，请谨慎操作" type="warning" showIcon />}
             <Table style={{ marginTop: '10px' }} columns={displayColumns} pagination={false} rowSelection={rowSelection}
@@ -512,7 +513,7 @@ export default function TablePage(props: any) {
                         })
                     }
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit">保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit">保存</Button>
                     </Form.Item>
                 </Form>
 

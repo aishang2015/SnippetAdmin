@@ -1,4 +1,4 @@
-import { faArrowRight, faBug, faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faDiceOne, faFileAlt, faHome, faInfo, faRecordVinyl, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faRecordVinyl, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { constants } from 'buffer';
 
@@ -36,6 +36,7 @@ export class Constants {
         {
             path: '', name: '系统配置', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
                 { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faDiceOne} fixedWidth /> },
+                { path: '/export', name: '数据导出', identify: 'dic-config', icon: <FontAwesomeIcon icon={faFileExport} fixedWidth /> },
             ]
         },
         // {

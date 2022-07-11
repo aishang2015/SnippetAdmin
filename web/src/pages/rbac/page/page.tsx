@@ -2,7 +2,6 @@
 import './page.less';
 
 import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Tag, Tree, TreeSelect } from 'antd';
-import { DeleteOutlined, EditOutlined, ExportOutlined, LinkOutlined, MenuOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { ApiInfoService } from '../../../http/requests/apiInfo';
@@ -11,6 +10,8 @@ import { join, split } from 'lodash';
 import { Constants } from '../../../common/constants';
 import { downloadBlob } from '../../../common/file';
 import { RightElement } from '../../../components/right/rightElement';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faEdit, faLink, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Page() {
 
@@ -132,9 +133,9 @@ export default function Page() {
         for (const d of data) {
             d.value = d.key;
             if (d.type === 1) {
-                d.icon = (<MenuOutlined />)
+                d.icon = (<FontAwesomeIcon fixedWidth icon={faBars} />)
             } else if (d.type === 2) {
-                d.icon = (<LinkOutlined />)
+                d.icon = (<FontAwesomeIcon fixedWidth icon={faLink} />)
             }
 
             if (d.children.length === 0) {
@@ -152,7 +153,7 @@ export default function Page() {
                     <div>
                         <RightElement identify="add-element" child={
                             <>
-                                <Button icon={<PlusOutlined />} style={{ marginRight: '10px' }} onClick={addElement}>创建</Button>
+                                <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} style={{ marginRight: '10px' }} onClick={addElement}>创建</Button>
                             </>
                         }></RightElement>
                         {/* <RightElement identify="export-element" child={
@@ -170,12 +171,12 @@ export default function Page() {
                             <div>
                                 <RightElement identify="edit-element" child={
                                     <>
-                                        <Button icon={<EditOutlined />} style={{ marginRight: '10px' }} onClick={() => editElement(1)}>编辑</Button>
+                                        <Button icon={<FontAwesomeIcon fixedWidth icon={faEdit} />} style={{ marginRight: '10px' }} onClick={() => editElement(1)}>编辑</Button>
                                     </>
                                 }></RightElement>
                                 <RightElement identify="remove-element" child={
                                     <>
-                                        <Button icon={<DeleteOutlined />} style={{ marginRight: '10px' }} onClick={() => deleteElement(1)}>删除</Button>
+                                        <Button icon={<FontAwesomeIcon fixedWidth icon={faTrash} />} style={{ marginRight: '10px' }} onClick={() => deleteElement(1)}>删除</Button>
                                     </>
                                 }></RightElement>
                             </div>
@@ -262,7 +263,7 @@ export default function Page() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<SaveOutlined />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

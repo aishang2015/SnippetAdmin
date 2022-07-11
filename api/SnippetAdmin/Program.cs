@@ -167,7 +167,15 @@ try
 
     // record some information
     app.UseLoginLogRecorder();
-    app.UseAccessedLogRecord("/api/*");
+    app.UseAccessedLogRecord("/api/ApiInfo/*",
+        "/api/Element/*",
+        "/api/Organization/*",
+        "/api/Position/*",
+        "/api/Role/*",
+        "/api/User/*",
+        "/api/Job/*",
+        "/api/JobRecord/*",
+        "/api/Dic/*");
     app.UseCustomExceptionRecorder();
 
     // use cors config

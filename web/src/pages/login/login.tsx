@@ -2,11 +2,13 @@ import './login.less';
 
 import React from "react";
 import { Button, Card, Form, Input } from 'antd';
-import { UserOutlined, LockOutlined, GithubOutlined } from '@ant-design/icons';
 import { LoginModel, login } from '../../http/requests/account';
 import { withRouter } from 'react-router-dom';
 import { OauthService } from '../../common/oauth';
 import { StorageService } from '../../common/storage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 
 class Login extends React.Component<any, any> {
 
@@ -31,12 +33,12 @@ class Login extends React.Component<any, any> {
                     <Form name="normal_login" onFinish={this.login.bind(this)}>
                         <Form.Item name="username"
                             rules={[{ required: true, message: '请输入你的用户名!' }]}>
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />}
+                            <Input prefix={<FontAwesomeIcon fixedWidth icon={faUser} />}
                                 placeholder="用户名" autoComplete="off" />
                         </Form.Item>
                         <Form.Item name="password"
                             rules={[{ required: true, message: '请输入你的密码!' }]}>
-                            <Input prefix={<LockOutlined className="site-form-item-icon" />}
+                            <Input prefix={<FontAwesomeIcon fixedWidth icon={faKey} />}
                                 type="password" placeholder="密码" autoComplete="off" />
                         </Form.Item>
 
@@ -45,7 +47,7 @@ class Login extends React.Component<any, any> {
                         </Form.Item>
                     </Form>
                     <div className="thrid-login-bar">
-                        <Button shape="circle" type="default" icon={<GithubOutlined />} onClick={() => this.githubLogin()} />
+                        <Button shape="circle" type="default" icon={<FontAwesomeIcon icon={faGithub} />} onClick={() => this.githubLogin()} />
                         <Button shape="circle" type="default" onClick={() => this.baiduLogin()} >Ba</Button>
                     </div>
                 </Card>
@@ -67,8 +69,8 @@ class Login extends React.Component<any, any> {
             let result = response.data.data;
 
             // 保存登录信息
-            StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(), 
-                result.identifies,result.refreshToken);
+            StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(),
+                result.identifies, result.refreshToken);
             window.location.reload();
 
         } catch (err) {

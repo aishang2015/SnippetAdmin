@@ -1,6 +1,7 @@
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'antd';
 import { EndpointOptions, jsPlumb, jsPlumbInstance } from 'jsplumb';
-import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import panzoom, { PanZoom, Transform } from 'panzoom';
 import { useEffect, useRef, useState } from 'react';
 import './flow.less';
@@ -188,9 +189,9 @@ export default function Flow(props: any) {
                 </div>
 
                 <div id="zoom-controller">
-                    <Button size="small" icon={<MinusOutlined />} onClick={zoomIn}></Button>
+                    <Button size="small" icon={<FontAwesomeIcon icon={faMinus} />} onClick={zoomIn}></Button>
                     <div id="scale-value">{transform.scale?.toFixed(1)}</div>
-                    <Button size="small" icon={<PlusOutlined />} onClick={zoomOut}></Button>
+                    <Button size="small" icon={<FontAwesomeIcon icon={faPlus} />} onClick={zoomOut}></Button>
                 </div>
             </div>
         </>

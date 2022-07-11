@@ -129,40 +129,6 @@ namespace SnippetAdmin.Controllers.RBAC
             return this.SuccessCommonResult(MessageConstant.ELEMENT_INFO_0003);
         }
 
-        /// <summary>
-        /// 导出元素数据
-        /// </summary>
-        [HttpPost]
-        [CommonResultResponseType]
-        public async Task<IActionResult> ExportElementData()
-        {
-            var elements = await _dbContext.RbacElements.ToListAsync();
-            var elementTrees = await _dbContext.RbacElementTrees.ToListAsync();
-
-            var ms = new MemoryStream(2048);
-            var sw = new StreamWriter(ms)
-            {
-                AutoFlush = true
-            };
-
-            sw.WriteLine("// 元素数据");
-            foreach (var e in elements)
-            {
-                sw.WriteLine($"_dbContext.RbacElements.Add(new RbacElement {{ Id = {e.Id}, Name = \"{e.Name}\", Identity = \"{e.Identity}\", Type = ElementType.{e.Type}, AccessApi = \"{e.AccessApi}\", Sorting = {e.Sorting} }});");
-            }
-
-            sw.WriteLine();
-            sw.WriteLine("// 元素树数据");
-            foreach (var e in elementTrees)
-            {
-                sw.WriteLine($"_dbContext.RbacElementTrees.Add(new RbacElementTree {{ Id = {e.Id}, Ancestor = {e.Ancestor}, Descendant = {e.Descendant} ,Length = {e.Length} }});");
-            }
-            sw.WriteLine("await _dbContext.SaveChangesAsync();");
-
-            ms.Seek(0, SeekOrigin.Begin);
-            return File(ms, "text/plain", "element.txt");
-        }
-
         private List<GetElementTreeOutputModel> MakeTreeData(List<RbacElement> elements, List<RbacElementTree> elementTrees,
             List<RbacElement> childElements)
         {

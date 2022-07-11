@@ -19,7 +19,8 @@ namespace SnippetAdmin.Core.Helpers
             var channelOptions = new BoundedChannelOptions(1000)
             {
                 // 满了后的行为
-                FullMode = BoundedChannelFullMode.DropOldest
+                FullMode = BoundedChannelFullMode.DropOldest,
+                SingleWriter = false
             };
             var channel = Channel.CreateBounded<TModel>(channelOptions);
             _writer = channel.Writer;

@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
 import './taskManage.less';
-import { faEdit, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
-import InfoCircleOutlined from '@ant-design/icons/lib/icons/InfoCircleOutlined';
+import { faEdit, faInfoCircle, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { JobService } from '../../../http/requests/job';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -147,7 +146,7 @@ export default function TaskManage(props: any) {
                         <Input placeholder="请输入任务名" autoComplete="off2"
                             suffix={
                                 <Tooltip title="任务名称为包含命名空间的类的全名">
-                                    <InfoCircleOutlined style={{ color: 'rgba(0,0,0,.45)' }} />
+                                    <FontAwesomeIcon icon={faInfoCircle} style={{ color: 'rgba(0,0,0,.45)' }} />
                                 </Tooltip>
                             } />
                     </Form.Item>
@@ -165,7 +164,7 @@ export default function TaskManage(props: any) {
                         ]}>
                         <Input placeholder="请输入Cron表达式" autoComplete="off" suffix={
                             <Tooltip title="任务名称为包含命名空间的类的全名">
-                                <InfoCircleOutlined style={{ color: 'rgba(0,0,0,.45)' }} />
+                                <FontAwesomeIcon icon={faInfoCircle} style={{ color: 'rgba(0,0,0,.45)' }} />
                             </Tooltip>
                         } />
                     </Form.Item>
