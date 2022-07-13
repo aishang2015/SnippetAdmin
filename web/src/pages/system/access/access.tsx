@@ -1,6 +1,6 @@
-import { faCircle, faCircleNotch, faFilter, faLock, faSearch, faSearchDollar, faTruckLoading } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, Input, InputNumber, Modal, Pagination, Slider, Space, Switch, Table } from 'antd';
+import { Button, Form, Input, InputNumber, Modal, Pagination, Table } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';

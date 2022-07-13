@@ -1,18 +1,19 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.Scheduler.JobRecord;
+using SnippetAdmin.Endpoint.Apis.Scheduler;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.Scheduler.JobRecord;
 
 namespace SnippetAdmin.Controllers.Scheduler
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class JobRecordController : ControllerBase
+    public class JobRecordController : ControllerBase, IJobRecordApi
     {
 
         private readonly SnippetAdminDbContext _dbContext;
@@ -24,7 +25,7 @@ namespace SnippetAdmin.Controllers.Scheduler
 
         [HttpPost]
         [CommonResultResponseType(typeof(PagedOutputModel<GetJobRecordsOutputModel>))]
-        public CommonResult GetJobRecords(GetJobRecordsInputModel inputModel, [FromServices] IMapper mapper)
+        public async Task<CommonResult<PagedOutputModel<GetJobRecordsOutputModel>>> GetJobRecords(GetJobRecordsInputModel inputModel)
         {
             var q = from jr in _dbContext.JobRecords
                     join j in _dbContext.Jobs on jr.JobId equals j.Id
@@ -47,11 +48,12 @@ namespace SnippetAdmin.Controllers.Scheduler
 
             var result = new PagedOutputModel<GetJobRecordsOutputModel>
             {
-                Total = resultQuery.Count(),
-                Data = resultQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
+                Total = await resultQuery.CountAsync(),
+                Data = await resultQuery.Skip(inputModel.SkipCount)
+                    .Take(inputModel.TakeCount).ToListAsync()
             };
 
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
@@ -61,7 +63,7 @@ namespace SnippetAdmin.Controllers.Scheduler
             var jobRecords = _dbContext.JobRecords.Where(jr => inputModel.RecordIds.Contains(jr.Id)).ToList();
             _dbContext.JobRecords.RemoveRange(jobRecords);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult();
+            return CommonResult.Success();
         }
 
         /// <summary>

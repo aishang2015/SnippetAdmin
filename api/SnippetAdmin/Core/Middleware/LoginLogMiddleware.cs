@@ -1,7 +1,7 @@
 ﻿using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data.Entity.System;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Account;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Account;
 using System.Text.Json;
 
 namespace SnippetAdmin.Core.Middleware

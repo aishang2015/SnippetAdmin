@@ -23,10 +23,13 @@ using System.Collections.Generic;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data;
 using SnippetAdmin.Models;
-using SnippetAdmin.Models.Dynamic;
 using SnippetAdmin.Models.Common;
+using SnippetAdmin.Models.Dynamic;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Models.{{Entity}};
+
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
 
 using {{Namespace}};
 
@@ -49,7 +52,7 @@ namespace SnippetAdmin.Controllers
         public CommonResult FindOne([FromBody] IdInputModel<int> inputModel)
         {{
             var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }}
 
         [HttpPost(""GetMany"")]
@@ -63,7 +66,7 @@ namespace SnippetAdmin.Controllers
                 Total = dataQuery.Count(),
                 Data = dataQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
             }};            
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }}
 
         [HttpPost(""GetMany2"")]
@@ -77,7 +80,7 @@ namespace SnippetAdmin.Controllers
                 Total = dataQuery.Count(),
                 Data = dataQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
             }};            
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }}
 
         [HttpPost(""AddOne"")]
@@ -85,7 +88,7 @@ namespace SnippetAdmin.Controllers
         {{
             _snippetAdminDbContext.Set<{{Entity}}>().Add(entity);
             await _snippetAdminDbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_003);
+            return CommonResult.Success(MessageConstant.SYSTEM_INFO_003);
         }}
 
         [HttpPost(""AddMany"")]
@@ -93,7 +96,7 @@ namespace SnippetAdmin.Controllers
         {{
             _snippetAdminDbContext.Set<{{Entity}}>().AddRange(data);
             await _snippetAdminDbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_003);
+            return CommonResult.Success(MessageConstant.SYSTEM_INFO_003);
         }}
 
         [HttpPost(""UpdateOne"")]
@@ -101,7 +104,7 @@ namespace SnippetAdmin.Controllers
         {{
             _snippetAdminDbContext.Set<{{Entity}}>().Update(entity);
             await _snippetAdminDbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_002);
+            return CommonResult.Success(MessageConstant.SYSTEM_INFO_002);
         }}
 
         [HttpPost(""DeleteOne"")]
@@ -110,7 +113,7 @@ namespace SnippetAdmin.Controllers
             var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
             _snippetAdminDbContext.Remove(result);
             await _snippetAdminDbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.SYSTEM_INFO_001);
+            return CommonResult.Success(MessageConstant.SYSTEM_INFO_001);
         }}
 
         {{dicAction}}
@@ -126,14 +129,14 @@ namespace SnippetAdmin.Controllers
                 Key = d.{{KeyProperty}}.ToString(),
                 Value = d.{{ValueProperty}}.ToString()
             }}).Distinct();
-            return this.SuccessCommonResult(query.ToList());
+            return CommonResult.Success(query.ToList());
         }}
 ";
 
             var searchModelTemplate = @$"
 
 using System;
-using SnippetAdmin.Models.Common;
+using SnippetAdmin.Endpoint.Models.Common;
 
 namespace SnippetAdmin.Models.{{Entity}}
 {{    

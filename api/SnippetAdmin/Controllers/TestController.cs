@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Orleans;
+using SnippetAdmin.Endpoint.Models;
 using SnippetAdmin.Grains;
-using SnippetAdmin.Models;
 
 namespace SnippetAdmin.Controllers
 {
@@ -15,7 +15,7 @@ namespace SnippetAdmin.Controllers
         {
             var testGrain = client.GetGrain<ITest>(1);
             await testGrain.Do();
-            return this.SuccessCommonResult("处理完毕");
+            return CommonResult.Success("处理完毕");
         }
     }
 }

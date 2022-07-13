@@ -1,12 +1,11 @@
 ﻿using CsvHelper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Entity.System;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
+using SnippetAdmin.Endpoint.Apis.System;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
 using System.Globalization;
 
 namespace SnippetAdmin.Controllers.System
@@ -14,7 +13,7 @@ namespace SnippetAdmin.Controllers.System
     [Route("api/[controller]/[action]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class DataController : ControllerBase
+    public class DataController : ControllerBase, IDataApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
@@ -59,14 +58,15 @@ namespace SnippetAdmin.Controllers.System
 
         [HttpGet]
         [CommonResultResponseType(typeof(List<string>))]
-        public CommonResult GetCsvDataType()
+        public Task<CommonResult<List<string>>> GetCsvDataType()
         {
-            return this.SuccessCommonResult(_entityDictionary.Keys.ToList());
+            var result = _entityDictionary.Keys.ToList();
+            return Task.FromResult(CommonResult.Success(result));
         }
 
         [HttpPost]
         [CommonResultResponseType]
-        public IActionResult ExportCsvData(IdInputModel<string> model)
+        public Task<FileContentResult> ExportCsvData(IdInputModel<string> model)
         {
             IQueryable queryable =
                 _entityDictionary.ContainsKey(model.Id) ?
@@ -85,19 +85,19 @@ namespace SnippetAdmin.Controllers.System
             }
 
             ms.Seek(0, SeekOrigin.Begin);
-            return File(ms.GetBuffer(), "text/plain", "data.csv");
+            return Task.FromResult(File(ms.GetBuffer(), "text/plain", "data.csv"));
         }
 
         [HttpGet]
         [CommonResultResponseType(typeof(List<string>))]
-        public CommonResult GetCodeDataType()
+        public Task<CommonResult<List<string>>> GetCodeDataType()
         {
-            return this.SuccessCommonResult(_methodDictionary.Keys.ToList());
+            return Task.FromResult(CommonResult.Success(_methodDictionary.Keys.ToList()));
         }
 
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<IActionResult> ExportCodeData(IdInputModel<string> model)
+        public async Task<FileContentResult> ExportCodeData(IdInputModel<string> model)
         {
             using var ms = new MemoryStream();
             using var sw = new StreamWriter(ms)

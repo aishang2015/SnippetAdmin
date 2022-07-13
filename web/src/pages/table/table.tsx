@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, DatePicker, Form, Input, InputNumber, message, Modal, Pagination, Popover, Select, Space, Switch, Table } from 'antd';
+import { Alert, Button, Checkbox, DatePicker, Form, Input, InputNumber, Modal, Pagination, Popover, Select, Space, Switch, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { cloneDeep, sortBy } from 'lodash';
 import './table.less';
@@ -128,7 +128,7 @@ export default function TablePage(props: any) {
 
         initialAsync();
 
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     async function loadData(currentpage: number, currentsize: number,
         sorts: any = sortData, filters: any = searchContent) {
@@ -444,7 +444,7 @@ export default function TablePage(props: any) {
     // 提交数据
     async function dataEditSubmit(values: any) {
 
-        if (values["id"] !== null && values["id"] != undefined && values["id"] != '') {
+        if (values["id"] !== null && values["id"] !== undefined && values["id"] !== '') {
             await DynamicService.updateOne(entityName, values);
         } else {
             await DynamicService.addOne(entityName, values);
@@ -509,6 +509,8 @@ export default function TablePage(props: any) {
                                     return <Form.Item label={prop.title} name={prop.dataIndex} key={prop.dataIndex}>
                                         <Switch></Switch>
                                     </Form.Item>;
+                                default:
+                                    return <></>;
                             }
                         })
                     }

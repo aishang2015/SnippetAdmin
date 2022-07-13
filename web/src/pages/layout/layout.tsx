@@ -1,20 +1,17 @@
-import { Layout, Space, Tabs } from 'antd';
+import { Layout } from 'antd';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import SideMenu from '../../components/layout/sideMenu';
 import NavHeader from '../../components/layout/navHeader';
-import { Configuration } from '../../common/config';
 import './layout.less';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { onReceiveMessage } from '../../redux/notification/notificationCreator';
 import { Constants } from '../../common/constants';
 import { EventService } from '../../common/event';
-import { refresh } from '../../http/requests/account';
-import { StorageService } from '../../common/storage';
 import { RefreshService } from '../../service/refreshService';
 
-const signalR = require("@microsoft/signalr");
+//const signalR = require("@microsoft/signalr");
 
 const { Content } = Layout;
 

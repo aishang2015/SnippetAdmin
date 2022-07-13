@@ -1,9 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { message } from 'antd';
 import { Configuration } from '../common/config';
-import { LoginResult, refresh } from './requests/account';
-import { CommonResult } from './common-result';
-import { StorageService } from '../common/storage';
 
 export class Axios {
 

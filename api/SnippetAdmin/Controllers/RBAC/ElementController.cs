@@ -6,24 +6,28 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.RBAC.Element;
+using SnippetAdmin.Endpoint.Apis.RBAC;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.RBAC.Element;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Policy = "AccessApi")]
-    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class ElementController : ControllerBase
+    public class ElementController : ControllerBase, IElementApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
-        public ElementController(SnippetAdminDbContext dbContext)
+        private readonly IMapper _mapper;
+
+        public ElementController(SnippetAdminDbContext dbContext,
+            IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -31,11 +35,10 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(GetElementOutputModel))]
-        public async Task<CommonResult> GetElement([FromBody] IdInputModel<int> inputModel,
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult<GetElementOutputModel>> GetElement([FromBody] IdInputModel<int> inputModel)
         {
             var element = await _dbContext.RbacElements.FindAsync(inputModel.Id);
-            return this.SuccessCommonResult(mapper.Map<GetElementOutputModel>(element));
+            return CommonResult.Success(_mapper.Map<GetElementOutputModel>(element));
         }
 
         /// <summary>
@@ -43,7 +46,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(List<GetElementTreeOutputModel>))]
-        public async Task<CommonResult> GetElementTree()
+        public async Task<CommonResult<List<GetElementTreeOutputModel>>> GetElementTree()
         {
             var elements = await _dbContext.RbacElements.OrderBy(e => e.Sorting).ToListAsync();
             var elementTrees = await _dbContext.RbacElementTrees.ToListAsync();
@@ -59,7 +62,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
             // 递归生成树数据
             var result = MakeTreeData(elements, elementTrees, topElements);
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         /// <summary>
@@ -67,14 +70,13 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel,
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel)
         {
             // 开启事务
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
             // 保存节点
-            var entity = await _dbContext.RbacElements.AddAsync(mapper.Map<RbacElement>(inputModel));
+            var entity = await _dbContext.RbacElements.AddAsync(_mapper.Map<RbacElement>(inputModel));
             await _dbContext.SaveChangesAsync();
 
             // 保存节点关系
@@ -96,7 +98,7 @@ namespace SnippetAdmin.Controllers.RBAC
             });
             await _dbContext.SaveChangesAsync();
             await tran.CommitAsync();
-            return this.SuccessCommonResult(MessageConstant.ELEMENT_INFO_0001);
+            return CommonResult.Success(MessageConstant.ELEMENT_INFO_0001);
         }
 
         /// <summary>
@@ -112,7 +114,7 @@ namespace SnippetAdmin.Controllers.RBAC
                            select e;
             _dbContext.RbacElements.RemoveRange(elements);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ELEMENT_INFO_0002);
+            return CommonResult.Success(MessageConstant.ELEMENT_INFO_0002);
         }
 
         /// <summary>
@@ -120,16 +122,17 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel,
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel)
         {
-            var element = mapper.Map<RbacElement>(inputModel);
+            var element = _mapper.Map<RbacElement>(inputModel);
             _dbContext.RbacElements.Update(element);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ELEMENT_INFO_0003);
+            return CommonResult.Success(MessageConstant.ELEMENT_INFO_0003);
         }
 
-        private List<GetElementTreeOutputModel> MakeTreeData(List<RbacElement> elements, List<RbacElementTree> elementTrees,
+        private List<GetElementTreeOutputModel> MakeTreeData(
+            List<RbacElement> elements,
+            List<RbacElementTree> elementTrees,
             List<RbacElement> childElements)
         {
             var outputModels = childElements.Select(e => new GetElementTreeOutputModel

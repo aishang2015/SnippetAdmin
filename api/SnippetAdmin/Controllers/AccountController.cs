@@ -13,15 +13,15 @@ using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.System;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Account;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Account;
 
 namespace SnippetAdmin.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class AccountController : ControllerBase
+    public class AccountController : ControllerBase, IAccountApi
     {
         private readonly UserManager<RbacUser> _userManager;
 
@@ -35,13 +35,16 @@ namespace SnippetAdmin.Controllers
 
         private readonly SnippetAdminDbContext _dbContext;
 
+        private readonly OauthHelper _oauthHelper;
+
         public AccountController(
             UserManager<RbacUser> userManager,
             IJwtFactory jwtFactory,
             IMapper mapper,
             IOptions<JwtOption> options,
             IMemoryCache memoryCache,
-            SnippetAdminDbContext dbContext)
+            SnippetAdminDbContext dbContext,
+            OauthHelper oauthHelper)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
@@ -49,6 +52,7 @@ namespace SnippetAdmin.Controllers
             _jwtOption = options.Value;
             _memoryCache = memoryCache;
             _dbContext = dbContext;
+            _oauthHelper = oauthHelper;
         }
 
         /// <summary>
@@ -62,19 +66,19 @@ namespace SnippetAdmin.Controllers
             var user = await _userManager.FindByNameAsync(inputModel.UserName);
             if (user == null)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
             }
 
             // 检查密码
             var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
             if (!isValidPassword)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
             }
 
             if (!user.IsActive)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0012);
             }
             return await MakeLoginResultAsync(user);
         }
@@ -91,7 +95,7 @@ namespace SnippetAdmin.Controllers
             var user = await _userManager.FindByNameAsync(User.GetUserName());
 
             // 返回结果
-            return this.SuccessCommonResult(MessageConstant.EMPTYTUPLE,
+            return CommonResult.Success(MessageConstant.EMPTYTUPLE,
                 _mapper.Map<UserInfoOutputModel>(user));
         }
 
@@ -99,8 +103,7 @@ namespace SnippetAdmin.Controllers
         /// 第三方登录
         /// </summary>
         [HttpPost]
-        public async Task<CommonResult> ThirdPartyLogin(ThirdPartyLoginInputModel model,
-            [FromServices] OauthHelper _oauthHelper)
+        public async Task<CommonResult> ThirdPartyLogin(ThirdPartyLoginInputModel model)
         {
             switch (model.Source)
             {
@@ -116,14 +119,14 @@ namespace SnippetAdmin.Controllers
                         _memoryCache.Set(key, githubUserInfo, TimeSpan.FromMinutes(5));
 
                         // 让前端进入账号绑定页面
-                        return this.SuccessCommonResult(MessageConstant.ACCOUNT_INFO_0002,
+                        return CommonResult.Success(MessageConstant.ACCOUNT_INFO_0002,
                             new ThirdPartyLoginOutputModel(null, null, CommonConstant.Github, githubUserInfo.name, key));
                     }
 
                     // 用户未激活
                     if (!findUser.IsActive)
                     {
-                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+                        return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0012);
                     }
 
                     // 根据找到的用户信息生成登录token
@@ -141,21 +144,21 @@ namespace SnippetAdmin.Controllers
                         _memoryCache.Set(key, baiduUserInfo, TimeSpan.FromMinutes(5));
 
                         // 让前端进入账号绑定页面
-                        return this.SuccessCommonResult(MessageConstant.ACCOUNT_INFO_0002,
+                        return CommonResult.Success(MessageConstant.ACCOUNT_INFO_0002,
                             new ThirdPartyLoginOutputModel(null, null, CommonConstant.Baidu, baiduUserInfo.uname, key));
                     }
 
                     // 用户未激活
                     if (!findUser.IsActive)
                     {
-                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+                        return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0012);
                     }
 
                     // 根据找到的用户信息生成登录token
                     return await MakeLoginResultAsync(findUser);
 
                 default:
-                    return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
+                    return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0004);
             }
         }
 
@@ -172,20 +175,20 @@ namespace SnippetAdmin.Controllers
             // 用户不存在
             if (user == null)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
             }
 
             // 检查密码
             var isValidPassword = await _userManager.CheckPasswordAsync(user, inputModel.Password);
             if (isValidPassword)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
             }
 
             // 用户未激活
             if (!user.IsActive)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0012);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0012);
             }
 
             // 账号验证通过则绑定用户的第三方账号信息
@@ -201,7 +204,7 @@ namespace SnippetAdmin.Controllers
                     }
                     else
                     {
-                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0007);
+                        return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0007);
                     }
 
                 case CommonConstant.Baidu:
@@ -214,11 +217,11 @@ namespace SnippetAdmin.Controllers
                     }
                     else
                     {
-                        return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0007);
+                        return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0007);
                     }
 
                 default:
-                    return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0004);
+                    return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0004);
             }
         }
 
@@ -233,26 +236,26 @@ namespace SnippetAdmin.Controllers
             var refreshToken = _dbContext.SysRefreshTokens.FirstOrDefault(token => token.UserName == inputModel.UserName);
             if (refreshToken == null)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0008);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0008);
             }
 
             // 账号被被人登录
             if (refreshToken.Content != inputModel.RefreshToken)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0009);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0009);
             }
 
             // 刷新token已过期
             if (refreshToken.ExpireTime < DateTime.Now)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0011);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0011);
             }
 
             // 验证token
             var userInfo = _jwtFactory.ValidToken(inputModel.JwtToken);
             if (userInfo == null)
             {
-                return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0010);
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0010);
             }
 
             // 取得用户
@@ -262,12 +265,12 @@ namespace SnippetAdmin.Controllers
                 // 生成jwttoken
                 var token = _jwtFactory.GenerateJwtToken(user.UserName);
                 var identifies = await GetUserFrontRightsAsync(user);
-                return this.SuccessCommonResult(
+                return CommonResult.Success(
                     string.Empty, string.Empty,
                     new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies, refreshToken.Content)
                 ); ;
             }
-            return this.FailCommonResult(MessageConstant.ACCOUNT_ERROR_0001);
+            return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
         }
 
         /// <summary>
@@ -294,7 +297,7 @@ namespace SnippetAdmin.Controllers
             // 生成jwttoken
             var token = _jwtFactory.GenerateJwtToken(user.UserName);
             var identifies = await GetUserFrontRightsAsync(user);
-            return this.SuccessCommonResult(
+            return CommonResult.Success(
                 MessageConstant.ACCOUNT_INFO_0001,
                 new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies, tokenContent)
             );

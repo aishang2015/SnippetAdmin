@@ -10,7 +10,7 @@ import { RoleService } from '../../../http/requests/role';
 import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faKey, faPassport, faPeopleArrows, faPlus, faRemoveFormat, faSave, faSearch, faTrash, faUser, faUserSecret, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faKey, faPlus, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function User() {
 
@@ -246,12 +246,6 @@ export default function User() {
         await getUsers();
     }
 
-    // 点击搜索按钮
-    function searchUser() {
-        // searchForm.submit();
-        setSearchVisible(false);
-    }
-
     // 点击重置搜索按钮
     function resetSearchForm() {
         searchOption.current.userName = null;
@@ -359,7 +353,7 @@ export default function User() {
 
     useEffect(() => {
         getUsers();
-    }, [page, size]); // 
+    }, [page, size]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // 搜索用户
     function openSearchModal() {

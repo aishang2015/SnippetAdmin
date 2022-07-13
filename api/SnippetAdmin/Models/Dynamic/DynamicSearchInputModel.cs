@@ -1,5 +1,5 @@
 ﻿using Convience.Util.Extension;
-using SnippetAdmin.Models.Common;
+using SnippetAdmin.Endpoint.Models.Common;
 using System.Linq.Expressions;
 
 namespace SnippetAdmin.Models.Dynamic

@@ -10,8 +10,6 @@ import Login from './pages/login/login';
 import React, { Suspense } from 'react';
 import Callback from './pages/callback/callback';
 import { Bind } from './pages/bind/bind';
-import { StorageService } from './common/storage';
-import { react } from '@babel/types';
 
 interface app {
 }
@@ -58,7 +56,7 @@ class App extends React.Component<any, app> {
     const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
     const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
 
-    const SettingPage = React.lazy(() => import('./pages/system/setting/setting'));
+    //const SettingPage = React.lazy(() => import('./pages/system/setting/setting'));
     const AccessLogPage = React.lazy(() => import('./pages/system/access/access'));
     const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
     const LoginLogPage = React.lazy(() => import('./pages/system/login/login'));

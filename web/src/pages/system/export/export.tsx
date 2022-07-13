@@ -1,7 +1,6 @@
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Card, Col, Divider, Row, Typography } from 'antd';
-import Meta from 'antd/lib/card/Meta';
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { ExportService } from '../../../http/requests/export';

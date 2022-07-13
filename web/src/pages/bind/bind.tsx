@@ -5,7 +5,7 @@ import './bind.less';
 import { BindingModel, bindingThirdPartyAccount } from "../../http/requests/account";
 import { StorageService } from "../../common/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faSave } from "@fortawesome/free-solid-svg-icons";
+import { faKey } from "@fortawesome/free-solid-svg-icons";
 
 interface BindState {
     thirdUserName?: string;

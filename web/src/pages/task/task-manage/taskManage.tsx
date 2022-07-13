@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Space, Switch, Table, Tag, Tooltip } from 'antd';
+import { Button, Form, Input, Modal, Pagination, Space, Switch, Table, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
@@ -12,6 +12,7 @@ export default function TaskManage(props: any) {
 
     const [page, setPage] = useState<number>(1);
     const [size, setSize] = useState<number>(20);
+    const [total, setTotal] = useState<number>(0);
 
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editForm] = Form.useForm();
@@ -64,12 +65,13 @@ export default function TaskManage(props: any) {
 
     useEffect(() => {
         initial();
-    }, []);// eslint-disable-line react-hooks/exhaustive-deps
+    }, [page, size]);// eslint-disable-line react-hooks/exhaustive-deps
 
     async function initial() {
 
         let response = await JobService.GetJobs({ page: page, size: size });
         setTaskTableData(response.data.data.data);
+        setTotal(response.data.data.total);
     }
 
     async function activeChange(checked: boolean, id: number) {
@@ -124,6 +126,16 @@ export default function TaskManage(props: any) {
         await JobService.RunJob({ id: id });
     }
 
+    async function pageChange(p: number, s?: number) {
+        if (p !== page) {
+            setPage(p);
+        }
+        if (s !== size && s !== undefined) {
+            setPage(1);
+            setSize(s);
+        }
+    }
+
     return (
         <>
             <div style={{ marginBottom: '10px' }}>
@@ -131,6 +143,7 @@ export default function TaskManage(props: any) {
             </div>
             <Table columns={taskTableColumns} dataSource={taskTableData} pagination={{ position: ["bottomLeft"], pageSize: 10 }}
                 bordered scroll={{ x: 1600 }} size="small"></Table>
+            <Pagination pageSize={size} total={total} current={page} showSizeChanger={true} onChange={pageChange} />
 
             <Modal visible={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
                 footer={null} title="任务信息编辑" maskClosable={false}>

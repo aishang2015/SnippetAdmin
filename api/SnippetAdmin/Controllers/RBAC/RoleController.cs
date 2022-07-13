@@ -6,18 +6,18 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.RBAC.Role;
+using SnippetAdmin.Endpoint.Apis.RBAC;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.RBAC.Role;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Policy = "AccessApi")]
-    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class RoleController : ControllerBase
+    public class RoleController : ControllerBase, IRoleApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
@@ -37,23 +37,23 @@ namespace SnippetAdmin.Controllers.RBAC
             role.IsActive = inputModel.IsActive;
             _dbContext.Roles.Update(role);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ROLE_INFO_0004);
+            return CommonResult.Success(MessageConstant.ROLE_INFO_0004);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetRoleOutputModel))]
-        public async Task<CommonResult> GetRole([FromBody] IdInputModel<int> inputModel)
+        public async Task<CommonResult<GetRoleOutputModel>> GetRole([FromBody] IdInputModel<int> inputModel)
         {
             var role = await _dbContext.Roles.FindAsync(inputModel.Id);
             var result = _mapper.Map<GetRoleOutputModel>(role);
             result.Rights = _dbContext.RoleClaims.Where(r => r.RoleId == inputModel.Id && r.ClaimType == ClaimConstant.RoleRight)
                 .Select(r => int.Parse(r.ClaimValue)).ToArray();
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(PagedOutputModel<GetRoleOutputModel>))]
-        public async Task<CommonResult> GetRolesAsync([FromBody] PagedInputModel inputModel)
+        public async Task<CommonResult<PagedOutputModel<GetRoleOutputModel>>> GetRolesAsync([FromBody] PagedInputModel inputModel)
         {
             var roles = await _dbContext.Roles.Skip(inputModel.SkipCount)
                 .Take(inputModel.TakeCount).ToListAsync();
@@ -64,12 +64,12 @@ namespace SnippetAdmin.Controllers.RBAC
                 Data = _mapper.Map<List<GetRoleOutputModel>>(roles)
             };
 
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
-        public async Task<CommonResult> GetRoleDic()
+        public async Task<CommonResult<List<DicOutputModel<int>>>> GetRoleDic()
         {
             var result = await _dbContext.Roles.Select(r => new DicOutputModel<int>
             {
@@ -77,7 +77,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 Value = r.Name
             }).ToListAsync();
 
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
@@ -87,11 +87,11 @@ namespace SnippetAdmin.Controllers.RBAC
             // 校验名称和代码重复
             if (_dbContext.Roles.Any(r => r.Id != inputModel.Id && r.Name == inputModel.Name))
             {
-                return this.FailCommonResult(MessageConstant.ROLE_ERROR_0007);
+                return CommonResult.Fail(MessageConstant.ROLE_ERROR_0007);
             }
             if (_dbContext.Roles.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
             {
-                return this.FailCommonResult(MessageConstant.ROLE_ERROR_0008);
+                return CommonResult.Fail(MessageConstant.ROLE_ERROR_0008);
             }
 
             using var trans = await _dbContext.Database.BeginTransactionAsync();
@@ -134,7 +134,7 @@ namespace SnippetAdmin.Controllers.RBAC
             }
             await trans.CommitAsync();
 
-            return this.SuccessCommonResult(MessageConstant.ROLE_INFO_0001);
+            return CommonResult.Success(MessageConstant.ROLE_INFO_0001);
         }
 
         [HttpPost]
@@ -144,7 +144,7 @@ namespace SnippetAdmin.Controllers.RBAC
             var role = await _dbContext.Roles.FindAsync(inputModel.Id);
             _dbContext.Roles.Remove(role);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ROLE_INFO_0002);
+            return CommonResult.Success(MessageConstant.ROLE_INFO_0002);
         }
     }
 }

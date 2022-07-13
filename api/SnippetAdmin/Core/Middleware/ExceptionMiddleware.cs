@@ -4,7 +4,7 @@ using SnippetAdmin.Core.Exceptions;
 using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.System;
-using SnippetAdmin.Models;
+using SnippetAdmin.Endpoint.Models;
 using System.Text.Json;
 
 namespace SnippetAdmin.Core.Middleware

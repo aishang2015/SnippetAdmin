@@ -1,7 +1,7 @@
 import Sider from "antd/lib/layout/Sider";
-import React, { createRef } from "react";
+import React from "react";
 import { Link } from 'react-router-dom';
-import { Button, Menu } from "antd";
+import { Menu } from "antd";
 import { connect } from "react-redux";
 import DynamicAntdTheme from 'dynamic-antd-theme';
 import { Constants } from "../../common/constants";

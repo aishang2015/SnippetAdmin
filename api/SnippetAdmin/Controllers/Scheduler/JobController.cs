@@ -1,49 +1,54 @@
 ﻿using AutoMapper;
 using Cronos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Data;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.Scheduler.Job;
+using SnippetAdmin.Endpoint.Apis.Scheduler;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.Scheduler.Job;
 
 namespace SnippetAdmin.Controllers.Scheduler
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class JobController : ControllerBase
+    public class JobController : ControllerBase, IJobApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
         private readonly JobSchedulerService _jobSchedulerService;
 
+        private readonly IMapper _mapper;
+
         public JobController(
             SnippetAdminDbContext dbContext,
-            JobSchedulerService jobSchedulerService)
+            JobSchedulerService jobSchedulerService,
+            IMapper mapper)
         {
             _dbContext = dbContext;
             _jobSchedulerService = jobSchedulerService;
+            _mapper = mapper;
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(PagedOutputModel<GetJobsOutputModel>))]
-        public CommonResult GetJobs(GetJobsInputModel inputModel,
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult<PagedOutputModel<GetJobsOutputModel>>> GetJobs(GetJobsInputModel inputModel)
         {
             var query = _dbContext.Jobs;
-            var data = query
+            var data = await query
                         .OrderByDescending(j => j.CreateTime)
                         .Skip(inputModel.SkipCount)
                         .Take(inputModel.TakeCount)
-                        .ToList();
+                        .ToListAsync();
 
             var result = new PagedOutputModel<GetJobsOutputModel>
             {
-                Total = query.Count(),
-                Data = mapper.Map<List<GetJobsOutputModel>>(data)
+                Total = await query.CountAsync(),
+                Data = _mapper.Map<List<GetJobsOutputModel>>(data)
             };
 
             result.Data.AsParallel().ForAll(job =>
@@ -55,7 +60,7 @@ namespace SnippetAdmin.Controllers.Scheduler
                 }
             });
 
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
@@ -65,7 +70,7 @@ namespace SnippetAdmin.Controllers.Scheduler
             var job = _dbContext.Jobs.Find(inputModel.Id);
             if (job == null)
             {
-                return this.FailCommonResult(MessageConstant.JOB_ERROR_0001);
+                return CommonResult.Fail(MessageConstant.JOB_ERROR_0001);
             }
 
             job.IsActive = inputModel.IsActive;
@@ -81,17 +86,17 @@ namespace SnippetAdmin.Controllers.Scheduler
                 _jobSchedulerService.PauseJob(job.Name);
             }
 
-            return this.SuccessCommonResult(inputModel.IsActive ?
+            return CommonResult.Success(inputModel.IsActive ?
                 MessageConstant.JOB_INFO_0004 :
                 MessageConstant.JOB_INFO_0005);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetJobOutputModel))]
-        public async Task<CommonResult> GetJob(GetJobInputModel inputModel)
+        public async Task<CommonResult<GetJobOutputModel>> GetJob(GetJobInputModel inputModel)
         {
             var job = await _dbContext.Jobs.FindAsync(inputModel.Id);
-            return this.SuccessCommonResult(new GetJobOutputModel
+            return CommonResult.Success(new GetJobOutputModel
             {
                 Id = job.Id,
                 Cron = job.Cron,
@@ -111,7 +116,7 @@ namespace SnippetAdmin.Controllers.Scheduler
             // 如果取不到下次时间，则直接抛出异常
             if (nextTime == null)
             {
-                return this.FailCommonResult(MessageConstant.JOB_ERROR_0002);
+                return CommonResult.Fail(MessageConstant.JOB_ERROR_0002);
             }
 
             _dbContext.Jobs.Update(new Data.Entity.Scheduler.Job
@@ -122,7 +127,7 @@ namespace SnippetAdmin.Controllers.Scheduler
                 Name = inputModel.Name
             });
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.JOB_INFO_0003);
+            return CommonResult.Success(MessageConstant.JOB_INFO_0003);
         }
 
         [HttpPost]
@@ -138,7 +143,7 @@ namespace SnippetAdmin.Controllers.Scheduler
             _jobSchedulerService.CancelJob(job.Name);
 
             // 删除后把任务取消
-            return this.SuccessCommonResult(MessageConstant.JOB_INFO_0002);
+            return CommonResult.Success(MessageConstant.JOB_INFO_0002);
         }
 
         [HttpPost]
@@ -152,7 +157,7 @@ namespace SnippetAdmin.Controllers.Scheduler
                 Describe = inputModel.Describe,
             });
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.JOB_INFO_0001);
+            return CommonResult.Success(MessageConstant.JOB_INFO_0001);
         }
 
         [HttpPost]
@@ -161,14 +166,15 @@ namespace SnippetAdmin.Controllers.Scheduler
         {
             var job = await _dbContext.Jobs.FindAsync(inputModel.Id);
             _jobSchedulerService.ActiveJobOnce(job);
-            return this.SuccessCommonResult(MessageConstant.JOB_INFO_0006);
+            return CommonResult.Success(MessageConstant.JOB_INFO_0006);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(List<string>))]
-        public CommonResult GetJobNames()
+        public async Task<CommonResult<List<string>>> GetJobNames()
         {
-            return this.SuccessCommonResult(_dbContext.Jobs.Select(j => j.Name));
+            var result = await _dbContext.Jobs.Select(j => j.Name).ToListAsync();
+            return CommonResult.Success(result);
         }
     }
 }

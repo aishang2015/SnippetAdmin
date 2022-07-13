@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Dynamic.Attributes;
 using SnippetAdmin.Core.Helpers;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Dynamic;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Dynamic;
 using System.Reflection;
 
 namespace SnippetAdmin.Controllers.Dynamic
@@ -12,16 +12,14 @@ namespace SnippetAdmin.Controllers.Dynamic
     [Route("api/[controller]/[action]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class DynamicController : ControllerBase
+    public class DynamicController : ControllerBase, IDynamicApi
     {
         /// <summary>
         /// 获取程序所有动态接口信息
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(CommonResult<List<GetDynamicInfoOutputModel>>))]
-        //[Authorize]
-        //[SnippetAdminAuthorize]
-        public CommonResult GetDynamicInfo()
+        public Task<CommonResult<List<GetDynamicInfoOutputModel>>> GetDynamicInfo()
         {
             var classes = ReflectionHelper.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null)
@@ -41,8 +39,8 @@ namespace SnippetAdmin.Controllers.Dynamic
                     EntityName = gdata.EntityName,
                     Name = gdata.Name
                 }).ToList()
-            });
-            return this.SuccessCommonResult(result);
+            }).ToList();
+            return Task.FromResult(CommonResult.Success(result));
         }
 
         /// <summary>
@@ -50,7 +48,7 @@ namespace SnippetAdmin.Controllers.Dynamic
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(CommonResult<List<GetColumnsOutputModel>>))]
-        public CommonResult GetColumns([FromBody] GetColumnsInputModel inputModel)
+        public Task<CommonResult<List<GetColumnsOutputModel>>> GetColumns([FromBody] GetColumnsInputModel inputModel)
         {
             var entityType = ReflectionHelper.GetAssemblyTypes()
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null &&
@@ -90,8 +88,8 @@ namespace SnippetAdmin.Controllers.Dynamic
 
                     _ => string.Empty
                 }
-            });
-            return this.SuccessCommonResult(result);
+            }).ToList();
+            return Task.FromResult(CommonResult.Success(result));
         }
     }
 }

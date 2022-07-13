@@ -1,6 +1,5 @@
-import { faArrowRight, faBug, faChalkboardTeacher, faClipboardCheck, faCog, faColumns, faCopyright, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faRecordVinyl, faSitemap, faTable, faTasks, faThumbtack, faUniversalAccess, faUser, faUserAlt, faUserFriends, faUsers, faUserSlash, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faClipboardCheck, faCog, faColumns, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faSitemap, faTasks, faThumbtack, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { constants } from 'buffer';
 
 export class Constants {
 

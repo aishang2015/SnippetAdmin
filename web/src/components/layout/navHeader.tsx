@@ -8,7 +8,7 @@ import { onToggle } from "../../redux/navCollapsed/navCollapsedCreator";
 import { onClearMessage } from "../../redux/notification/notificationCreator";
 import { StorageService } from "../../common/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faBell, faCompress, faEdit, faExpand, faOutdent, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeftLong, faArrowRightLong, faBell, faCompress, faEdit, faExpand, faOutdent, faUser } from "@fortawesome/free-solid-svg-icons";
 
 type INavHeaderProps = {
     collapsed: boolean;
@@ -68,8 +68,6 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
             </div>
         );
 
-        const userName = localStorage.getItem('user-name');
-
         return (
             <Header className="site-layout" style={{ padding: 0 }}>
                 {/* {React.createElement(this.props.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
@@ -77,8 +75,8 @@ class NavHeader extends React.Component<INavHeaderProps, INavHeaderState>{
                     onClick: this.props.toggle,
                 })} */}
                 {this.props.collapsed ?
-                    <FontAwesomeIcon icon={faArrowRight} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={this.props.toggle} /> :
-                    <FontAwesomeIcon icon={faArrowLeft} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={this.props.toggle} />
+                    <FontAwesomeIcon icon={faArrowRightLong} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={this.props.toggle} /> :
+                    <FontAwesomeIcon icon={faArrowLeftLong} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={this.props.toggle} />
                 }
                 <div style={{
                     display: 'flex',

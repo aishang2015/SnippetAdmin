@@ -6,9 +6,9 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.RBAC.Organization;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.RBAC.Organization;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -17,13 +17,16 @@ namespace SnippetAdmin.Controllers.RBAC
     [Authorize(Policy = "AccessApi")]
     //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class OrganizationController : ControllerBase
+    public class OrganizationController : ControllerBase, IOrganizationApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
-        public OrganizationController(SnippetAdminDbContext dbContext)
+        private readonly IMapper _mapper;
+
+        public OrganizationController(SnippetAdminDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         #region 组织处理
@@ -32,17 +35,16 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取组织机构详细信息
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(CommonResult<GetOrganizationOutputModel>))]
-        public async Task<CommonResult> GetOrganization([FromBody] IdInputModel<int> inputModel,
-            [FromServices] IMapper mapper)
+        [CommonResultResponseType(typeof(GetOrganizationOutputModel))]
+        public async Task<CommonResult<GetOrganizationOutputModel>> GetOrganization([FromBody] IdInputModel<int> inputModel)
         {
             var org = await _dbContext.RbacOrganizations.FindAsync(inputModel.Id);
-            var result = mapper.Map<GetOrganizationOutputModel>(org);
+            var result = _mapper.Map<GetOrganizationOutputModel>(org);
             result.TypeName = _dbContext.RbacOrganizationTypes.FirstOrDefault(t => t.Code == result.Type)?.Name;
             result.UpId = (from tree in _dbContext.RbacOrganizationTrees
                            where tree.Descendant == inputModel.Id && tree.Length == 1
                            select tree).FirstOrDefault()?.Ancestor;
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(List<GetOrganizationTreeOutputModel>))]
-        public async Task<CommonResult> GetOrganizationTree()
+        public async Task<CommonResult<List<GetOrganizationTreeOutputModel>>> GetOrganizationTree()
         {
             var orgs = await _dbContext.RbacOrganizations.OrderBy(org => org.Sorting).ToListAsync();
             var orgTrees = await _dbContext.RbacOrganizationTrees.ToListAsync();
@@ -66,7 +68,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
             // 递归生成树数据
             var result = MakeTreeData(orgs, orgTrees, topOrgs);
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         /// <summary>
@@ -74,20 +76,19 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> CreateOrganization([FromBody] CreateOrganizationInputModel inputModel,
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult> CreateOrganization([FromBody] CreateOrganizationInputModel inputModel)
         {
             // 组织编码重复
             if (_dbContext.RbacOrganizations.Any(r => r.Code == inputModel.Code))
             {
-                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
+                return CommonResult.Fail(MessageConstant.ORGANIZATION_ERROR_0004);
             }
 
             // 开启事务
             using var tran = await _dbContext.Database.BeginTransactionAsync();
 
             // 保存节点
-            var newOrg = mapper.Map<RbacOrganization>(inputModel);
+            var newOrg = _mapper.Map<RbacOrganization>(inputModel);
             var entity = await _dbContext.RbacOrganizations.AddAsync(newOrg);
             await _dbContext.SaveChangesAsync();
 
@@ -110,7 +111,7 @@ namespace SnippetAdmin.Controllers.RBAC
             });
             await _dbContext.SaveChangesAsync();
             await tran.CommitAsync();
-            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0001);
+            return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0001);
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace SnippetAdmin.Controllers.RBAC
                                 select org;
             _dbContext.RbacOrganizations.RemoveRange(organizations);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0002);
+            return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0002);
         }
 
         /// <summary>
@@ -134,13 +135,12 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> UpdateOrganization([FromBody] UpdateOrganizationInputModel inputModel,
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult> UpdateOrganization([FromBody] UpdateOrganizationInputModel inputModel)
         {
             // 组织编码重复
             if (_dbContext.RbacOrganizations.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
             {
-                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0004);
+                return CommonResult.Fail(MessageConstant.ORGANIZATION_ERROR_0004);
             }
 
             // 组织不能移入自己树下的组织
@@ -149,11 +149,11 @@ namespace SnippetAdmin.Controllers.RBAC
                               select orgTree;
             if (isChildNode.Any())
             {
-                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0009);
+                return CommonResult.Fail(MessageConstant.ORGANIZATION_ERROR_0009);
             }
 
             // 更新组织节点
-            var organization = mapper.Map<RbacOrganization>(inputModel);
+            var organization = _mapper.Map<RbacOrganization>(inputModel);
             _dbContext.RbacOrganizations.Update(organization);
 
             // 判断树节点是否被移动
@@ -203,7 +203,7 @@ namespace SnippetAdmin.Controllers.RBAC
             }
 
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0003);
+            return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0003);
         }
 
         #endregion
@@ -215,12 +215,11 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(List<GetOrganizationTypesOutputModel>))]
-        public CommonResult GetOrganizationTypes(
-            [FromServices] IMapper mapper)
+        public async Task<CommonResult<List<GetOrganizationTypesOutputModel>>> GetOrganizationTypes()
         {
-            return this.SuccessCommonResult(
-                mapper.Map<List<GetOrganizationTypesOutputModel>>(
-                    _dbContext.RbacOrganizationTypes.ToList()));
+            var result = await _dbContext.RbacOrganizationTypes.ToListAsync();
+            return CommonResult.Success(
+                _mapper.Map<List<GetOrganizationTypesOutputModel>>(result));
         }
 
         /// <summary>
@@ -235,12 +234,12 @@ namespace SnippetAdmin.Controllers.RBAC
         {
             if (_dbContext.RbacOrganizationTypes.Any(ot => ot.Code == inputModel.Code && ot.Id != inputModel.Id))
             {
-                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0007);
+                return CommonResult.Fail(MessageConstant.ORGANIZATION_ERROR_0007);
             }
 
             if (_dbContext.RbacOrganizationTypes.Any(ot => ot.Name == inputModel.Name && ot.Id != inputModel.Id))
             {
-                return this.FailCommonResult(MessageConstant.ORGANIZATION_ERROR_0008);
+                return CommonResult.Fail(MessageConstant.ORGANIZATION_ERROR_0008);
             }
 
             if (inputModel.Id != null)
@@ -260,7 +259,7 @@ namespace SnippetAdmin.Controllers.RBAC
             }
             await _dbContext.SaveChangesAsync();
 
-            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0005);
+            return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0005);
         }
 
         /// <summary>
@@ -279,7 +278,7 @@ namespace SnippetAdmin.Controllers.RBAC
             orgs.ForEach(org => org.Type = null);
             _dbContext.RbacOrganizations.UpdateRange(orgs);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.ORGANIZATION_INFO_0002);
+            return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0002);
         }
 
         #endregion

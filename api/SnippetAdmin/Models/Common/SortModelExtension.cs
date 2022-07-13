@@ -1,5 +1,5 @@
 ﻿using SnippetAdmin.Core.Exceptions;
-
+using SnippetAdmin.Endpoint.Models.Common;
 using System.Linq.Expressions;
 
 namespace SnippetAdmin.Models.Common

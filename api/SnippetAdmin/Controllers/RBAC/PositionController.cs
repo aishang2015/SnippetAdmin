@@ -6,18 +6,19 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
-using SnippetAdmin.Models;
+using SnippetAdmin.Endpoint.Apis.RBAC;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.RBAC.Position;
 using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.RBAC.Position;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Policy = "AccessApi")]
-    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class PositionController : ControllerBase
+    public class PositionController : ControllerBase, IPositionApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
@@ -36,11 +37,11 @@ namespace SnippetAdmin.Controllers.RBAC
             // validate
             if (_dbContext.RbacPositions.Any(p => p.Id != inputModel.Id && p.Name == inputModel.Name))
             {
-                return this.FailCommonResult(MessageConstant.POSITION_ERROR_0001);
+                return CommonResult.Fail(MessageConstant.POSITION_ERROR_0001);
             }
             if (_dbContext.RbacPositions.Any(p => p.Id != inputModel.Id && p.Code == inputModel.Code))
             {
-                return this.FailCommonResult(MessageConstant.POSITION_ERROR_0002);
+                return CommonResult.Fail(MessageConstant.POSITION_ERROR_0002);
             }
 
             var position = _dbContext.RbacPositions.Find(inputModel.Id);
@@ -62,7 +63,7 @@ namespace SnippetAdmin.Controllers.RBAC
             }
             await _dbContext.SaveChangesAsync();
 
-            return this.SuccessCommonResult(MessageConstant.POSITION_INFO_0001);
+            return CommonResult.Success(MessageConstant.POSITION_INFO_0001);
         }
 
         [HttpPost]
@@ -77,15 +78,15 @@ namespace SnippetAdmin.Controllers.RBAC
             _dbContext.RemoveRange(userClaims);
             await _dbContext.SaveChangesAsync();
 
-            return this.SuccessCommonResult(MessageConstant.POSITION_INFO_0002);
+            return CommonResult.Success(MessageConstant.POSITION_INFO_0002);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetPositionOutputModel))]
-        public CommonResult GetPosition([FromBody] IdInputModel<int> inputModel)
+        public async Task<CommonResult<GetPositionOutputModel>> GetPosition([FromBody] IdInputModel<int> inputModel)
         {
-            var positoin = _dbContext.RbacPositions.Find(inputModel.Id);
-            return this.SuccessCommonResult(new GetPositionOutputModel
+            var positoin = await _dbContext.RbacPositions.FindAsync(inputModel.Id);
+            return CommonResult.Success(new GetPositionOutputModel
             {
                 Id = positoin.Id,
                 Name = positoin.Name,
@@ -96,7 +97,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
         [HttpPost]
         [CommonResultResponseType(typeof(PagedOutputModel<GetPositionsOutputModel>))]
-        public async Task<CommonResult> GetPositions([FromBody] PagedInputModel inputModel)
+        public async Task<CommonResult<PagedOutputModel<GetPositionsOutputModel>>> GetPositions([FromBody] PagedInputModel inputModel)
         {
             var query = _dbContext.RbacPositions.OrderBy(p => p.Sorting).AsQueryable();
             query = query.Sort(inputModel.Sorts);
@@ -112,12 +113,12 @@ namespace SnippetAdmin.Controllers.RBAC
                     Sorting = p.Sorting
                 }).Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToListAsync()
             };
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
-        public async Task<CommonResult> GetPositionDic()
+        public async Task<CommonResult<List<DicOutputModel<int>>>> GetPositionDic()
         {
             var result = await _dbContext.RbacPositions.Select(r => new DicOutputModel<int>
             {
@@ -125,7 +126,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 Value = r.Name
             }).ToListAsync();
 
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
     }
 }

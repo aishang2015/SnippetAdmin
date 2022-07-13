@@ -1,4 +1,3 @@
-import { type } from "os";
 import { CommonResult, CommonResultNoData } from "../common-result";
 import { Axios } from "../request";
 

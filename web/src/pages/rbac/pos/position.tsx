@@ -7,7 +7,7 @@ import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-export default function () {
+export default function Position() {
 
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);

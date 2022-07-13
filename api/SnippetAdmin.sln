@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.UT", "SnippetA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.IT", "SnippetAdmin.IT\SnippetAdmin.IT.csproj", "{47F9CBAF-9A78-4ACC-8B7D-A9E3C989AE81}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.Endpoint", "SnippetAdmin.Endpoint\SnippetAdmin.Endpoint.csproj", "{E1CADC71-57F6-410C-9331-992373887C1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{47F9CBAF-9A78-4ACC-8B7D-A9E3C989AE81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47F9CBAF-9A78-4ACC-8B7D-A9E3C989AE81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47F9CBAF-9A78-4ACC-8B7D-A9E3C989AE81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1CADC71-57F6-410C-9331-992373887C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1CADC71-57F6-410C-9331-992373887C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1CADC71-57F6-410C-9331-992373887C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1CADC71-57F6-410C-9331-992373887C1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

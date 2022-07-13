@@ -8,7 +8,6 @@ import { ApiInfoService } from '../../../http/requests/apiInfo';
 import { ElementService } from '../../../http/requests/element';
 import { join, split } from 'lodash';
 import { Constants } from '../../../common/constants';
-import { downloadBlob } from '../../../common/file';
 import { RightElement } from '../../../components/right/rightElement';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faEdit, faLink, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -75,12 +74,6 @@ export default function Page() {
                 await getTreeData();
             }
         });
-    }
-
-    // 导出元素
-    async function exportElement() {
-        let response = await ElementService.exportElementData();
-        downloadBlob(response.data, "element.txt");
     }
 
     // 元素编辑表单提交

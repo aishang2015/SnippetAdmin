@@ -2,32 +2,36 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.RBAC.User;
+using SnippetAdmin.Endpoint.Apis.RBAC;
+using SnippetAdmin.Endpoint.Models;
+using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.Endpoint.Models.RBAC.User;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Policy = "AccessApi")]
-    //[SnippetAdminAuthorize]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class UserController : ControllerBase
+    public class UserController : ControllerBase, IUserApi
     {
         private readonly SnippetAdminDbContext _dbContext;
 
         private readonly IMapper _mapper;
 
-        public UserController(SnippetAdminDbContext dbContext, IMapper mapper)
+        private readonly UserManager<RbacUser> _userManager;
+
+        public UserController(SnippetAdminDbContext dbContext, IMapper mapper, UserManager<RbacUser> userManager)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -38,12 +42,12 @@ namespace SnippetAdmin.Controllers.RBAC
             user.IsActive = inputModel.IsActive;
             _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.USER_INFO_0001);
+            return CommonResult.Success(MessageConstant.USER_INFO_0001);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(GetUserOutputModel))]
-        public async Task<CommonResult> GetUserAsync([FromBody] IdInputModel<int> inputModel)
+        public async Task<CommonResult<GetUserOutputModel>> GetUserAsync([FromBody] IdInputModel<int> inputModel)
         {
             var user = await _dbContext.Users.FindAsync(inputModel.Id);
             var result = _mapper.Map<GetUserOutputModel>(user);
@@ -58,12 +62,12 @@ namespace SnippetAdmin.Controllers.RBAC
                                 where uc.UserId == inputModel.Id &&
                                     uc.ClaimType == ClaimConstant.UserPosition
                                 select uc.ClaimValue).ToArray().Select(d => int.Parse(d)).ToArray();
-            return this.SuccessCommonResult(result);
+            return CommonResult.Success(result);
         }
 
         [HttpPost]
         [CommonResultResponseType(typeof(PagedOutputModel<SearchUserOutputModel>))]
-        public CommonResult SearchUser([FromBody] SearchUserInputModel inputModel)
+        public Task<CommonResult<PagedOutputModel<SearchUserOutputModel>>> SearchUser([FromBody] SearchUserInputModel inputModel)
         {
             var userQuery = _dbContext.CacheSet<RbacUser>().AsQueryable().OrderBy(u => u.Id);
             var roleQuery = _dbContext.CacheSet<RbacRole>().AsQueryable().OrderBy(u => u.Id);
@@ -139,20 +143,19 @@ namespace SnippetAdmin.Controllers.RBAC
             var result = new PagedOutputModel<SearchUserOutputModel>
             {
                 Total = resultQuery.Count(),
-                Data = resultQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount)
+                Data = resultQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
             };
 
-            return this.SuccessCommonResult(result);
+            return Task.FromResult(CommonResult.Success(result));
         }
 
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> AddOrUpdateUserAsync([FromBody] AddOrUpdateUserInputModel inputModel,
-            [FromServices] UserManager<RbacUser> userManager)
+        public async Task<CommonResult> AddOrUpdateUserAsync([FromBody] AddOrUpdateUserInputModel inputModel)
         {
             if (_dbContext.Users.Any(u => u.UserName == inputModel.UserName && u.Id != inputModel.Id))
             {
-                return this.FailCommonResult(MessageConstant.USER_ERROR_0012);
+                return CommonResult.Fail(MessageConstant.USER_ERROR_0012);
             }
 
             using var trans = await _dbContext.Database.BeginTransactionAsync();
@@ -174,8 +177,8 @@ namespace SnippetAdmin.Controllers.RBAC
             else
             {
                 user = _mapper.Map<RbacUser>(inputModel);
-                await userManager.CreateAsync(user);
-                await userManager.AddPasswordAsync(user, "123456");
+                await _userManager.CreateAsync(user);
+                await _userManager.AddPasswordAsync(user, "123456");
             }
 
             inputModel.Roles?.ToList().ForEach(role =>
@@ -199,7 +202,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
             await _dbContext.SaveChangesAsync();
             await trans.CommitAsync();
-            return this.SuccessCommonResult(MessageConstant.USER_INFO_0001);
+            return CommonResult.Success(MessageConstant.USER_INFO_0001);
         }
 
         [HttpPost]
@@ -211,23 +214,22 @@ namespace SnippetAdmin.Controllers.RBAC
             _dbContext.Remove(user);
             _dbContext.RemoveRange(uops);
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.USER_INFO_0001);
+            return CommonResult.Success(MessageConstant.USER_INFO_0001);
         }
 
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> SetUserPasswordAsync([FromBody] SetUserPasswordInputModel inputModel,
-            [FromServices] UserManager<RbacUser> userManager)
+        public async Task<CommonResult> SetUserPasswordAsync([FromBody] SetUserPasswordInputModel inputModel)
         {
             if (inputModel.Password != inputModel.ConfirmPassword)
             {
-                return this.FailCommonResult(MessageConstant.USER_ERROR_0011);
+                return CommonResult.Fail(MessageConstant.USER_ERROR_0011);
             }
 
             var user = _dbContext.Users.Find(inputModel.Id);
-            await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user, inputModel.Password);
-            return this.SuccessCommonResult(MessageConstant.USER_INFO_0003);
+            await _userManager.RemovePasswordAsync(user);
+            await _userManager.AddPasswordAsync(user, inputModel.Password);
+            return CommonResult.Success(MessageConstant.USER_INFO_0003);
         }
 
         [HttpPost]
@@ -244,7 +246,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 });
             }
             await _dbContext.SaveChangesAsync();
-            return this.SuccessCommonResult(MessageConstant.USER_INFO_0004);
+            return CommonResult.Success(MessageConstant.USER_INFO_0004);
         }
 
         [HttpPost]
@@ -256,7 +258,7 @@ namespace SnippetAdmin.Controllers.RBAC
             _dbContext.RemoveRange(uops);
             await _dbContext.SaveChangesAsync();
 
-            return this.SuccessCommonResult(MessageConstant.USER_INFO_0004);
+            return CommonResult.Success(MessageConstant.USER_INFO_0004);
         }
     }
 }
