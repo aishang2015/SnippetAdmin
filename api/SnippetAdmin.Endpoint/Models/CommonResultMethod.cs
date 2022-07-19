@@ -34,10 +34,10 @@
             Code = codeMessage.Item1,
             Message = codeMessage.Item2
         };
-    //}
+        //}
 
-    //public partial record CommonResult<T> : CommonResult where T : class
-    //{
+        //public partial record CommonResult<T> : CommonResult where T : class
+        //{
         /// <summary>
         /// 生成成功消息(不带消息内容)
         /// </summary>

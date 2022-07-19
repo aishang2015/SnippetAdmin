@@ -9,9 +9,9 @@ namespace SnippetAdmin.Core.Extensions
     {
         public static IMvcBuilder AddFluentValidation(this IMvcBuilder builder)
         {
+            ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
             builder.AddFluentValidation(configuration =>
             {
-                configuration.ValidatorOptions.CascadeMode = CascadeMode.Stop;
                 configuration.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             });
 

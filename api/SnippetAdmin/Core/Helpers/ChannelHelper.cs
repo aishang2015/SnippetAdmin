@@ -5,7 +5,7 @@ namespace SnippetAdmin.Core.Helpers
     public class ChannelHelper<TModel>
     {
         private static readonly Lazy<ChannelHelper<TModel>> lazy =
-            new Lazy<ChannelHelper<TModel>>(() => new ChannelHelper<TModel>());
+            new(() => new ChannelHelper<TModel>());
 
         private readonly ChannelWriter<TModel> _writer;
         private readonly ChannelReader<TModel> _reader;
