@@ -54,6 +54,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.PluginBase\SnippetAdmin.PluginBase.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Endpoint\SnippetAdmin.Endpoint.csproj" />
 	</ItemGroup>
 

@@ -73,7 +73,7 @@ namespace SnippetAdmin.Data
 
                 //dbContext.Database.Migrate();
 
-                //dbContext.Database.EnsureDeleted();
+                dbContext.Database.EnsureDeleted();
 
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
