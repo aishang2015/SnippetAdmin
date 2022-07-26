@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Data.Exceptions
+﻿namespace SnippetAdmin.EntityFrameworkCore
 {
     public class NoDatabaseOptionException : Exception
     {

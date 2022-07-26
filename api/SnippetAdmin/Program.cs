@@ -16,6 +16,7 @@ using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
+using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Grains;
 using SnippetAdmin.Models;
 using System.Reflection;
@@ -28,7 +29,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // 分别是数据库 缓存 内存缓存 jwt automapper oauth 用户访问器
-    builder.Services.AddDatabase(builder.Configuration);
+    builder.Services.AddDatabase<SnippetAdminDbContext, RbacUser, RbacRole>(builder.Configuration);
     builder.Services.AddMemoryCache();
     builder.Services.AddCustomAuthentication(builder.Configuration);
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

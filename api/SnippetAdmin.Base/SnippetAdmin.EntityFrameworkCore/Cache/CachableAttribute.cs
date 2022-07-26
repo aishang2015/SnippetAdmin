@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Data.Cache
+﻿namespace SnippetAdmin.EntityFrameworkCore.Cache
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class CachableAttribute : Attribute

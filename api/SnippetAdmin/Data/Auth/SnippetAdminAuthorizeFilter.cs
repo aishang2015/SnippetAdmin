@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SnippetAdmin.Constants;
+using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data.Entity.Rbac;
 
 namespace SnippetAdmin.Data.Auth

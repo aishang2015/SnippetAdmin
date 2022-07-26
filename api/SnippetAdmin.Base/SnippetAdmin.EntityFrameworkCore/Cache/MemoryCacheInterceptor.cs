@@ -2,13 +2,12 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Caching.Memory;
-using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Reflection;
 
-namespace SnippetAdmin.Data.Cache
+namespace SnippetAdmin.EntityFrameworkCore.Cache
 {
-    public class MemoryCacheInterceptor : DbTransactionInterceptor, ISaveChangesInterceptor
+    public class MemoryCacheInterceptor<T> : DbTransactionInterceptor, ISaveChangesInterceptor where T : DbContext
     {
         private class CachedEntry
         {
@@ -19,11 +18,7 @@ namespace SnippetAdmin.Data.Cache
 
         private readonly IMemoryCache _memoryCache;
 
-        private static ConcurrentDictionary<string, MethodInfo> _addMethodInfoDic = new();
-
-        private static ConcurrentDictionary<string, MethodInfo> _removeAllMethodInfoDic = new();
-
-        private static AutoResetEvent autoResetEvent = new AutoResetEvent(true);
+        private static readonly AutoResetEvent autoResetEvent = new(true);
 
         public MemoryCacheInterceptor(IMemoryCache memoryCache)
         {
@@ -77,8 +72,8 @@ namespace SnippetAdmin.Data.Cache
         {
             var contextId = eventData.Context.ContextId.InstanceId;
 
-            // OrderBy的目的是为了先删除再添加缓存，否则像是USERROlE表会出问题
             var entryList = eventData.Context.ChangeTracker.Entries()
+                .Where(e => CacheableBase<T>.Instance.CacheableTypeList.Contains(e.Entity.GetType()))
                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Deleted || e.State == EntityState.Modified)
                 .Select(e => new CachedEntry
                 {
@@ -108,15 +103,14 @@ namespace SnippetAdmin.Data.Cache
             autoResetEvent.WaitOne();
 
             var entryList = _memoryCache.Get<List<CachedEntry>>(contextId);
-            entryList?.Where(entry => DbContextInitializer.CacheAbleDic[entry.Entity.GetType()])
-                .ToList().ForEach(entry =>
+            entryList?.ForEach(entry =>
             {
                 var typeName = entry.Entity.GetType().FullName;
                 var dataList = _memoryCache.Get(typeName);
 
                 // 方法信息
-                var addMethod = _addMethodInfoDic.GetOrAdd(typeName, dataList.GetType().GetMethod("Add"));
-                var removeAllMethod = _removeAllMethodInfoDic.GetOrAdd(typeName, dataList.GetType().GetMethod("RemoveAll"));
+                var addMethod = CacheableBase<T>.Instance.AddMethodInfoDic[typeName];
+                var removeAllMethod = CacheableBase<T>.Instance.RemoveAllMethodInfoDic[typeName];
                 switch (entry.State)
                 {
                     case EntityState.Added:
@@ -165,12 +159,12 @@ namespace SnippetAdmin.Data.Cache
             //var lambda = predicate.Compile();
             //Predicate<object> p = o => lambda(o);
 
-            Func<int, object, bool> equalFun = (index, obj) =>
+            bool equalFun(int index, object obj) =>
                 idProperties[index].GetValue(obj).ToString() ==
                 idProperties[index].GetValue(entry.Entity).ToString();
 
             // 暴力枚举😁
-            return idProperties.Count() switch
+            return idProperties.Length switch
             {
                 1 => o => equalFun(0, o),
                 2 => o => equalFun(0, o) && equalFun(1, o),

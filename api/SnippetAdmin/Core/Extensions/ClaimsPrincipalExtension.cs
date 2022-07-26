@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace SnippetAdmin.Data
+namespace SnippetAdmin.Core.Extensions
 {
     public static class ClaimsPrincipalExtension
     {

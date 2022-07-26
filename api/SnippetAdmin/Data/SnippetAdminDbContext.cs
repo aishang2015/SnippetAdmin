@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
+using SnippetAdmin.EntityFrameworkCore.Cache;
 
 namespace SnippetAdmin.Data
 {
@@ -91,7 +92,7 @@ namespace SnippetAdmin.Data
 
         public IEnumerable<T> CacheSet<T>() where T : class
         {
-            if (DbContextInitializer.CacheAbleDic[typeof(T)])
+            if (CacheableBase<SnippetAdminDbContext>.Instance.CacheableTypeList.Contains(typeof(T)))
             {
                 return _memoryCache.Get(typeof(T).FullName) as List<T>;
             }

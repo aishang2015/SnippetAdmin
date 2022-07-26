@@ -1,75 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Constants;
-using SnippetAdmin.Data.Cache;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Enums;
-using System.Collections.Concurrent;
+using SnippetAdmin.EntityFrameworkCore.Cache;
 
 namespace SnippetAdmin.Data
 {
     public class DbContextInitializer
     {
-        public static ConcurrentDictionary<Type, bool> CacheAbleDic = new ConcurrentDictionary<Type, bool>();
-
-        /// <summary>
-        /// 初始化内存缓存
-        /// </summary>
-        private static readonly Action<IMemoryCache, SnippetAdminDbContext> InitialCache =
-            (memoryCache, dbcontext) =>
-            {
-                var dbSetPropertyTypes = dbcontext.GetType().GetProperties()
-                    .Where(property =>
-                        property.PropertyType.IsGenericType && (
-                        typeof(DbSet<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition()) ||
-                        property.PropertyType.GetInterface(typeof(DbSet<>).FullName) != null))
-                    .ToList();
-
-                var toListMethod = typeof(DbContextInitializer).GetMethod("GetDataList");
-
-                dbSetPropertyTypes.ForEach(dbSetProperty =>
-                {
-                    // 判断实体的cacheable特性
-                    var entityType = dbSetProperty.PropertyType.GetGenericArguments()[0];
-                    if (CacheAbleDic[entityType])
-                    {
-                        var method = toListMethod.MakeGenericMethod(entityType);
-                        var data = method.Invoke(new DbContextInitializer(), new object[] { dbcontext });
-                        memoryCache.Set(dbSetProperty.PropertyType.GetGenericArguments()[0].FullName, data);
-                    }
-                });
-            };
-
-        /// <summary>
-        /// 根据cache特性进行判断，哪些实体可以被缓存
-        /// </summary>
-        private static Action<SnippetAdminDbContext> _setCacheAbleDic = (dbContext) =>
-        {
-
-            // 取得dbcontext的所有实体的缓存特性
-            var dbSetPropertyTypes = dbContext.GetType().GetProperties()
-                .Where(property =>
-                    property.PropertyType.IsGenericType && (
-                    typeof(DbSet<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition()) ||
-                    property.PropertyType.GetInterface(typeof(DbSet<>).FullName) != null))
-                .ToList();
-            dbSetPropertyTypes.ForEach(dbSetProperty =>
-            {
-                // 判断实体的cacheable特性
-                var entityType = dbSetProperty.PropertyType.GetGenericArguments()[0];
-                var cacheAttribute = entityType.GetCustomAttributes(typeof(CachableAttribute), false).FirstOrDefault();
-                CacheAbleDic.TryAdd(entityType, cacheAttribute != null && (cacheAttribute as CachableAttribute).CacheAble);
-            });
-        };
-
         private static Action<IMemoryCache, SnippetAdminDbContext, UserManager<RbacUser>,
             RoleManager<RbacRole>, ILogger<SnippetAdminDbContext>>
             _initialSnippetAdminDbContext = (memoryCache, dbContext, userManager, roleManager, logger) =>
             {
                 logger.LogInformation("开始执行数据库初始化操作。");
-
-                _setCacheAbleDic(dbContext);
 
                 //dbContext.Database.Migrate();
 
@@ -78,8 +22,9 @@ namespace SnippetAdmin.Data
                 // 加载用户数据
                 if (dbContext.Database.EnsureCreated())
                 {
-                    // 这里是为了确保数据库表存在，防止delete库之后表不存在的问题
-                    InitialCache(memoryCache, dbContext);
+                    // 将所有数据加载到缓存
+                    CacheableBase<SnippetAdminDbContext>.Instance.LoadAllCacheableData(
+                       dbContext, memoryCache);
 
                     // 初始化权限
                     logger.LogInformation("初始化权限数据。");
@@ -93,7 +38,9 @@ namespace SnippetAdmin.Data
                 }
                 else
                 {
-                    InitialCache(memoryCache, dbContext);
+                    // 将所有数据加载到缓存
+                    CacheableBase<SnippetAdminDbContext>.Instance.LoadAllCacheableData(
+                       dbContext, memoryCache);
                 }
 
 

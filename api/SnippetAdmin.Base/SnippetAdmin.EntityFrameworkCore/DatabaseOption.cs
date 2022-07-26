@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Data
+﻿namespace SnippetAdmin.EntityFrameworkCore
 {
     public class DatabaseOption
     {

@@ -36,6 +36,11 @@ namespace SnippetAdmin.PluginBase
 
                 var dllDirectory = Path.GetDirectoryName(dllPath);
 
+                if (string.IsNullOrEmpty(dllDirectory))
+                {
+                    continue;
+                }
+
                 // 引用的第三方路径
                 var pluginReferenceDllPathes = Directory.GetFiles(dllDirectory)
                     .Where(f => !f.StartsWith("System"))
