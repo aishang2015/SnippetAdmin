@@ -1,4 +1,4 @@
-﻿using SnippetAdmin.Endpoint.Models;
+﻿using SnippetAdmin.CommonModel;
 using SnippetAdmin.Endpoint.Models.Account;
 
 namespace SnippetAdmin.Controllers

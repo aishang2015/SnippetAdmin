@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SnippetAdmin.Core.Dynamic.Attributes;
+using SnippetAdmin.DynamicApi.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.System
 {
-    [DynamicApi("登录日志")]
+    [DynamicApi("登录日志", typeof(SnippetAdminDbContext))]
     [Comment("登录日志")]
     [Table("T_Sys_LoginLog")]
     public class SysLoginLog

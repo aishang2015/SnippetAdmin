@@ -1,5 +1,4 @@
-﻿using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
+﻿using SnippetAdmin.CommonModel;
 using SnippetAdmin.Endpoint.Models.RBAC.Role;
 
 namespace SnippetAdmin.Endpoint.Apis.RBAC

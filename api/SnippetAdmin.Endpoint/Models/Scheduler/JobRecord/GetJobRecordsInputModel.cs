@@ -1,4 +1,4 @@
-﻿using SnippetAdmin.Endpoint.Models.Common;
+﻿using SnippetAdmin.CommonModel;
 
 namespace SnippetAdmin.Endpoint.Models.Scheduler.JobRecord
 {

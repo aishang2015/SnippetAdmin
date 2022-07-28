@@ -1,3 +1,5 @@
+global using SnippetAdmin.CommonModel;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Orleans;
@@ -5,7 +7,6 @@ using Orleans.Hosting;
 using Serilog;
 using SnippetAdmin.Background;
 using SnippetAdmin.Core.Authentication;
-using SnippetAdmin.Core.Dynamic;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Core.FileStore;
 using SnippetAdmin.Core.Logger;
@@ -17,6 +18,7 @@ using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
+using SnippetAdmin.DynamicApi;
 using SnippetAdmin.Grains;
 using SnippetAdmin.Models;
 using System.Reflection;
@@ -116,7 +118,7 @@ try
         {
             c.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream("SnippetAdmin.Swagger.index.html");
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "web端业务接口-v1");
-            c.SwaggerEndpoint("/swagger/dynamic-v1/swagger.json", "动态接口-v1");
+            c.SwaggerEndpoint("/swagger/DynamicApi/swagger.json", "动态接口");
         });
 
         app.UseMiniProfiler();

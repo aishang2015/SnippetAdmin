@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Core.Exceptions
+﻿namespace SnippetAdmin.CommonModel.Extensions
 {
     public class ErrorSortPropertyException : Exception
     {

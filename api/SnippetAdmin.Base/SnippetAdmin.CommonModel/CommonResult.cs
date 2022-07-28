@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Endpoint.Models
+﻿namespace SnippetAdmin.CommonModel
 {
     /// <summary>
     /// 通用action返回模型

@@ -14,7 +14,6 @@ using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.System;
-using SnippetAdmin.Endpoint.Models;
 using SnippetAdmin.Endpoint.Models.Account;
 
 namespace SnippetAdmin.Controllers

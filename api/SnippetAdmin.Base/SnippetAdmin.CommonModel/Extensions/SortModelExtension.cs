@@ -1,8 +1,6 @@
-﻿using SnippetAdmin.Core.Exceptions;
-using SnippetAdmin.Endpoint.Models.Common;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace SnippetAdmin.Models.Common
+namespace SnippetAdmin.CommonModel.Extensions
 {
     public static class SortModelExtension
     {
@@ -30,8 +28,8 @@ namespace SnippetAdmin.Models.Common
                     var orderByExp = Expression.Lambda(propertyAccess, parameter);
 
                     string OrderName = i > 0 ?
-                        (sort.IsAsc ? "ThenBy" : "ThenByDescending") :
-                        (sort.IsAsc ? "OrderBy" : "OrderByDescending");
+                        sort.IsAsc ? "ThenBy" : "ThenByDescending" :
+                        sort.IsAsc ? "OrderBy" : "OrderByDescending";
 
                     var resultExp = Expression.Call(typeof(Queryable), OrderName, new Type[] { typeof(T), property.PropertyType }, query.Expression, Expression.Quote(orderByExp));
                     query = query.Provider.CreateQuery<T>(resultExp);

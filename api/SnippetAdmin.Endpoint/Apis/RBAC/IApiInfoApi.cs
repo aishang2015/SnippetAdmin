@@ -1,4 +1,4 @@
-﻿using SnippetAdmin.Endpoint.Models;
+﻿using SnippetAdmin.CommonModel;
 
 namespace SnippetAdmin.Endpoint.Apis.RBAC
 {

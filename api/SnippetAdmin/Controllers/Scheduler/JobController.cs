@@ -7,8 +7,6 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Data;
 using SnippetAdmin.Endpoint.Apis.Scheduler;
-using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
 using SnippetAdmin.Endpoint.Models.Scheduler.Job;
 
 namespace SnippetAdmin.Controllers.Scheduler

@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Endpoint.Models.Common
+﻿namespace SnippetAdmin.CommonModel
 {
     public record IdInputModel<T>
     {

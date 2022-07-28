@@ -1,8 +1,7 @@
-﻿using Convience.Util.Extension;
-using SnippetAdmin.Endpoint.Models.Common;
+﻿using SnippetAdmin.CommonModel;
 using System.Linq.Expressions;
 
-namespace SnippetAdmin.Models.Dynamic
+namespace SnippetAdmin.DynamicApi.Models
 {
     public record DynamicSearchInputModel : PagedInputModel
     {
@@ -70,7 +69,7 @@ namespace SnippetAdmin.Models.Dynamic
             };
             var filterExpression = Expression.Lambda<Func<T, bool>>(compareExpression, param);
 
-            return expression.AndAll(filterExpression);
+            return AndAll(expression, filterExpression);
         }
 
         private Expression<Func<T, bool>> HandleStringFilter<T>(Expression<Func<T, bool>> expression, DynamicFilter filter)
@@ -96,7 +95,7 @@ namespace SnippetAdmin.Models.Dynamic
             };
             var filterExpression = Expression.Lambda<Func<T, bool>>(compareExpression, param);
 
-            return expression.AndAll(filterExpression);
+            return AndAll(expression, filterExpression);
         }
 
         private Expression<Func<T, bool>> HandleDateFilter<T>(Expression<Func<T, bool>> expression, DynamicFilter filter)
@@ -151,7 +150,7 @@ namespace SnippetAdmin.Models.Dynamic
             };
             var filterExpression = Expression.Lambda<Func<T, bool>>(compareExpression, param);
 
-            return expression.AndAll(filterExpression);
+            return AndAll(expression, filterExpression);
         }
 
         private Expression<Func<T, bool>> HandleBoolFilter<T>(Expression<Func<T, bool>> expression, DynamicFilter filter)
@@ -172,7 +171,7 @@ namespace SnippetAdmin.Models.Dynamic
             };
             var filterExpression = Expression.Lambda<Func<T, bool>>(compareExpression, param);
 
-            return expression.AndAll(filterExpression);
+            return AndAll(expression, filterExpression);
         }
 
         private Expression<Func<T, bool>> HandleEnumFilter<T>(Expression<Func<T, bool>> expression, DynamicFilter filter)
@@ -197,8 +196,8 @@ namespace SnippetAdmin.Models.Dynamic
 
             foreach (var value in filter.IntArrayValue)
             {
-                var enumvalue = parseMethod.Invoke(null, new object[] { propertyType, value.ToString() });
-                listAddMethod.Invoke(enumList, new object[] { enumvalue });
+                var enumvalue = parseMethod?.Invoke(null, new object[] { propertyType, value.ToString() });
+                listAddMethod?.Invoke(enumList, new object[] { enumvalue });
             }
 
             var param = Expression.Parameter(typeof(T), "s");
@@ -214,7 +213,17 @@ namespace SnippetAdmin.Models.Dynamic
             };
             var filterExpression = Expression.Lambda<Func<T, bool>>(compareExpression, param);
 
-            return expression.AndAll(filterExpression);
+            return AndAll(expression, filterExpression);
+        }
+
+        /// <summary>
+        /// 与
+        /// </summary>
+        private Expression<Func<T, bool>> AndAll<T>(Expression<Func<T, bool>> expression, Expression<Func<T, bool>> andExpression)
+        {
+            var invokedExpr = Expression.Invoke(andExpression, expression.Parameters.Cast<Expression>());
+            var newExp = Expression.AndAlso(expression.Body, invokedExpr);
+            return Expression.Lambda<Func<T, bool>>(newExp, expression.Parameters);
         }
 
     }
@@ -255,4 +264,5 @@ namespace SnippetAdmin.Models.Dynamic
         YearMonthDay = 2,
         YearMonthDayHourMinuteSecond = 3
     }
+
 }

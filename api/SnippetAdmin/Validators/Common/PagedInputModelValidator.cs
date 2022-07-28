@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Extensions;
-using SnippetAdmin.Endpoint.Models.Common;
 
 namespace SnippetAdmin.Validators.Common
 {

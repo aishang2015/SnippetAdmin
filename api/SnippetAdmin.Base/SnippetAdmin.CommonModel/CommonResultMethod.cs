@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Endpoint.Models
+﻿namespace SnippetAdmin.CommonModel
 {
     public partial record CommonResult
     {

@@ -1,153 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using SnippetAdmin.Core.Dynamic.Attributes;
-using SnippetAdmin.Core.Helpers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
+using SnippetAdmin.DynamicApi.Attributes;
+using SnippetAdmin.DynamicApi.Templates;
 using System.Reflection;
 using System.Text;
 
-namespace SnippetAdmin.Core.Dynamic
+namespace SnippetAdmin.DynamicApi
 {
     public static class DynamicExtension
     {
         public static IMvcBuilder AddDynamicController(this IMvcBuilder builder)
         {
-            var controllerTemplate = @$"
-using Microsoft.AspNetCore.Mvc;
-
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
-
-using SnippetAdmin.Constants;
-using SnippetAdmin.Data;
-using SnippetAdmin.Models;
-using SnippetAdmin.Models.Common;
-using SnippetAdmin.Models.Dynamic;
-using SnippetAdmin.Core.Extensions;
-using SnippetAdmin.Models.{{Entity}};
-
-using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
-
-using {{Namespace}};
-
-namespace SnippetAdmin.Controllers
-{{
-    [Route(""api/[controller]"")]
-    [ApiController]
-    [ApiExplorerSettings(GroupName = ""dynamic-v1"")]
-    public class {{Entity}}Controller: ControllerBase
-    {{
-
-        private readonly SnippetAdminDbContext _snippetAdminDbContext;
-
-        public {{Entity}}Controller(SnippetAdminDbContext snippetAdminDbContext)
-        {{
-            _snippetAdminDbContext = snippetAdminDbContext;
-        }}
-        
-        [HttpPost(""FindOne"")]
-        public CommonResult FindOne([FromBody] IdInputModel<int> inputModel)
-        {{
-            var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
-            return CommonResult.Success(result);
-        }}
-
-        [HttpPost(""GetMany"")]
-        public CommonResult GetMany([FromBody] DynamicSearchInputModel inputModel)
-        {{
-            var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
-            dataQuery = inputModel.GetFilterExpression(dataQuery);
-            dataQuery = dataQuery.Sort(inputModel.Sorts);
-            var result = new PagedOutputModel<{{Entity}}>
-            {{
-                Total = dataQuery.Count(),
-                Data = dataQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
-            }};            
-            return CommonResult.Success(result);
-        }}
-
-        [HttpPost(""GetMany2"")]
-        public CommonResult GetMany2([FromBody] Get{{Entity}}InputModel inputModel)
-        {{
-            var dataQuery = _snippetAdminDbContext.Set<{{Entity}}>().AsQueryable();
-            dataQuery = dataQuery{{QueryCondition}};
-            dataQuery = dataQuery.Sort(inputModel.Sorts);
-            var result = new PagedOutputModel<{{Entity}}>
-            {{
-                Total = dataQuery.Count(),
-                Data = dataQuery.Skip(inputModel.SkipCount).Take(inputModel.TakeCount).ToList()
-            }};            
-            return CommonResult.Success(result);
-        }}
-
-        [HttpPost(""AddOne"")]
-        public async Task<CommonResult> AddOne([FromBody] {{Entity}} entity)
-        {{
-            _snippetAdminDbContext.Set<{{Entity}}>().Add(entity);
-            await _snippetAdminDbContext.SaveChangesAsync();
-            return CommonResult.Success(MessageConstant.SYSTEM_INFO_003);
-        }}
-
-        [HttpPost(""AddMany"")]
-        public async Task<CommonResult> AddOne([FromBody] IEnumerable<{{Entity}}> data)
-        {{
-            _snippetAdminDbContext.Set<{{Entity}}>().AddRange(data);
-            await _snippetAdminDbContext.SaveChangesAsync();
-            return CommonResult.Success(MessageConstant.SYSTEM_INFO_003);
-        }}
-
-        [HttpPost(""UpdateOne"")]
-        public async Task<CommonResult> UpdateOne([FromBody] {{Entity}} entity)
-        {{
-            _snippetAdminDbContext.Set<{{Entity}}>().Update(entity);
-            await _snippetAdminDbContext.SaveChangesAsync();
-            return CommonResult.Success(MessageConstant.SYSTEM_INFO_002);
-        }}
-
-        [HttpPost(""DeleteOne"")]
-        public async Task<CommonResult> DeleteOne([FromBody] IdInputModel<int> inputModel)
-        {{
-            var result = _snippetAdminDbContext.Set<{{Entity}}>().Find(inputModel.Id);
-            _snippetAdminDbContext.Remove(result);
-            await _snippetAdminDbContext.SaveChangesAsync();
-            return CommonResult.Success(MessageConstant.SYSTEM_INFO_001);
-        }}
-
-        {{dicAction}}
-    }}
-}}
-";
-            var dicActionTemplate = @$"
-
-        [HttpPost(""GetDic"")]
-        public CommonResult GetDic()
-        {{
-            var query = _snippetAdminDbContext.Set<{{Entity}}>().Select(d=> new DicOutputModel<string>{{
-                Key = d.{{KeyProperty}}.ToString(),
-                Value = d.{{ValueProperty}}.ToString()
-            }}).Distinct();
-            return CommonResult.Success(query.ToList());
-        }}
-";
-
-            var searchModelTemplate = @$"
-
-using System;
-using SnippetAdmin.Endpoint.Models.Common;
-
-namespace SnippetAdmin.Models.{{Entity}}
-{{    
-    public record Get{{Entity}}InputModel: PagedInputModel
-    {{
-        {{Properties}}
-    }}
-}}
-";
-
-            var classes = ReflectionHelper.GetAssemblyTypes()
+            var classes = DependencyContext.Default.CompileLibraries
+                .Where(lib => !lib.Serviceable && lib.Type != "referenceassembly")
+                .Select(lib => Assembly.Load(lib.Name))
+                .SelectMany(a => a.GetTypes())
                 .Where(t => t.GetCustomAttribute(typeof(DynamicApiAttribute)) != null).ToList();
 
             var syntaxTreeList = new List<SyntaxTree>();
@@ -156,14 +26,23 @@ namespace SnippetAdmin.Models.{{Entity}}
             {
                 foreach (var classType in classes)
                 {
-                    var controllerSource = controllerTemplate;
+                    var controllerSource = DbContextTemplateConstant.ControllerTemplate;
+
+                    // 特性
+                    var attribute = classType.GetCustomAttribute(typeof(DynamicApiAttribute))
+                        as DynamicApiAttribute;
+                    controllerSource = controllerSource.Replace("{DbContextType}", attribute?.DbContextType.Name);
+                    controllerSource = controllerSource.Replace("{DbContextName}", "_" + attribute?.DbContextType.Name.ToLower());
+                    controllerSource = controllerSource.Replace("{DbContextNamespace}", attribute?.DbContextType.Namespace);
+
+                    controllerSource = controllerSource.Replace("{GroupName}", attribute?.ApiGroup ?? "DynamicApi");
 
                     // 查找字典相关的属性,生成一个获取字典的请求
                     var dicKeyProperty = classType.GetProperties().FirstOrDefault(p => p.GetCustomAttribute(typeof(DynamicDicKeyAttribute)) != null);
                     var dicValueProperty = classType.GetProperties().FirstOrDefault(p => p.GetCustomAttribute(typeof(DynamicDicValueAttribute)) != null);
                     if (dicKeyProperty != null && dicValueProperty != null)
                     {
-                        var dicAction = dicActionTemplate
+                        var dicAction = DbContextTemplateConstant.DicActionTemplate
                             .Replace("{KeyProperty}", dicKeyProperty.Name)
                             .Replace("{ValueProperty}", dicValueProperty.Name);
                         controllerSource = controllerSource.Replace("{dicAction}", dicAction);
@@ -242,7 +121,7 @@ namespace SnippetAdmin.Models.{{Entity}}
                             conditinBuilder.Append($".AndIfExist(inputModel.Equal{property.Name},d=>d.{property.Name}==inputModel.Equal{property.Name})\n                ");
                         }
                     }
-                    var searchModelSource = searchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
+                    var searchModelSource = DbContextTemplateConstant.SearchModelTemplate.Replace("{Properties}", propertyBuilder.ToString());
                     searchModelSource = searchModelSource.Replace("{Entity}", classType.Name);
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(searchModelSource));
                     controllerSource = controllerSource.Replace("{QueryCondition}", conditinBuilder.ToString());
@@ -252,8 +131,8 @@ namespace SnippetAdmin.Models.{{Entity}}
                     controllerSource = controllerSource.Replace("{Entity}", classType.Name);
                     syntaxTreeList.Add(SyntaxFactory.ParseSyntaxTree(controllerSource));
 
-                    FileHelper.WriteToFile("Dynamic", $"{classType.Name}Controller.cs", controllerSource);
-                    FileHelper.WriteToFile("Dynamic", $"Get{classType.Name}InputModel.cs", searchModelSource);
+                    WriteToFile("Dynamic", $"{classType.Name}Controller.cs", controllerSource);
+                    WriteToFile("Dynamic", $"Get{classType.Name}InputModel.cs", searchModelSource);
                 }
 
                 var compilation = CSharpCompilation.Create(
@@ -280,6 +159,27 @@ namespace SnippetAdmin.Models.{{Entity}}
                 }
             }
             return builder;
+        }
+
+        public static void WriteToFile(string directory, string fileName, string fileContent, string filePath = "")
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                filePath = AppContext.BaseDirectory;
+            }
+            filePath = Path.Combine(filePath, directory);
+
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            var fullpath = Path.Combine(filePath, fileName);
+
+            using (var file = new StreamWriter(File.Create(fullpath)))
+            {
+                file.Write(fileContent);
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Orleans;
 using SnippetAdmin.Core.FileStore;
-using SnippetAdmin.Endpoint.Models;
 using SnippetAdmin.Grains;
 
 namespace SnippetAdmin.Controllers

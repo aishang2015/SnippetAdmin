@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SnippetAdmin.Endpoint.Models;
 
 namespace SnippetAdmin.Core.Extensions
 {

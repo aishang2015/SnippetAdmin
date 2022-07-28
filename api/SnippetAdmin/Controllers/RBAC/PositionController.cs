@@ -2,15 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SnippetAdmin.CommonModel.Extensions;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Apis.RBAC;
-using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
 using SnippetAdmin.Endpoint.Models.RBAC.Position;
-using SnippetAdmin.Models.Common;
 
 namespace SnippetAdmin.Controllers.RBAC
 {

@@ -1,5 +1,4 @@
-﻿using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
+﻿using SnippetAdmin.CommonModel;
 using SnippetAdmin.Endpoint.Models.Scheduler.Job;
 
 namespace SnippetAdmin.Endpoint.Apis.Scheduler

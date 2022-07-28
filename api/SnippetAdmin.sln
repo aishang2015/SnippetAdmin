@@ -11,7 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SnippetAdmin.Base", "Snippe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.PluginBase", "SnippetAdmin.Base\SnippetAdmin.PluginBase\SnippetAdmin.PluginBase.csproj", "{AE36842A-3268-4900-8CC4-40124C6E9D27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnippetAdmin.EntityFrameworkCore", "SnippetAdmin.Base\SnippetAdmin.EntityFrameworkCore\SnippetAdmin.EntityFrameworkCore.csproj", "{CF5D6C34-A2C0-4D6F-B8FE-E56F0E12D721}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.EntityFrameworkCore", "SnippetAdmin.Base\SnippetAdmin.EntityFrameworkCore\SnippetAdmin.EntityFrameworkCore.csproj", "{CF5D6C34-A2C0-4D6F-B8FE-E56F0E12D721}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.CommonModel", "SnippetAdmin.Base\SnippetAdmin.CommonModel\SnippetAdmin.CommonModel.csproj", "{7C382295-4048-40A5-B814-92FD2F819C33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.DynamicApi", "SnippetAdmin.Base\SnippetAdmin.DynamicApi\SnippetAdmin.DynamicApi.csproj", "{E52BA0A0-8629-445C-9DF1-801544010E14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +39,14 @@ Global
 		{CF5D6C34-A2C0-4D6F-B8FE-E56F0E12D721}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF5D6C34-A2C0-4D6F-B8FE-E56F0E12D721}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF5D6C34-A2C0-4D6F-B8FE-E56F0E12D721}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C382295-4048-40A5-B814-92FD2F819C33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C382295-4048-40A5-B814-92FD2F819C33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C382295-4048-40A5-B814-92FD2F819C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C382295-4048-40A5-B814-92FD2F819C33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E52BA0A0-8629-445C-9DF1-801544010E14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E52BA0A0-8629-445C-9DF1-801544010E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E52BA0A0-8629-445C-9DF1-801544010E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E52BA0A0-8629-445C-9DF1-801544010E14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +54,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{AE36842A-3268-4900-8CC4-40124C6E9D27} = {8B59A39C-A790-4D0B-9ABF-E3878052EBE4}
 		{CF5D6C34-A2C0-4D6F-B8FE-E56F0E12D721} = {8B59A39C-A790-4D0B-9ABF-E3878052EBE4}
+		{7C382295-4048-40A5-B814-92FD2F819C33} = {8B59A39C-A790-4D0B-9ABF-E3878052EBE4}
+		{E52BA0A0-8629-445C-9DF1-801544010E14} = {8B59A39C-A790-4D0B-9ABF-E3878052EBE4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C901D68-0B4B-4CD6-A6BA-BEB02B5B9FFC}

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SnippetAdmin.Core.Dynamic.Attributes;
+using SnippetAdmin.DynamicApi.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.System
 {
-    [DynamicApi("访问日志")]
+    [DynamicApi("访问日志", typeof(SnippetAdminDbContext))]
     [Comment("接口访问日志")]
     [Table("T_Sys_AccessLog")]
     [Index(nameof(AccessedTime))]

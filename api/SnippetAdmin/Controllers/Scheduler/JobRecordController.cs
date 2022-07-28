@@ -4,8 +4,6 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Endpoint.Apis.Scheduler;
-using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
 using SnippetAdmin.Endpoint.Models.Scheduler.JobRecord;
 
 namespace SnippetAdmin.Controllers.Scheduler

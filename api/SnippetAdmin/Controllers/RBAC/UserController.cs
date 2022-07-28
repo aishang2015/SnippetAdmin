@@ -8,8 +8,6 @@ using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Apis.RBAC;
-using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
 using SnippetAdmin.Endpoint.Models.RBAC.User;
 
 namespace SnippetAdmin.Controllers.RBAC

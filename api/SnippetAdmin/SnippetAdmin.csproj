@@ -43,6 +43,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.CommonModel\SnippetAdmin.CommonModel.csproj" />
+	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.DynamicApi\SnippetAdmin.DynamicApi.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.EntityFrameworkCore\SnippetAdmin.EntityFrameworkCore.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.PluginBase\SnippetAdmin.PluginBase.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Endpoint\SnippetAdmin.Endpoint.csproj" />

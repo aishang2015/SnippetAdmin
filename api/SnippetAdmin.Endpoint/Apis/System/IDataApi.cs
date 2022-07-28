@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SnippetAdmin.Endpoint.Models;
-using SnippetAdmin.Endpoint.Models.Common;
+using SnippetAdmin.CommonModel;
 
 namespace SnippetAdmin.Endpoint.Apis.System
 {

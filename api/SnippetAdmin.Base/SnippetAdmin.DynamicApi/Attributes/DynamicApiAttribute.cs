@@ -1,4 +1,4 @@
-﻿namespace SnippetAdmin.Core.Dynamic.Attributes
+﻿namespace SnippetAdmin.DynamicApi.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class DynamicApiAttribute : Attribute
@@ -7,9 +7,12 @@
 
         public string ApiGroup { get; private set; }
 
-        public DynamicApiAttribute(string apiName, string apiGroup = "默认分组")
+        public Type DbContextType { get; private set; }
+
+        public DynamicApiAttribute(string apiName, Type dbContextType, string apiGroup = "DynamicApi")
         {
             ApiName = apiName;
+            DbContextType = dbContextType;
             ApiGroup = apiGroup;
         }
     }

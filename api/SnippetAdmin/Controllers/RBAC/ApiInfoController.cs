@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using SnippetAdmin.Endpoint.Apis.RBAC;
-using SnippetAdmin.Endpoint.Models;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
