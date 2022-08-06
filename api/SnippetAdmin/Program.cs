@@ -2,6 +2,7 @@ global using SnippetAdmin.CommonModel;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Orleans;
 using Orleans.Hosting;
 using Serilog;
@@ -123,6 +124,9 @@ try
 
         app.UseMiniProfiler();
     }
+
+    // static file access
+    app.UseFileStorageAccess();
 
     // record some information
     app.UseLoginLogRecorder();

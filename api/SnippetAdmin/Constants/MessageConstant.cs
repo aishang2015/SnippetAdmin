@@ -134,7 +134,6 @@
 
         #endregion UserController
 
-
         #region DicController
 
         public static readonly (string, string) DICTIONARY_INFO_0001 = ("DICTIONARY_INFO_0001", "字典类型创建成功！");
@@ -160,6 +159,13 @@
         public static readonly (string, string) DICTIONARY_ERROR_0012 = ("DICTIONARY_ERROR_0012", "请输入字典项目编码！");
         public static readonly (string, string) DICTIONARY_ERROR_0013 = ("DICTIONARY_ERROR_0013", "字典项目编码过长！");
         public static readonly (string, string) DICTIONARY_ERROR_0014 = ("DICTIONARY_ERROR_0014", "字典项目编码只允许数字字母下划线！");
+
+        #endregion
+
+        #region SettingController
+
+        public static readonly (string, string) SETTING_INFO_0001 = ("SETTING_INFO_0001", "页面配置保存成功！");
+
 
         #endregion
     }

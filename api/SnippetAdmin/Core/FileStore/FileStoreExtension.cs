@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 
 namespace SnippetAdmin.Core.FileStore
 {
@@ -26,6 +28,22 @@ namespace SnippetAdmin.Core.FileStore
             action(config);
             ConfigureService(services, config);
             return services;
+        }
+
+        public static IApplicationBuilder UseFileStorageAccess(this IApplicationBuilder app)
+        {
+            var option = app.ApplicationServices
+                .GetRequiredService<IOptions<FileStoreOption>>().Value;
+
+            var filePath = option.IsAbsolute ? option.BasePath :
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, option.BasePath);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                RequestPath = "/store",
+                FileProvider = new PhysicalFileProvider(filePath)
+            });
+
+            return app;
         }
 
         private static void ConfigureService(IServiceCollection services, FileStoreOption option)

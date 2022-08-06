@@ -68,6 +68,8 @@ namespace SnippetAdmin.Data
 
         public DbSet<SysDicValue> SysDicValues { get; set; }
 
+        public DbSet<SysSetting> SysSettings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -1,4 +1,4 @@
-import { faArrowRight, faBug, faClipboardCheck, faCog, faColumns, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faSitemap, faTasks, faThumbtack, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faClipboardCheck, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faSitemap, faTasks, faThumbtack, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export class Constants {
@@ -34,6 +34,7 @@ export class Constants {
         },
         {
             path: '', name: '系统配置', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
+                { path: '/setting', name: '系统配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faCogs} fixedWidth /> },
                 { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faDiceOne} fixedWidth /> },
                 { path: '/export', name: '数据导出', identify: 'dic-config', icon: <FontAwesomeIcon icon={faFileExport} fixedWidth /> },
             ]
