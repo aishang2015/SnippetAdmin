@@ -37,6 +37,10 @@ namespace SnippetAdmin.Core.FileStore
 
             var filePath = option.IsAbsolute ? option.BasePath :
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, option.BasePath);
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
             app.UseStaticFiles(new StaticFileOptions
             {
                 RequestPath = "/store",
