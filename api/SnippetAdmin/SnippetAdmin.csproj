@@ -22,7 +22,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-		<PackageReference Include="Cronos" Version="0.7.1" />
 		<PackageReference Include="CsvHelper" Version="28.0.1" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
@@ -47,6 +46,7 @@
 	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.DynamicApi\SnippetAdmin.DynamicApi.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.EntityFrameworkCore\SnippetAdmin.EntityFrameworkCore.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.PluginBase\SnippetAdmin.PluginBase.csproj" />
+	  <ProjectReference Include="..\SnippetAdmin.Base\SnippetAdmin.Quartz\SnippetAdmin.Quartz.csproj" />
 	  <ProjectReference Include="..\SnippetAdmin.Endpoint\SnippetAdmin.Endpoint.csproj" />
 	</ItemGroup>
 

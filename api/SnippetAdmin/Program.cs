@@ -21,7 +21,9 @@ using SnippetAdmin.Data.Auth;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.DynamicApi;
 using SnippetAdmin.Grains;
+using SnippetAdmin.Jobs;
 using SnippetAdmin.Models;
+using SnippetAdmin.Quartz;
 using System.Reflection;
 
 Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
@@ -56,7 +58,9 @@ try
     builder.Services.AddSignalR();
 
     // 添加定时任务调度器
-    builder.Services.AddJobScheduler();
+    //builder.Services.AddJobScheduler();
+    builder.Services.AddScoped<HelloJob>();
+    builder.Services.AddCustomerQuartz(builder.Configuration);
 
     // 配置swagger权限访问
     builder.Services.AddCustomSwaggerGen();
@@ -157,7 +161,6 @@ try
     });
 
     app.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
-    app.Initialize(JobInitializer.InitialJob);
     app.Run();
 }
 catch (Exception e)

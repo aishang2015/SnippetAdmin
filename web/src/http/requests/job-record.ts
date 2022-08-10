@@ -18,6 +18,7 @@ export class JobRecordService {
                     jobState: string,
                     duration: string,
                     beginTime: Date,
+                    endTime: Date,
                     infomation: string
                 }
             ]

@@ -12,12 +12,9 @@ namespace SnippetAdmin.Data.Entity.Scheduler
         [DynamicDicKey]
         public int Id { get; set; }
 
-        [Comment("任务Id")]
+        [Comment("任务名称")]
         [DynamicDicValue]
-        public int JobId { get; set; }
-
-        [Comment("触发方式")]
-        public TriggerMode TriggerMode { get; set; }
+        public string JobName { get; set; }
 
         [Comment("任务状态")]
         public JobState JobState { get; set; }
@@ -25,8 +22,11 @@ namespace SnippetAdmin.Data.Entity.Scheduler
         [Comment("执行时长")]
         public long? Duration { get; set; }
 
-        [Comment("执行时间")]
+        [Comment("开始时间")]
         public DateTime? BeginTime { get; set; }
+
+        [Comment("结束时间")]
+        public DateTime? EndTime { get; set; }
 
         [Comment("执行信息")]
         public string Infomation { get; set; }

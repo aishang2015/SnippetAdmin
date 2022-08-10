@@ -4,21 +4,8 @@ using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 
-namespace SnippetAdmin.Services
+namespace SnippetAdmin.Services.Impl
 {
-    public interface IAccessService
-    {
-        /// <summary>
-        /// get current request's user's organization ids not contained lower levels org id
-        /// </summary> 
-        public List<int> GetCurrentUserOrgId();
-
-        /// <summary>
-        /// get current request's user's organization ids contains all lower levels org ids  
-        /// </summary> 
-        public List<int> GetCurrentUserGroupOrgId();
-    }
-
     public class AccessService : IAccessService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

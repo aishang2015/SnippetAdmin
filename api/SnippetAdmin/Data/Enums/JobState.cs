@@ -2,9 +2,8 @@
 {
     public enum JobState
     {
-        Prepared = 0,
-        IsRunning = 1,
-        Successed = 2,
-        Failed = 3
+        成功 = 1,
+        失败 = 2,
+        运行中 = 3
     }
 }

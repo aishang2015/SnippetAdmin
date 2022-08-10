@@ -37,6 +37,7 @@ export class JobService {
     }) {
         type getElementResult = {
             id: number,
+            type: string,
             name: string,
             describe: string,
             cron: string
@@ -46,6 +47,7 @@ export class JobService {
 
     static UpdateJob(param: {
         id: number,
+        type: string,
         name: string,
         describe: string,
         cron: string
@@ -60,11 +62,12 @@ export class JobService {
     }
 
     static AddJob(param: {
+        type: string,
         name: string,
         describe: string,
         cron: string
     }) {
-        return Axios.instance.post<CommonResultNoData>('api/Job/DeleteJob', param);
+        return Axios.instance.post<CommonResultNoData>('api/Job/AddJob', param);
     }
 
     static RunJob(param: {
@@ -73,7 +76,11 @@ export class JobService {
         return Axios.instance.post<CommonResultNoData>('api/Job/RunJob', param);
     }
 
-    static GetJobNames(){
+    static GetJobNames() {
         return Axios.instance.post<CommonResult<Array<string>>>('api/Job/GetJobNames', null);
+    }
+
+    static GetJobTypeList() {
+        return Axios.instance.post<CommonResult<Array<string>>>('api/Job/GetJobTypeList', null);
     }
 }

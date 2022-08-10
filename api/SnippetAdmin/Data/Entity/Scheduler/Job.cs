@@ -11,6 +11,9 @@ namespace SnippetAdmin.Data.Entity.Scheduler
     {
         public int Id { get; set; }
 
+        [Comment("执行的任务类")]
+        public string Type { get; set; }
+
         [Comment("任务类全名")]
         public string Name { get; set; }
 

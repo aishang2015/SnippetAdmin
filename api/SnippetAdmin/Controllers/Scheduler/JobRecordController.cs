@@ -26,7 +26,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         public async Task<CommonResult<PagedOutputModel<GetJobRecordsOutputModel>>> GetJobRecords(GetJobRecordsInputModel inputModel)
         {
             var q = from jr in _dbContext.JobRecords
-                    join j in _dbContext.Jobs on jr.JobId equals j.Id
+                    join j in _dbContext.Jobs on jr.JobName equals j.Name
                     orderby jr.Id descending
                     select new GetJobRecordsOutputModel
                     {
@@ -34,10 +34,10 @@ namespace SnippetAdmin.Controllers.Scheduler
                         Name = j.Name,
                         Describe = j.Describe,
                         BeginTime = jr.BeginTime,
+                        EndTime = jr.EndTime,
                         Duration = jr.Duration == null ? "" : Sec2Min(jr.Duration.Value),
                         Infomation = jr.Infomation,
-                        JobState = (int)jr.JobState,
-                        TriggerMode = jr.TriggerMode.ToString()
+                        JobState = (int)jr.JobState
                     };
 
             var resultQuery = q

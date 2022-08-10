@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
-using Cronos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Quartz;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
-using SnippetAdmin.Core.Scheduler;
+using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
 using SnippetAdmin.Endpoint.Apis.Scheduler;
 using SnippetAdmin.Endpoint.Models.Scheduler.Job;
+using SnippetAdmin.Quartz;
 
 namespace SnippetAdmin.Controllers.Scheduler
 {
@@ -18,18 +19,30 @@ namespace SnippetAdmin.Controllers.Scheduler
     {
         private readonly SnippetAdminDbContext _dbContext;
 
-        private readonly JobSchedulerService _jobSchedulerService;
+        private readonly IQuartzService _quartzService;
 
         private readonly IMapper _mapper;
 
         public JobController(
             SnippetAdminDbContext dbContext,
-            JobSchedulerService jobSchedulerService,
+            IQuartzService quartzService,
             IMapper mapper)
         {
             _dbContext = dbContext;
-            _jobSchedulerService = jobSchedulerService;
+            _quartzService = quartzService;
             _mapper = mapper;
+        }
+
+        [HttpPost]
+        [CommonResultResponseType(typeof(List<string>))]
+        public CommonResult<List<string>> GetJobTypeList()
+        {
+            var typeNameList = ReflectionHelper
+                .GetSubClass<IJob>()
+                .Select(t => t.FullName)
+                .Where(n => !n.Contains("QuartzJobRunner"))
+                .ToList();
+            return CommonResult.Success(typeNameList);
         }
 
         [HttpPost]
@@ -49,14 +62,14 @@ namespace SnippetAdmin.Controllers.Scheduler
                 Data = _mapper.Map<List<GetJobsOutputModel>>(data)
             };
 
-            result.Data.AsParallel().ForAll(job =>
-            {
-                if (job.IsActive)
-                {
-                    job.NextTime = CronExpression.Parse(job.Cron, CronFormat.IncludeSeconds)
-                        .GetNextOccurrence(DateTime.UtcNow, TimeZoneInfo.Local);
-                }
-            });
+            //result.Data.AsParallel().ForAll(job =>
+            //{
+            //    if (job.IsActive)
+            //    {
+            //        job.NextTime = new CronExpression(job.Cron)
+            //            .GetNextValidTimeAfter(DateTime.UtcNow).Value.DateTime;
+            //    }
+            //});
 
             return CommonResult.Success(result);
         }
@@ -73,16 +86,16 @@ namespace SnippetAdmin.Controllers.Scheduler
 
             job.IsActive = inputModel.IsActive;
             _dbContext.Update(job);
-            await _dbContext.SaveChangesAsync();
 
             if (inputModel.IsActive)
             {
-                _jobSchedulerService.ActivateJob(job.Name);
+                await _quartzService.Resume(job.Name);
             }
             else
             {
-                _jobSchedulerService.PauseJob(job.Name);
+                await _quartzService.Pause(job.Name);
             }
+            await _dbContext.SaveChangesAsync();
 
             return CommonResult.Success(inputModel.IsActive ?
                 MessageConstant.JOB_INFO_0004 :
@@ -97,6 +110,7 @@ namespace SnippetAdmin.Controllers.Scheduler
             return CommonResult.Success(new GetJobOutputModel
             {
                 Id = job.Id,
+                Type = job.Type,
                 Cron = job.Cron,
                 Describe = job.Describe,
                 Name = job.Name,
@@ -107,23 +121,34 @@ namespace SnippetAdmin.Controllers.Scheduler
         [CommonResultResponseType]
         public async Task<CommonResult> UpdateJob(UpdateJobInputModel inputModel)
         {
+            if (_dbContext.Jobs.Any(j => j.Name == inputModel.Name && j.Id != inputModel.Id))
+            {
+                return CommonResult.Fail(MessageConstant.JOB_ERROR_0003);
+            }
+
             var now = DateTime.UtcNow;
-            var nextTime = CronExpression.Parse(inputModel.Cron, CronFormat.IncludeSeconds)
-                .GetNextOccurrence(now, TimeZoneInfo.Local);
+            var isValid = CronExpression.IsValidExpression(inputModel.Cron);
 
             // 如果取不到下次时间，则直接抛出异常
-            if (nextTime == null)
+            if (!isValid)
             {
                 return CommonResult.Fail(MessageConstant.JOB_ERROR_0002);
             }
 
-            _dbContext.Jobs.Update(new Data.Entity.Scheduler.Job
+            await _quartzService.Remove(inputModel.Name);
+            await _quartzService.Add(new Quartz.Models.JobDetail
             {
-                Id = inputModel.Id,
-                Cron = inputModel.Cron,
-                Describe = inputModel.Describe,
-                Name = inputModel.Name
+                JobType = Type.GetType(inputModel.Type),
+                JobName = inputModel.Name,
+                JobDescribe = inputModel.Describe,
+                CronExpression = inputModel.Cron
             });
+            var job = _dbContext.Jobs.Find(inputModel.Id);
+            job.Type = inputModel.Type;
+            job.Cron = inputModel.Cron;
+            job.Describe = inputModel.Describe;
+            job.Name = inputModel.Name;
+            _dbContext.Update(job);
             await _dbContext.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.JOB_INFO_0003);
         }
@@ -133,12 +158,11 @@ namespace SnippetAdmin.Controllers.Scheduler
         public async Task<CommonResult> DeleteJob(DeleteJobInputModel inputModel)
         {
             var job = _dbContext.Jobs.Find(inputModel.Id);
-            var jobRecords = _dbContext.JobRecords.Where(r => r.JobId == job.Id).ToList();
+            var jobRecords = _dbContext.JobRecords.Where(r => r.JobName == job.Name).ToList();
             _dbContext.Jobs.Remove(job);
             _dbContext.JobRecords.RemoveRange(jobRecords);
+            await _quartzService.Remove(job.Name);
             await _dbContext.SaveChangesAsync();
-
-            _jobSchedulerService.CancelJob(job.Name);
 
             // 删除后把任务取消
             return CommonResult.Success(MessageConstant.JOB_INFO_0002);
@@ -148,11 +172,26 @@ namespace SnippetAdmin.Controllers.Scheduler
         [CommonResultResponseType]
         public async Task<CommonResult> AddJob(AddJobInputModel inputModel)
         {
+            if (_dbContext.Jobs.Any(j => j.Name == inputModel.Name))
+            {
+                return CommonResult.Fail(MessageConstant.JOB_ERROR_0003);
+            }
+
+            await _quartzService.Add(new Quartz.Models.JobDetail
+            {
+                JobType = Type.GetType(inputModel.Type),
+                JobName = inputModel.Name,
+                JobDescribe = inputModel.Describe,
+                CronExpression = inputModel.Cron
+            });
             _dbContext.Add(new Data.Entity.Scheduler.Job
             {
+                Type = inputModel.Type,
                 Name = inputModel.Name,
                 Cron = inputModel.Cron,
                 Describe = inputModel.Describe,
+                IsActive = true,
+                CreateTime = DateTime.Now
             });
             await _dbContext.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.JOB_INFO_0001);
@@ -163,7 +202,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         public async Task<CommonResult> RunJob(RunJobInputModel inputModel)
         {
             var job = await _dbContext.Jobs.FindAsync(inputModel.Id);
-            _jobSchedulerService.ActiveJobOnce(job);
+            await _quartzService.Trigger(job.Name);
             return CommonResult.Success(MessageConstant.JOB_INFO_0006);
         }
 

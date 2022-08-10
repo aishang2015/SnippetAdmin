@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Pagination, Space, Switch, Table, Tag, Tooltip } from 'antd';
+import { Button, Form, Input, Modal, Pagination, Select, Space, Switch, Table, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
@@ -14,12 +14,20 @@ export default function TaskManage(props: any) {
     const [size, setSize] = useState<number>(20);
     const [total, setTotal] = useState<number>(0);
 
+    const [jobTypeList, setJobTypeList] = useState(new Array<string>());
+
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [editForm] = Form.useForm();
 
     const [taskTableData, setTaskTableData] = useState(new Array<any>());
 
     const taskTableColumns: any = [
+        {
+            title: '编号', dataIndex: "id", align: 'center', width: '100px',
+            render: (data: any, record: any, index: any) => (
+                <span>{1 + index + size * (page - 1)} </span>
+            )
+        },
         { title: '任务名', dataIndex: "name", align: 'center', width: '300px' },
         { title: '任务描述', dataIndex: "describe", align: 'center' },
         {
@@ -72,6 +80,9 @@ export default function TaskManage(props: any) {
         let response = await JobService.GetJobs({ page: page, size: size });
         setTaskTableData(response.data.data.data);
         setTotal(response.data.data.total);
+
+        let jobTypeList = await JobService.GetJobTypeList();
+        setJobTypeList(jobTypeList.data.data);
     }
 
     async function activeChange(checked: boolean, id: number) {
@@ -86,6 +97,7 @@ export default function TaskManage(props: any) {
         let job = await JobService.GetJob({ id: id });
         editForm.setFieldsValue({
             id: job.data.data.id,
+            type: job.data.data.type,
             name: job.data.data.name,
             describe: job.data.data.describe,
             cron: job.data.data.cron
@@ -97,12 +109,14 @@ export default function TaskManage(props: any) {
         if (jobs["id"]) {
             await JobService.UpdateJob({
                 id: jobs["id"],
+                type: jobs["type"],
                 name: jobs["name"],
                 describe: jobs["describe"],
                 cron: jobs["cron"]
             });
         } else {
             await JobService.AddJob({
+                type: jobs["type"],
                 name: jobs["name"],
                 describe: jobs["describe"],
                 cron: jobs["cron"]
@@ -141,7 +155,7 @@ export default function TaskManage(props: any) {
             <div style={{ marginBottom: '10px' }}>
                 <Button type="primary" onClick={addTask}><FontAwesomeIcon icon={faPlus} fixedWidth></FontAwesomeIcon>创建新任务</Button>
             </div>
-            <Table columns={taskTableColumns} dataSource={taskTableData} pagination={{ position: ["bottomLeft"], pageSize: 10 }}
+            <Table style={{ marginBottom: '10px' }} columns={taskTableColumns} dataSource={taskTableData} pagination={false}
                 bordered scroll={{ x: 1600 }} size="small"></Table>
             <Pagination pageSize={size} total={total} current={page} showSizeChanger={true} onChange={pageChange} />
 
@@ -150,21 +164,30 @@ export default function TaskManage(props: any) {
                 <Form form={editForm} preserve={false} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}
                     onFinish={submitJob}>
                     <Form.Item name="id" hidden ><Input /></Form.Item>
+                    <Form.Item name="type" label="任务类型" rules={
+                        [
+                            { required: true, message: "请选择任务类型" },
+                        ]}
+                    >
+                        <Select placeholder="请选择任务类型">
+                            {
+                                jobTypeList.map(o => (
+                                    <Select.Option value={o} key={o}>{o}</Select.Option>
+                                ))
+                            }
+                        </Select>
+                    </Form.Item>
                     <Form.Item name="name" label="任务名称" rules={
                         [
                             { required: true, message: "请输入任务名称" },
                             { max: 40, message: "任务名称过长" },
                         ]}
                     >
-                        <Input placeholder="请输入任务名" autoComplete="off2"
-                            suffix={
-                                <Tooltip title="任务名称为包含命名空间的类的全名">
-                                    <FontAwesomeIcon icon={faInfoCircle} style={{ color: 'rgba(0,0,0,.45)' }} />
-                                </Tooltip>
-                            } />
+                        <Input placeholder="请输入任务名" autoComplete="off2" />
                     </Form.Item>
                     <Form.Item name="describe" label="任务描述" rules={
                         [
+                            { required: true, message: "请输入任务名称" },
                             { max: 80, message: "描述文字过长" },
                         ]}>
                         <Input placeholder="请输入任务描述" autoComplete="off" />
@@ -176,7 +199,7 @@ export default function TaskManage(props: any) {
                             { pattern: /(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/, message: "cron格式不对" }
                         ]}>
                         <Input placeholder="请输入Cron表达式" autoComplete="off" suffix={
-                            <Tooltip title="任务名称为包含命名空间的类的全名">
+                            <Tooltip title="cron表达式">
                                 <FontAwesomeIcon icon={faInfoCircle} style={{ color: 'rgba(0,0,0,.45)' }} />
                             </Tooltip>
                         } />

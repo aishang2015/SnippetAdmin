@@ -131,6 +131,7 @@
 
         public static readonly (string, string) JOB_ERROR_0001 = ("JOB_ERROR_0001", "没有找到该任务！");
         public static readonly (string, string) JOB_ERROR_0002 = ("JOB_ERROR_0002", "Cron表达式错误！");
+        public static readonly (string, string) JOB_ERROR_0003 = ("JOB_ERROR_0003", "任务名称不能重复！");
 
         #endregion UserController
 
