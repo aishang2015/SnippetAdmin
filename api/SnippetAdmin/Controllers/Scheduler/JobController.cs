@@ -8,6 +8,7 @@ using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Data;
 using SnippetAdmin.Endpoint.Apis.Scheduler;
 using SnippetAdmin.Endpoint.Models.Scheduler.Job;
+using SnippetAdmin.Jobs;
 using SnippetAdmin.Quartz;
 
 namespace SnippetAdmin.Controllers.Scheduler
@@ -38,9 +39,9 @@ namespace SnippetAdmin.Controllers.Scheduler
         public CommonResult<List<string>> GetJobTypeList()
         {
             var typeNameList = ReflectionHelper
-                .GetSubClass<IJob>()
+                .GetSubClass<SnippetAdminJob>()
+                .Where(c => !c.IsAbstract)
                 .Select(t => t.FullName)
-                .Where(n => !n.Contains("QuartzJobRunner"))
                 .ToList();
             return CommonResult.Success(typeNameList);
         }

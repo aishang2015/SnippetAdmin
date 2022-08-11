@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
 import './taskManage.less';
-import { faEdit, faInfoCircle, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faInfoCircle, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { JobService } from '../../../http/requests/job';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -153,6 +153,8 @@ export default function TaskManage(props: any) {
     return (
         <>
             <div style={{ marginBottom: '10px' }}>
+                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
+                    onClick={initial}>刷新</Button>
                 <Button type="primary" onClick={addTask}><FontAwesomeIcon icon={faPlus} fixedWidth></FontAwesomeIcon>创建新任务</Button>
             </div>
             <Table style={{ marginBottom: '10px' }} columns={taskTableColumns} dataSource={taskTableData} pagination={false}

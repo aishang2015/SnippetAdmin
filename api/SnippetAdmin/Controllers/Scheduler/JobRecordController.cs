@@ -69,6 +69,8 @@ namespace SnippetAdmin.Controllers.Scheduler
         /// </summary>
         private static string Sec2Min(long sec)
         {
+            long millisecond = sec % 1000;
+            sec = sec / 1000;
             if (sec < 0)
                 sec = 0;
             long miao = sec % 60;
@@ -77,7 +79,7 @@ namespace SnippetAdmin.Controllers.Scheduler
             long fen = sec % 60;
             sec -= fen;
             long shi = sec / 60;
-            return string.Format("{0:00}:{1:00}:{2:00}", shi, fen, miao);
+            return string.Format("{0:00}:{1:00}:{2:00}.{3:000}", shi, fen, miao, millisecond);
         }
     }
 }

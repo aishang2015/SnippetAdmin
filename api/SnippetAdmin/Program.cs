@@ -2,7 +2,6 @@ global using SnippetAdmin.CommonModel;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders;
 using Orleans;
 using Orleans.Hosting;
 using Serilog;
@@ -14,7 +13,6 @@ using SnippetAdmin.Core.Logger;
 using SnippetAdmin.Core.Middleware;
 using SnippetAdmin.Core.Monitor;
 using SnippetAdmin.Core.Oauth;
-using SnippetAdmin.Core.Scheduler;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;

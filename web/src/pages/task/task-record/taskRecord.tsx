@@ -1,4 +1,4 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Modal, Pagination, Radio, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
@@ -35,6 +35,8 @@ export default function TaskRecord(props: any) {
                     return (<Tag color="green">成功</Tag>);
                 } else if (text === 2) {
                     return (<Tag color="green">失败</Tag>);
+                } else if (text === 3) {
+                    return (<Tag color="green">运行中</Tag>);
                 }
             },
         },
@@ -137,10 +139,13 @@ export default function TaskRecord(props: any) {
     return (
         <>
             <div style={{ marginBottom: '10px' }}>
+                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
+                    onClick={initial}>刷新</Button>
                 <Radio.Group defaultValue="" buttonStyle="solid" onChange={jobStateChange}>
                     <Radio.Button value="" style={{ width: "80px", textAlign: "center" }}>全部</Radio.Button>
                     <Radio.Button value="1" style={{ width: "80px", textAlign: "center" }}>成功</Radio.Button>
                     <Radio.Button value="2" style={{ width: "80px", textAlign: "center" }}>失败</Radio.Button>
+                    <Radio.Button value="3" style={{ width: "80px", textAlign: "center" }}>运行中</Radio.Button>
                 </Radio.Group>
                 <Select style={{ width: 300, marginLeft: 20 }} placeholder="请选择job类型" allowClear onChange={jobNameChange}>
                     {jobNames.map(name => (

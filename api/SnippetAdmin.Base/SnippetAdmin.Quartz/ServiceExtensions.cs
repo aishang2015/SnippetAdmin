@@ -19,7 +19,9 @@ namespace SnippetAdmin.Quartz
             });
 
             var quartzOptions = section.Get<QuartzOptions>();
-            DBInitializer.InitializeMySql("Server=127.0.0.1;Port=3306;Database=QuartzStore;Uid=root;Pwd=123456;");
+            var connectionKey = quartzOptions.AllKeys.FirstOrDefault(k => k.Contains("connectionString"));
+            var connectionString = quartzOptions.Get(connectionKey);
+            DBInitializer.InitializeMySql(connectionString);
 
             //services.AddSingleton<QuartzJobRunner>();
             //services.AddSingleton<IJobFactory, ProviderJobFactory>();
