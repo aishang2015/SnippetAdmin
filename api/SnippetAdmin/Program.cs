@@ -2,6 +2,7 @@ global using SnippetAdmin.CommonModel;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Orleans;
 using Orleans.Hosting;
 using Serilog;
@@ -21,6 +22,7 @@ using SnippetAdmin.DynamicApi;
 using SnippetAdmin.Grains;
 using SnippetAdmin.Jobs;
 using SnippetAdmin.Models;
+using SnippetAdmin.Orleans;
 using SnippetAdmin.Quartz;
 using System.Reflection;
 
@@ -105,12 +107,15 @@ try
     builder.Host.UseCustomSerilog();
 
     // use orleans
-    builder.Host.UseOrleans((ctx, builder) =>
-    {
-        builder.UseLocalhostClustering();
-        builder.AddMemoryGrainStorage("SnippetAdminSilo");
-        builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(TestGrain).Assembly).WithReferences());
-    });
+    builder.UseDevelopOrleans(typeof(TestGrain));
+    //builder.Host.UseOrleans((ctx, builder) =>
+    //{
+    //    builder.UseLocalhostClustering();
+    //    builder.AddMemoryGrainStorage("SnippetAdminSilo");
+    //    builder.ConfigureApplicationParts(parts => {
+    //        parts.AddApplicationPart(typeof(TestGrain).Assembly).WithReferences();
+    //    });
+    //});
 
     var app = builder.Build();
 

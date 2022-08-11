@@ -15,6 +15,11 @@ namespace SnippetAdmin.Quartz
             var connection = new MySqlConnection(noDbStr);
             connection.Open();
 
+            var deleteCmd = connection.CreateCommand();
+            deleteCmd.CommandText = string.Format(DropDatabaseSql, dbName);
+            deleteCmd.Connection = connection;
+            deleteCmd.ExecuteNonQuery();
+
             var checkCmd = connection.CreateCommand();
             checkCmd.CommandText = string.Format(CheckDatabaseExist, dbName);
             checkCmd.Connection = connection;
@@ -48,6 +53,9 @@ namespace SnippetAdmin.Quartz
 
         private static string CheckDatabaseExist = @"
 SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '{0}';";
+
+        private static string DropDatabaseSql = @"
+DROP DATABASE IF EXISTS {0};";
 
         private static string CreateDatabaseSql = @"
         CREATE DATABASE IF NOT EXISTS {0};
