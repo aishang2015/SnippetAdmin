@@ -189,15 +189,15 @@ export default function TaskManage(props: any) {
                     </Form.Item>
                     <Form.Item name="describe" label="任务描述" rules={
                         [
-                            { required: true, message: "请输入任务名称" },
+                            { required: true, message: "请输入任务描述" },
                             { max: 80, message: "描述文字过长" },
                         ]}>
                         <Input placeholder="请输入任务描述" autoComplete="off" />
                     </Form.Item>
                     <Form.Item name="cron" label="执行计划" rules={
                         [
-                            { required: true, message: "请输入任务名称" },
-                            { max: 40, message: "任务名称过长" },
+                            { required: true, message: "请输入执行计划" },
+                            { max: 40, message: "执行计划过长" },
                             { pattern: /(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/, message: "cron格式不对" }
                         ]}>
                         <Input placeholder="请输入Cron表达式" autoComplete="off" suffix={

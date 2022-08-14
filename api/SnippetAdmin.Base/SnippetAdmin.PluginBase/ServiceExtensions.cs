@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SnippetAdmin.PluginBase.Messages;
 using SnippetAdmin.PluginBase.Messages.Memory;
+using SnippetAdmin.PluginBase.Models;
 using SnippetAdmin.PluginBase.Register;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -15,8 +16,13 @@ namespace SnippetAdmin.PluginBase
         /// </summary>
         /// <param name="services"></param>
         /// <param name="assemblies"></param>
-        public static IMvcBuilder RegistPlugin(this IMvcBuilder builder, params string[] dllPaths)
+        public static RegistResult RegistPlugin(this IMvcBuilder builder, params string[] dllPaths)
         {
+            var result = new RegistResult();
+            var assemblyList = new List<Assembly>();
+            var scriptList = new List<string>();
+            var styleList = new List<string>();
+
             var messageObserver = new MemoryMessageObserver();
             builder.Services.AddSingleton(messageObserver);
             builder.Services.AddSingleton<IMessageObserver>(messageObserver);
@@ -24,18 +30,21 @@ namespace SnippetAdmin.PluginBase
             {
                 var pluginAssembly = Assembly.LoadFrom(dllPath);
 
+                assemblyList.Add(pluginAssembly);
+
                 // 将插件内注册的服务注入到主容器
                 var type = pluginAssembly.GetTypes()?
                     .Where(t => typeof(IServiceRegister).IsAssignableFrom(t) && t.IsClass).FirstOrDefault();
                 if (type != null)
                 {
-                    var methodInfo = typeof(IServiceRegister).GetMethod("RegisterPluginServices");
                     var instance = Activator.CreateInstance(type) as IServiceRegister;
                     instance?.RegisterPluginServices(builder.Services);
+
+                    scriptList.AddRange(instance.ScriptUrlList);
+                    styleList.AddRange(instance.StyleUrlList);
                 }
 
                 var dllDirectory = Path.GetDirectoryName(dllPath);
-
                 if (string.IsNullOrEmpty(dllDirectory))
                 {
                     continue;
@@ -62,7 +71,12 @@ namespace SnippetAdmin.PluginBase
 
             }
 
-            return builder;
+            return new RegistResult
+            {
+                AssemblySet = assemblyList.ToHashSet(),
+                ScriptUrlSet = scriptList.ToHashSet(),
+                StyleUrlSet = styleList.ToHashSet()
+            };
         }
     }
 }

@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.DynamicApi", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.Quartz", "SnippetAdmin.Base\SnippetAdmin.Quartz\SnippetAdmin.Quartz.csproj", "{E7EFFCD8-62E4-4026-B824-1E4D7A345EB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnippetAdmin.Orleans", "SnippetAdmin.Base\SnippetAdmin.Orleans\SnippetAdmin.Orleans.csproj", "{0DCC9641-8D81-4C62-84C5-357A3355FC98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnippetAdmin.Orleans", "SnippetAdmin.Base\SnippetAdmin.Orleans\SnippetAdmin.Orleans.csproj", "{0DCC9641-8D81-4C62-84C5-357A3355FC98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
