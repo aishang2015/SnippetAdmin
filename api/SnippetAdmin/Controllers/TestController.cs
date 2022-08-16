@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Orleans;
-using Quartz;
 using SnippetAdmin.Core.FileStore;
 using SnippetAdmin.Grains;
 using SnippetAdmin.Jobs;

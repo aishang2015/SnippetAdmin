@@ -3,11 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orleans;
 using Orleans.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SnippetAdmin.Orleans
 {
@@ -21,7 +16,8 @@ namespace SnippetAdmin.Orleans
             {
                 builder.UseLocalhostClustering();
                 builder.AddMemoryGrainStorage("SnippetAdminSilo");
-                builder.ConfigureApplicationParts(parts => {
+                builder.ConfigureApplicationParts(parts =>
+                {
                     types.ToList().ForEach(type =>
                     {
                         parts.AddApplicationPart(type.Assembly).WithReferences();

@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SnippetAdmin.Core.Attributes;
-using SnippetAdmin.Core.Helpers;
-using SnippetAdmin.Endpoint.Models.Dynamic;
-using System.Reflection;
 
 namespace SnippetAdmin.Controllers.Dynamic
 {

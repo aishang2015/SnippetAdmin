@@ -2,9 +2,6 @@ global using SnippetAdmin.CommonModel;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Orleans;
-using Orleans.Hosting;
 using Serilog;
 using SnippetAdmin.Background;
 using SnippetAdmin.Core.Authentication;

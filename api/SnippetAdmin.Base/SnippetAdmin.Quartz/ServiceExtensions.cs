@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
-using Quartz.Spi;
 
 namespace SnippetAdmin.Quartz
 {
