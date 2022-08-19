@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.FileStore;
@@ -12,6 +13,7 @@ namespace SnippetAdmin.Controllers.System
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(Policy = "AccessApi")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class SettingController : ControllerBase
     {
@@ -31,6 +33,7 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType(typeof(GetLoginPageSettingOutputModel))]
+        [AllowAnonymous]
         public CommonResult GetLoginPageSetting()
         {
             var settings = GetSettings(

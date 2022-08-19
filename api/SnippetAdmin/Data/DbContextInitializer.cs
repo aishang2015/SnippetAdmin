@@ -59,7 +59,6 @@ namespace SnippetAdmin.Data
         /// <returns></returns>
         private static async Task InitialElements(SnippetAdminDbContext _dbContext)
         {
-
             // 元素数据
             _dbContext.RbacElements.Add(new RbacElement { Id = 1, Name = "主页", Identity = "home", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 2, Name = "权限管理", Identity = "rbac", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
@@ -110,7 +109,7 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElements.Add(new RbacElement { Id = 58, Name = "登录记录", Identity = "loginRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 59, Name = "页面", Identity = "loginRecordPage", Type = ElementType.ButtonLink, AccessApi = "api/SysLoginLog/GetMany2", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 60, Name = "系统配置", Identity = "system-config", Type = ElementType.Menu, AccessApi = "", Sorting = 5 });
-            _dbContext.RbacElements.Add(new RbacElement { Id = 61, Name = "字典配置", Identity = "dic-config", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 61, Name = "字典配置", Identity = "dic-config", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 62, Name = "页面", Identity = "dic-page", Type = ElementType.ButtonLink, AccessApi = "api/Dic/GetDicTypeList,api/Dic/GetDicValueList", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 63, Name = "添加字典类型", Identity = "add-dictype", Type = ElementType.ButtonLink, AccessApi = "api/Dic/AddDicType", Sorting = 1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 64, Name = "编辑字典类型", Identity = "edit-dictype", Type = ElementType.ButtonLink, AccessApi = "api/Dic/UpdateDicType", Sorting = 2 });
@@ -118,6 +117,10 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElements.Add(new RbacElement { Id = 66, Name = "添加字典项目", Identity = "add-dicvalue", Type = ElementType.ButtonLink, AccessApi = "api/Dic/AddDicValue", Sorting = 4 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 67, Name = "编辑字典项目", Identity = "update-dicvalue", Type = ElementType.ButtonLink, AccessApi = "api/Dic/UpdateDicValue", Sorting = 5 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 68, Name = "删除字典项目", Identity = "delete-dicvalue", Type = ElementType.ButtonLink, AccessApi = "api/Dic/DeleteDicValue", Sorting = 6 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 70, Name = "系统配置", Identity = "sys-config", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 71, Name = "通用配置", Identity = "common-config", Type = ElementType.ButtonLink, AccessApi = "api/Setting/GetLoginPageSetting,api/Setting/SaveLoginPageSetting", Sorting = 1 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 72, Name = "数据导出", Identity = "data-export", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 73, Name = "页面", Identity = "export-data-page", Type = ElementType.ButtonLink, AccessApi = "api/Data/ExportCodeData,api/Data/ExportCsvData,api/Data/GetCodeDataType,api/Data/GetCsvDataType", Sorting = -1 });
 
             // 元素树数据
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 1, Ancestor = 1, Descendant = 1, Length = 0 });
@@ -284,8 +287,18 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 162, Ancestor = 60, Descendant = 68, Length = 2 });
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 163, Ancestor = 61, Descendant = 68, Length = 1 });
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 164, Ancestor = 68, Descendant = 68, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 165, Ancestor = 69, Descendant = 69, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 166, Ancestor = 60, Descendant = 70, Length = 1 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 167, Ancestor = 70, Descendant = 70, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 168, Ancestor = 60, Descendant = 71, Length = 2 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 169, Ancestor = 70, Descendant = 71, Length = 1 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 170, Ancestor = 71, Descendant = 71, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 171, Ancestor = 60, Descendant = 72, Length = 1 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 172, Ancestor = 72, Descendant = 72, Length = 0 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 173, Ancestor = 60, Descendant = 73, Length = 2 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 174, Ancestor = 72, Descendant = 73, Length = 1 });
+            _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 175, Ancestor = 73, Descendant = 73, Length = 0 });
             await _dbContext.SaveChangesAsync();
-
         }
 
         /// <summary>

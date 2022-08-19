@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
@@ -11,6 +12,7 @@ namespace SnippetAdmin.Controllers.System
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(Policy = "AccessApi")]
     [ApiExplorerSettings(GroupName = "v1")]
     public class DicController : ControllerBase, IDicApi
     {

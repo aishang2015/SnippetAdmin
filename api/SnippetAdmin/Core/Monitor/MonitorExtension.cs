@@ -10,8 +10,8 @@ namespace SnippetAdmin.Core.Monitor
         public static IServiceCollection AddMetricEventListener(this IServiceCollection services)
         {
             // inject and start the listner
-            services.AddSingleton<MetricEventListener>();
-            services.BuildServiceProvider().GetService<MetricEventListener>();
+            var listener = new MetricEventListener();
+            services.AddSingleton(listener);
 
             // add a background service to broadcast all metric through the signalr hub
             services.AddBackgroundService<MetricsBackgroundService>();

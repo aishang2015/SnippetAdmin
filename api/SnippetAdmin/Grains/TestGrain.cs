@@ -1,4 +1,5 @@
 ﻿using Orleans;
+using SnippetAdmin.Data;
 
 namespace SnippetAdmin.Grains
 {
@@ -11,9 +12,13 @@ namespace SnippetAdmin.Grains
     {
         private readonly ILogger<TestGrain> _logger;
 
-        public TestGrain(ILogger<TestGrain> logger)
+        private readonly SnippetAdminDbContext _dbContext;
+
+        public TestGrain(ILogger<TestGrain> logger,
+            SnippetAdminDbContext dbContext)
         {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         public async Task Do()

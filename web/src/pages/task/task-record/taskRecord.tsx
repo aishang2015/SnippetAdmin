@@ -56,9 +56,11 @@ export default function TaskRecord(props: any) {
             title: '操作', key: 'operate', align: 'center', width: '120px', fixed: 'right',
             render: (text: any, record: any) => (
                 <Space size="middle">
-                    <Tooltip title="删除记录">
-                        <a onClick={() => { deleteRecord(record.id) }}><FontAwesomeIcon icon={faTrash} /></a>
-                    </Tooltip>
+                    {record.jobState !== 3 &&
+                        <Tooltip title="删除记录">
+                            <a onClick={() => { deleteRecord(record.id) }}><FontAwesomeIcon icon={faTrash} /></a>
+                        </Tooltip>
+                    }
                 </Space>
             ),
         }
