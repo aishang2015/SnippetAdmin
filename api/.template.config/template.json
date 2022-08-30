@@ -1,0 +1,13 @@
+{
+  "author": "tenka",
+  "classifications": [ "Web/WebAPI" ], 
+  "name": "SnippetAdmin", 
+  "identity": "SnippetAdminTpl",
+  "shortName": "sa",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "SnippetAdmin",
+  "preferNameDirectory": true,
+}

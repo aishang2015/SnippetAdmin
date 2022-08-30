@@ -15,3 +15,14 @@
 - docker-compose up -d
 - 使用visual studio打开api，vscode打开web项目，在appsetting中配置mysql地址。code first模式，程序会自动生成数据库以及数据
 
+
+
+### 创建模板
+
+- cd api
+
+- dotnet new -i .
+
+- dotnet new sa -n 你自己的项目名
+
+
