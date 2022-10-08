@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SnippetAdmin.EntityFrameworkCore;
 using SnippetAdmin.EntityFrameworkCore.Cache;
+using SnippetAdmin.EntityFrameworkCore.Sharding;
 
 namespace SnippetAdmin.Data
 {
@@ -71,6 +73,29 @@ namespace SnippetAdmin.Data
             throw new NoDatabaseOptionException();
         }
 
+        public static IServiceCollection AddShardingDatabase<TDbContext>(this IServiceCollection services,
+            IConfiguration configuration, string optionKey = "DatabaseOption")
+            where TDbContext : ShardingDbContext
+        {
+            var databaseOption = configuration.GetSection(optionKey).Get<DatabaseOption>();
+            if (databaseOption != null)
+            {
+                // 添加缓存拦截器
+                services.AddMemoryCache();
+                services.AddScoped<MemoryCacheInterceptor<TDbContext>>();
+
+                services.AddDbContext<TDbContext>((provider, option) =>
+                {
+                    option.UseShardingDatabase(databaseOption);
+                    option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor<TDbContext>>());
+                });
+
+                return services;
+            }
+            throw new NoDatabaseOptionException();
+        }
+
+
         private static DbContextOptionsBuilder UseDatabase(this DbContextOptionsBuilder option, DatabaseOption databaseOption)
         {
             option = databaseOption.Type switch
@@ -105,6 +130,45 @@ namespace SnippetAdmin.Data
                 }),
                 _ => option
             };
+            return option;
+        }
+
+        private static DbContextOptionsBuilder UseShardingDatabase(this DbContextOptionsBuilder option,
+            DatabaseOption databaseOption)
+        {
+            option = databaseOption.Type switch
+            {
+                "InMemory" => option.UseInMemoryDatabase(databaseOption.Connection),
+
+                "SQLite" => option.UseSqlite(databaseOption.Connection, builder =>
+                {
+                    builder.UseRelationalNulls();
+                }),
+
+                "SQLServer" => option.UseSqlServer(databaseOption.Connection, builder =>
+                {
+                    builder.UseRelationalNulls();
+                }),
+
+                "MySQL" => option.UseMySql(databaseOption.Connection, ServerVersion.AutoDetect(databaseOption.Connection), builder =>
+                {
+                    builder.UseRelationalNulls();
+                }),
+
+                "PostgreSQL" => option.UseNpgsql(databaseOption.Connection, builder =>
+                {
+                    builder.UseRelationalNulls();
+                }),
+
+                // oracle版本11或12
+                "Oracle" => option.UseOracle(databaseOption.Connection, builder =>
+                {
+                    builder.UseOracleSQLCompatibility(databaseOption.Version);
+                    builder.UseRelationalNulls();
+                }),
+                _ => option
+            };
+            option.ReplaceService<IModelCacheKeyFactory, ShardingCacheFactory>();
             return option;
         }
     }
