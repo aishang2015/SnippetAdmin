@@ -52,8 +52,6 @@ namespace SnippetAdmin.Data
 
         public DbSet<RbacPosition> RbacPositions { get; set; }
 
-        public DbSet<SysRefreshToken> SysRefreshTokens { get; set; }
-
         public DbSet<SysAccessLog> SysApiAccessLogs { get; set; }
 
         public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }

@@ -60,15 +60,15 @@ class BasicLayout extends React.Component<any, any> {
 
         // await startFun();
 
-        this.backInterval = setInterval(async () => {
+        // this.backInterval = setInterval(async () => {
 
-            await RefreshService.refreshTokenAsync();
+        //     await RefreshService.refreshTokenAsync();
 
-        }, 1000 * 60 * 5)
+        // }, 1000 * 60 * 5)
     }
 
     componentWillUnmount() {
-        clearInterval(this.backInterval);
+        // clearInterval(this.backInterval);
     }
 
     componentDidUpdate() {

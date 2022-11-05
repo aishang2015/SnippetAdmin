@@ -20,11 +20,10 @@ export function bindingThirdPartyAccount(model: BindingModel) {
     return Axios.instance.post<CommonResult<LoginResult>>('api/account/BindingThirdPartyAccount', model);
 }
 
-export function refresh(userName: string, jwtToken: string, refreshToken: string) {
+export function refresh(userName: string, jwtToken: string) {
     return Axios.instance.post<CommonResult<LoginResult>>('api/account/refresh', {
         userName: userName,
-        jwtToken: jwtToken,
-        refreshToken: refreshToken
+        jwtToken: jwtToken
     });
 }
 

@@ -232,25 +232,6 @@ namespace SnippetAdmin.Controllers
         [CommonResultResponseType(typeof(CommonResult<LoginOutputModel>))]
         public async Task<CommonResult> Refresh([FromBody] RefreshInputModel inputModel)
         {
-            // 查找刷新凭证
-            var refreshToken = _dbContext.SysRefreshTokens.FirstOrDefault(token => token.UserName == inputModel.UserName);
-            if (refreshToken == null)
-            {
-                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0008);
-            }
-
-            // 账号被被人登录
-            if (refreshToken.Content != inputModel.RefreshToken)
-            {
-                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0009);
-            }
-
-            // 刷新token已过期
-            if (refreshToken.ExpireTime < DateTime.Now)
-            {
-                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0011);
-            }
-
             // 验证token
             var userInfo = _jwtFactory.ValidToken(inputModel.JwtToken);
             if (userInfo == null)
@@ -267,8 +248,8 @@ namespace SnippetAdmin.Controllers
                 var identifies = await GetUserFrontRightsAsync(user);
                 return CommonResult.Success(
                     string.Empty, string.Empty,
-                    new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies, refreshToken.Content)
-                ); ;
+                    new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies)
+                );
             }
             return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
         }
@@ -278,28 +259,12 @@ namespace SnippetAdmin.Controllers
         /// </summary>
         private async Task<CommonResult> MakeLoginResultAsync(RbacUser user)
         {
-            // 生成刷新token,移除旧token
-            var refreshToken = _dbContext.SysRefreshTokens.FirstOrDefault(token => token.UserName == user.UserName);
-            if (refreshToken != null)
-            {
-                _dbContext.Remove(refreshToken);
-            }
-            var tokenContent = Guid.NewGuid().ToString("N");
-            _dbContext.SysRefreshTokens.Add(new SysRefreshToken
-            {
-                UserName = user.UserName,
-                Content = tokenContent,
-                CreatedTime = DateTime.Now,
-                ExpireTime = DateTime.Now.AddHours(_jwtOption.RefreshExpireSpan),
-            });
-            _dbContext.SaveChanges();
-
             // 生成jwttoken
             var token = _jwtFactory.GenerateJwtToken(user.UserName);
             var identifies = await GetUserFrontRightsAsync(user);
             return CommonResult.Success(
                 MessageConstant.ACCOUNT_INFO_0001,
-                new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies, tokenContent)
+                new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies)
             );
         }
 
