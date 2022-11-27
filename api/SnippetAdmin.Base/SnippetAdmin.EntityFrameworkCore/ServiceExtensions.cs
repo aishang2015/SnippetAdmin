@@ -122,12 +122,12 @@ namespace SnippetAdmin.Data
                     builder.UseRelationalNulls();
                 }),
 
-                // oracle版本11或12
-                "Oracle" => option.UseOracle(databaseOption.Connection, builder =>
-                {
-                    builder.UseOracleSQLCompatibility(databaseOption.Version);
-                    builder.UseRelationalNulls();
-                }),
+                //// oracle版本11或12
+                //"Oracle" => option.UseOracle(databaseOption.Connection, builder =>
+                //{
+                //    builder.UseOracleSQLCompatibility(databaseOption.Version);
+                //    builder.UseRelationalNulls();
+                //}),
                 _ => option
             };
             return option;
@@ -160,12 +160,12 @@ namespace SnippetAdmin.Data
                     builder.UseRelationalNulls();
                 }),
 
-                // oracle版本11或12
-                "Oracle" => option.UseOracle(databaseOption.Connection, builder =>
-                {
-                    builder.UseOracleSQLCompatibility(databaseOption.Version);
-                    builder.UseRelationalNulls();
-                }),
+                //// oracle版本11或12
+                //"Oracle" => option.UseOracle(databaseOption.Connection, builder =>
+                //{
+                //    builder.UseOracleSQLCompatibility(databaseOption.Version);
+                //    builder.UseRelationalNulls();
+                //}),
                 _ => option
             };
             option.ReplaceService<IModelCacheKeyFactory, ShardingCacheFactory>();

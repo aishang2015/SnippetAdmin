@@ -18,8 +18,8 @@ namespace SnippetAdmin.Quartz
             });
 
             var quartzOptions = section.Get<QuartzOptions>();
-            var connectionKey = quartzOptions.AllKeys.FirstOrDefault(k => k.Contains("connectionString"));
-            var connectionString = quartzOptions.Get(connectionKey);
+            var connectionKey = quartzOptions.Keys.FirstOrDefault(k => k.Contains("connectionString"));
+            var connectionString = quartzOptions[connectionKey];
             DBInitializer.InitializeMySql(connectionString);
 
             //services.AddSingleton<QuartzJobRunner>();
