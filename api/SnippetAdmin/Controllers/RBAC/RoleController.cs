@@ -39,7 +39,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(GetRoleOutputModel))]
+        [CommonResultResponseType<GetRoleOutputModel>]
         public async Task<CommonResult<GetRoleOutputModel>> GetRole([FromBody] IdInputModel<int> inputModel)
         {
             var role = await _dbContext.Roles.FindAsync(inputModel.Id);
@@ -50,7 +50,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(PagedOutputModel<GetRoleOutputModel>))]
+        [CommonResultResponseType<PagedOutputModel<GetRoleOutputModel>>]
         public async Task<CommonResult<PagedOutputModel<GetRoleOutputModel>>> GetRolesAsync([FromBody] PagedInputModel inputModel)
         {
             var roles = await _dbContext.Roles.Skip(inputModel.SkipCount)
@@ -66,7 +66,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
+        [CommonResultResponseType<List<DicOutputModel<int>>>]
         public async Task<CommonResult<List<DicOutputModel<int>>>> GetRoleDic()
         {
             var result = await _dbContext.Roles.Select(r => new DicOutputModel<int>

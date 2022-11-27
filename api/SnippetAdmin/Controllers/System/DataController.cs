@@ -57,7 +57,7 @@ namespace SnippetAdmin.Controllers.System
         }
 
         [HttpGet]
-        [CommonResultResponseType(typeof(List<string>))]
+        [CommonResultResponseType<List<string>>]
         public Task<CommonResult<List<string>>> GetCsvDataType()
         {
             var result = _entityDictionary.Keys.ToList();
@@ -89,7 +89,7 @@ namespace SnippetAdmin.Controllers.System
         }
 
         [HttpGet]
-        [CommonResultResponseType(typeof(List<string>))]
+        [CommonResultResponseType<List<string>>]
         public Task<CommonResult<List<string>>> GetCodeDataType()
         {
             return Task.FromResult(CommonResult.Success(_methodDictionary.Keys.ToList()));

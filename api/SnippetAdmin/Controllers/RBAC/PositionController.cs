@@ -80,7 +80,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(GetPositionOutputModel))]
+        [CommonResultResponseType<GetPositionOutputModel>]
         public async Task<CommonResult<GetPositionOutputModel>> GetPosition([FromBody] IdInputModel<int> inputModel)
         {
             var positoin = await _dbContext.RbacPositions.FindAsync(inputModel.Id);
@@ -94,7 +94,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(PagedOutputModel<GetPositionsOutputModel>))]
+        [CommonResultResponseType<PagedOutputModel<GetPositionsOutputModel>>]
         public async Task<CommonResult<PagedOutputModel<GetPositionsOutputModel>>> GetPositions([FromBody] PagedInputModel inputModel)
         {
             var query = _dbContext.RbacPositions.OrderBy(p => p.Sorting).AsQueryable();
@@ -115,7 +115,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
+        [CommonResultResponseType<List<DicOutputModel<int>>>]
         public async Task<CommonResult<List<DicOutputModel<int>>>> GetPositionDic()
         {
             var result = await _dbContext.RbacPositions.Select(r => new DicOutputModel<int>

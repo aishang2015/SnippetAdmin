@@ -22,7 +22,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(PagedOutputModel<GetJobRecordsOutputModel>))]
+        [CommonResultResponseType<PagedOutputModel<GetJobRecordsOutputModel>>]
         public async Task<CommonResult<PagedOutputModel<GetJobRecordsOutputModel>>> GetJobRecords(GetJobRecordsInputModel inputModel)
         {
             var q = from jr in _dbContext.JobRecords

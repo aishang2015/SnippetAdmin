@@ -2,15 +2,19 @@
 
 namespace SnippetAdmin.Core.Attributes
 {
-    public class CommonResultResponseTypeAttribute : ProducesResponseTypeAttribute
-    {
-        public CommonResultResponseTypeAttribute() : base(typeof(CommonResult), 200)
-        {
-        }
+	public class CommonResultResponseTypeAttribute : ProducesResponseTypeAttribute 
+	{
+		public CommonResultResponseTypeAttribute() : base(200)
+		{
+			Type = typeof(CommonResult);
+		}
+	}
 
-        public CommonResultResponseTypeAttribute(Type type) : base(200)
-        {
-            Type = typeof(CommonResult<>).MakeGenericType(type);
-        }
-    }
+	public class CommonResultResponseTypeAttribute<T> : ProducesResponseTypeAttribute where T : class
+	{
+		public CommonResultResponseTypeAttribute() : base( 200)
+		{
+			Type = typeof(CommonResult<T>);
+		}
+	}
 }

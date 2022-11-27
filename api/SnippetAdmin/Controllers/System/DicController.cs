@@ -30,7 +30,7 @@ namespace SnippetAdmin.Controllers.System
         /// 取得字典类型列表
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(List<GetDicTypeListOutputModel>))]
+        [CommonResultResponseType<List<GetDicTypeListOutputModel>>]
         public async Task<CommonResult<List<GetDicTypeListOutputModel>>> GetDicTypeList()
         {
             var dicTypeList = await _dbContext.SysDicTypes.ToListAsync();
@@ -105,7 +105,7 @@ namespace SnippetAdmin.Controllers.System
         /// 取得字典项目列表
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(List<GetDicValueListOutputModel>))]
+        [CommonResultResponseType<List<GetDicValueListOutputModel>>]
         public async Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueList(IdInputModel<int> inputModel)
         {
             var dicValueList = await _dbContext.SysDicValues.Where(v => v.TypeId == inputModel.Id)
@@ -118,7 +118,7 @@ namespace SnippetAdmin.Controllers.System
         /// 取得字典项目列表
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(List<GetDicValueListOutputModel>))]
+        [CommonResultResponseType<List<GetDicValueListOutputModel>>]
         public async Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueListByCode(IdInputModel<string> inputModel)
         {
             var dicValueList = from dicType in _dbContext.SysDicTypes

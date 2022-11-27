@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Endpoint.Apis.RBAC;
 
 namespace SnippetAdmin.Controllers.RBAC
@@ -21,7 +22,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取程序所有API信息
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(CommonResult<List<string>>), 200)]
+        [CommonResultResponseType<List<string>>]
         [Authorize(Policy = "AccessApi")]
         public Task<CommonResult<List<string>>> GetApiPaths()
         {

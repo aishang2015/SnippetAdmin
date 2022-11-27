@@ -32,7 +32,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取元素详细信息
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(GetElementOutputModel))]
+        [CommonResultResponseType<GetElementOutputModel>]
         public async Task<CommonResult<GetElementOutputModel>> GetElement([FromBody] IdInputModel<int> inputModel)
         {
             var element = await _dbContext.RbacElements.FindAsync(inputModel.Id);
@@ -43,7 +43,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取元素树信息
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(List<GetElementTreeOutputModel>))]
+        [CommonResultResponseType<List<GetElementTreeOutputModel>>]
         public async Task<CommonResult<List<GetElementTreeOutputModel>>> GetElementTree()
         {
             var elements = await _dbContext.RbacElements.OrderBy(e => e.Sorting).ToListAsync();

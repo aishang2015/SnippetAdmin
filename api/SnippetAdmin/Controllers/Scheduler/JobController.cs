@@ -35,7 +35,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(List<string>))]
+        [CommonResultResponseType<List<string>>]
         public CommonResult<List<string>> GetJobTypeList()
         {
             var typeNameList = ReflectionHelper
@@ -47,7 +47,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(PagedOutputModel<GetJobsOutputModel>))]
+        [CommonResultResponseType<PagedOutputModel<GetJobsOutputModel>>]
         public async Task<CommonResult<PagedOutputModel<GetJobsOutputModel>>> GetJobs(GetJobsInputModel inputModel)
         {
             var query = _dbContext.Jobs;
@@ -104,7 +104,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(GetJobOutputModel))]
+        [CommonResultResponseType<GetJobOutputModel>]
         public async Task<CommonResult<GetJobOutputModel>> GetJob(GetJobInputModel inputModel)
         {
             var job = await _dbContext.Jobs.FindAsync(inputModel.Id);
@@ -208,7 +208,7 @@ namespace SnippetAdmin.Controllers.Scheduler
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(List<string>))]
+        [CommonResultResponseType<List<string>>]
         public async Task<CommonResult<List<string>>> GetJobNames()
         {
             var result = await _dbContext.Jobs.Select(j => j.Name).ToListAsync();

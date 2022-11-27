@@ -32,7 +32,7 @@ namespace SnippetAdmin.Controllers.System
         /// 获取登录页配置
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(GetLoginPageSettingOutputModel))]
+        [CommonResultResponseType<GetLoginPageSettingOutputModel>]
         [AllowAnonymous]
         public CommonResult GetLoginPageSetting()
         {

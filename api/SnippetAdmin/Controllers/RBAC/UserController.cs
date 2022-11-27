@@ -43,7 +43,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(GetUserOutputModel))]
+        [CommonResultResponseType<GetUserOutputModel>]
         public async Task<CommonResult<GetUserOutputModel>> GetUserAsync([FromBody] IdInputModel<int> inputModel)
         {
             var user = await _dbContext.Users.FindAsync(inputModel.Id);
@@ -63,7 +63,7 @@ namespace SnippetAdmin.Controllers.RBAC
         }
 
         [HttpPost]
-        [CommonResultResponseType(typeof(PagedOutputModel<SearchUserOutputModel>))]
+        [CommonResultResponseType<PagedOutputModel<SearchUserOutputModel>>]
         public Task<CommonResult<PagedOutputModel<SearchUserOutputModel>>> SearchUser([FromBody] SearchUserInputModel inputModel)
         {
             var userQuery = _dbContext.CacheSet<RbacUser>().AsQueryable().OrderBy(u => u.Id);

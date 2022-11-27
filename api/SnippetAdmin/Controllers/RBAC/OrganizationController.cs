@@ -33,7 +33,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取组织机构详细信息
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(GetOrganizationOutputModel))]
+        [CommonResultResponseType<GetOrganizationOutputModel>]
         public async Task<CommonResult<GetOrganizationOutputModel>> GetOrganization([FromBody] IdInputModel<int> inputModel)
         {
             var org = await _dbContext.RbacOrganizations.FindAsync(inputModel.Id);
@@ -49,7 +49,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取组织树信息
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(List<GetOrganizationTreeOutputModel>))]
+        [CommonResultResponseType<List<GetOrganizationTreeOutputModel>>]
         public async Task<CommonResult<List<GetOrganizationTreeOutputModel>>> GetOrganizationTree()
         {
             var orgs = await _dbContext.RbacOrganizations.OrderBy(org => org.Sorting).ToListAsync();
@@ -212,7 +212,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 查询组织类型列表
         /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(List<GetOrganizationTypesOutputModel>))]
+        [CommonResultResponseType<List<GetOrganizationTypesOutputModel>>]
         public async Task<CommonResult<List<GetOrganizationTypesOutputModel>>> GetOrganizationTypes()
         {
             var result = await _dbContext.RbacOrganizationTypes.ToListAsync();
