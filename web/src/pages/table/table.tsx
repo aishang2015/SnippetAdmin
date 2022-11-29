@@ -1,11 +1,10 @@
 import { Alert, Button, Checkbox, DatePicker, Form, Input, InputNumber, Modal, Pagination, Popover, Select, Space, Switch, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { cloneDeep, sortBy } from 'lodash';
-import './table.less';
 import { DynamicService } from '../../http/requests/dynamic';
 import { dateFormat } from '../../common/time';
 import { useForm } from 'antd/lib/form/Form';
-import moment from 'moment';
+//import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckSquare, faEye, faFilter, faPlus, faRotateLeft, faSave, faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -96,7 +95,7 @@ export default function TablePage(props: any) {
                                 propertyColumns.forEach(p => {
                                     if (p.filterType === "date") {
                                         let date = new Date(data.data.data[p.dataIndex]);
-                                        fieldValues[p.dataIndex] = moment(date);
+                                        //fieldValues[p.dataIndex] = moment(date);
                                     } else {
                                         fieldValues[p.dataIndex] = data.data.data[p.dataIndex];
                                     }
@@ -474,7 +473,7 @@ export default function TablePage(props: any) {
             <Pagination defaultCurrent={1} pageSize={size} total={total} current={page} style={{ marginTop: '10px' }}
                 showSizeChanger={true} onChange={pageChange} showTotal={(total, range) => `共计 ${total} 条数据`} />
 
-            <Modal visible={editDataModal} onCancel={() => setEditDataModal(false)} title="编辑数据" footer={null}>
+            <Modal open={editDataModal} onCancel={() => setEditDataModal(false)} title="编辑数据" footer={null}>
                 <Form form={dataEditForm} onFinish={dataEditSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
                     {

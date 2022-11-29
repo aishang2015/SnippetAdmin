@@ -1,6 +1,6 @@
 import { Picker } from 'emoji-mart';
-import 'emoji-mart/css/emoji-mart.css';
-import './org.less';
+//import 'emoji-mart/css/emoji-mart.css';
+import './org.css';
 
 import { faEdit, faObjectGroup, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -282,7 +282,7 @@ export default function Org() {
                 </div>
             </div>
 
-            <Modal visible={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
+            <Modal open={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
                 title="组织信息编辑" width={800} maskClosable={false}>
                 <Form preserve={false} form={orgForm} onFinish={orgSubmit}>
                     <Form.Item name="id" hidden>
@@ -338,9 +338,10 @@ export default function Org() {
                 </Form>
             </Modal>
 
-            <Modal width={390} visible={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
+            <Modal width={390} open={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
                 onCancel={() => setEmojiModalVisible(false)} maskClosable={false}>
-                <Picker native={true} autoFocus={true} emoji={orgIconId} onSelect={(e: any) => {
+                    
+                {/* <Picker native={true} autoFocus={true} emoji={orgIconId} onSelect={(e: any) => {
                     setOrgIcon(e.native);
                     setOrgIconId(e.id);
                     setEmojiModalVisible(false);
@@ -360,10 +361,10 @@ export default function Org() {
                         flags: '旗帜',
                         custom: '自定义',
                     }
-                }} />
+                }} /> */}
             </Modal>
 
-            <Modal width={600} visible={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
+            <Modal width={600} open={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
 
                 <RightElement identify="add-update-org-type" child={
                     <>
@@ -372,7 +373,7 @@ export default function Org() {
                 }></RightElement>
                 <Table size="small" columns={orgTypeTableColumns} dataSource={orgTypeData} pagination={false}></Table>
             </Modal>
-            <Modal width={500} visible={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
+            <Modal width={500} open={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
                 title="组织类型编辑" maskClosable={false}>
 
                 <Form preserve={false} form={orgTypeForm} onFinish={orgTypeSubmit}>

@@ -1,20 +1,17 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'moment/locale/zh-cn';
-import zhCN from 'antd/lib/locale/zh_CN';
-
-import { Provider } from 'react-redux';
 import { Configuration } from './common/config';
 import { Axios } from './http/request';
-import { ReduxStore } from './redux/reduxStore';
-import { ConfigProvider } from 'antd';
 import { OauthService } from './common/oauth';
-import { RefreshService } from './service/refreshService';
 
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 Configuration.init().then(
+
   async success => {
 
     // 初始化axio实例
@@ -22,33 +19,21 @@ Configuration.init().then(
 
     // 初始化认证配置
     OauthService.initUserManager();
+    
+    root.render(
 
-    // 初始化redux
-    const store = ReduxStore.initReduxStore();
+        <App />
 
-    // 刷新token
-    await RefreshService.refreshTokenAsync();
-
-    ReactDOM.render(
-      <React.StrictMode>
-        <Provider store={store}>
-          <ConfigProvider locale={zhCN}>
-            <App />
-          </ConfigProvider>
-        </Provider>
-      </React.StrictMode>,
-      document.getElementById('root')
     );
-
-    // If you want to start measuring performance in your app, pass a function
-    // to log results (for example: reportWebVitals(console.log))
-    // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-    reportWebVitals();
   },
   fail => {
-    ReactDOM.render(
-      <div>无法加载配置文件！</div>,
-      document.getElementById('root')
+    root.render(
+      <div>无法加载配置文件！</div>
     );
   }
-)
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

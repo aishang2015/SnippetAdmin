@@ -4,7 +4,6 @@ import { Card, Col, Divider, Row, Typography } from 'antd';
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { ExportService } from '../../../http/requests/export';
-import './export.less';
 
 
 export default function Export() {
@@ -41,7 +40,7 @@ export default function Export() {
             ? response.headers["content-disposition"].split(";")[1].split("=")[1]
             : new Date().getTime();
         downloadElement.href = href;
-        downloadElement.download = decodeURIComponent(fileName); //解码
+        downloadElement.download = decodeURIComponent(fileName as string); //解码
         document.body.appendChild(downloadElement);
         downloadElement.click();
         document.body.removeChild(downloadElement);

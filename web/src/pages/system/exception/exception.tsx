@@ -2,7 +2,7 @@ import { Pagination, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { ExceptionLogService } from '../../../http/requests/exception';
-import './exception.less';
+
 
 export default function Exception() {
 

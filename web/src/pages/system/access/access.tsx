@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { AccessLogService } from '../../../http/requests/access';
 
-import './access.less';
 
 
 export default function Access() {
@@ -111,7 +110,7 @@ export default function Access() {
                 <Pagination current={page} total={total} showSizeChanger={true} style={{ marginTop: '10px' }}
                     onChange={async (p, s) => { setPage(p); setSize(s); }}></Pagination>
             }
-            <Modal visible={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}>
+            <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item name="path" label="请求路径">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" />

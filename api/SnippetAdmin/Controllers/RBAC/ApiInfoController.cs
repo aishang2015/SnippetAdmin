@@ -65,6 +65,7 @@ export class {entity}Service {
 			apiDescriptions.ToList().ForEach(desc =>
 			{
 				var actionDescriptor = desc.ActionDescriptor as ControllerActionDescriptor;
+				controllerName = actionDescriptor.ControllerName;
 
 				var paramTypeName = GetDataTypeName(desc.ParameterDescriptions.FirstOrDefault()?.Type);
 				var responseTypeName = GetDataTypeName(desc.SupportedResponseTypes.FirstOrDefault()?.Type);
@@ -79,7 +80,7 @@ export class {entity}Service {
 
 			var result = TsCodeTemplate
 				.Replace("{requests}", stringBuilder.ToString())
-				.Replace("{entity}", inputModel.ControllerName);
+				.Replace("{entity}", controllerName);
 
 
 			return CommonResult.Success(new GetTsRequestCodeOutputModel()

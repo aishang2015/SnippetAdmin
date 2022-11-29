@@ -1,6 +1,6 @@
 import { Button, Divider, Form, Input, Modal, Pagination, Space, Switch, Table, Tooltip, Tree, TreeSelect } from 'antd';
 
-import './role.less';
+import './role.css';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { RoleService } from '../../../http/requests/role';
@@ -35,7 +35,7 @@ export default function Role() {
         {
             title: '启用', dataIndex: "isActive", align: 'center', width: '90px',
             render: (data: any, record: any) => (
-                <Switch defaultChecked={data} onChange={(checked, event) => activeChange(checked, event, record.id, record.isActive)}></Switch>
+                <Switch defaultChecked={data} onChange={(checked, event) => activeChange(checked, record.id, record.isActive)}></Switch>
             ),
         },
         {
@@ -68,7 +68,7 @@ export default function Role() {
         setRoleModalVisible(true);
     }
 
-    async function activeChange(checked: boolean, event: Event, roleId: number, isActive: boolean) {
+    async function activeChange(checked: boolean, roleId: number, isActive: boolean) {
         await RoleService.activeRole({ id: roleId, isActive: checked });
     }
 
@@ -161,7 +161,7 @@ export default function Role() {
                 }
             </div>
 
-            <Modal visible={roleModalVisible} title="角色信息" footer={null} onCancel={() => setRoleModalVisible(false)}
+            <Modal open={roleModalVisible} title="角色信息" footer={null} onCancel={() => setRoleModalVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={roleEditForm} onFinish={roleInfoSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -200,7 +200,7 @@ export default function Role() {
                 </Form>
             </Modal>
 
-            <Modal visible={rightModalVisible} onCancel={() => setRightModalVisible(false)} title="角色权限" footer={null}>
+            <Modal open={rightModalVisible} onCancel={() => setRightModalVisible(false)} title="角色权限" footer={null}>
                 <Tree checkable checkedKeys={rights} defaultExpandAll={true} treeData={rightTree} />
             </Modal>
         </>

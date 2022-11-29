@@ -1,5 +1,5 @@
 {
-    "server_url": "http://localhost:29680",
+    "server_url": "http://192.168.16.58:29680",
     "oauth": {
         "github": {
             "client_id": "",

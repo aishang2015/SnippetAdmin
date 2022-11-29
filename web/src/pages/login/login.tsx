@@ -1,9 +1,8 @@
-import './login.less';
+import './login.css';
 
 import React from "react";
 import { Button, Card, Form, Input } from 'antd';
 import { LoginModel, login } from '../../http/requests/account';
-import { withRouter } from 'react-router-dom';
 import { OauthService } from '../../common/oauth';
 import { StorageService } from '../../common/storage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +11,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { SettingService } from '../../http/requests/setting';
 import { Configuration } from '../../common/config';
 
-class Login extends React.Component<any, any> {
+export default class Login extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
@@ -149,5 +148,3 @@ class Login extends React.Component<any, any> {
         OauthService.baiduLogin();
     }
 }
-
-export default withRouter(Login);

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { JobService } from '../../../http/requests/job';
 import { JobRecordService } from '../../../http/requests/job-record';
-import './taskRecord.less';
 
 export default function TaskRecord(props: any) {
 

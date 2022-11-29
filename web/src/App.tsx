@@ -1,120 +1,98 @@
-import BasicLayout from './pages/layout/layout'
+import React, { FC, Suspense } from 'react';
 import {
-  BrowserRouter as Router,
-  Redirect,
+  BrowserRouter,
+  createBrowserRouter,
   Route,
-  Switch,
+  RouterProvider,
+  Routes
 } from "react-router-dom";
-import './App.less';
-import Login from './pages/login/login';
-import React, { Suspense } from 'react';
+import 'antd/dist/reset.css';
+import zhCN from 'antd/locale/zh_CN';
+import './App.css';
+import BasicLayout from './pages/layout/layout';
 import Callback from './pages/callback/callback';
 import { Bind } from './pages/bind/bind';
+import { ConfigProvider } from 'antd';
+import Login from './pages/login/login';
 
-interface app {
-}
+const App: FC = () => {
 
-class App extends React.Component<any, app> {
+  const HomePage = React.lazy(() => import('./pages/home/home'));
+  const AboutPage = React.lazy(() => import('./pages/about/about'));
+  const TablePage = React.lazy(() => import('./pages/table/table'));
+  const FlowPage = React.lazy(() => import('./pages/flow/flow'));
+  const ChatPage = React.lazy(() => import('./pages/chat/chat'));
 
-  constructor(props: any) {
-    super(props);
-    this.state = {
+  const UserPage = React.lazy(() => import('./pages/rbac/user/user'));
+  const RolePage = React.lazy(() => import('./pages/rbac/role/role'));
+  const PagePage = React.lazy(() => import('./pages/rbac/page/page'));
+  const OrgPage = React.lazy(() => import('./pages/rbac/org/org'));
+  const PosPage = React.lazy(() => import('./pages/rbac/pos/position'));
+  const StatePage = React.lazy(() => import('./pages/rbac/state/state'));
+
+  const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
+  const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
+
+  const SettingPage = React.lazy(() => import('./pages/system/setting/setting'));
+  const AccessLogPage = React.lazy(() => import('./pages/system/access/access'));
+  const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
+  const LoginLogPage = React.lazy(() => import('./pages/system/login/login'));
+  const DictionaryPage = React.lazy(() => import('./pages/system/dictionary/dictionary'));
+  const ExportPage = React.lazy(() => import('./pages/system/export/export'));
+
+  const loadingContent = "加载中...";
+
+  var noAuthorizedRouter = createBrowserRouter([
+    { path: '/login', element: <Login /> },
+    { path: "/*", element: <Login /> },
+  ]);
+
+  var authorizedRouter = createBrowserRouter([
+    {
+      path: '/',
+      element: <BasicLayout />,
+      children: [
+        { path: "/home", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
+        { path: "/flow", element: <Suspense fallback={loadingContent}><FlowPage /></Suspense> },
+        { path: "/chat", element: <Suspense fallback={loadingContent}><ChatPage /></Suspense> },
+        { path: "/about", element: <Suspense fallback={loadingContent}><AboutPage /></Suspense> },
+
+        { path: "/user", element: <Suspense fallback={loadingContent}><UserPage /></Suspense> },
+        { path: "/role", element: <Suspense fallback={loadingContent}><RolePage /></Suspense> },
+        { path: "/page", element: <Suspense fallback={loadingContent}><PagePage /></Suspense> },
+        { path: "/org", element: <Suspense fallback={loadingContent}><OrgPage /></Suspense> },
+        { path: "/pos", element: <Suspense fallback={loadingContent}><PosPage /></Suspense> },
+        { path: "/state", element: <Suspense fallback={loadingContent}><StatePage /></Suspense> },
+
+        { path: "/taskMange", element: <Suspense fallback={loadingContent}><TaskManagePage /></Suspense> },
+        { path: "/taskRecord", element: <Suspense fallback={loadingContent}><TaskRecordPage /></Suspense> },
+
+        { path: "/access", element: <Suspense fallback={loadingContent}><AccessLogPage /></Suspense> },
+        { path: "/exception", element: <Suspense fallback={loadingContent}><ExceptionedPage /></Suspense> },
+        { path: "/loginlog", element: <Suspense fallback={loadingContent}><LoginLogPage /></Suspense> },
+        { path: "/dictionary", element: <Suspense fallback={loadingContent}><DictionaryPage /></Suspense> },
+        { path: "/setting", element: <Suspense fallback={loadingContent}><SettingPage /></Suspense> },
+        { path: "/export", element: <Suspense fallback={loadingContent}><ExportPage /></Suspense> },
+        { path: "/*", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
+      ]
     }
-  }
+  ]);
 
-  render() {
 
-    // // 客户端判断token是否过期，过期则清理登录信息
-    // let isOutOfDate = false;
-    // let expireString = StorageService.getExpire();
-    // if (expireString) {
-    //   let expireTime = new Date(expireString);
-    //   if (expireTime < new Date()) {
-    //     isOutOfDate = true;
-    //   }
-    // } else {
-    //   isOutOfDate = true;
-    // }
+  return (
 
-    // if (isOutOfDate) {
-    //   StorageService.clearLoginStore();
-    // }
+    <ConfigProvider
+      locale={zhCN}
+      theme={{
+        token: {
+          colorPrimary: '#00b96b',
+        },
+      }}>
 
-    const HomePage = React.lazy(() => import('./pages/home/home'));
-    const AboutPage = React.lazy(() => import('./pages/about/about'));
-    const TablePage = React.lazy(() => import('./pages/table/table'));
-    const FlowPage = React.lazy(() => import('./pages/flow/flow'));
-    const ChatPage = React.lazy(() => import('./pages/chat/chat'));
+      <RouterProvider router={localStorage.getItem('token') ? authorizedRouter : noAuthorizedRouter} />
 
-    const UserPage = React.lazy(() => import('./pages/rbac/user/user'));
-    const RolePage = React.lazy(() => import('./pages/rbac/role/role'));
-    const PagePage = React.lazy(() => import('./pages/rbac/page/page'));
-    const OrgPage = React.lazy(() => import('./pages/rbac/org/org'));
-    const PosPage = React.lazy(() => import('./pages/rbac/pos/position'));
-    const StatePage = React.lazy(() => import('./pages/rbac/state/state'));
-
-    const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
-    const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
-
-    const SettingPage = React.lazy(() => import('./pages/system/setting/setting'));
-    const AccessLogPage = React.lazy(() => import('./pages/system/access/access'));
-    const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
-    const LoginLogPage = React.lazy(() => import('./pages/system/login/login'));
-    const DictionaryPage = React.lazy(() => import('./pages/system/dictionary/dictionary'));
-    const ExportPage = React.lazy(() => import('./pages/system/export/export'));
-
-    const loadingContent = "加载中...";
-
-    return (
-      <Router>
-        <Switch>
-          <Route path="/" render={
-            ({ location }) => localStorage.getItem('token') ? (
-              <BasicLayout>
-                <Switch>
-                  <Route exact={true} path="/home"><Suspense fallback={loadingContent}><HomePage /></Suspense></Route>
-                  <Route exact={true} path="/table"><Suspense fallback={loadingContent}><TablePage /></Suspense></Route>
-                  <Route exact={true} path="/flow"><Suspense fallback={loadingContent}><FlowPage /></Suspense></Route>
-                  <Route exact={true} path="/chat"><Suspense fallback={loadingContent}><ChatPage /></Suspense></Route>
-                  <Route exact={true} path="/about"><Suspense fallback={loadingContent}><AboutPage /></Suspense></Route>
-
-                  <Route exact={true} path="/user"><Suspense fallback={loadingContent}><UserPage /></Suspense></Route>
-                  <Route exact={true} path="/role"><Suspense fallback={loadingContent}><RolePage /></Suspense></Route>
-                  <Route exact={true} path="/page"><Suspense fallback={loadingContent}><PagePage /></Suspense></Route>
-                  <Route exact={true} path="/org"><Suspense fallback={loadingContent}><OrgPage /></Suspense></Route>
-                  <Route exact={true} path="/pos"><Suspense fallback={loadingContent}><PosPage /></Suspense></Route>
-                  <Route exact={true} path="/state"><Suspense fallback={loadingContent}><StatePage /></Suspense></Route>
-
-                  <Route exact={true} path="/taskMange"><Suspense fallback={loadingContent}><TaskManagePage /></Suspense></Route>
-                  <Route exact={true} path="/taskRecord"><Suspense fallback={loadingContent}><TaskRecordPage /></Suspense></Route>
-
-                  <Route exact={true} path="/access"><Suspense fallback={loadingContent}><AccessLogPage /></Suspense></Route>
-                  <Route exact={true} path="/exception"><Suspense fallback={loadingContent}><ExceptionedPage /></Suspense></Route>
-                  <Route exact={true} path="/loginlog"><Suspense fallback={loadingContent}><LoginLogPage /></Suspense></Route>
-                  <Route exact={true} path="/dictionary"><Suspense fallback={loadingContent}><DictionaryPage /></Suspense></Route>
-                  <Route exact={true} path="/setting"><Suspense fallback={loadingContent}><SettingPage /></Suspense></Route>
-                  <Route exact={true} path="/export"><Suspense fallback={loadingContent}><ExportPage /></Suspense></Route>
-
-                  <Route path="*">
-                    <Redirect to="/home"></Redirect>
-                  </Route>
-                </Switch>
-              </BasicLayout>
-            ) : (
-              <Switch>
-                <Route exact={true} path="/login" component={Login}></Route>
-                <Route exact={true} path="/callback" component={Callback}></Route>
-                <Route exact={true} path="/binding" component={Bind}></Route>
-                <Route path="*">
-                  <Redirect to="/login"></Redirect>
-                </Route>
-              </Switch>
-            )
-          } />
-        </Switch>
-      </Router>
-    );
-  }
+    </ConfigProvider>
+  );
 }
 
 export default App;

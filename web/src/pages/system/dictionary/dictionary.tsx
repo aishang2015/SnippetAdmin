@@ -5,7 +5,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
 import { DictionaryService, GetDicTypeListResponse, GetDicValueListResponse } from '../../../http/requests/dictionary';
-import './dictionary.less';
+import './dictionary.css';
 
 
 export default function Dictionary() {
@@ -233,7 +233,7 @@ export default function Dictionary() {
                     <Table size="small" columns={tableColumns} dataSource={valueData} scroll={{ x: 900 }} pagination={false}></Table>
                 </div>
             </div>
-            <Modal visible={dicTypeVisible} destroyOnClose={true} maskClosable={false} footer={null}
+            <Modal open={dicTypeVisible} destroyOnClose={true} maskClosable={false} footer={null}
                 title={"编辑字典类型"} onCancel={() => setDicTypeVisible(false)}>
                 <Form form={typeForm} preserve={false} onFinish={submitType}>
                     <Form.Item name="id" hidden>
@@ -262,7 +262,7 @@ export default function Dictionary() {
                     </Form.Item>
                 </Form>
             </Modal>
-            <Modal visible={dicValueVisible} destroyOnClose={true} maskClosable={false} footer={null}
+            <Modal open={dicValueVisible} destroyOnClose={true} maskClosable={false} footer={null}
                 title={"编辑字典项目"} onCancel={() => setDicValueVisible(false)}>
                 <Form form={valueForm} preserve={false} onFinish={submitValue}>
                     <Form.Item name="id" hidden>

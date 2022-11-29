@@ -1,0 +1,15 @@
+#dic-container {
+    height: 100%;
+    display: flex;
+}
+
+#dic-container #dic-type-container {
+    width: 320px;
+    max-height: 100%;
+    overflow: auto;
+}
+
+#dic-container #dic-value-container {
+    flex-grow: 1;
+    max-height: 100%;
+}

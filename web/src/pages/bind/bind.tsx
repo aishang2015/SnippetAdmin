@@ -1,7 +1,7 @@
 import { Button, Card, Form, Input } from "antd";
 import React from "react";
 
-import './bind.less';
+import './bind.css';
 import { BindingModel, bindingThirdPartyAccount } from "../../http/requests/account";
 import { StorageService } from "../../common/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

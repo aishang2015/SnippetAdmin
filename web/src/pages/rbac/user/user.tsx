@@ -1,6 +1,6 @@
 import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tooltip, Tree, TreeSelect } from 'antd';
 
-import './user.less';
+import './user.css';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { DebounceSelect } from '../../../components/common/debounceSelect';
@@ -110,20 +110,20 @@ export default function User() {
         {
             title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
             render: (data: any, record: any) => (
-                <Space size="middle">
+                <Space.Compact >
                     <RightElement identify="edit-user" child={
                         <>
-                            <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
+                            <Tooltip title="编辑"><Button size='small' type='link' onClick={() => editUser(record.id)} icon={<FontAwesomeIcon icon={faEdit} />}></Button></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-user" child={
                         <>
-                            <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
+                            <Tooltip title="删除"><Button size='small' type='link' onClick={() => deleteUser(record.id)} icon={<FontAwesomeIcon icon={faTrash} />}></Button></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="set-password" child={
                         <>
-                            <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><FontAwesomeIcon icon={faKey} /></a></Tooltip>
+                            <Tooltip title="设定密码"><Button size='small' type='link' onClick={() => setPwd(record.id)} icon={<FontAwesomeIcon icon={faKey} />}></Button></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="move-out" child={
@@ -135,7 +135,7 @@ export default function User() {
                             </Tooltip>}
                         </>
                     }></RightElement>
-                </Space>
+                </Space.Compact>
             ),
         },
     ];
@@ -390,7 +390,7 @@ export default function User() {
                 </div>
             </div>
 
-            <Modal visible={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
+            <Modal open={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item name="userName" label="账号">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
@@ -427,7 +427,7 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal visible={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
+            <Modal open={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={orgSettingForm} onFinish={submitOrgMember} preserve={false}>
                     <Form.Item label="成员" name="members" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} rules={
@@ -444,7 +444,7 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal visible={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
+            <Modal open={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={userEditForm} onFinish={userInfoSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -510,7 +510,7 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal visible={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
+            <Modal open={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={pwdEditForm} onFinish={pwdSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>

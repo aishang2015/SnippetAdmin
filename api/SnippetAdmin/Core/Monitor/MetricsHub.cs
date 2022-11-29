@@ -13,5 +13,9 @@ namespace SnippetAdmin.Core.Monitor
 
     public class MetricsHub : Hub<IMetricsHubClient>
     {
-    }
+		public override Task OnConnectedAsync()
+		{
+			return base.OnConnectedAsync();
+		}
+	}
 }

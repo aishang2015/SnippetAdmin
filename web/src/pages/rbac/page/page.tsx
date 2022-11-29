@@ -1,5 +1,5 @@
 
-import './page.less';
+import './page.css';
 
 import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Tag, Tree, TreeSelect } from 'antd';
 import { useEffect, useState } from 'react';
@@ -193,7 +193,7 @@ export default function Page() {
                 </div>
             </div>
 
-            <Modal visible={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
+            <Modal open={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
                 title="页面元素编辑" width={600} maskClosable={false}>
                 <Form form={elementForm} onFinish={elementFormSubmit} preserve={false} >
                     <Form.Item name="id" hidden>

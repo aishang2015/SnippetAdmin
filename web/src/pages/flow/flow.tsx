@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import { EndpointOptions, jsPlumb, jsPlumbInstance } from 'jsplumb';
 import panzoom, { PanZoom, Transform } from 'panzoom';
 import { useEffect, useRef, useState } from 'react';
-import './flow.less';
+import './flow.css';
 
 
 export default function Flow(props: any) {

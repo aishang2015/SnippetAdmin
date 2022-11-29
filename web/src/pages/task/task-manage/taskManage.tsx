@@ -2,7 +2,6 @@ import { Button, Form, Input, Modal, Pagination, Select, Space, Switch, Table, T
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
-import './taskManage.less';
 import { faCircleNotch, faEdit, faInfoCircle, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { JobService } from '../../../http/requests/job';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -161,7 +160,7 @@ export default function TaskManage(props: any) {
                 bordered scroll={{ x: 1600 }} size="small"></Table>
             <Pagination pageSize={size} total={total} current={page} showSizeChanger={true} onChange={pageChange} />
 
-            <Modal visible={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
+            <Modal open={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
                 footer={null} title="任务信息编辑" maskClosable={false}>
                 <Form form={editForm} preserve={false} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}
                     onFinish={submitJob}>
