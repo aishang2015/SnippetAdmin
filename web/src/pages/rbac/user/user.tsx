@@ -110,20 +110,20 @@ export default function User() {
         {
             title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
             render: (data: any, record: any) => (
-                <Space.Compact >
+                <Space size="middle">
                     <RightElement identify="edit-user" child={
                         <>
-                            <Tooltip title="编辑"><Button size='small' type='link' onClick={() => editUser(record.id)} icon={<FontAwesomeIcon icon={faEdit} />}></Button></Tooltip>
+                            <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-user" child={
                         <>
-                            <Tooltip title="删除"><Button size='small' type='link' onClick={() => deleteUser(record.id)} icon={<FontAwesomeIcon icon={faTrash} />}></Button></Tooltip>
+                            <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="set-password" child={
                         <>
-                            <Tooltip title="设定密码"><Button size='small' type='link' onClick={() => setPwd(record.id)} icon={<FontAwesomeIcon icon={faKey} />}></Button></Tooltip>
+                            <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><FontAwesomeIcon icon={faKey} /></a></Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="move-out" child={
@@ -135,7 +135,7 @@ export default function User() {
                             </Tooltip>}
                         </>
                     }></RightElement>
-                </Space.Compact>
+                </Space>
             ),
         },
     ];
@@ -468,8 +468,8 @@ export default function User() {
                     }>
                         <Input autoComplete="off2" placeholder="请输入姓名" />
                     </Form.Item>
-                    <Form.Item name="gender" label="性别">
-                        <Radio.Group defaultValue={0}>
+                    <Form.Item name="gender" label="性别" initialValue={0}>
+                        <Radio.Group>
                             <Radio value={0}>未知</Radio>
                             <Radio value={1}>男</Radio>
                             <Radio value={2}>女</Radio>

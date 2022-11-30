@@ -1,9 +1,9 @@
-import { faArrowRightLong, faArrowLeftLong, faCompress, faExpand, faBell, faUser, faEdit, faOutdent } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightLong, faArrowLeftLong, faUser, faEdit, faOutdent } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Badge, Button, Divider, Dropdown, Layout, Menu, message, Space } from "antd";
+import { Avatar, Divider, Dropdown, Layout, Menu, MenuProps, Space } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import menu from "antd/es/menu";
+import MenuItem from "antd/es/menu/MenuItem";
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Constants } from "../../common/constants";
@@ -15,26 +15,66 @@ export default function BasicLayout() {
 
     const [collapsed, setCollapsed] = useState(false);
 
-    const menu = (
-        <Menu>
-            <Menu.Item>
+    const menus: MenuProps['items'] = [
+        {
+            label:
                 <a>
                     <Space><FontAwesomeIcon icon={faEdit} fixedWidth />个人设置</Space>
                 </a>
-            </Menu.Item>
-            <Divider style={{ marginTop: 4, marginBottom: 4 }} />
-            <Menu.Item>
+            , key: '1'
+        }, // 菜单项务必填写 key
+        {
+            label:
                 <a onClick={() => logout()}>
                     <Space><FontAwesomeIcon icon={faOutdent} fixedWidth />注销</Space>
                 </a>
-            </Menu.Item>
-        </Menu >
-    );
+            , key: '2'
+        },
+    ];
 
     function logout() {
         StorageService.clearLoginStore();
-        window.location.reload();
+        window.location.replace('/');
     };
+
+    function getItem(
+        label: React.ReactNode,
+        key: React.Key,
+        icon?: React.ReactNode,
+        children?: MenuItem[],
+        type?: 'group',
+    ): MenuItem {
+        return {
+            key,
+            icon,
+            children,
+            label,
+            type,
+        } as unknown as MenuItem;
+    }
+
+    function getMenuItems() {
+        let items = new Array<MenuItem>();
+        let index = 0;
+        for (const routeInfo of Constants.RouteInfo) {
+            if(!StorageService.getRights().find(right => right === routeInfo.identify)){
+                continue;
+            }
+            if (routeInfo.children != undefined) {
+                let childItems = new Array<MenuItem>();
+                for (const child of routeInfo.children) {
+                    if(!StorageService.getRights().find(right => right === child.identify)){
+                        continue;
+                    }
+                    childItems.push(getItem(<Link to={child.path}>{child.name}</Link>, index++, child.icon));
+                }
+                items.push(getItem(routeInfo.name, index++, routeInfo.icon, childItems));
+            } else {
+                items.push(getItem(<Link to={routeInfo.path}>{routeInfo.name}</Link>, index++, routeInfo.icon));
+            }
+        }
+        return items;
+    }
 
     return (
         <>
@@ -46,43 +86,8 @@ export default function BasicLayout() {
                         <div className="logo large-logo-font" >SnippetAdmin</div>
                     }
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: "space-between", userSelect: "none" }}>
-                        <Menu theme="dark" mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}>
-                            {Constants.RouteInfo.map((r, index) => {
-                                if (r.children !== undefined) {
-                                    return (
-                                        <>
-                                            {StorageService.getRights().find(right => right === r.identify) &&
-                                                <Menu.SubMenu key={index} icon={r.icon} title={r.name}>
-                                                    {
-                                                        r.children.map((item, i) => {
-                                                            return (
-                                                                <>
-                                                                    {StorageService.getRights().find(r => r === item.identify) &&
-                                                                        <Menu.Item key={i + item.path} icon={item.icon}>
-                                                                            <Link to={item.path}>{item.name}</Link>
-                                                                        </Menu.Item>
-                                                                    }
-                                                                </>
-                                                            );
-                                                        })
-                                                    }
-                                                </Menu.SubMenu>
-                                            }
-                                        </>
-                                    );
-                                } else {
-                                    return (
-                                        <>
-                                            {StorageService.getRights().find(right => right === r.identify) &&
-                                                <Menu.Item key={r.path} icon={r.icon}>
-                                                    <Link to={r.path}>{r.name}</Link>
-                                                </Menu.Item>
-                                            }
-                                        </>
-                                    );
-                                }
-
-                            })}
+                        <Menu theme="dark" mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}
+                            items={getMenuItems() as any}>
                         </Menu>
                     </div>
                 </Sider>
@@ -97,7 +102,7 @@ export default function BasicLayout() {
                             alignItems: 'center'
                         }}>
 
-                            <Dropdown className="dropdown" overlay={menu} arrow={{ pointAtCenter: false }} trigger={['click']}>
+                            <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
                                 <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '30px' }} />
                             </Dropdown>
 

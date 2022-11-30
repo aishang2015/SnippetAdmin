@@ -43,6 +43,7 @@ const App: FC = () => {
   const loadingContent = "加载中...";
 
   var noAuthorizedRouter = createBrowserRouter([
+    { path: '', element: <Login /> },
     { path: '/login', element: <Login /> },
     { path: "/*", element: <Login /> },
   ]);
@@ -52,6 +53,7 @@ const App: FC = () => {
       path: '/',
       element: <BasicLayout />,
       children: [
+        { path: "", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
         { path: "/home", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
         { path: "/flow", element: <Suspense fallback={loadingContent}><FlowPage /></Suspense> },
         { path: "/chat", element: <Suspense fallback={loadingContent}><ChatPage /></Suspense> },
@@ -86,6 +88,7 @@ const App: FC = () => {
       theme={{
         token: {
           colorPrimary: '#00b96b',
+          colorLink:'#00b96b'
         },
       }}>
 
