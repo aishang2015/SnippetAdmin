@@ -119,8 +119,6 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElements.Add(new RbacElement { Id = 68, Name = "删除字典项目", Identity = "delete-dicvalue", Type = ElementType.ButtonLink, AccessApi = "api/Dic/DeleteDicValue", Sorting = 6 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 70, Name = "系统配置", Identity = "sys-config", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 71, Name = "通用配置", Identity = "common-config", Type = ElementType.ButtonLink, AccessApi = "api/Setting/GetLoginPageSetting,api/Setting/SaveLoginPageSetting", Sorting = 1 });
-            _dbContext.RbacElements.Add(new RbacElement { Id = 72, Name = "数据导出", Identity = "data-export", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
-            _dbContext.RbacElements.Add(new RbacElement { Id = 73, Name = "页面", Identity = "export-data-page", Type = ElementType.ButtonLink, AccessApi = "api/Data/ExportCodeData,api/Data/ExportCsvData,api/Data/GetCodeDataType,api/Data/GetCsvDataType", Sorting = -1 });
 
             // 元素树数据
             _dbContext.RbacElementTrees.Add(new RbacElementTree { Id = 1, Ancestor = 1, Descendant = 1, Length = 0 });

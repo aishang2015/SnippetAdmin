@@ -333,7 +333,7 @@ export default function Org() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -398,7 +398,7 @@ export default function Org() {
                         <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off2"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

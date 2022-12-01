@@ -7,11 +7,11 @@ using SnippetAdmin.Data;
 using SnippetAdmin.Endpoint.Apis.System;
 using System.Globalization;
 
-namespace SnippetAdmin.Controllers.System
+namespace SnippetAdmin.Controllers.Develop
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Policy = "AccessApi")]
+    [Authorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class DataController : ControllerBase, IDataApi
     {

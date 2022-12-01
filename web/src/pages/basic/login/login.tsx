@@ -2,14 +2,14 @@ import './login.css';
 
 import React from "react";
 import { Button, Card, Form, Input } from 'antd';
-import { LoginModel, login } from '../../http/requests/account';
-import { OauthService } from '../../common/oauth';
-import { StorageService } from '../../common/storage';
+import { LoginModel, login } from '../../../http/requests/account';
+import { OauthService } from '../../../common/oauth';
+import { StorageService } from '../../../common/storage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { SettingService } from '../../http/requests/setting';
-import { Configuration } from '../../common/config';
+import { SettingService } from '../../../http/requests/setting';
+import { Configuration } from '../../../common/config';
 
 export default class Login extends React.Component<any, any> {
 

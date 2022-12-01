@@ -3,7 +3,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import './chat.css';
 import { useState } from 'react';
 import { concat, delay } from 'lodash';
-import { dateFormat } from '../../common/time';
+import { dateFormat } from '../../../common/time';
 
 
 export default function ChatPage(props: any) {

@@ -505,7 +505,7 @@ export default function User() {
                         </Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -534,7 +534,7 @@ export default function User() {
                         <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

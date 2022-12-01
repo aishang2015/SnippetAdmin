@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useRef, useState } from "react";
-import { Configuration } from '../../common/config';
+import { Configuration } from '../../../common/config';
 import { Card, Col, Row, Statistic, Typography } from 'antd';
 
 const signalR = require("@microsoft/signalr");

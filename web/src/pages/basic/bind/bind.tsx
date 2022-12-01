@@ -2,8 +2,8 @@ import { Button, Card, Form, Input } from "antd";
 import React from "react";
 
 import './bind.css';
-import { BindingModel, bindingThirdPartyAccount } from "../../http/requests/account";
-import { StorageService } from "../../common/storage";
+import { BindingModel, bindingThirdPartyAccount } from "../../../http/requests/account";
+import { StorageService } from "../../../common/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 

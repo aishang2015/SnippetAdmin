@@ -206,7 +206,7 @@ export default function TaskManage(props: any) {
                         } />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button htmlType="submit"><Space><FontAwesomeIcon icon={faSave} /> 保存</Space></Button>
+                        <Button type='primary' htmlType="submit"><Space><FontAwesomeIcon icon={faSave} /> 保存</Space></Button>
                     </Form.Item>
                 </Form>
             </Modal>

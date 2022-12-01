@@ -1,27 +1,21 @@
 import React, { FC, Suspense } from 'react';
 import {
-  BrowserRouter,
   createBrowserRouter,
-  Route,
-  RouterProvider,
-  Routes
-} from "react-router-dom";
+  RouterProvider} from "react-router-dom";
 import 'antd/dist/reset.css';
 import zhCN from 'antd/locale/zh_CN';
 import './App.css';
-import BasicLayout from './pages/layout/layout';
-import Callback from './pages/callback/callback';
-import { Bind } from './pages/bind/bind';
+import BasicLayout from './pages/basic/layout/layout';
 import { ConfigProvider } from 'antd';
-import Login from './pages/login/login';
+import Login from './pages/basic/login/login';
 
 const App: FC = () => {
 
-  const HomePage = React.lazy(() => import('./pages/home/home'));
-  const AboutPage = React.lazy(() => import('./pages/about/about'));
-  const TablePage = React.lazy(() => import('./pages/table/table'));
-  const FlowPage = React.lazy(() => import('./pages/flow/flow'));
-  const ChatPage = React.lazy(() => import('./pages/chat/chat'));
+  const HomePage = React.lazy(() => import('./pages/basic/home/home'));
+  const AboutPage = React.lazy(() => import('./pages/basic/about/about'));
+  const TablePage = React.lazy(() => import('./pages/test/table/table'));
+  const FlowPage = React.lazy(() => import('./pages/test/flow/flow'));
+  const ChatPage = React.lazy(() => import('./pages/test/chat/chat'));
 
   const UserPage = React.lazy(() => import('./pages/rbac/user/user'));
   const RolePage = React.lazy(() => import('./pages/rbac/role/role'));
@@ -38,7 +32,9 @@ const App: FC = () => {
   const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
   const LoginLogPage = React.lazy(() => import('./pages/system/login/login'));
   const DictionaryPage = React.lazy(() => import('./pages/system/dictionary/dictionary'));
-  const ExportPage = React.lazy(() => import('./pages/system/export/export'));
+  
+  const ExportPage = React.lazy(() => import('./pages/develop/export/export'));
+  const CodePage = React.lazy(() => import('./pages/develop/code/code'));
 
   const loadingContent = "加载中...";
 
@@ -74,7 +70,10 @@ const App: FC = () => {
         { path: "/loginlog", element: <Suspense fallback={loadingContent}><LoginLogPage /></Suspense> },
         { path: "/dictionary", element: <Suspense fallback={loadingContent}><DictionaryPage /></Suspense> },
         { path: "/setting", element: <Suspense fallback={loadingContent}><SettingPage /></Suspense> },
+
         { path: "/export", element: <Suspense fallback={loadingContent}><ExportPage /></Suspense> },
+        { path: "/code", element: <Suspense fallback={loadingContent}><CodePage /></Suspense> },
+
         { path: "/*", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
       ]
     }

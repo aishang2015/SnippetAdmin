@@ -1,8 +1,8 @@
 import { Alert, Button, Checkbox, DatePicker, Form, Input, InputNumber, Modal, Pagination, Popover, Select, Space, Switch, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { cloneDeep, sortBy } from 'lodash';
-import { DynamicService } from '../../http/requests/dynamic';
-import { dateFormat } from '../../common/time';
+import { DynamicService } from '../../../http/requests/dynamic';
+import { dateFormat } from '../../../common/time';
 import { useForm } from 'antd/lib/form/Form';
 //import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -514,7 +514,7 @@ export default function TablePage(props: any) {
                         })
                     }
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit">保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit">保存</Button>
                     </Form.Item>
                 </Form>
 

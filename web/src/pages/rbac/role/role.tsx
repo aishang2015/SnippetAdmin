@@ -195,7 +195,7 @@ export default function Role() {
                         <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true} showCheckedStrategy="SHOW_ALL"></TreeSelect>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

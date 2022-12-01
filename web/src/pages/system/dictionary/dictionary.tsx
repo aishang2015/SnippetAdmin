@@ -258,7 +258,7 @@ export default function Dictionary() {
                         <Input placeholder="请输入编码" allowClear={true} autoComplete="off2"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<FontAwesomeIcon icon={faSave} fixedWidth />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon icon={faSave} fixedWidth />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -293,7 +293,7 @@ export default function Dictionary() {
                         <InputNumber style={{ width: "100%" }} placeholder="请输入排序" autoComplete="off2" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<FontAwesomeIcon icon={faSave} fixedWidth />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon icon={faSave} fixedWidth />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

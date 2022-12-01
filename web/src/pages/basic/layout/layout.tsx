@@ -1,13 +1,13 @@
-import { faArrowRightLong, faArrowLeftLong, faUser, faEdit, faOutdent } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightLong, faArrowLeftLong, faUser, faEdit, faOutdent, faCaretRight, faCaretLeft, faRightLong, faLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Divider, Dropdown, Layout, Menu, MenuProps, Space } from "antd";
+import { Avatar, Button, Divider, Dropdown, Layout, Menu, MenuProps, Space } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import MenuItem from "antd/es/menu/MenuItem";
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Constants } from "../../common/constants";
-import { StorageService } from "../../common/storage";
+import { Constants } from "../../../common/constants";
+import { StorageService } from "../../../common/storage";
 
 import './layout.css';
 
@@ -56,14 +56,14 @@ export default function BasicLayout() {
     function getMenuItems() {
         let items = new Array<MenuItem>();
         let index = 0;
-        for (const routeInfo of Constants.RouteInfo) {
-            if(!StorageService.getRights().find(right => right === routeInfo.identify)){
+        for (const routeInfo of Constants.GetRouteInfo()) {
+            if (!StorageService.getRights().find(right => right === routeInfo.identify) && routeInfo.identify) {
                 continue;
             }
             if (routeInfo.children != undefined) {
                 let childItems = new Array<MenuItem>();
                 for (const child of routeInfo.children) {
-                    if(!StorageService.getRights().find(right => right === child.identify)){
+                    if (!StorageService.getRights().find(right => right === child.identify) && child.identify) {
                         continue;
                     }
                     childItems.push(getItem(<Link to={child.path}>{child.name}</Link>, index++, child.icon));
@@ -93,10 +93,10 @@ export default function BasicLayout() {
                 </Sider>
                 <Layout>
                     <Header className="site-layout" style={{ padding: 0, display: 'flex', alignItems: 'center' }}>
-                        {collapsed ?
-                            <FontAwesomeIcon icon={faArrowRightLong} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={() => setCollapsed(!collapsed)} /> :
-                            <FontAwesomeIcon icon={faArrowLeftLong} style={{ lineHeight: '64px', fontSize: '20px', margin: '22px' }} onClick={() => setCollapsed(!collapsed)} />
-                        }
+
+                        <Button type="text" onClick={() => setCollapsed(!collapsed)} icon={collapsed ?
+                            <FontAwesomeIcon icon={faRightLong} style={{ color: 'white' }} /> :
+                            <FontAwesomeIcon icon={faLeftLong} style={{ color: 'white' }} />} />
                         <div style={{
                             display: 'flex',
                             alignItems: 'center'
