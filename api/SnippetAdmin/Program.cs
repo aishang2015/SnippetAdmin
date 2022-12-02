@@ -31,7 +31,7 @@ try
 	var builder = WebApplication.CreateBuilder(args);
 
 	// 分别是数据库 缓存 内存缓存 jwt automapper oauth 用户访问器
-	builder.Services.AddDatabase<SnippetAdminDbContext, RbacUser, RbacRole>(builder.Configuration);
+	builder.Services.AddSnippetAdminDbContext(builder.Configuration);
 	builder.Services.AddMemoryCache();
 	builder.Services.AddCustomAuthentication(builder.Configuration);
 	builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -96,6 +96,7 @@ try
 	});
 
 	// record some log
+	builder.Services.AddBackgroundService<ShardingInitialBackgroundService>();
 	builder.Services.AddBackgroundService<LoginLogBackgroundService>();
 	builder.Services.AddBackgroundService<AccessedLogBackgroundService>();
 	builder.Services.AddBackgroundService<ExceptionLogBackgroundService>();

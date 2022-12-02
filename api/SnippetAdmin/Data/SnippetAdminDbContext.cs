@@ -1,105 +1,212 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Hawthorn.EntityFramework.Sharding;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.EntityFrameworkCore.Cache;
+using System.Reflection.Emit;
 
 namespace SnippetAdmin.Data
 {
-    public class SnippetAdminDbContext : IdentityDbContext<RbacUser, RbacRole, int,
-        RbacUserClaim, RbacUserRole, RbacUserLogin, RbacRoleClaim, RbacUserToken>
-    {
-        private readonly IMemoryCache _memoryCache;
+	public class SnippetAdminDbContext : IdentityDbContext<RbacUser, RbacRole, int,
+		RbacUserClaim, RbacUserRole, RbacUserLogin, RbacRoleClaim, RbacUserToken>
+	{
+		public string ShardingKey { get; private set; }
 
-        public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options,
-            IMemoryCache memoryCache) : base(options)
-        {
-            // 执行迁移命令之前需要暂时注释掉Program.cs中的mvcBuilder.AddDynamicController();
-            // 迁移命令,生成一个【FirstMigration】的迁移
-            // Add-Migration FirstMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
-            // 应用迁移
-            // Update-Database
-            // 删除迁移
-            // Remove-Migration
-            // 列出迁移
-            // Get-Migration
-            // 生成脚本，生成一个AddElementSortingMigration到RemoveElementSortingMigration变化的脚本
-            // 如果不加from或to则生成一个初始到最后迁移的脚本
-            // Script-Migration AddElementSortingMigration RemoveElementSortingMigration 
+		private List<(Type, string)> _typeNames = new();
 
-            // 更改默认不跟踪所有实体
-            // ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
-            // 相同的对象
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
+		private readonly IMemoryCache _memoryCache;
 
-            // 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
-            ChangeTracker.AutoDetectChangesEnabled = false;
+		private readonly IShardingInfoService _shardingInfoService;
 
-            _memoryCache = memoryCache;
-        }
+		private DbContextOptions _options;
 
-        public DbSet<RbacElement> RbacElements { get; set; }
+		public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options,
+			IShardingInfoService shardingInfoService,
+			IMemoryCache memoryCache) : base(options)
+		{
+			// 执行迁移命令之前需要暂时注释掉Program.cs中的mvcBuilder.AddDynamicController();
+			// 迁移命令,生成一个【FirstMigration】的迁移
+			// Add-Migration FirstMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
+			// 应用迁移
+			// Update-Database
+			// 删除迁移
+			// Remove-Migration
+			// 列出迁移
+			// Get-Migration
+			// 生成脚本，生成一个AddElementSortingMigration到RemoveElementSortingMigration变化的脚本
+			// 如果不加from或to则生成一个初始到最后迁移的脚本
+			// Script-Migration AddElementSortingMigration RemoveElementSortingMigration 
 
-        public DbSet<RbacElementTree> RbacElementTrees { get; set; }
+			// 更改默认不跟踪所有实体
+			// ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
+			// 相同的对象
+			ShardingKey = shardingInfoService.GetShardingInfoKey();
+			_typeNames = shardingInfoService.GetShardingList();
 
-        public DbSet<RbacOrganization> RbacOrganizations { get; set; }
+			ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
 
-        public DbSet<RbacOrganizationTree> RbacOrganizationTrees { get; set; }
+			// 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
+			ChangeTracker.AutoDetectChangesEnabled = false;
 
-        public DbSet<RbacOrganizationType> RbacOrganizationTypes { get; set; }
+			_memoryCache = memoryCache;
+			_shardingInfoService = shardingInfoService;
+			_options = options;
 
-        public DbSet<RbacPosition> RbacPositions { get; set; }
+		}
 
-        public DbSet<SysAccessLog> SysApiAccessLogs { get; set; }
+		public DbSet<RbacElement> RbacElements { get; set; }
 
-        public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
+		public DbSet<RbacElementTree> RbacElementTrees { get; set; }
 
-        public DbSet<SysLoginLog> SysLoginLogs { get; set; }
+		public DbSet<RbacOrganization> RbacOrganizations { get; set; }
 
-        public DbSet<Job> Jobs { get; set; }
+		public DbSet<RbacOrganizationTree> RbacOrganizationTrees { get; set; }
 
-        public DbSet<JobRecord> JobRecords { get; set; }
+		public DbSet<RbacOrganizationType> RbacOrganizationTypes { get; set; }
 
-        public DbSet<SysDicType> SysDicTypes { get; set; }
+		public DbSet<RbacPosition> RbacPositions { get; set; }
 
-        public DbSet<SysDicValue> SysDicValues { get; set; }
+		public DbSet<SysAccessLog> SysApiAccessLogs { get; set; }
 
-        public DbSet<SysSetting> SysSettings { get; set; }
+		public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
+		public DbSet<SysLoginLog> SysLoginLogs { get; set; }
 
-            builder.Entity<RbacUser>().ToTable("T_RBAC_User");
-            builder.Entity<RbacRole>().ToTable("T_RBAC_Role");
-            builder.Entity<RbacUserRole>().ToTable("T_RBAC_UserRole");
-            builder.Entity<RbacUserClaim>().ToTable("T_RBAC_UserClaim");
-            builder.Entity<RbacRoleClaim>().ToTable("T_RBAC_RoleClaim");
-            builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
-            builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
+		public DbSet<Job> Jobs { get; set; }
 
-        }
+		public DbSet<JobRecord> JobRecords { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
+		public DbSet<SysDicType> SysDicTypes { get; set; }
 
-            // 打印sql参数
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
+		public DbSet<SysDicValue> SysDicValues { get; set; }
 
-        public IEnumerable<T> CacheSet<T>() where T : class
-        {
-            if (CacheableBase<SnippetAdminDbContext>.Instance.CacheableTypeList.Contains(typeof(T)))
-            {
-                return _memoryCache.Get(typeof(T).FullName) as List<T>;
-            }
-            else
-            {
-                return Set<T>().AsQueryable();
-            }
-        }
-    }
+		public DbSet<SysSetting> SysSettings { get; set; }
+
+		public DbSet<SysSharding> SysShardings { get; set; }
+
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			base.OnModelCreating(builder);
+
+			builder.Entity<RbacUser>().ToTable("T_RBAC_User");
+			builder.Entity<RbacRole>().ToTable("T_RBAC_Role");
+			builder.Entity<RbacUserRole>().ToTable("T_RBAC_UserRole");
+			builder.Entity<RbacUserClaim>().ToTable("T_RBAC_UserClaim");
+			builder.Entity<RbacRoleClaim>().ToTable("T_RBAC_RoleClaim");
+			builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
+			builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
+
+			if (_typeNames.Count > 0)
+			{
+				foreach (var typeName in _typeNames)
+				{
+					builder.SharedTypeEntity(typeName.Item2, typeName.Item1).ToTable(typeName.Item2);
+				}
+			}
+
+		}
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
+			base.OnConfiguring(optionsBuilder);
+
+			// 打印sql参数
+			optionsBuilder.EnableSensitiveDataLogging();
+		}
+
+		public IEnumerable<T> CacheSet<T>() where T : class
+		{
+			if (CacheableBase<SnippetAdminDbContext>.Instance.CacheableTypeList.Contains(typeof(T)))
+			{
+				return _memoryCache.Get(typeof(T).FullName) as List<T>;
+			}
+			else
+			{
+				return Set<T>().AsQueryable();
+			}
+		}
+
+		public async Task CreateTable(string tableName, Type type)
+		{
+			using var context = new TableDbContext(GetOption(), tableName, type);
+			var creator = context.GetService<IRelationalDatabaseCreator>();
+			try
+			{
+				await creator.CreateTablesAsync();
+				_shardingInfoService.AddShardingInfo((type, tableName));
+
+				SysShardings.Add(new SysSharding { TableName = tableName, TableType = type.Name });
+				await SaveChangesAsync();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+		}
+
+
+		private DbContextOptions<TableDbContext> GetOption()
+		{
+			var builder = new DbContextOptionsBuilder<TableDbContext>()
+				.EnableServiceProviderCaching(false);
+
+#pragma warning disable EF1001 // Internal EF Core API usage.
+			var inMemoryOptions = _options.FindExtension<InMemoryOptionsExtension>();
+			if (inMemoryOptions != null)
+			{
+				return builder.UseInMemoryDatabase(inMemoryOptions.StoreName)
+					.Options;
+			}
+
+			var sqliteOptions = _options.FindExtension<SqliteOptionsExtension>();
+			if (sqliteOptions != null)
+			{
+				return builder.UseSqlite(sqliteOptions.ConnectionString)
+					.Options;
+			}
+
+			var sqlServerOptions = _options.FindExtension<SqlServerOptionsExtension>();
+			if (sqlServerOptions != null)
+			{
+				return builder.UseSqlServer(sqlServerOptions.ConnectionString)
+					.Options;
+			}
+
+			var mysqlOptions = _options.FindExtension<MySqlOptionsExtension>();
+			if (mysqlOptions != null)
+			{
+				return builder.UseMySql(mysqlOptions.ConnectionString,
+					ServerVersion.AutoDetect(mysqlOptions.ConnectionString))
+					.Options;
+			}
+
+			var npgsqlOptions = _options.FindExtension<NpgsqlOptionsExtension>();
+			if (inMemoryOptions != null)
+			{
+				return builder.UseNpgsql(npgsqlOptions.ConnectionString)
+					.Options;
+			}
+
+			//var oracleOptions = _options.GetExtension<OracleOptionsExtension>();
+			//if (oracleOptions != null)
+			//{
+			//	// todo
+			//	return builder.UseOracle(oracleOptions.ConnectionString)
+			//		.Options;
+			//}
+
+			return null;
+#pragma warning restore EF1001 // Internal EF Core API usage.
+		}
+	}
 }

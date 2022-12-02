@@ -35,7 +35,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<GetOrganizationOutputModel>]
-        public async Task<CommonResult<GetOrganizationOutputModel>> GetOrganization([FromBody] IdInputModel<int> inputModel)
+		[Description("获取组织机构详细信息")]
+		public async Task<CommonResult<GetOrganizationOutputModel>> GetOrganization([FromBody] IdInputModel<int> inputModel)
         {
             var org = await _dbContext.RbacOrganizations.FindAsync(inputModel.Id);
             var result = _mapper.Map<GetOrganizationOutputModel>(org);
@@ -76,7 +77,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> CreateOrganization([FromBody] CreateOrganizationInputModel inputModel)
+		[Description("创建组织")]
+		public async Task<CommonResult> CreateOrganization([FromBody] CreateOrganizationInputModel inputModel)
         {
             // 组织编码重复
             if (_dbContext.RbacOrganizations.Any(r => r.Code == inputModel.Code))
@@ -119,7 +121,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteOrganization([FromBody] IdInputModel<int> inputModel)
+		[Description("删除组织")]
+		public async Task<CommonResult> DeleteOrganization([FromBody] IdInputModel<int> inputModel)
         {
             var organizations = from org in _dbContext.RbacOrganizations
                                 join orgTree in _dbContext.RbacOrganizationTrees on org.Id equals orgTree.Descendant
@@ -135,7 +138,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> UpdateOrganization([FromBody] UpdateOrganizationInputModel inputModel)
+		[Description("修改组织")]
+		public async Task<CommonResult> UpdateOrganization([FromBody] UpdateOrganizationInputModel inputModel)
         {
             // 组织编码重复
             if (_dbContext.RbacOrganizations.Any(r => r.Id != inputModel.Id && r.Code == inputModel.Code))
@@ -215,6 +219,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<GetOrganizationTypesOutputModel>>]
+        [Description("查询组织类型列表")]
         public async Task<CommonResult<List<GetOrganizationTypesOutputModel>>> GetOrganizationTypes()
         {
             var result = await _dbContext.RbacOrganizationTypes.ToListAsync();
@@ -229,7 +234,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// <returns></returns>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> AddOrUpdateOrganizationType(
+		[Description("添加或更新组织类型")]
+		public async Task<CommonResult> AddOrUpdateOrganizationType(
             [FromBody] AddOrUpdateOrganizationTypeInputModel inputModel)
         {
             if (_dbContext.RbacOrganizationTypes.Any(ot => ot.Code == inputModel.Code && ot.Id != inputModel.Id))
@@ -269,7 +275,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// <returns></returns>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> RemoveOrganizationType(
+		[Description("删除组织类型")]
+		public async Task<CommonResult> RemoveOrganizationType(
             RemoveOrganizationTypeInputModel inputModel)
         {
             var orgType = _dbContext.RbacOrganizationTypes.Find(inputModel.Id);
