@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Endpoint.Apis.RBAC;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -25,6 +26,7 @@ namespace SnippetAdmin.Controllers.RBAC
         [HttpPost]
         [CommonResultResponseType<List<string>>]
         [Authorize(Policy = "AccessApi")]
+        [Description("获取程序所有API信息")]
         public Task<CommonResult<List<string>>> GetApiPaths()
         {
             var result = _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items

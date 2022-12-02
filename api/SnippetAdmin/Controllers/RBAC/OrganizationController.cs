@@ -7,6 +7,7 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Models.RBAC.Organization;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -50,6 +51,7 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<GetOrganizationTreeOutputModel>>]
+        [Description("获取组织树信息")]
         public async Task<CommonResult<List<GetOrganizationTreeOutputModel>>> GetOrganizationTree()
         {
             var orgs = await _dbContext.RbacOrganizations.OrderBy(org => org.Sorting).ToListAsync();

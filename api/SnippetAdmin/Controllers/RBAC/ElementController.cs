@@ -8,6 +8,7 @@ using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Apis.RBAC;
 using SnippetAdmin.Endpoint.Models.RBAC.Element;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -33,7 +34,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<GetElementOutputModel>]
-        public async Task<CommonResult<GetElementOutputModel>> GetElement([FromBody] IdInputModel<int> inputModel)
+		[Description("获取元素详细信息")]
+		public async Task<CommonResult<GetElementOutputModel>> GetElement([FromBody] IdInputModel<int> inputModel)
         {
             var element = await _dbContext.RbacElements.FindAsync(inputModel.Id);
             return CommonResult.Success(_mapper.Map<GetElementOutputModel>(element));
@@ -44,7 +46,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<GetElementTreeOutputModel>>]
-        public async Task<CommonResult<List<GetElementTreeOutputModel>>> GetElementTree()
+		[Description("获取元素树信息")]
+		public async Task<CommonResult<List<GetElementTreeOutputModel>>> GetElementTree()
         {
             var elements = await _dbContext.RbacElements.OrderBy(e => e.Sorting).ToListAsync();
             var elementTrees = await _dbContext.RbacElementTrees.ToListAsync();
@@ -68,7 +71,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel)
+		[Description("创建页面元素")]
+		public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel)
         {
             // 开启事务
             using var tran = await _dbContext.Database.BeginTransactionAsync();
@@ -104,7 +108,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteElement([FromBody] IdInputModel<int> inputModel)
+		[Description("删除页面元素")]
+		public async Task<CommonResult> DeleteElement([FromBody] IdInputModel<int> inputModel)
         {
             var elements = from e in _dbContext.RbacElements
                            join et in _dbContext.RbacElementTrees on e.Id equals et.Descendant
@@ -120,7 +125,8 @@ namespace SnippetAdmin.Controllers.RBAC
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel)
+		[Description("修改页面元素")]
+		public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel)
         {
             var element = _mapper.Map<RbacElement>(inputModel);
             _dbContext.RbacElements.Update(element);

@@ -29,6 +29,7 @@ export default function Access() {
             )
         },
         { title: '请求方法', dataIndex: "method", align: 'center', width: '100px' },
+        { title: '方法描述', dataIndex: "description", align: 'center' },
         { title: '请求路径', dataIndex: "path", align: 'center' },
         { title: '用户名', dataIndex: "username", align: 'center', width: '220px' },
         { title: '访问者ip', dataIndex: "remoteIp", align: 'center', width: '100px' },
@@ -95,7 +96,7 @@ export default function Access() {
                 <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faFilter} fixedWidth />}
                     onClick={openSearchModal}>查找</Button>
             </div>
-            <Table bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1230 }}
+            <Table bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1600 }}
                 expandable={{
                     expandedRowRender: record =>
                         <div>

@@ -8,6 +8,7 @@ using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.Data.Enums;
 using SnippetAdmin.Endpoint.Models.System.Setting;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.System
 {
@@ -34,7 +35,8 @@ namespace SnippetAdmin.Controllers.System
         [HttpPost]
         [CommonResultResponseType<GetLoginPageSettingOutputModel>]
         [AllowAnonymous]
-        public CommonResult GetLoginPageSetting()
+		[Description("获取登录页配置")]
+		public CommonResult GetLoginPageSetting()
         {
             var settings = GetSettings(
                  SettingType.LoginPageTitle,
@@ -57,7 +59,8 @@ namespace SnippetAdmin.Controllers.System
         /// <returns></returns>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> SaveLoginPageSetting([FromForm] SaveLoginPageSettingInputModel formData)
+		[Description("保存登录页配置")]
+		public async Task<CommonResult> SaveLoginPageSetting([FromForm] SaveLoginPageSettingInputModel formData)
         {
             var settings = GetSettings(
                 SettingType.LoginPageTitle,

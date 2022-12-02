@@ -7,6 +7,7 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.Endpoint.Models.System.Dic;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.System
 {
@@ -31,7 +32,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<GetDicTypeListOutputModel>>]
-        public async Task<CommonResult<List<GetDicTypeListOutputModel>>> GetDicTypeList()
+		[Description("取得字典类型列表")]
+		public async Task<CommonResult<List<GetDicTypeListOutputModel>>> GetDicTypeList()
         {
             var dicTypeList = await _dbContext.SysDicTypes.ToListAsync();
             var result = _mapper.Map<List<GetDicTypeListOutputModel>>(dicTypeList);
@@ -43,7 +45,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> AddDicType(AddDicTypeInputModel inputModel)
+		[Description("添加字典类型")]
+		public async Task<CommonResult> AddDicType(AddDicTypeInputModel inputModel)
         {
             if (_dbContext.SysDicTypes.Any(t => t.Name == inputModel.Name))
             {
@@ -67,7 +70,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> UpdateDicType(UpdateDicTypeInputModel inputModel)
+		[Description("更新字典类型")]
+		public async Task<CommonResult> UpdateDicType(UpdateDicTypeInputModel inputModel)
         {
             if (_dbContext.SysDicTypes.Any(t => t.Name == inputModel.Name && t.Id != inputModel.Id))
             {
@@ -91,7 +95,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteDicType(IdInputModel<int> inputModel)
+		[Description("删除字典类型")]
+		public async Task<CommonResult> DeleteDicType(IdInputModel<int> inputModel)
         {
             var dicType = _dbContext.SysDicTypes.Find(inputModel.Id);
             _dbContext.Remove(dicType);
@@ -106,7 +111,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<GetDicValueListOutputModel>>]
-        public async Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueList(IdInputModel<int> inputModel)
+		[Description("取得字典项目列表")]
+		public async Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueList(IdInputModel<int> inputModel)
         {
             var dicValueList = await _dbContext.SysDicValues.Where(v => v.TypeId == inputModel.Id)
                 .OrderBy(v => v.Sorting).ToListAsync();
@@ -119,7 +125,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<GetDicValueListOutputModel>>]
-        public async Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueListByCode(IdInputModel<string> inputModel)
+		[Description("取得字典项目列表")]
+		public async Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueListByCode(IdInputModel<string> inputModel)
         {
             var dicValueList = from dicType in _dbContext.SysDicTypes
                                join dicValue in _dbContext.SysDicValues on dicType.Id equals dicValue.TypeId
@@ -134,7 +141,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> AddDicValueAsync(AddDicValueInputModel inputModel)
+		[Description("添加字典项目")]
+		public async Task<CommonResult> AddDicValueAsync(AddDicValueInputModel inputModel)
         {
             if (_dbContext.SysDicValues.Any(t => t.Name == inputModel.Name && t.TypeId == inputModel.TypeId))
             {
@@ -158,7 +166,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> UpdateDicValueAsync(UpdateDicValueInputModel inputModel)
+		[Description("更新字典项目")]
+		public async Task<CommonResult> UpdateDicValueAsync(UpdateDicValueInputModel inputModel)
         {
             if (_dbContext.SysDicValues.Any(t => t.Name == inputModel.Name
                 && t.TypeId == inputModel.TypeId
@@ -186,7 +195,8 @@ namespace SnippetAdmin.Controllers.System
         /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeleteDicValue(IdInputModel<int> inputModel)
+		[Description("删除字典项目")]
+		public async Task<CommonResult> DeleteDicValue(IdInputModel<int> inputModel)
         {
             var dicType = _dbContext.SysDicValues.Find(inputModel.Id);
             _dbContext.Remove(dicType);
