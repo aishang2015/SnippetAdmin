@@ -9,10 +9,11 @@
         public static readonly (string, string) SYSTEM_ERROR_002 = ("SYSTEM_ERROR_002", "页码不能小于0！");
         public static readonly (string, string) SYSTEM_ERROR_003 = ("SYSTEM_ERROR_003", "页面大小不能小于0！");
         public static readonly (string, string) SYSTEM_ERROR_004 = ("SYSTEM_ERROR_004", "排序字段错误！");
+		public static readonly (string, string) SYSTEM_ERROR_005 = ("SYSTEM_ERROR_005", "分表不存在！");
 
-        public static readonly (string, string) SYSTEM_INFO_001 = ("SYSTEM_INFO_001", "删除成功！");
+		public static readonly (string, string) SYSTEM_INFO_001 = ("SYSTEM_INFO_001", "删除成功！");
         public static readonly (string, string) SYSTEM_INFO_002 = ("SYSTEM_INFO_002", "更新成功！");
-        public static readonly (string, string) SYSTEM_INFO_003 = ("SYSTEM_INFO_003", "添加成功！");
+		public static readonly (string, string) SYSTEM_INFO_003 = ("SYSTEM_INFO_003", "添加成功！");
 
         #endregion Common
 

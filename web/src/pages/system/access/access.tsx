@@ -1,10 +1,11 @@
 import { faCircleNotch, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, Input, InputNumber, Modal, Pagination, Table } from 'antd';
+import { Button, DatePicker, Form, Input, InputNumber, Modal, Pagination, Table } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { AccessLogService } from '../../../http/requests/access';
+import dayjs from 'dayjs';
 
 
 
@@ -55,6 +56,7 @@ export default function Access() {
                     isAsc: false
                 }
             ],
+            month: searchObj.searchMonth ? searchObj.searchMonth.format('YYYYMM') : dayjs().format('YYYYMM'),
             lowerElapsedTime: searchObj.searchElapsed,
             equalPath: searchObj.searchPath,
             equalUsername: searchObj.searchUsername,
@@ -71,6 +73,7 @@ export default function Access() {
 
     function searchSubmit(values: any) {
         let obj: any = {};
+        obj.searchMonth = values['month'];
         obj.searchPath = values["path"];
         obj.searchUsername = values["username"];
         obj.searchIp = values["ip"];
@@ -113,6 +116,9 @@ export default function Access() {
             }
             <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
+                    <Form.Item name="month" label="月份" >
+                        <DatePicker picker="month" defaultValue={dayjs(new Date())} style={{ width: "100%" }}/>
+                    </Form.Item>
                     <Form.Item name="path" label="请求路径">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" />
                     </Form.Item>

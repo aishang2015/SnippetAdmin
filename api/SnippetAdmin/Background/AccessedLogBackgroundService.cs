@@ -33,10 +33,16 @@ namespace SnippetAdmin.Background
 			while (!stoppingToken.IsCancellationRequested)
 			{
 				var log = await ChannelHelper<SysAccessLog>.Instance.Reader.ReadAsync();
-				using var scope = _provider.CreateScope();
-				using var db = scope.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-				await db.SysApiAccessLogs.AddAsync(log);
-				await db.SaveChangesAsync();
+
+				using var scope1 = _provider.CreateScope();
+				using var db1 = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
+				await db1.CheckSharingTable<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+
+				using var scope2 = _provider.CreateScope();
+				using var db2 = scope2.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
+
+				await db2.GetShardingTableSet<SysAccessLog>(DateTime.Now.ToString("yyyyMM")).AddAsync(log);
+				await db2.SaveChangesAsync();
 			}
 		}
 	}

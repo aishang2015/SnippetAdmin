@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.System
 {
-	[DynamicApi("访问日志", typeof(SnippetAdminDbContext))]
+	/// <summary>
+	/// 月份分表
+	/// </summary>
 	[Comment("接口访问日志")]
 	[Table("T_Sys_AccessLog")]
 	[Index(nameof(AccessedTime))]

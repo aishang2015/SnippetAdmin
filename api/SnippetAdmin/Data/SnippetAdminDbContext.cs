@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -76,8 +77,6 @@ namespace SnippetAdmin.Data
 
 		public DbSet<RbacPosition> RbacPositions { get; set; }
 
-		public DbSet<SysAccessLog> SysApiAccessLogs { get; set; }
-
 		public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
 
 		public DbSet<SysLoginLog> SysLoginLogs { get; set; }
@@ -134,6 +133,35 @@ namespace SnippetAdmin.Data
 			{
 				return Set<T>().AsQueryable();
 			}
+		}
+
+		// todo 需要优化
+		/// <summary>
+		/// 检查分表
+		/// </summary>
+		/// <remark>
+		/// 如果未实行分表则进行创建分表,这里AddShardingInfo会把分表数据保存，但是只有等到
+		/// 下次OnModelCreating时才会去SharedTypeEntity配置分表信息，因此此操作需要在一个
+		/// 独立的scope中去进行
+		/// </remark>
+		public async Task CheckSharingTable<T>(string keyword) where T : class
+		{
+			var tableName = typeof(T).Name + keyword;
+			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
+			{
+				await CreateTable(tableName, typeof(T));
+				_shardingInfoService.AddShardingInfo((typeof(T), tableName));
+			}
+		}
+
+		// 获取访问记录分表
+		public DbSet<T> GetShardingTableSet<T>(string keyword) where T : class
+		{
+			if (!CacheSet<SysSharding>().Any(s => s.TableName == typeof(T).Name + keyword))
+			{
+				return null;
+			}
+			return Set<T>(typeof(T).Name + keyword);
 		}
 
 		public async Task CreateTable(string tableName, Type type)
