@@ -1,4 +1,4 @@
-import { faArrowRight, faBug, faClipboardCheck, faCode, faCodeBranch, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faSitemap, faTasks, faThumbtack, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faClipboardCheck, faCode, faCodeBranch, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faFirstAid, faHome, faInfo, faSitemap, faTasks, faThumbtack, faTools, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Configuration } from './config';
 
@@ -55,6 +55,7 @@ export class Constants {
                     path: '', name: '开发者工具', identify: '', icon: <FontAwesomeIcon icon={faCode} fixedWidth />, children: [
                         { path: '/export', name: '数据导出', identify: '', icon: <FontAwesomeIcon icon={faFileExport} fixedWidth /> },
                         { path: '/code', name: '代码生成', identify: '', icon: <FontAwesomeIcon icon={faCodeBranch} fixedWidth /> },
+                        { path: '/frontend', name: '前端工具', identify: '', icon: <FontAwesomeIcon icon={faTools} fixedWidth /> },
                     ]
                 }
             ]);

@@ -51,7 +51,7 @@ export default function CodePage() {
                         rules={[{ required: true, message: '请选择控制器!' }]}>
                         <Select style={{ width: '180px' }} placeholder="请选择控制器">
                             {controllers.map(c =>
-                                <Select.Option value={c}>{c}</Select.Option>
+                                <Select.Option key={c} value={c}>{c}</Select.Option>
                             )}
                         </Select>
                     </Form.Item>

@@ -1,7 +1,8 @@
 import React, { FC, Suspense } from 'react';
 import {
   createBrowserRouter,
-  RouterProvider} from "react-router-dom";
+  RouterProvider
+} from "react-router-dom";
 import 'antd/dist/reset.css';
 import zhCN from 'antd/locale/zh_CN';
 import './App.css';
@@ -32,9 +33,11 @@ const App: FC = () => {
   const ExceptionedPage = React.lazy(() => import('./pages/system/exception/exception'));
   const LoginLogPage = React.lazy(() => import('./pages/system/login/login'));
   const DictionaryPage = React.lazy(() => import('./pages/system/dictionary/dictionary'));
-  
+
   const ExportPage = React.lazy(() => import('./pages/develop/export/export'));
   const CodePage = React.lazy(() => import('./pages/develop/code/code'));
+  const FrontToolPage = React.lazy(() => import('./pages/develop/frontend/frontend'));
+
 
   const loadingContent = "加载中...";
 
@@ -73,6 +76,7 @@ const App: FC = () => {
 
         { path: "/export", element: <Suspense fallback={loadingContent}><ExportPage /></Suspense> },
         { path: "/code", element: <Suspense fallback={loadingContent}><CodePage /></Suspense> },
+        { path: '/frontend', element: <Suspense fallback={loadingContent}><FrontToolPage /></Suspense> },
 
         { path: "/*", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
       ]
@@ -87,7 +91,7 @@ const App: FC = () => {
       theme={{
         token: {
           colorPrimary: '#00b96b',
-          colorLink:'#00b96b'
+          colorLink: '#00b96b'
         },
       }}>
 

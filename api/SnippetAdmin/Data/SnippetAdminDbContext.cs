@@ -142,7 +142,7 @@ namespace SnippetAdmin.Data
 		/// <remark>
 		/// 如果未实行分表则进行创建分表,这里AddShardingInfo会把分表数据保存，但是只有等到
 		/// 下次OnModelCreating时才会去SharedTypeEntity配置分表信息，因此此操作需要在一个
-		/// 独立的scope中去进行
+		/// 独立的scope中去进行,这里把分表信息保存会执行一次SaveChangesAsync，
 		/// </remark>
 		public async Task CheckSharingTable<T>(string keyword) where T : class
 		{

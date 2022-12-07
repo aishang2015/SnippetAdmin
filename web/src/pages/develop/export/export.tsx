@@ -52,7 +52,7 @@ export default function Export() {
             <Typography.Title level={4}>导出代码</Typography.Title>
             <Row gutter={[16, 16]}>
                 {codeDataTypeList.map(type =>
-                    <Col span={4} >
+                    <Col span={4} key={type}>
                         <Card title={null}
                             actions={[
                                 <FontAwesomeIcon icon={faDownload} onClick={() => downloadCodeData(type)} />
@@ -66,7 +66,7 @@ export default function Export() {
             <Typography.Title level={4}>导出CSV</Typography.Title>
             <Row gutter={[16, 16]}>
                 {csvDataTypeList.map(type =>
-                    <Col span={4} >
+                    <Col span={4} key={type}>
                         <Card title={null}
                             actions={[
                                 <div onClick={() => downloadCsvData(type)}>

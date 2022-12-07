@@ -1,4 +1,5 @@
-import { Picker } from 'emoji-mart';
+
+import data from '@emoji-mart/data';
 //import 'emoji-mart/css/emoji-mart.css';
 import './org.css';
 
@@ -9,6 +10,10 @@ import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
 import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
+import React from 'react';
+
+// @ts-ignore - alternatively, add `declare module "@emoji-mart/react"` to your project's type declarations
+const Picker = React.lazy(() => import("@emoji-mart/react"));
 
 export default function Org() {
 
@@ -340,28 +345,14 @@ export default function Org() {
 
             <Modal width={390} open={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
                 onCancel={() => setEmojiModalVisible(false)} maskClosable={false}>
-                    
-                {/* <Picker native={true} autoFocus={true} emoji={orgIconId} onSelect={(e: any) => {
-                    setOrgIcon(e.native);
-                    setOrgIconId(e.id);
-                    setEmojiModalVisible(false);
-                }} i18n={{
-                    search: '搜索',
-                    notfound: '没找到您想要的Emoji',
-                    categories: {
-                        search: '搜索结果',
-                        recent: '经常使用',
-                        people: '人',
-                        nature: '动物和自然',
-                        foods: '食品和饮料',
-                        activity: '活动',
-                        places: '旅行和地点',
-                        objects: '物体',
-                        symbols: '符号',
-                        flags: '旗帜',
-                        custom: '自定义',
+                <Picker data={data} emoji={orgIconId} theme="light" locale={"zh"} onEmojiSelect={
+                    (value: any) => {
+                        console.log(value);
+                        setOrgIcon(value.native);
+                        setOrgIconId(value.id);
+                        setEmojiModalVisible(false);
                     }
-                }} /> */}
+                } />                
             </Modal>
 
             <Modal width={600} open={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
