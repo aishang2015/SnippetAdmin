@@ -1,5 +1,6 @@
 {
-    "server_url": "http://localhost:29680",
+    "server_url": "http://127.0.0.1:29680",
+    "mode":"develop", 
     "oauth": {
         "github": {
             "client_id": "",

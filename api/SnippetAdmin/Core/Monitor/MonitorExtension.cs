@@ -21,10 +21,10 @@ namespace SnippetAdmin.Core.Monitor
         /// <summary>
         /// map to metrics hub
         /// </summary>
-        public static IEndpointRouteBuilder MapMetricHub(this IEndpointRouteBuilder endpoints)
+        public static WebApplication MapMetricHub(this WebApplication application)
         {
-            endpoints.MapHub<MetricsHub>("/metrics");
-            return endpoints;
+			application.MapHub<MetricsHub>("/metrics");
+            return application;
         }
     }
 }

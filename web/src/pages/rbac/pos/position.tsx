@@ -1,6 +1,6 @@
 import { Button, Divider, Form, Input, InputNumber, Modal, Pagination, Space, Table, Tooltip } from 'antd';
 import { RightElement } from '../../../components/right/rightElement';
-import './position.less';
+import './position.css';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { PositionService } from '../../../http/requests/position';
@@ -115,7 +115,7 @@ export default function Position() {
                     <Pagination current={page} total={total} onChange={async (p, s) => { setPage(p); setSize(s); await getPositions(p, s); }} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
                 }
             </div>
-            <Modal visible={positionModalVisible} title="职位信息" footer={null} onCancel={() => setPositionModalVisible(false)}
+            <Modal open={positionModalVisible} title="职位信息" footer={null} onCancel={() => setPositionModalVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={positionEditForm} onFinish={positionSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -146,7 +146,7 @@ export default function Position() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

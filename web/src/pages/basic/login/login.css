@@ -1,0 +1,63 @@
+.full-window {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-window .login-card {
+    min-width: 400px;
+    padding: 0 60px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid gray;
+    box-shadow: 6px 6px 4px #0a0a0a;
+}
+
+.full-window .login-card .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-window .login-card .logo-contaier {
+    text-align: center;
+    vertical-align: center;
+}
+
+.full-window .login-card .logo-contaier .logo {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+
+.full-window .login-card .logo-contaier .logo-text {
+    font-size: 30px;
+    color: white;
+}
+
+.full-window .login-card .form-container {
+    display: block;
+    width: 280px;
+}
+
+.full-window .login-card .thrid-login-bar {
+    display: block;
+    width: 100%;
+    text-align: right;
+    visibility: hidden;
+}
+
+.full-window .login-card .thrid-login-bar button {
+    margin-left: 5px;
+}
+
+.full-window .copy-right-bar {
+    position: absolute;
+    bottom: 20px;
+    color: rgba(255, 255, 255, 0.3);
+    user-select: none;
+    font-size: 1.2em;
+}

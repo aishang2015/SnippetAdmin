@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { dateFormat } from "../../../common/time";
 import { LoginLogService } from "../../../http/requests/login-log";
 
-import './login.less';
 
 
 export default function Login() {

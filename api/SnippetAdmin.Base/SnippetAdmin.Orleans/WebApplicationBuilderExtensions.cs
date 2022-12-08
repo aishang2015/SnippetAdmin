@@ -16,13 +16,6 @@ namespace SnippetAdmin.Orleans
             {
                 builder.UseLocalhostClustering();
                 builder.AddMemoryGrainStorage("SnippetAdminSilo");
-                builder.ConfigureApplicationParts(parts =>
-                {
-                    types.ToList().ForEach(type =>
-                    {
-                        parts.AddApplicationPart(type.Assembly).WithReferences();
-                    });
-                });
             });
 
             return hostBuilder;

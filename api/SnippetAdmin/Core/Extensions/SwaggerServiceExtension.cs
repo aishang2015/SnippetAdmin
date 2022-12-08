@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.OpenApi.Models;
 
 namespace SnippetAdmin.Core.Extensions
 {
@@ -35,7 +36,10 @@ namespace SnippetAdmin.Core.Extensions
                         Array.Empty<string>()
                     }
                 });
-            });
+
+				var filePath = Path.Combine(AppContext.BaseDirectory, "SnippetAdmin.xml");
+				c.IncludeXmlComments(filePath);
+			});
             return services;
         }
     }

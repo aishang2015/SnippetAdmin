@@ -142,22 +142,21 @@ namespace SnippetAdmin.DynamicApi
                      references: AppDomain.CurrentDomain.GetAssemblies().Select(x => MetadataReference.CreateFromFile(x.Location)));
 
                 Assembly compiledAssembly;
-                using (var stream = new MemoryStream())
-                {
-                    // 检测脚本代码是否有误
-                    var compileResult = compilation.Emit(stream);
-                    if (compileResult.Success)
-                    {
-                        compiledAssembly = Assembly.Load(stream.GetBuffer());
+				using var stream = new MemoryStream();
 
-                        builder.ConfigureApplicationPartManager(apm =>
-                        {
-                            var assemblyPart = new AssemblyPart(compiledAssembly);
-                            apm.ApplicationParts.Add(assemblyPart);
-                        });
-                    }
-                }
-            }
+				// 检测脚本代码是否有误
+				var compileResult = compilation.Emit(stream);
+				if (compileResult.Success)
+				{
+					compiledAssembly = Assembly.Load(stream.GetBuffer());
+
+					builder.ConfigureApplicationPartManager(apm =>
+					{
+						var assemblyPart = new AssemblyPart(compiledAssembly);
+						apm.ApplicationParts.Add(assemblyPart);
+					});
+				}
+			}
             return builder;
         }
 
@@ -176,10 +175,8 @@ namespace SnippetAdmin.DynamicApi
 
             var fullpath = Path.Combine(filePath, fileName);
 
-            using (var file = new StreamWriter(File.Create(fullpath)))
-            {
-                file.Write(fileContent);
-            }
-        }
+			using var file = new StreamWriter(File.Create(fullpath));
+			file.Write(fileContent);
+		}
     }
 }

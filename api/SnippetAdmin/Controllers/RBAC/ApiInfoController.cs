@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Endpoint.Apis.RBAC;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -10,6 +12,7 @@ namespace SnippetAdmin.Controllers.RBAC
     [ApiExplorerSettings(GroupName = "v1")]
     public class ApiInfoController : ControllerBase, IApiInfoApi
     {
+
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionGroupCollectionProvider;
 
         public ApiInfoController(IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider)
@@ -21,8 +24,9 @@ namespace SnippetAdmin.Controllers.RBAC
         /// 获取程序所有API信息
         /// </summary>
         [HttpPost]
-        [ProducesResponseType(typeof(CommonResult<List<string>>), 200)]
+        [CommonResultResponseType<List<string>>]
         [Authorize(Policy = "AccessApi")]
+        [Description("获取程序所有API信息")]
         public Task<CommonResult<List<string>>> GetApiPaths()
         {
             var result = _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items

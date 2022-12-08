@@ -1,6 +1,7 @@
-import { Picker } from 'emoji-mart';
-import 'emoji-mart/css/emoji-mart.css';
-import './org.less';
+
+import data from '@emoji-mart/data';
+//import 'emoji-mart/css/emoji-mart.css';
+import './org.css';
 
 import { faEdit, faObjectGroup, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,6 +10,10 @@ import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
 import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
+import React from 'react';
+
+// @ts-ignore - alternatively, add `declare module "@emoji-mart/react"` to your project's type declarations
+const Picker = React.lazy(() => import("@emoji-mart/react"));
 
 export default function Org() {
 
@@ -282,7 +287,7 @@ export default function Org() {
                 </div>
             </div>
 
-            <Modal visible={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
+            <Modal open={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
                 title="组织信息编辑" width={800} maskClosable={false}>
                 <Form preserve={false} form={orgForm} onFinish={orgSubmit}>
                     <Form.Item name="id" hidden>
@@ -333,37 +338,24 @@ export default function Org() {
                         <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
 
-            <Modal width={390} visible={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
+            <Modal width={390} open={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
                 onCancel={() => setEmojiModalVisible(false)} maskClosable={false}>
-                <Picker native={true} autoFocus={true} emoji={orgIconId} onSelect={(e: any) => {
-                    setOrgIcon(e.native);
-                    setOrgIconId(e.id);
-                    setEmojiModalVisible(false);
-                }} i18n={{
-                    search: '搜索',
-                    notfound: '没找到您想要的Emoji',
-                    categories: {
-                        search: '搜索结果',
-                        recent: '经常使用',
-                        people: '人',
-                        nature: '动物和自然',
-                        foods: '食品和饮料',
-                        activity: '活动',
-                        places: '旅行和地点',
-                        objects: '物体',
-                        symbols: '符号',
-                        flags: '旗帜',
-                        custom: '自定义',
+                <Picker data={data} emoji={orgIconId} theme="light" locale={"zh"} onEmojiSelect={
+                    (value: any) => {
+                        console.log(value);
+                        setOrgIcon(value.native);
+                        setOrgIconId(value.id);
+                        setEmojiModalVisible(false);
                     }
-                }} />
+                } />                
             </Modal>
 
-            <Modal width={600} visible={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
+            <Modal width={600} open={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
 
                 <RightElement identify="add-update-org-type" child={
                     <>
@@ -372,7 +364,7 @@ export default function Org() {
                 }></RightElement>
                 <Table size="small" columns={orgTypeTableColumns} dataSource={orgTypeData} pagination={false}></Table>
             </Modal>
-            <Modal width={500} visible={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
+            <Modal width={500} open={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
                 title="组织类型编辑" maskClosable={false}>
 
                 <Form preserve={false} form={orgTypeForm} onFinish={orgTypeSubmit}>
@@ -397,7 +389,7 @@ export default function Org() {
                         <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off2"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

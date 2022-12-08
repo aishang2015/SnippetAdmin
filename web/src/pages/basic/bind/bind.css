@@ -1,0 +1,16 @@
+.bind-window {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bind-window .bind-card {
+    width: 350px;
+    text-align: center;
+}
+
+.bind-window .bind-card .logo-contaier {
+    font-size: 48px;
+}

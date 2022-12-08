@@ -6,7 +6,7 @@ import { RcFile, UploadFile } from 'antd/lib/upload/interface';
 import { useEffect, useState } from 'react';
 import { Configuration } from '../../../common/config';
 import { SettingService } from '../../../http/requests/setting';
-import './setting.less';
+import './setting.css';
 
 export default function Setting() {
 

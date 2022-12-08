@@ -4,6 +4,8 @@ export class Configuration {
 
     static BaseUrl: string;
 
+    static Mode: string;
+
     static OauthSetting: {
         github: {
             client_id: string;
@@ -13,7 +15,7 @@ export class Configuration {
             client_id: string;
             redirect_uri: string;
         },
-        
+
     };
 
     static init() {
@@ -24,6 +26,7 @@ export class Configuration {
                     .then(result => {
                         that.BaseUrl = result.data.server_url;
                         that.OauthSetting = result.data.oauth;
+                        that.Mode = result.data.mode;
                         resolve('success');
                     }, error => {
                         console.error("无法找到配置文件！");

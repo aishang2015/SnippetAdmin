@@ -1,5 +1,6 @@
-import { faArrowRight, faBug, faClipboardCheck, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faHome, faInfo, faSitemap, faTasks, faThumbtack, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBug, faClipboardCheck, faCode, faCodeBranch, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faFirstAid, faHome, faInfo, faSitemap, faTasks, faThumbtack, faTools, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Configuration } from './config';
 
 export class Constants {
 
@@ -36,7 +37,6 @@ export class Constants {
             path: '', name: '系统配置', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
                 { path: '/setting', name: '系统配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faCogs} fixedWidth /> },
                 { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faDiceOne} fixedWidth /> },
-                { path: '/export', name: '数据导出', identify: 'dic-config', icon: <FontAwesomeIcon icon={faFileExport} fixedWidth /> },
             ]
         },
         // {
@@ -47,6 +47,22 @@ export class Constants {
         //     ]
         // },
     ];
+
+    static GetRouteInfo() {
+        if (Configuration.Mode === "develop") {
+            return Constants.RouteInfo.concat([
+                {
+                    path: '', name: '开发者工具', identify: '', icon: <FontAwesomeIcon icon={faCode} fixedWidth />, children: [
+                        { path: '/export', name: '数据导出', identify: '', icon: <FontAwesomeIcon icon={faFileExport} fixedWidth /> },
+                        { path: '/code', name: '代码生成', identify: '', icon: <FontAwesomeIcon icon={faCodeBranch} fixedWidth /> },
+                        { path: '/frontend', name: '前端工具', identify: '', icon: <FontAwesomeIcon icon={faTools} fixedWidth /> },
+                    ]
+                }
+            ]);
+        }
+
+        return Constants.RouteInfo;
+    }
 
     static flatRoute = function (array: any) {
         let result = new Array<any>();

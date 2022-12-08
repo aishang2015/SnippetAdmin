@@ -1,0 +1,21 @@
+#user-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+#user-container #user-group-container {
+    padding: 10px;
+    border-right: 1px solid #eeeeee;
+    width: 320px;
+}
+
+#user-container #user-list-container {
+    padding: 10px;
+    flex: 1;
+    overflow: auto;
+}
+
+#user-container #user-list-container .searchInput {
+    width: 180px;
+}

@@ -1,6 +1,6 @@
 import { Avatar, Button, Divider, Form, Input, Modal, Pagination, Radio, Select, Space, Switch, Table, Tag, Tooltip, Tree, TreeSelect } from 'antd';
 
-import './user.less';
+import './user.css';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { DebounceSelect } from '../../../components/common/debounceSelect';
@@ -390,7 +390,7 @@ export default function User() {
                 </div>
             </div>
 
-            <Modal visible={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
+            <Modal open={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item name="userName" label="账号">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
@@ -427,7 +427,7 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal visible={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
+            <Modal open={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={orgSettingForm} onFinish={submitOrgMember} preserve={false}>
                     <Form.Item label="成员" name="members" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} rules={
@@ -444,7 +444,7 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal visible={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
+            <Modal open={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={userEditForm} onFinish={userInfoSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -468,8 +468,8 @@ export default function User() {
                     }>
                         <Input autoComplete="off2" placeholder="请输入姓名" />
                     </Form.Item>
-                    <Form.Item name="gender" label="性别">
-                        <Radio.Group defaultValue={0}>
+                    <Form.Item name="gender" label="性别" initialValue={0}>
+                        <Radio.Group>
                             <Radio value={0}>未知</Radio>
                             <Radio value={1}>男</Radio>
                             <Radio value={2}>女</Radio>
@@ -505,12 +505,12 @@ export default function User() {
                         </Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>
 
-            <Modal visible={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
+            <Modal open={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={pwdEditForm} onFinish={pwdSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -534,7 +534,7 @@ export default function User() {
                         <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
                     </Form.Item>
                 </Form>
             </Modal>

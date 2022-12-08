@@ -1,0 +1,80 @@
+#chat-container {
+    width: 460px;
+    height: 924px;
+    padding: 100px 20px 80px 20px;
+    position: relative;
+}
+
+#chat-container #message-area {
+    height: calc(60%);
+    width: calc(106%);
+    padding-top: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#chat-container #message-area .send-message-area {
+    margin-top: 10px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 370px 50px;
+}
+
+#chat-container #message-area .send-message-area .send-message-content {
+    text-align: right;
+    margin-left: 70px;
+}
+
+#chat-container #message-area .send-message-area .send-message-content .send-message {
+    text-align: left;
+    display: inline-block;
+    padding: 10px;
+    background-color: gainsboro;
+    border-radius: 10px;
+    border-start-end-radius: 0;
+    white-space: pre-wrap;
+}
+
+#chat-container #message-area .send-message-area .send-message-content .send-message-time {
+    color: #bbb;
+}
+
+#chat-container #message-area .send-message-area .send-user-avatar {
+    text-align: center;
+}
+
+#chat-container #message-area .receive-message-area {
+    margin-top: 10px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50px 370px;
+}
+
+#chat-container #message-area .receive-message-area .receive-message-content {
+    margin-right: 70px;
+}
+
+#chat-container #message-area .receive-message-area .receive-message-content .receive-message {
+    display: inline-block;
+    padding: 10px;
+    background-color: gainsboro;
+    border-radius: 10px;
+    border-start-start-radius: 0;
+    white-space: pre-wrap;
+}
+
+#chat-container #message-area .receive-message-area .receive-message-content .receive-message-time {
+    color: #bbb;
+}
+
+#chat-container #message-area .receive-message-area .receive-user-avatar {
+    text-align: center;
+}
+
+#chat-container #send-area {
+    position: absolute;
+    width: calc(60%);
+    bottom: 80px;
+    display: flex;
+    align-items: flex-end;
+}

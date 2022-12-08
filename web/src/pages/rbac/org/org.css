@@ -1,0 +1,15 @@
+#org-container {
+    display: flex;
+    height: 100%;
+}
+
+#org-container #org-tree-container {
+    width: 320px;
+    border-right: 1px solid #eeeeee;
+    padding: 10px;
+}
+
+#org-container #org-detail-container {
+    flex: 1;
+    padding: 10px;
+}

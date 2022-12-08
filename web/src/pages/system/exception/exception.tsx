@@ -2,7 +2,7 @@ import { Pagination, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { ExceptionLogService } from '../../../http/requests/exception';
-import './exception.less';
+
 
 export default function Exception() {
 
@@ -20,7 +20,7 @@ export default function Exception() {
             )
         },
         { title: '异常类型', dataIndex: "type", align: 'center', width: '300px' },
-        { title: '异常消息', dataIndex: "message", align: 'center' },
+        { title: '异常消息', dataIndex: "message", align: 'left' },
         { title: '异常源', dataIndex: "source", align: 'center', width: '200px' },
         {
             title: '发生时间', dataIndex: "happenedTime", align: 'center', width: '180px',

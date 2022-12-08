@@ -11,6 +11,7 @@ export interface SysAccessLogRequest {
     page?: number;
     size?: number;
     sorts?: Array<SortModel> | null;
+    month?: string | null;
     containedMethod?: string | null;
     equalMethod?: string | null;
     containedPath?: string | null;

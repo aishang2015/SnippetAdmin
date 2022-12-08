@@ -1,12 +1,12 @@
 import { faCircleNotch, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, Input, InputNumber, Modal, Pagination, Table } from 'antd';
+import { Button, DatePicker, Form, Input, InputNumber, Modal, Pagination, Table } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { AccessLogService } from '../../../http/requests/access';
+import dayjs from 'dayjs';
 
-import './access.less';
 
 
 export default function Access() {
@@ -30,6 +30,7 @@ export default function Access() {
             )
         },
         { title: '请求方法', dataIndex: "method", align: 'center', width: '100px' },
+        { title: '方法描述', dataIndex: "description", align: 'center' },
         { title: '请求路径', dataIndex: "path", align: 'center' },
         { title: '用户名', dataIndex: "username", align: 'center', width: '220px' },
         { title: '访问者ip', dataIndex: "remoteIp", align: 'center', width: '100px' },
@@ -55,6 +56,7 @@ export default function Access() {
                     isAsc: false
                 }
             ],
+            month: searchObj.searchMonth ? searchObj.searchMonth.format('YYYYMM') : dayjs().format('YYYYMM'),
             lowerElapsedTime: searchObj.searchElapsed,
             equalPath: searchObj.searchPath,
             equalUsername: searchObj.searchUsername,
@@ -71,6 +73,7 @@ export default function Access() {
 
     function searchSubmit(values: any) {
         let obj: any = {};
+        obj.searchMonth = values['month'];
         obj.searchPath = values["path"];
         obj.searchUsername = values["username"];
         obj.searchIp = values["ip"];
@@ -96,7 +99,7 @@ export default function Access() {
                 <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faFilter} fixedWidth />}
                     onClick={openSearchModal}>查找</Button>
             </div>
-            <Table bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1230 }}
+            <Table bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1600 }}
                 expandable={{
                     expandedRowRender: record =>
                         <div>
@@ -111,8 +114,11 @@ export default function Access() {
                 <Pagination current={page} total={total} showSizeChanger={true} style={{ marginTop: '10px' }}
                     onChange={async (p, s) => { setPage(p); setSize(s); }}></Pagination>
             }
-            <Modal visible={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}>
+            <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
+                    <Form.Item name="month" label="月份" >
+                        <DatePicker picker="month" defaultValue={dayjs(new Date())} style={{ width: "100%" }}/>
+                    </Form.Item>
                     <Form.Item name="path" label="请求路径">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" />
                     </Form.Item>

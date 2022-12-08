@@ -1,0 +1,89 @@
+#flow-container {
+    background-color: #e3f9fd;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#flow-container #flow-component-bar {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    padding: 10px;
+    background-color: ghostwhite;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+}
+
+#flow-container .mt-10 {
+    margin-top: 10px;
+}
+
+#flow-container .node {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    user-select: none;
+    background: white;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 10px;
+}
+
+#flow-container .node .node-draggable {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    cursor: move;
+}
+
+#flow-container .node-one {
+    border: 1px solid #f5222d;
+    background: #f5222d;
+}
+
+#flow-container .node-two {
+    border: 1px solid #13c2c2;
+    background: #13c2c2;
+}
+
+#flow-container .node-three {
+    border: 1px solid #FFC773;
+    background: #FFC773;
+}
+
+#flow-container .node-four {
+    border: 1px solid #2E4E7E;
+    background: #2E4E7E;
+}
+
+#flow-container .node-five {
+    border: 1px solid #519a73;
+    background: #519a73;
+}
+
+#flow-container .node-selected {
+    border: 1px dashed black;
+}
+
+#flow-container #zoom-controller {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+#flow-container #zoom-controller #scale-value {
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+}

@@ -76,7 +76,7 @@ export class Axios {
         // 添加认证头拦截器
         Axios.instance.interceptors.request.use(
             config => {
-                config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
+                config.headers!["Authorization"] = "Bearer " + localStorage.getItem("token");
                 return config;
             },
             error => {

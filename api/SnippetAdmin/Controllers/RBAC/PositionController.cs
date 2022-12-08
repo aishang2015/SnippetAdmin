@@ -9,6 +9,7 @@ using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Apis.RBAC;
 using SnippetAdmin.Endpoint.Models.RBAC.Position;
+using System.ComponentModel;
 
 namespace SnippetAdmin.Controllers.RBAC
 {
@@ -28,9 +29,13 @@ namespace SnippetAdmin.Controllers.RBAC
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// 创建或添加一个职位
+        /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> AddOrUpdatePositionAsync(AddOrUpdatePositionInputModel inputModel)
+		[Description("创建或添加一个职位")]
+		public async Task<CommonResult> AddOrUpdatePositionAsync(AddOrUpdatePositionInputModel inputModel)
         {
             // validate
             if (_dbContext.RbacPositions.Any(p => p.Id != inputModel.Id && p.Name == inputModel.Name))
@@ -64,9 +69,13 @@ namespace SnippetAdmin.Controllers.RBAC
             return CommonResult.Success(MessageConstant.POSITION_INFO_0001);
         }
 
+        /// <summary>
+        /// 删除一个职位
+        /// </summary>
         [HttpPost]
         [CommonResultResponseType]
-        public async Task<CommonResult> DeletePositionAsync(DeletePositionInputModel inputModel)
+		[Description("删除一个职位")]
+		public async Task<CommonResult> DeletePositionAsync(DeletePositionInputModel inputModel)
         {
             var position = _dbContext.RbacPositions.Find(inputModel.Id);
             var userClaims = _dbContext.UserClaims.Where(uc => uc.ClaimValue == inputModel.Id.ToString() &&
@@ -79,9 +88,13 @@ namespace SnippetAdmin.Controllers.RBAC
             return CommonResult.Success(MessageConstant.POSITION_INFO_0002);
         }
 
-        [HttpPost]
-        [CommonResultResponseType(typeof(GetPositionOutputModel))]
-        public async Task<CommonResult<GetPositionOutputModel>> GetPosition([FromBody] IdInputModel<int> inputModel)
+		/// <summary>
+		/// 取得职位信息
+		/// </summary>
+		[HttpPost]
+        [CommonResultResponseType<GetPositionOutputModel>]
+		[Description("取得职位信息")]
+		public async Task<CommonResult<GetPositionOutputModel>> GetPosition([FromBody] IdInputModel<int> inputModel)
         {
             var positoin = await _dbContext.RbacPositions.FindAsync(inputModel.Id);
             return CommonResult.Success(new GetPositionOutputModel
@@ -93,9 +106,13 @@ namespace SnippetAdmin.Controllers.RBAC
             });
         }
 
+        /// <summary>
+        /// 查询职位列表
+        /// </summary>
         [HttpPost]
-        [CommonResultResponseType(typeof(PagedOutputModel<GetPositionsOutputModel>))]
-        public async Task<CommonResult<PagedOutputModel<GetPositionsOutputModel>>> GetPositions([FromBody] PagedInputModel inputModel)
+        [CommonResultResponseType<PagedOutputModel<GetPositionsOutputModel>>]
+		[Description("查询职位列表")]
+		public async Task<CommonResult<PagedOutputModel<GetPositionsOutputModel>>> GetPositions([FromBody] PagedInputModel inputModel)
         {
             var query = _dbContext.RbacPositions.OrderBy(p => p.Sorting).AsQueryable();
             query = query.Sort(inputModel.Sorts);
@@ -114,9 +131,13 @@ namespace SnippetAdmin.Controllers.RBAC
             return CommonResult.Success(result);
         }
 
-        [HttpPost]
-        [CommonResultResponseType(typeof(List<DicOutputModel<int>>))]
-        public async Task<CommonResult<List<DicOutputModel<int>>>> GetPositionDic()
+		/// <summary>
+		/// 取得职位字典
+		/// </summary>
+		[HttpPost]
+        [CommonResultResponseType<List<DicOutputModel<int>>>]
+		[Description("取得职位字典")]
+		public async Task<CommonResult<List<DicOutputModel<int>>>> GetPositionDic()
         {
             var result = await _dbContext.RbacPositions.Select(r => new DicOutputModel<int>
             {
