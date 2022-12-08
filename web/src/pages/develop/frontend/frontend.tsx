@@ -1,5 +1,5 @@
 
-import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Select, Space, Switch, Tabs, TreeSelect } from 'antd';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Select, Space, Switch, Table, Tabs, TreeSelect } from 'antd';
 import './frontend.css';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
@@ -10,21 +10,34 @@ export default function Frontend() {
 
     const [tabKey, setTabKey] = useState<string>("form");
 
+
     const [properties, setProperties] = useState<Array<any>>([]);
     const [formSetting, setFormSetting] = useState<any>([]);
     const [formCode, setFormCode] = useState<string>('');
     const [elementForm] = useForm();
+    const [couldGenerateCode, setCouldGenerateCode] = useState<boolean>(true);
+
+
+    const [tableColumns, setTableColumns] = useState<Array<any>>([]);
 
     const items = [
         { label: '表单', key: 'form' },
+        { label: '表格', key: 'table' },
     ];
 
     function tabKeyChanged(key: string) {
         setTabKey(key);
+        elementForm.resetFields();
+        setCouldGenerateCode(true);
+        setFormCode('');
+        setFormSetting({});
+        setProperties([]);
+        setTableColumns([]);
     }
 
     function generateForm(values: any) {
         if (values.properties && values.properties.length > 0) {
+            setCouldGenerateCode(false);
             elementForm.resetFields();
             setFormSetting(values);
             setProperties(values.properties);
@@ -72,7 +85,7 @@ export default function Frontend() {
             <FormItem name="${p.name}" label="${p.label}" required="${p.isRequired ?? false}" hidden="${p.isHidden ?? false}"
                 valuePropName="${(p.type === "checkbox" || p.type === "switch") ? "checked" : "value"}" rules={
                     ${p.isRequired ? ("[{ required: true, message: \"请输入" + p.label + "\" }]") : ("[]")}
-                } preserve={false}> 
+                } preserve={false}>
                 ${getCom(p.type, p.name)}
             </FormItem>
             `;
@@ -100,13 +113,13 @@ export default function Frontend() {
             let formData = {
             ${formData}
             };
-        }finally{            
+        }finally{
             setIsLoading(false);
         }
     }
 
     return (
-        <Form form={form} labelCol={{ span: ${formSetting.labelCol} }} wrapperCol={{ span: ${formSetting.wrapperCol} }}>
+        <Form form={form} labelCol={{ span: ${formSetting.labelCol} }} wrapperCol={{ span: ${formSetting.wrapperCol} }} layout="${formSetting.layout}">
             ${pHtml}
             <Form.Item wrapperCol={{ offset: ${formSetting.labelCol}, span: ${formSetting.wrapperCol} }}>
                 <Button type='primary' htmlType="submit" loading={isLoading}>保存</Button>
@@ -132,6 +145,142 @@ export default function Frontend() {
         document.body.removeChild(textArea);
     }
 
+    //#region 表格
+    function generateTable(values: any) {
+        if (values.properties && values.properties.length > 0) {
+            setCouldGenerateCode(false);
+            elementForm.resetFields();
+            setFormSetting(values);
+            setProperties(values.properties);
+            if (values && values.properties && values.properties.length > 0) {
+                let columns = values.properties.map((p: any) => {
+                    let data: any = {
+                        title: p.label,
+                        dataIndex: p.name,
+                        key: p.name,
+                        align: p.align,
+                    };
+                    if (p.width) {
+                        data.width = p.width
+                    }
+
+                    return data;
+                });
+
+                if (values.noCol) {
+                    columns = [
+                        {
+                            title: "序号",
+                            dataIndex: "no",
+                            key: "no",
+                            width: "100px"
+                        }
+                    ].concat(columns);
+                }
+                if (values.editCol) {
+                    columns = columns.concat([
+                        {
+                            title: "操作",
+                            dataIndex: "operate",
+                            key: "operate"
+                        }
+                    ])
+                }
+
+                setTableColumns(columns);
+            }
+        }
+    }
+
+    function generateTableCode() {
+        let columnHtml = '';
+        for (const p of properties) {
+            columnHtml += `
+            { title: '${p.label}',key: "${p.name}", dataIndex: "${p.name}", align: "${p.align}",${p.width ? "width:'" + p.width + "'," : ''} ${p.render ? "render: (data: any, record: any, index: any) => {}" : ""}},`;
+        }
+        if (formSetting.noCol) {
+            columnHtml = `
+            {
+                title: '序号', dataIndex: "num", align: 'left', width: '100px',
+                render: (data: any, record: any, index: any) => (
+                    <span>{(page - 1) * size + 1 + index}</span>
+                )
+            },` + columnHtml;
+        }
+        if (formSetting.editCol) {
+            columnHtml = columnHtml + `
+            {
+                title: '操作', key: 'operate', align: 'center', width: '130px',
+                render: (text: any, record: any) => (
+                    <Space size="middle">
+                        <RightElement identify="" child={
+                            <>
+                                <Tooltip title="编辑"><a onClick={() => edit(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
+                            </>
+                        }></RightElement>
+                        <RightElement identify="" child={
+                            <>
+                                <Tooltip title="删除"><a onClick={() => remove(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
+                            </>
+                        }></RightElement>
+                    </Space>
+                ),
+            }
+            `;
+        }
+
+        let result = `
+        import { Modal, Pagination, Space, Table, Tooltip } from 'antd';
+        import { useEffect, useState } from 'react';
+        import { RightElement } from '../../../components/right/rightElement';
+        import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+        import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+        
+        export default function TablePage() {
+            
+            const [page, setPage] = useState(1);
+            const [size, setSize] = useState(10);
+            const [total, setTotal] = useState(0);
+
+            const [modalVisible, setModalVisible] = useState(false);
+            const [tableData, setTableData] = useState(new Array<any>());
+
+            const tableColumns:any = [${columnHtml}];
+
+            useEffect(() => {
+
+            }, []);
+
+            async function edit(id:any){
+                setModalVisible(true);
+            }
+
+            async function remove(id:any){
+                Modal.confirm({
+                    title: '是否删除?',
+                    onOk: async () => {
+                    }
+                })
+            }
+
+            return (
+                <>
+                    <Table columns={tableColumns} dataSource={tableData} pagination={false} size="${formSetting.size}" ></Table>
+                    {total > 0 &&
+                        <Pagination current={page} total={total} onChange={async (p, s) => { setPage(p); setSize(s); }} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
+                    }
+                    <Modal open={modalVisible} title="" footer={null} onCancel={() => setModalVisible(false)}
+                        destroyOnClose={true} maskClosable={false}>
+                    </Modal>
+                </>
+            );
+        }
+        `;
+        setFormCode(result);
+    }
+
+    //#endregion
+
     return (
         <>
             <Tabs items={items} defaultActiveKey="form" onChange={tabKeyChanged} />
@@ -156,6 +305,17 @@ export default function Frontend() {
                                     rules={[{ required: true, message: '请输入' }]}
                                 >
                                     <InputNumber style={{ width: '130px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="方向"
+                                    name="layout"
+                                    initialValue={'horizontal'}
+                                    rules={[{ required: true, message: '请输入' }]}
+                                >
+                                    <Select style={{ width: '130px' }} >
+                                        <Select.Option key='horizontal'>垂直</Select.Option>
+                                        <Select.Option key='inline'>内联</Select.Option>
+                                    </Select>
                                 </Form.Item>
                             </div>
                             <Form.List name="properties">
@@ -218,9 +378,17 @@ export default function Frontend() {
                                                 </Button>
                                             </Form.Item>
                                             <Form.Item>
-                                                <Button type="primary" htmlType='submit' block >
-                                                    生成表单
-                                                </Button>
+                                                <div>
+                                                    <Button type="primary" htmlType='submit' style={{ marginRight: '8px' }} >
+                                                        生成表单
+                                                    </Button>
+                                                    <Button disabled={couldGenerateCode} onClick={generateFormCode} type="primary" htmlType='button' style={{ marginRight: '8px' }}  >
+                                                        生成代码
+                                                    </Button>
+                                                    <Button disabled={couldGenerateCode} onClick={copyFormCode} type="primary" htmlType='button' style={{ marginRight: '8px' }}  >
+                                                        复制代码
+                                                    </Button>
+                                                </div>
                                             </Form.Item>
                                         </>
                                     )
@@ -230,7 +398,7 @@ export default function Frontend() {
                     </div>
                     <div className='output-area'>
                         <Form form={elementForm} labelCol={{ span: formSetting.labelCol }}
-                            wrapperCol={{ span: formSetting.wrapperCol }}>
+                            wrapperCol={{ span: formSetting.wrapperCol }} layout={formSetting.layout}>
                             {
                                 properties.map(p =>
                                 (
@@ -287,16 +455,6 @@ export default function Frontend() {
                                 </Form.Item>
                             }
                         </Form>
-                        {properties.length > 0 &&
-                            <>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={generateFormCode}  >
-                                    生成表单的代码
-                                </Button>
-                                <Button type="primary" onClick={copyFormCode}  >
-                                    复制代码
-                                </Button>
-                            </>
-                        }
                     </div>
                     <div id="code-area">
                         <pre>
@@ -304,6 +462,140 @@ export default function Frontend() {
                         </pre>
                     </div>
                 </div>
+            }
+            {tabKey === "table" &&
+
+                <div className="design-container">
+                    <div className='input-area'>
+                        <Form name='dynamic-form' autoComplete='off' onFinish={generateTable}>
+                            <div style={{ display: 'flex' }}>
+                                <Form.Item
+                                    label="checkBox列"
+                                    name="checkCol"
+                                    initialValue={true}
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox style={{ marginRight: '8px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="序号列"
+                                    name="noCol"
+                                    initialValue={true}
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox style={{ marginRight: '8px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="操作列"
+                                    name="editCol"
+                                    initialValue={true}
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox style={{ marginRight: '8px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="大小"
+                                    name="size"
+                                    initialValue={"large"}
+                                >
+                                    <Select>
+                                        <Select.Option key="large">大</Select.Option>
+                                        <Select.Option key="middle">中</Select.Option>
+                                        <Select.Option key="small">小</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                            <Form.List name="properties">
+                                {
+                                    (fields, { add, remove }) => (
+                                        <>
+                                            {
+                                                fields.map(
+                                                    (field) => (
+                                                        <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
+                                                            <Form.Item
+                                                                {...field}
+                                                                label="标签"
+                                                                name={[field.name, 'label']}
+                                                                rules={[{ required: true, message: '请输入' }]}
+                                                            >
+                                                                <Input style={{ width: '130px' }} />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                {...field}
+                                                                label="名称"
+                                                                name={[field.name, 'name']}
+                                                                rules={[{ required: true, message: '请输入' }]}
+                                                            >
+                                                                <Input style={{ width: '130px' }} />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                {...field}
+                                                                label="对齐"
+                                                                name={[field.name, 'align']}
+                                                                initialValue="center"
+                                                            >
+                                                                <Select style={{ width: '130px' }} >
+                                                                    <Select.Option key="left">左对齐</Select.Option>
+                                                                    <Select.Option key="center">居中</Select.Option>
+                                                                    <Select.Option key="right">右对齐</Select.Option>
+                                                                </Select>
+                                                            </Form.Item>
+                                                            <Form.Item name={[field.name, 'width']} label="宽度">
+                                                                <Input style={{ width: '130px' }} />
+                                                            </Form.Item>
+                                                            <Form.Item name={[field.name, 'render']} initialValue={false} valuePropName="checked">
+                                                                <Checkbox>自定义渲染</Checkbox>
+                                                            </Form.Item>
+                                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                                        </Space>
+                                                    )
+                                                )
+                                            }
+                                            <Form.Item>
+                                                <Button type="dashed" onClick={() => add()} block >
+                                                    添加字段
+                                                </Button>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <div>
+                                                    <Button type="primary" htmlType='submit' style={{ marginRight: '8px' }} >
+                                                        生成表格
+                                                    </Button>
+                                                    <Button disabled={couldGenerateCode} onClick={generateTableCode} type="primary" htmlType='button' style={{ marginRight: '8px' }}  >
+                                                        生成代码
+                                                    </Button>
+                                                    <Button disabled={couldGenerateCode} onClick={copyFormCode} type="primary" htmlType='button' style={{ marginRight: '8px' }}  >
+                                                        复制代码
+                                                    </Button>
+                                                </div>
+                                            </Form.Item>
+                                        </>
+                                    )
+                                }
+                            </Form.List>
+                        </Form>
+                    </div>
+                    <div className='output-area'>
+                        {properties.length > 0 &&
+                            <>
+                                {formSetting.checkCol &&
+                                    <Table rowSelection={{ type: 'checkbox' }} columns={tableColumns} size={formSetting.size}></Table>
+                                }
+                                {!formSetting.checkCol &&
+                                    <Table columns={tableColumns} size={formSetting.size}></Table>
+                                }
+                            </>
+                        }
+
+                    </div>
+                    <div id="code-area">
+                        <pre>
+                            {formCode}
+                        </pre>
+                    </div>
+                </div>
+
             }
         </>
     );
