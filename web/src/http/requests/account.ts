@@ -43,6 +43,7 @@ export interface LoginResult {
 export interface UserInfoResult {
     id: number;
     userName: string;
+    realName: string;
     email: string;
     phoneNumber: string;
 }

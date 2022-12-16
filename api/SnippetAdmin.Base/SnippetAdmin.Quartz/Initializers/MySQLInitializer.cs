@@ -1,7 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 
-namespace SnippetAdmin.Quartz
+namespace SnippetAdmin.Quartz.Initializers
 {
     public partial class DBInitializer
     {
@@ -12,16 +12,16 @@ namespace SnippetAdmin.Quartz
             var dbName = regex.Match(connectionStr).Groups[0].Value
                 .Replace("Database=", "")
                 .Replace(";", "");
-            var connection = new MySqlConnection(noDbStr);
+            using var connection = new MySqlConnection(noDbStr);
             connection.Open();
 
             var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = string.Format(DropDatabaseSql, dbName);
+            deleteCmd.CommandText = string.Format(DropMySqlDatabaseSql, dbName);
             deleteCmd.Connection = connection;
             deleteCmd.ExecuteNonQuery();
 
             var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = string.Format(CheckDatabaseExist, dbName);
+            checkCmd.CommandText = string.Format(CheckMySqlDatabaseExist, dbName);
             checkCmd.Connection = connection;
             var result = (long)checkCmd.ExecuteScalar();
 
@@ -33,7 +33,7 @@ namespace SnippetAdmin.Quartz
                 cmd.Transaction = transaction;
                 cmd.CommandType = System.Data.CommandType.Text;
 
-                cmd.CommandText = string.Format(CreateDatabaseSql, dbName);
+                cmd.CommandText = string.Format(CreateMySqlDatabaseSql, dbName);
                 cmd.ExecuteNonQuery();
                 transaction.Commit();
 
@@ -43,7 +43,7 @@ namespace SnippetAdmin.Quartz
                 cmd2.Transaction = transaction2;
                 cmd2.CommandType = System.Data.CommandType.Text;
 
-                cmd2.CommandText = string.Format(CreateTableSql, dbName);
+                cmd2.CommandText = string.Format(CreateMySqlTableSql, dbName);
                 cmd2.ExecuteNonQuery();
                 transaction2.Commit();
             }
@@ -51,24 +51,18 @@ namespace SnippetAdmin.Quartz
         }
 
 
-        private static string CheckDatabaseExist = @"
+        private static string CheckMySqlDatabaseExist = @"
 SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '{0}';";
 
-        private static string DropDatabaseSql = @"
+        private static string DropMySqlDatabaseSql = @"
 DROP DATABASE IF EXISTS {0};";
 
-        private static string CreateDatabaseSql = @"
+        private static string CreateMySqlDatabaseSql = @"
         CREATE DATABASE IF NOT EXISTS {0};
 ";
 
-        private static string CreateTableSql = @"
+        private static string CreateMySqlTableSql = @"
 
-# By: Ron Cordell - roncordell
-#  I didn't see this anywhere, so I thought I'd post it here. This is the script from Quartz to create the tables in a MySQL database, modified to use INNODB instead of MYISAM.
-
-
-# make sure you have UTF-8 collaction for best .NET interoperability
-# CREATE DATABASE quartznet CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE {0};
 DROP TABLE IF EXISTS QRTZ_FIRED_TRIGGERS;
 DROP TABLE IF EXISTS QRTZ_PAUSED_TRIGGER_GRPS;

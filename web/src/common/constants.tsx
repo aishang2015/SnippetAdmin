@@ -34,8 +34,8 @@ export class Constants {
             ]
         },
         {
-            path: '', name: '系统配置', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
-                { path: '/setting', name: '系统配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faCogs} fixedWidth /> },
+            path: '', name: '系统管理', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
+                { path: '/setting', name: '系统配置', identify: 'sys-config', icon: <FontAwesomeIcon icon={faCogs} fixedWidth /> },
                 { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faDiceOne} fixedWidth /> },
             ]
         },

@@ -1,0 +1,497 @@
+﻿using Microsoft.Data.SqlClient;
+using System.Text.RegularExpressions;
+
+namespace SnippetAdmin.Quartz.Initializers
+{
+	public partial class DBInitializer
+	{
+		public static void InitializeSqlServer(string connectionStr)
+		{
+			var regex = new Regex("Initial Catalog=.*?;");
+			var noDbStr = regex.Replace(connectionStr, string.Empty);
+			var dbName = regex.Match(connectionStr).Groups[0].Value
+					.Replace("Initial Catalog=", string.Empty)
+					.Replace(";", "");
+
+			using var connection = new SqlConnection(noDbStr);
+			connection.Open();
+
+			var checkCmd = connection.CreateCommand();
+			checkCmd.CommandText = string.Format(CheckSqlServerDatabaseExist, dbName);
+			checkCmd.Connection = connection;
+			var result = (int)checkCmd.ExecuteScalar();
+
+			if (result == 1)
+			{
+				// 测试用，每次启动会重置数据库
+				var deleteCmd = connection.CreateCommand();
+				deleteCmd.CommandText = string.Format(DropSqlServerDatabaseSql, dbName);
+				deleteCmd.Connection = connection;
+				deleteCmd.ExecuteNonQuery();
+				CreateDatabase(dbName, connection);
+			}
+			else
+			{
+				CreateDatabase(dbName, connection);
+			}
+
+			static void CreateDatabase(string dbName, SqlConnection connection)
+			{
+				using var cmd = connection.CreateCommand();
+				cmd.Connection = connection;
+				cmd.CommandText = string.Format(CreateSqlServerDatabaseSql, dbName);
+				cmd.ExecuteNonQuery();
+
+				using var transaction2 = connection.BeginTransaction();
+				using var cmd2 = connection.CreateCommand();
+				cmd2.Connection = connection;
+				cmd2.Transaction = transaction2;
+				cmd2.CommandType = System.Data.CommandType.Text;
+
+				cmd2.CommandText = string.Format(CreateSqlServerTableSql, dbName);
+				cmd2.ExecuteNonQuery();
+				transaction2.Commit();
+			}
+		}
+
+		private static string CheckSqlServerDatabaseExist =
+			@"SELECT COUNT(*) FROM MASTER.DBO.SYSDATABASES WHERE NAME='{0}'";
+
+		private static string DropSqlServerDatabaseSql =
+			@"DROP DATABASE {0};";
+
+		private static string CreateSqlServerDatabaseSql =
+			@"CREATE DATABASE {0};";
+
+		// 这个适用于sql server 2016以下版本
+		private static string CreateSqlServerTableSql =
+			@"
+-- this script is for SQL Server versions below 2016
+USE {0};
+
+IF OBJECT_ID(N'[dbo].[FK_QRTZ_TRIGGERS_QRTZ_JOB_DETAILS]', N'F') IS NOT NULL
+ALTER TABLE [dbo].[QRTZ_TRIGGERS] DROP CONSTRAINT [FK_QRTZ_TRIGGERS_QRTZ_JOB_DETAILS];
+
+IF OBJECT_ID(N'[dbo].[FK_QRTZ_CRON_TRIGGERS_QRTZ_TRIGGERS]', N'F') IS NOT NULL
+ALTER TABLE [dbo].[QRTZ_CRON_TRIGGERS] DROP CONSTRAINT [FK_QRTZ_CRON_TRIGGERS_QRTZ_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[FK_QRTZ_SIMPLE_TRIGGERS_QRTZ_TRIGGERS]', N'F') IS NOT NULL
+ALTER TABLE [dbo].[QRTZ_SIMPLE_TRIGGERS] DROP CONSTRAINT [FK_QRTZ_SIMPLE_TRIGGERS_QRTZ_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[FK_QRTZ_SIMPROP_TRIGGERS_QRTZ_TRIGGERS]', N'F') IS NOT NULL
+ALTER TABLE [dbo].[QRTZ_SIMPROP_TRIGGERS] DROP CONSTRAINT [FK_QRTZ_SIMPROP_TRIGGERS_QRTZ_TRIGGERS];
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_QRTZ_JOB_LISTENERS_QRTZ_JOB_DETAILS]') AND parent_object_id = OBJECT_ID(N'[dbo].[QRTZ_JOB_LISTENERS]'))
+ALTER TABLE [dbo].[QRTZ_JOB_LISTENERS] DROP CONSTRAINT [FK_QRTZ_JOB_LISTENERS_QRTZ_JOB_DETAILS];
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_QRTZ_TRIGGER_LISTENERS_QRTZ_TRIGGERS]') AND parent_object_id = OBJECT_ID(N'[dbo].[QRTZ_TRIGGER_LISTENERS]'))
+ALTER TABLE [dbo].[QRTZ_TRIGGER_LISTENERS] DROP CONSTRAINT [FK_QRTZ_TRIGGER_LISTENERS_QRTZ_TRIGGERS];
+
+
+IF OBJECT_ID(N'[dbo].[QRTZ_CALENDARS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_CALENDARS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_CRON_TRIGGERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_CRON_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_BLOB_TRIGGERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_BLOB_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_FIRED_TRIGGERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_FIRED_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_PAUSED_TRIGGER_GRPS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_PAUSED_TRIGGER_GRPS];
+
+IF  OBJECT_ID(N'[dbo].[QRTZ_JOB_LISTENERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_JOB_LISTENERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_SCHEDULER_STATE]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_SCHEDULER_STATE];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_LOCKS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_LOCKS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_TRIGGER_LISTENERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_TRIGGER_LISTENERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_JOB_DETAILS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_JOB_DETAILS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_SIMPLE_TRIGGERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_SIMPLE_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_SIMPROP_TRIGGERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_SIMPROP_TRIGGERS];
+
+IF OBJECT_ID(N'[dbo].[QRTZ_TRIGGERS]', N'U') IS NOT NULL
+DROP TABLE [dbo].[QRTZ_TRIGGERS];
+
+CREATE TABLE [dbo].[QRTZ_CALENDARS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [CALENDAR_NAME] nvarchar(200) NOT NULL,
+  [CALENDAR] varbinary(max) NOT NULL
+);
+
+CREATE TABLE [dbo].[QRTZ_CRON_TRIGGERS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [TRIGGER_NAME] nvarchar(150) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL,
+  [CRON_EXPRESSION] nvarchar(120) NOT NULL,
+  [TIME_ZONE_ID] nvarchar(80) 
+);
+
+CREATE TABLE [dbo].[QRTZ_FIRED_TRIGGERS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [ENTRY_ID] nvarchar(140) NOT NULL,
+  [TRIGGER_NAME] nvarchar(150) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL,
+  [INSTANCE_NAME] nvarchar(200) NOT NULL,
+  [FIRED_TIME] bigint NOT NULL,
+  [SCHED_TIME] bigint NOT NULL,
+  [PRIORITY] int NOT NULL,
+  [STATE] nvarchar(16) NOT NULL,
+  [JOB_NAME] nvarchar(150) NULL,
+  [JOB_GROUP] nvarchar(150) NULL,
+  [IS_NONCONCURRENT] bit NULL,
+  [REQUESTS_RECOVERY] bit NULL 
+);
+
+CREATE TABLE [dbo].[QRTZ_PAUSED_TRIGGER_GRPS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL 
+);
+
+CREATE TABLE [dbo].[QRTZ_SCHEDULER_STATE] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [INSTANCE_NAME] nvarchar(200) NOT NULL,
+  [LAST_CHECKIN_TIME] bigint NOT NULL,
+  [CHECKIN_INTERVAL] bigint NOT NULL
+);
+
+CREATE TABLE [dbo].[QRTZ_LOCKS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [LOCK_NAME] nvarchar(40) NOT NULL 
+);
+
+CREATE TABLE [dbo].[QRTZ_JOB_DETAILS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [JOB_NAME] nvarchar(150) NOT NULL,
+  [JOB_GROUP] nvarchar(150) NOT NULL,
+  [DESCRIPTION] nvarchar(250) NULL,
+  [JOB_CLASS_NAME] nvarchar(250) NOT NULL,
+  [IS_DURABLE] bit NOT NULL,
+  [IS_NONCONCURRENT] bit NOT NULL,
+  [IS_UPDATE_DATA] bit NOT NULL,
+  [REQUESTS_RECOVERY] bit NOT NULL,
+  [JOB_DATA] varbinary(max) NULL
+);
+
+CREATE TABLE [dbo].[QRTZ_SIMPLE_TRIGGERS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [TRIGGER_NAME] nvarchar(150) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL,
+  [REPEAT_COUNT] int NOT NULL,
+  [REPEAT_INTERVAL] bigint NOT NULL,
+  [TIMES_TRIGGERED] int NOT NULL
+);
+
+CREATE TABLE [dbo].[QRTZ_SIMPROP_TRIGGERS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [TRIGGER_NAME] nvarchar(150) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL,
+  [STR_PROP_1] nvarchar(512) NULL,
+  [STR_PROP_2] nvarchar(512) NULL,
+  [STR_PROP_3] nvarchar(512) NULL,
+  [INT_PROP_1] int NULL,
+  [INT_PROP_2] int NULL,
+  [LONG_PROP_1] bigint NULL,
+  [LONG_PROP_2] bigint NULL,
+  [DEC_PROP_1] numeric(13,4) NULL,
+  [DEC_PROP_2] numeric(13,4) NULL,
+  [BOOL_PROP_1] bit NULL,
+  [BOOL_PROP_2] bit NULL,
+  [TIME_ZONE_ID] nvarchar(80) NULL 
+);
+
+CREATE TABLE [dbo].[QRTZ_BLOB_TRIGGERS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [TRIGGER_NAME] nvarchar(150) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL,
+  [BLOB_DATA] varbinary(max) NULL
+);
+
+CREATE TABLE [dbo].[QRTZ_TRIGGERS] (
+  [SCHED_NAME] nvarchar(120) NOT NULL,
+  [TRIGGER_NAME] nvarchar(150) NOT NULL,
+  [TRIGGER_GROUP] nvarchar(150) NOT NULL,
+  [JOB_NAME] nvarchar(150) NOT NULL,
+  [JOB_GROUP] nvarchar(150) NOT NULL,
+  [DESCRIPTION] nvarchar(250) NULL,
+  [NEXT_FIRE_TIME] bigint NULL,
+  [PREV_FIRE_TIME] bigint NULL,
+  [PRIORITY] int NULL,
+  [TRIGGER_STATE] nvarchar(16) NOT NULL,
+  [TRIGGER_TYPE] nvarchar(8) NOT NULL,
+  [START_TIME] bigint NOT NULL,
+  [END_TIME] bigint NULL,
+  [CALENDAR_NAME] nvarchar(200) NULL,
+  [MISFIRE_INSTR] int NULL,
+  [JOB_DATA] varbinary(max) NULL
+);
+
+ALTER TABLE [dbo].[QRTZ_CALENDARS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_CALENDARS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [CALENDAR_NAME]
+  );
+
+ALTER TABLE [dbo].[QRTZ_CRON_TRIGGERS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_CRON_TRIGGERS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_FIRED_TRIGGERS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_FIRED_TRIGGERS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [ENTRY_ID]
+  );
+
+ALTER TABLE [dbo].[QRTZ_PAUSED_TRIGGER_GRPS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_PAUSED_TRIGGER_GRPS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [TRIGGER_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_SCHEDULER_STATE] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_SCHEDULER_STATE] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [INSTANCE_NAME]
+  );
+
+ALTER TABLE [dbo].[QRTZ_LOCKS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_LOCKS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [LOCK_NAME]
+  );
+
+ALTER TABLE [dbo].[QRTZ_JOB_DETAILS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_JOB_DETAILS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [JOB_NAME],
+    [JOB_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_SIMPLE_TRIGGERS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_SIMPLE_TRIGGERS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_SIMPROP_TRIGGERS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_SIMPROP_TRIGGERS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_TRIGGERS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_TRIGGERS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_BLOB_TRIGGERS] WITH NOCHECK ADD
+  CONSTRAINT [PK_QRTZ_BLOB_TRIGGERS] PRIMARY KEY  CLUSTERED
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  );
+
+ALTER TABLE [dbo].[QRTZ_CRON_TRIGGERS] ADD
+  CONSTRAINT [FK_QRTZ_CRON_TRIGGERS_QRTZ_TRIGGERS] FOREIGN KEY
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  ) REFERENCES [dbo].[QRTZ_TRIGGERS] (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  ) ON DELETE CASCADE;
+
+ALTER TABLE [dbo].[QRTZ_SIMPLE_TRIGGERS] ADD
+  CONSTRAINT [FK_QRTZ_SIMPLE_TRIGGERS_QRTZ_TRIGGERS] FOREIGN KEY
+  (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  ) REFERENCES [dbo].[QRTZ_TRIGGERS] (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  ) ON DELETE CASCADE;
+
+ALTER TABLE [dbo].[QRTZ_SIMPROP_TRIGGERS] ADD
+  CONSTRAINT [FK_QRTZ_SIMPROP_TRIGGERS_QRTZ_TRIGGERS] FOREIGN KEY
+  (
+  [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  ) REFERENCES [dbo].[QRTZ_TRIGGERS] (
+    [SCHED_NAME],
+    [TRIGGER_NAME],
+    [TRIGGER_GROUP]
+  ) ON DELETE CASCADE;
+
+ALTER TABLE [dbo].[QRTZ_TRIGGERS] ADD
+  CONSTRAINT [FK_QRTZ_TRIGGERS_QRTZ_JOB_DETAILS] FOREIGN KEY
+  (
+    [SCHED_NAME],
+    [JOB_NAME],
+    [JOB_GROUP]
+  ) REFERENCES [dbo].[QRTZ_JOB_DETAILS] (
+    [SCHED_NAME],
+    [JOB_NAME],
+    [JOB_GROUP]
+  );
+
+-- drop indexes if they exist and rebuild if current ones
+
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_J' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS')) 
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_J] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_JG' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_JG] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_C' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_C] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_G' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_G] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_G_J' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_G_J] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_STATE' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_STATE] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_N_STATE' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_N_STATE] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_N_G_STATE' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_N_G_STATE] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_NEXT_FIRE_TIME' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_NEXT_FIRE_TIME] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_NFT_ST' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_NFT_ST] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_NFT_MISFIRE' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_NFT_MISFIRE] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_NFT_ST_MISFIRE' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_NFT_ST_MISFIRE] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_T_NFT_ST_MISFIRE_GRP' AND object_id = OBJECT_ID('dbo.QRTZ_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_T_NFT_ST_MISFIRE_GRP] on [dbo].[QRTZ_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_TRIG_INST_NAME' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_TRIG_INST_NAME] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_INST_JOB_REQ_RCVRY' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_INST_JOB_REQ_RCVRY] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_J_G' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_J_G] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_JG' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_JG] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_T_G' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_T_G] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_TG' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_TG] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_G_J' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_G_J] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+   
+IF EXISTS (SELECT 1 from sys.indexes WHERE name ='IDX_QRTZ_FT_G_T' AND object_id = OBJECT_ID('dbo.QRTZ_FIRED_TRIGGERS'))
+BEGIN
+    DROP INDEX [IDX_QRTZ_FT_G_T] on [dbo].[QRTZ_FIRED_TRIGGERS]
+END
+
+
+CREATE INDEX [IDX_QRTZ_T_G_J]                 ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, JOB_GROUP, JOB_NAME);
+CREATE INDEX [IDX_QRTZ_T_C]                   ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, CALENDAR_NAME);
+
+CREATE INDEX [IDX_QRTZ_T_N_G_STATE]           ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, TRIGGER_GROUP, TRIGGER_STATE);
+CREATE INDEX [IDX_QRTZ_T_STATE]               ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, TRIGGER_STATE);
+CREATE INDEX [IDX_QRTZ_T_N_STATE]             ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, TRIGGER_NAME, TRIGGER_GROUP, TRIGGER_STATE);
+CREATE INDEX [IDX_QRTZ_T_NEXT_FIRE_TIME]      ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, NEXT_FIRE_TIME);
+CREATE INDEX [IDX_QRTZ_T_NFT_ST]              ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, TRIGGER_STATE, NEXT_FIRE_TIME);
+CREATE INDEX [IDX_QRTZ_T_NFT_ST_MISFIRE]      ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME, TRIGGER_STATE);
+CREATE INDEX [IDX_QRTZ_T_NFT_ST_MISFIRE_GRP]  ON [dbo].[QRTZ_TRIGGERS](SCHED_NAME, MISFIRE_INSTR, NEXT_FIRE_TIME, TRIGGER_GROUP, TRIGGER_STATE);
+
+CREATE INDEX [IDX_QRTZ_FT_INST_JOB_REQ_RCVRY] ON [dbo].[QRTZ_FIRED_TRIGGERS](SCHED_NAME, INSTANCE_NAME, REQUESTS_RECOVERY);
+CREATE INDEX [IDX_QRTZ_FT_G_J]                ON [dbo].[QRTZ_FIRED_TRIGGERS](SCHED_NAME, JOB_GROUP, JOB_NAME);
+CREATE INDEX [IDX_QRTZ_FT_G_T]                ON [dbo].[QRTZ_FIRED_TRIGGERS](SCHED_NAME, TRIGGER_GROUP, TRIGGER_NAME);";
+	}
+}

@@ -8,21 +8,17 @@
 
 密码：admin
 
-使用github action 实现了基于docker，阿里云镜像仓库和阿里云ecs的 CICD 参考目录 /.github/workflows/docker-image.yml
-
 ### 启动方式
 
 - docker-compose up -d
 - 使用visual studio打开api，vscode打开web项目，在appsetting中配置mysql地址。code first模式，程序会自动生成数据库以及数据
 
-
-
 ### 创建模板
 
-- cd api
+- cd api                                  #进入目录
 
-- dotnet new -i .
+- dotnet new -u .                 #卸载
+
+- dotnet new -i .                  #安装
 
 - dotnet new sa -n 你自己的项目名
-
-

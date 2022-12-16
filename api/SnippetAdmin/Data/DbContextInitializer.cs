@@ -108,7 +108,7 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElements.Add(new RbacElement { Id = 56, Name = "页面", Identity = "exceptionRecordPage", Type = ElementType.ButtonLink, AccessApi = "api/SysExceptionLog/GetMany2", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 58, Name = "登录记录", Identity = "loginRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 59, Name = "页面", Identity = "loginRecordPage", Type = ElementType.ButtonLink, AccessApi = "api/SysLoginLog/GetMany2", Sorting = -1 });
-            _dbContext.RbacElements.Add(new RbacElement { Id = 60, Name = "系统配置", Identity = "system-config", Type = ElementType.Menu, AccessApi = "", Sorting = 5 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 60, Name = "系统管理", Identity = "system-config", Type = ElementType.Menu, AccessApi = "", Sorting = 5 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 61, Name = "字典配置", Identity = "dic-config", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 62, Name = "页面", Identity = "dic-page", Type = ElementType.ButtonLink, AccessApi = "api/Dic/GetDicTypeList,api/Dic/GetDicValueList", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 63, Name = "添加字典类型", Identity = "add-dictype", Type = ElementType.ButtonLink, AccessApi = "api/Dic/AddDicType", Sorting = 1 });

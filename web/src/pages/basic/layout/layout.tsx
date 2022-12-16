@@ -1,19 +1,22 @@
-import { faArrowRightLong, faArrowLeftLong, faUser, faEdit, faOutdent, faCaretRight, faCaretLeft, faRightLong, faLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightLong, faArrowLeftLong, faUser, faEdit, faOutdent, faCaretRight, faCaretLeft, faRightLong, faLeftLong, faSquareCaretLeft, faSquareCaretRight, faCircle, faCircleLeft, faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, Button, Divider, Dropdown, Layout, Menu, MenuProps, Space } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import MenuItem from "antd/es/menu/MenuItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Constants } from "../../../common/constants";
 import { StorageService } from "../../../common/storage";
+import { getUserInfo } from "../../../http/requests/account";
+import { RefreshService } from "../../../service/refreshService";
 
 import './layout.css';
 
 export default function BasicLayout() {
 
     const [collapsed, setCollapsed] = useState(false);
+    const [realName, setRealName] = useState<string>('');
 
     const menus: MenuProps['items'] = [
         {
@@ -31,6 +34,16 @@ export default function BasicLayout() {
             , key: '2'
         },
     ];
+
+    useEffect(() => {
+        init();
+    }, []);
+
+    async function init() {
+        await RefreshService.refreshTokenAsync();
+        let info = await getUserInfo();
+        setRealName(info.data.data.realName);
+    }
 
     function logout() {
         StorageService.clearLoginStore();
@@ -95,17 +108,18 @@ export default function BasicLayout() {
                     <Header className="site-layout" style={{ padding: 0, display: 'flex', alignItems: 'center' }}>
 
                         <Button type="text" onClick={() => setCollapsed(!collapsed)} icon={collapsed ?
-                            <FontAwesomeIcon icon={faRightLong} style={{ color: 'white' }} /> :
-                            <FontAwesomeIcon icon={faLeftLong} style={{ color: 'white' }} />} />
+                            <FontAwesomeIcon icon={faCircleRight} style={{ color: 'white' }} /> :
+                            <FontAwesomeIcon icon={faCircleLeft} style={{ color: 'white' }} />} />
                         <div style={{
                             display: 'flex',
                             alignItems: 'center'
                         }}>
 
                             <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
-                                <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '30px' }} />
+                                <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '4px' }} />
                             </Dropdown>
 
+                            <div style={{ color: 'white', marginRight: '30px' }} >{realName}</div>
                         </div>
                     </Header >
                     <Content className="screen_container">
