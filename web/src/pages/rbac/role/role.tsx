@@ -41,19 +41,25 @@ export default function Role() {
         {
             title: '操作', key: 'operate', align: 'center', width: '130px',
             render: (text: any, record: any) => (
-                <Space size="middle">
+                <div>
                     <RightElement identify="edit-role" child={
                         <>
-                            <Tooltip title="编辑角色"><a onClick={() => editRole(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
+                            <Tooltip title="编辑角色">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => editRole(record.id)}><FontAwesomeIcon icon={faEdit} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-role" child={
                         <>
-                            <Tooltip title="删除角色"><a onClick={() => deleteRole(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
+                            <Tooltip title="删除角色">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deleteRole(record.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
-                    <Tooltip title="查看权限"><a onClick={() => viewRight(record.id)}><FontAwesomeIcon icon={faSearch} /></a></Tooltip>
-                </Space>
+                    <Tooltip title="查看权限">
+                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => viewRight(record.id)}><FontAwesomeIcon icon={faSearch} /></Button>
+                    </Tooltip>
+                </div>
             ),
         }
     ];

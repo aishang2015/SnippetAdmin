@@ -110,32 +110,38 @@ export default function User() {
         {
             title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
             render: (data: any, record: any) => (
-                <Space size="middle">
+                <div>
                     <RightElement identify="edit-user" child={
                         <>
-                            <Tooltip title="编辑"><a onClick={() => editUser(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
+                            <Tooltip title="编辑">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => editUser(record.id)}><FontAwesomeIcon icon={faEdit} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-user" child={
                         <>
-                            <Tooltip title="删除"><a onClick={() => deleteUser(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
+                            <Tooltip title="删除">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deleteUser(record.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="set-password" child={
                         <>
-                            <Tooltip title="设定密码"><a onClick={() => setPwd(record.id)}><FontAwesomeIcon icon={faKey} /></a></Tooltip>
+                            <Tooltip title="设定密码">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => setPwd(record.id)}><FontAwesomeIcon icon={faKey} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="move-out" child={
                         <>
                             {selectedOrg !== null && <Tooltip title="移出组织">
-                                <a onClick={() => moveOutOrg(record.id)}>
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => moveOutOrg(record.id)}>
                                     <FontAwesomeIcon icon={faUserSlash} />
-                                </a>
+                                </Button>
                             </Tooltip>}
                         </>
                     }></RightElement>
-                </Space>
+                </div>
             ),
         },
     ];

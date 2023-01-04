@@ -25,24 +25,28 @@ export default function Position() {
                 <span>{(page - 1) * size + 1 + index}</span>
             )
         },
-        { title: '名称', dataIndex: "name", align: 'center', width: '220px' },
+        { title: '名称', dataIndex: "name", align: 'center' },
         { title: '职位编码', dataIndex: "code", align: 'center', width: '220px' },
         { title: '排序', dataIndex: "sorting", align: 'center', width: '100px' },
         {
             title: '操作', key: 'operate', align: 'center', width: '130px',
             render: (text: any, record: any) => (
-                <Space size="middle">
+                <div>
                     <RightElement identify="edit-role" child={
                         <>
-                            <Tooltip title="编辑职位"><a onClick={() => editPosition(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
+                            <Tooltip title="编辑职位">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => editPosition(record.id)}><FontAwesomeIcon icon={faEdit} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-role" child={
                         <>
-                            <Tooltip title="删除职位"><a onClick={() => deletePosition(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
+                            <Tooltip title="删除职位">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deletePosition(record.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
-                </Space>
+                </div>
             ),
         }
     ];

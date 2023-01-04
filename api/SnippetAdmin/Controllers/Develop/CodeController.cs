@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using SnippetAdmin.CommonModel;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Endpoint.Models.Develop.Code;
@@ -30,9 +31,7 @@ import { Axios } from "../request";
 
 export class {entity}Service {
 
-{requests}
-
-}
+{requests}}
 """;
 
 		private const string TsModelTemplate = """
@@ -40,8 +39,8 @@ export class {entity}Service {
  * {modelName}
  */
 export interface {modelName} {
-{properties}
-}
+{properties}}
+
 """;
 
 		private const string TsPropertyTemplate = "    {propertyName}?: null | {propertyType};";
@@ -114,7 +113,7 @@ export interface {modelName} {
 				.Replace("{requests}", stringBuilder.ToString())
 				.Replace("{entity}", controllerName);
 
-			foreach (var model in modelList)
+			foreach (var model in modelList.Where(m => !string.IsNullOrEmpty(m)))
 			{
 				result += "\r\n\r\n";
 				result += model;
@@ -148,6 +147,11 @@ export interface {modelName} {
 		private string GenerateTypeModel(Type type)
 		{
 			if (type == null)
+			{
+				return null;
+			}
+
+			if (type.Name == "String" || type.Name == "Int32")
 			{
 				return null;
 			}
@@ -187,6 +191,10 @@ export interface {modelName} {
 				"Boolean" => "bool",
 				"String" => "string",
 				"Int32" => "number",
+				"DateTime[]" => "Date[]",
+				"Boolean[]" => "bool[]",
+				"String[]" => "string[]",
+				"Int32[]" => "number[]",
 				_ => typeName
 			};
 		}

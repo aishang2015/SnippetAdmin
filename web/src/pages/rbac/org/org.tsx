@@ -5,12 +5,11 @@ import './org.css';
 
 import { faEdit, faObjectGroup, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Space, Table, Tooltip, Tree, TreeSelect } from 'antd';
+import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Table, Tooltip, Tree, TreeSelect } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
 import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
-import React from 'react';
 
 // @ts-ignore - alternatively, add `declare module "@emoji-mart/react"` to your project's type declarations
 const Picker = React.lazy(() => import("@emoji-mart/react"));
@@ -38,7 +37,7 @@ export default function Org() {
 
         {
             title: '序号', dataIndex: "num", align: 'center', width: '90px', fixed: "left",
-            render: (data: any, record: any, index: any) => (
+            render: (_data: any, _record: any, index: any) => (
                 <span>{1 + index}</span>
             )
         },
@@ -47,19 +46,23 @@ export default function Org() {
 
         {
             title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
-            render: (data: any, record: any) => (
-                <Space size="middle">
+            render: (_data: any, record: any) => (
+                <div>
                     <RightElement identify="add-update-org-type" child={
                         <>
-                            <Tooltip title="编辑"><a onClick={() => orgTypeEdit(record)}><FontAwesomeIcon fixedWidth icon={faEdit} /></a></Tooltip>
+                            <Tooltip title="编辑">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => orgTypeEdit(record)}><FontAwesomeIcon fixedWidth icon={faEdit} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="remove-org-type" child={
                         <>
-                            <Tooltip title="删除"><a onClick={() => deleteOrgType(record.id)}><FontAwesomeIcon fixedWidth icon={faTrash} /></a></Tooltip>
+                            <Tooltip title="删除">
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deleteOrgType(record.id)}><FontAwesomeIcon fixedWidth icon={faTrash} /></Button>
+                            </Tooltip>
                         </>
                     }></RightElement>
-                </Space>
+                </div>
             ),
         }
     ];
@@ -179,7 +182,7 @@ export default function Org() {
     }
 
     // 展示组织类型列表
-    async function showOrgTypes(values: any) {
+    async function showOrgTypes(_values: any) {
         setOrgTypeTableVisible(true);
         let result = await OrganizationService.GetOrganizationTypes();
         setOrgTypeData(result.data.data);
@@ -352,7 +355,7 @@ export default function Org() {
                         setOrgIconId(value.id);
                         setEmojiModalVisible(false);
                     }
-                } />                
+                } />
             </Modal>
 
             <Modal width={600} open={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >

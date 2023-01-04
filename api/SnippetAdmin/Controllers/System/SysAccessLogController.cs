@@ -64,7 +64,7 @@ namespace SnippetAdmin.Controllers.System
 			var dataQuery = _snippetadmindbcontext.GetShardingTableSet<SysAccessLog>(inputModel.Month)?.AsQueryable();
 			if (dataQuery == null)
 			{
-				return CommonResult.Fail(MessageConstant.SYSTEM_ERROR_005);
+				return CommonResult.Fail(MessageConstant.SHARDING_ERROR_001);
 			}
 
 			dataQuery = dataQuery.AndIfExist(inputModel.ContainedMethod, d => d.Method.Contains(inputModel.ContainedMethod))

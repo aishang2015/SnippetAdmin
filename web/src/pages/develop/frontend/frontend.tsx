@@ -212,18 +212,22 @@ export default function Frontend() {
             {
                 title: '操作', key: 'operate', align: 'center', width: '130px',
                 render: (text: any, record: any) => (
-                    <Space size="middle">
+                    <div>
                         <RightElement identify="" child={
                             <>
-                                <Tooltip title="编辑"><a onClick={() => edit(record.id)}><FontAwesomeIcon icon={faEdit} /></a></Tooltip>
+                                <Tooltip title="编辑">
+                                    <Button type='link' style={{ padding: '4px 6px' }} onClick={() => edit(record.id)}><FontAwesomeIcon icon={faEdit} /></Button>
+                                </Tooltip>
                             </>
                         }></RightElement>
                         <RightElement identify="" child={
                             <>
-                                <Tooltip title="删除"><a onClick={() => remove(record.id)}><FontAwesomeIcon icon={faTrash} /></a></Tooltip>
+                                <Tooltip title="删除">
+                                    <Button type='link' style={{ padding: '4px 6px' }} onClick={() => remove(record.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+                                </Tooltip>
                             </>
                         }></RightElement>
-                    </Space>
+                    </div>
                 ),
             }
             `;

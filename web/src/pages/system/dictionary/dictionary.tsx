@@ -36,26 +36,26 @@ export default function Dictionary() {
         {
             title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
             render: (data: any, record: any) => (
-                <Space size="middle">
+                <div >
                     <Tooltip title="编辑">
                         <RightElement identify="update-dicvalue" child={
                             <>
-                                <a onClick={() => editValue(record)}>
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => editValue(record)}>
                                     <FontAwesomeIcon icon={faEdit} />
-                                </a>
+                                </Button>
                             </>
                         }></RightElement>
                     </Tooltip>
                     <Tooltip title="删除">
                         <RightElement identify="delete-dicvalue" child={
                             <>
-                                <a onClick={() => deleteValue(record.id)}>
+                                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deleteValue(record.id)}>
                                     <FontAwesomeIcon icon={faTrash} />
-                                </a>
+                                </Button>
                             </>
                         }></RightElement>
                     </Tooltip>
-                </Space>
+                </div>
             ),
         },
     ];
@@ -206,16 +206,16 @@ export default function Dictionary() {
                             <List.Item actions={[
                                 <RightElement identify="edit-dictype" child={
                                     <>
-                                        <a onClick={() => editType(item)}><FontAwesomeIcon icon={faEdit} /></a>
+                                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => editType(item)}><FontAwesomeIcon icon={faEdit} /></Button>
                                     </>
                                 }></RightElement>,
                                 <RightElement identify="delete-dictype" child={
                                     <>
-                                        <a onClick={() => deleteType(item.id!)}><FontAwesomeIcon icon={faTrash} /></a>
+                                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deleteType(item.id!)}><FontAwesomeIcon icon={faTrash} /></Button>
                                     </>
                                 }></RightElement>
                             ]}>
-                                <List.Item.Meta title={<a onClick={() => initValueList(item.id!)}>{item.name}</a>} description={item.code} />
+                                <List.Item.Meta title={<Button type='link' style={{ padding: '4px 0px' }} onClick={() => initValueList(item.id!)}>{item.name}</Button>} description={item.code} />
                             </List.Item>
                         )}
                     />

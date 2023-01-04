@@ -5,9 +5,9 @@ import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { AccessLogService } from '../../../http/requests/access';
+import 'dayjs/locale/zh-cn';
 import dayjs from 'dayjs';
-
-
+dayjs.locale('zh-cn');
 
 export default function Access() {
 
@@ -103,10 +103,19 @@ export default function Access() {
                 expandable={{
                     expandedRowRender: record =>
                         <div>
-                            <p style={{ margin: 0 }}>请求体：</p>
-                            <p style={{ margin: 0 }}>{record.requestBody}</p>
-                            <p style={{ margin: 0 }}>响应体：</p>
-                            <p style={{ margin: 0 }}>{record.responseBody}</p>
+                            {record.requestBody &&
+                                <>
+                                    <p style={{ margin: 0 }}>请求数据：</p>
+                                    <pre style={{ margin: 0 }}>{JSON.stringify(JSON.parse(record.requestBody), null, 2)}</pre>
+                                </>
+
+                            }
+                            {record.responseBody &&
+                                <>
+                                    <p style={{ margin: 0 }}>响应数据：</p>
+                                    <pre style={{ margin: 0 }}>{JSON.stringify(JSON.parse(record.responseBody), null, 2)}</pre>
+                                </>
+                            }
                         </div>
                 }}
                 pagination={false} size="small" ></Table>
@@ -117,7 +126,7 @@ export default function Access() {
             <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item name="month" label="月份" >
-                        <DatePicker picker="month" defaultValue={dayjs(new Date())} style={{ width: "100%" }}/>
+                        <DatePicker picker="month" defaultValue={dayjs(new Date())} style={{ width: "100%" }} />
                     </Form.Item>
                     <Form.Item name="path" label="请求路径">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" />

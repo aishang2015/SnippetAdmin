@@ -57,13 +57,13 @@ export default function TaskManage(props: any) {
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <Tooltip title="编辑任务">
-                        <a onClick={() => { editTask(record.id) }}><FontAwesomeIcon icon={faEdit} /></a>
+                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { editTask(record.id) }}><FontAwesomeIcon icon={faEdit} /></Button>
                     </Tooltip>
                     <Tooltip title="删除任务">
-                        <a onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} /></a>
+                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} /></Button>
                     </Tooltip>
                     <Tooltip title="立即执行任务">
-                        <a onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} /></a>
+                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} /></Button>
                     </Tooltip>
                 </Space>
             ),

@@ -10,6 +10,16 @@ import BasicLayout from './pages/basic/layout/layout';
 import { ConfigProvider } from 'antd';
 import Login from './pages/basic/login/login';
 
+type ThemeData = {
+  colorPrimary: string;
+  colorLink: string;
+};
+
+const defaultData: ThemeData = {
+  colorPrimary: '#1677ff',
+  colorLink: '#1677ff'
+};
+
 const App: FC = () => {
 
   const HomePage = React.lazy(() => import('./pages/basic/home/home'));
@@ -39,6 +49,8 @@ const App: FC = () => {
   const FrontToolPage = React.lazy(() => import('./pages/develop/frontend/frontend'));
 
 
+  const [themeData, setThemeData] = React.useState<ThemeData>(defaultData);
+
   const loadingContent = "加载中...";
 
   var noAuthorizedRouter = createBrowserRouter([
@@ -50,7 +62,12 @@ const App: FC = () => {
   var authorizedRouter = createBrowserRouter([
     {
       path: '/',
-      element: <BasicLayout />,
+      element: <BasicLayout onThemeChange={(color: string) => {
+        setThemeData({
+          colorPrimary: color,
+          colorLink: color
+        })
+      }} />,
       children: [
         { path: "", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
         { path: "/home", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
@@ -83,6 +100,18 @@ const App: FC = () => {
     }
   ]);
 
+  React.useEffect(() => {
+
+    let color = localStorage.getItem("primaryColor");
+    if (color === null) {
+      color = "#1677ff";
+      localStorage.setItem("primaryColor", color);
+    }
+    setThemeData({
+      colorPrimary: color,
+      colorLink: color
+    });
+  }, []);
 
   return (
 
@@ -90,8 +119,8 @@ const App: FC = () => {
       locale={zhCN}
       theme={{
         token: {
-          colorPrimary: '#00b96b',
-          colorLink: '#00b96b'
+          colorPrimary: themeData.colorPrimary,
+          colorLink: themeData.colorLink
         },
       }}>
 

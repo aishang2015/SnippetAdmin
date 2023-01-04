@@ -1,10 +1,10 @@
-import { faArrowRightLong, faArrowLeftLong, faUser, faEdit, faOutdent, faCaretRight, faCaretLeft, faRightLong, faLeftLong, faSquareCaretLeft, faSquareCaretRight, faCircle, faCircleLeft, faCircleRight } from "@fortawesome/free-solid-svg-icons";
+import { faCircleLeft, faCircleRight, faEdit, faOutdent, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Button, Divider, Dropdown, Layout, Menu, MenuProps, Space } from "antd";
+import { Avatar, Button, Dropdown, Layout, Menu, MenuProps, Popover, Space } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import MenuItem from "antd/es/menu/MenuItem";
 import { useEffect, useState } from "react";
+import { CirclePicker, ColorResult } from 'react-color';
 import { Link, Outlet } from "react-router-dom";
 import { Constants } from "../../../common/constants";
 import { StorageService } from "../../../common/storage";
@@ -13,30 +13,40 @@ import { RefreshService } from "../../../service/refreshService";
 
 import './layout.css';
 
-export default function BasicLayout() {
+interface IBasicLayout {
+    onThemeChange(color: string): void;
+}
+
+export default function BasicLayout({ onThemeChange }: IBasicLayout) {
+
+    type MenuItem = Required<MenuProps>['items'][number];
 
     const [collapsed, setCollapsed] = useState(false);
     const [realName, setRealName] = useState<string>('');
 
+    const [primaryColor, setPrimaryColor] = useState<string>('');
+
     const menus: MenuProps['items'] = [
         {
             label:
-                <a>
+                <Button type='link' style={{ padding: '4px 6px' }} >
                     <Space><FontAwesomeIcon icon={faEdit} fixedWidth />个人设置</Space>
-                </a>
+                </Button>
             , key: '1'
         }, // 菜单项务必填写 key
         {
             label:
-                <a onClick={() => logout()}>
+                <Button type='link' style={{ padding: '4px 6px' }}  onClick={() => logout()}>
                     <Space><FontAwesomeIcon icon={faOutdent} fixedWidth />注销</Space>
-                </a>
+                </Button>
             , key: '2'
         },
     ];
 
     useEffect(() => {
         init();
+        let color = localStorage.getItem("primaryColor")!;
+        setPrimaryColor(color);
     }, []);
 
     async function init() {
@@ -89,6 +99,12 @@ export default function BasicLayout() {
         return items;
     }
 
+    function handleColorChanged(color: ColorResult) {
+        onThemeChange(color.hex);
+        setPrimaryColor(color.hex);
+        localStorage.setItem("primaryColor",color.hex);
+    }
+
     return (
         <>
             {/* all the other elements */}
@@ -114,12 +130,25 @@ export default function BasicLayout() {
                             display: 'flex',
                             alignItems: 'center'
                         }}>
+                            <Popover content={(
+                                <CirclePicker onChangeComplete={handleColorChanged} />
+                            )}>
+                                <div style={{
+                                    width: '20px', height: '20px', backgroundColor: primaryColor,
+                                    borderRadius: '4px', marginRight: '10px'
+                                }}>
+
+                                </div>
+                            </Popover>
 
                             <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
                                 <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '4px' }} />
                             </Dropdown>
 
-                            <div style={{ color: 'white', marginRight: '30px' }} >{realName}</div>
+                            <div style={{
+                                color: 'white', marginRight: '30px', userSelect: 'none', width: '80px',
+                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                            }} >{realName}</div>
                         </div>
                     </Header >
                     <Content className="screen_container">
