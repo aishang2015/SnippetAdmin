@@ -7,7 +7,7 @@ import 'antd/dist/reset.css';
 import zhCN from 'antd/locale/zh_CN';
 import './App.css';
 import BasicLayout from './pages/basic/layout/layout';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme } from 'antd';
 import Login from './pages/basic/login/login';
 
 type ThemeData = {
@@ -49,7 +49,8 @@ const App: FC = () => {
   const FrontToolPage = React.lazy(() => import('./pages/develop/frontend/frontend'));
 
 
-  const [themeData, setThemeData] = React.useState<ThemeData>(defaultData);
+  const [colorData, setColorData] = React.useState<ThemeData>(defaultData);
+  const [themeData, setThemeData] = React.useState<string>('');
 
   const loadingContent = "加载中...";
 
@@ -62,11 +63,14 @@ const App: FC = () => {
   var authorizedRouter = createBrowserRouter([
     {
       path: '/',
-      element: <BasicLayout onThemeChange={(color: string) => {
-        setThemeData({
+      element: <BasicLayout onColorChange={(color: string) => {
+        setColorData({
           colorPrimary: color,
           colorLink: color
         })
+      }} onThemeChange={(themeStr: string) => {
+        setThemeData(themeStr);
+
       }} />,
       children: [
         { path: "", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
@@ -107,10 +111,18 @@ const App: FC = () => {
       color = "#1677ff";
       localStorage.setItem("primaryColor", color);
     }
-    setThemeData({
+    setColorData({
       colorPrimary: color,
-      colorLink: color
+      colorLink: color,
     });
+
+    let themeStr = localStorage.getItem("theme");
+    if (themeStr === null) {
+      themeStr = "light";
+      localStorage.setItem("theme", themeStr);
+    }
+    setThemeData(themeStr);
+
   }, []);
 
   return (
@@ -119,9 +131,10 @@ const App: FC = () => {
       locale={zhCN}
       theme={{
         token: {
-          colorPrimary: themeData.colorPrimary,
-          colorLink: themeData.colorLink
+          colorPrimary: colorData.colorPrimary,
+          colorLink: colorData.colorLink,
         },
+        algorithm: themeData === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm
       }}>
 
       <RouterProvider router={localStorage.getItem('token') ? authorizedRouter : noAuthorizedRouter} />

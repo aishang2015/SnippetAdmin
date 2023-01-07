@@ -1,21 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
-
-using SnippetAdmin.CommonModel;
 using SnippetAdmin.CommonModel.Extensions;
+using SnippetAdmin.Constants;
+using SnippetAdmin.Core.Extensions;
+using SnippetAdmin.Data;
+using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.DynamicApi.Models;
 using SnippetAdmin.DynamicApi.Templates;
-using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Models.SysAccessLog;
-
-using SnippetAdmin.Data.Entity.System;
-
-using SnippetAdmin.Data;
-using SnippetAdmin.Constants;
 
 namespace SnippetAdmin.Controllers.System
 {

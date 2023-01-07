@@ -5,8 +5,8 @@
 
 #setting-container #setting-item-container {
     width: 300px;
-    border-right: 1px solid #eeeeee;
     padding: 10px;
+    height: 100%;
 }
 
 #setting-container #setting-item-container ul {
@@ -23,13 +23,11 @@
 }
 
 #setting-container #setting-item-container ul .li-selected {
-    border-left: 5px solid blue;
     background-color: rgba(222, 222, 222, 0.2);
 }
 
 #setting-container #setting-item-container ul li:hover {
     background-color: rgba(222, 222, 222, 0.5);
-    border-left: 5px solid blue;
 }
 
 #setting-container #setting-detail-container {

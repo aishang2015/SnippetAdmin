@@ -12,36 +12,36 @@ using SnippetAdmin.Endpoint.Models.System.Dic;
 
 namespace SnippetAdmin.Models
 {
-    public class AutoMapperProfile : Profile
-    {
-        public AutoMapperProfile()
-        {
-            CreateMap<RbacUser, UserInfoOutputModel>().ReverseMap();
+	public class AutoMapperProfile : Profile
+	{
+		public AutoMapperProfile()
+		{
+			CreateMap<RbacUser, UserInfoOutputModel>().ReverseMap();
 
-            CreateMap<RbacElement, GetElementOutputModel>();
-            CreateMap<CreateElementInputModel, RbacElement>();
-            CreateMap<UpdateElementInputModel, RbacElement>();
+			CreateMap<RbacElement, GetElementOutputModel>();
+			CreateMap<CreateElementInputModel, RbacElement>();
+			CreateMap<UpdateElementInputModel, RbacElement>();
 
-            CreateMap<RbacOrganization, GetOrganizationOutputModel>();
-            CreateMap<CreateOrganizationInputModel, RbacOrganization>();
-            CreateMap<UpdateOrganizationInputModel, RbacOrganization>();
+			CreateMap<RbacOrganization, GetOrganizationOutputModel>();
+			CreateMap<CreateOrganizationInputModel, RbacOrganization>();
+			CreateMap<UpdateOrganizationInputModel, RbacOrganization>();
 
-            CreateMap<RbacRole, GetRoleOutputModel>();
-            CreateMap<AddOrUpdateRoleInputModel, RbacRole>();
+			CreateMap<RbacRole, GetRoleOutputModel>();
+			CreateMap<AddOrUpdateRoleInputModel, RbacRole>();
 
-            CreateMap<AddOrUpdateUserInputModel, RbacUser>();
-            CreateMap<RbacUser, GetUserOutputModel>();
+			CreateMap<AddOrUpdateUserInputModel, RbacUser>();
+			CreateMap<RbacUser, GetUserOutputModel>();
 
-            CreateMap<Job, GetJobsOutputModel>();
+			CreateMap<Job, GetJobsOutputModel>();
 
-            CreateMap<RbacOrganizationType, GetOrganizationTypesOutputModel>();
+			CreateMap<RbacOrganizationType, GetOrganizationTypesOutputModel>();
 
-            CreateMap<SysDicType, GetDicTypeListOutputModel>();
-            CreateMap<AddDicTypeInputModel, SysDicType>();
-            CreateMap<UpdateDicTypeInputModel, SysDicType>();
-            CreateMap<SysDicValue, GetDicValueListOutputModel>();
-            CreateMap<AddDicValueInputModel, SysDicValue>();
-            CreateMap<UpdateDicValueInputModel, SysDicValue>();
-        }
-    }
+			CreateMap<SysDicType, GetDicTypeListOutputModel>();
+			CreateMap<AddDicTypeInputModel, SysDicType>();
+			CreateMap<UpdateDicTypeInputModel, SysDicType>();
+			CreateMap<SysDicValue, GetDicValueListOutputModel>();
+			CreateMap<AddDicValueInputModel, SysDicValue>();
+			CreateMap<UpdateDicValueInputModel, SysDicValue>();
+		}
+	}
 }

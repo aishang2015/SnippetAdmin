@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.CommonModel.Extensions
 {
-    public class ErrorSortPropertyException : Exception
-    {
-    }
+	public class ErrorSortPropertyException : Exception
+	{
+	}
 }

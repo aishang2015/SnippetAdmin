@@ -14,7 +14,6 @@ using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.TextJson;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Auth;
-using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.DynamicApi;
 using SnippetAdmin.Grains;
 using SnippetAdmin.Jobs;
@@ -23,11 +22,14 @@ using SnippetAdmin.Orleans;
 using SnippetAdmin.Quartz;
 using System.Reflection;
 
-Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
+Log.Logger = new LoggerConfiguration()
+	.Enrich.FromLogContext()
+	.WriteToFile()
+	.CreateBootstrapLogger();
 
 try
 {
-	Log.Information("Server start Runing!");
+	Log.Information("服务开始启动!");
 	var builder = WebApplication.CreateBuilder(args);
 
 	// 分别是数据库 缓存 内存缓存 jwt automapper oauth 用户访问器
@@ -36,6 +38,9 @@ try
 	builder.Services.AddCustomAuthentication(builder.Configuration);
 	builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 	builder.Services.AddOauth(builder.Configuration);
+
+	// 使用serilog
+	builder.Host.UseCustomSerilog();
 
 	// 自定义授权策略
 	builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IAuthorizationHandler, AccessApiAuthorizationHandler>());
@@ -101,8 +106,6 @@ try
 	builder.Services.AddBackgroundService<AccessedLogBackgroundService>();
 	builder.Services.AddBackgroundService<ExceptionLogBackgroundService>();
 
-	// 使用serilog
-	builder.Host.UseCustomSerilog();
 
 	// use orleans
 	builder.UseDevelopOrleans(typeof(TestGrain));
@@ -135,7 +138,8 @@ try
 
 	// record some information
 	app.UseLoginLogRecorder();
-	app.UseAccessedLogRecord("/api/ApiInfo/*",
+	app.UseAccessedLogRecord(
+		"/api/ApiInfo/*",
 		"/api/Element/*",
 		"/api/Organization/*",
 		"/api/Position/*",
@@ -162,7 +166,7 @@ try
 }
 catch (Exception e)
 {
-	Log.Error(e, "Exception happened!");
+	Log.Error(e, "发生异常，服务停止!");
 }
 finally
 {

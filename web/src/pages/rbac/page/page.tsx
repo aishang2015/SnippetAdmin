@@ -158,6 +158,7 @@ export default function Page() {
                     <Divider style={{ margin: "10px 0" }} />
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
                 </div>
+                <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="page-detail-container">
                     {elementDetail !== null &&
                         <>

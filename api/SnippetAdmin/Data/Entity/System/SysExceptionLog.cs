@@ -15,31 +15,24 @@ namespace SnippetAdmin.Data.Entity.System
         public int Id { get; set; }
 
         [Comment("异常类型")]
-        [Column("type", TypeName = "varchar(200)")]
         public string Type { get; set; }
 
         [Comment("异常消息")]
-        [Column("message")]
         public string Message { get; set; }
 
         [Comment("异常源")]
-        [Column("source")]
         public string Source { get; set; }
 
         [Comment("堆栈跟踪")]
-        [Column("stack_trace")]
         public string StackTrace { get; set; }
 
         [Comment("发生时间")]
-        [Column("happened_time")]
         public DateTime HappenedTime { get; set; }
 
         [Comment("访问路径")]
-        [Column("path", TypeName = "varchar(200)")]
         public string Path { get; set; }
 
         [Comment("访问用户名")]
-        [Column("username", TypeName = "varchar(200)")]
         public string Username { get; set; }
     }
 }

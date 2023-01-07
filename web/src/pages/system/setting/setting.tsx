@@ -1,6 +1,7 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, Input, Upload, Image } from 'antd';
+import { Button, Form, Input, Upload, Image, Divider } from 'antd';
+import { useToken } from 'antd/es/theme/internal';
 import { useForm } from 'antd/lib/form/Form';
 import { RcFile, UploadFile } from 'antd/lib/upload/interface';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ import './setting.css';
 
 export default function Setting() {
 
+    const token = useToken();
     const [selectItem, setSelectItem] = useState<number>(0);
 
     const [iconFileList, setIconFileList] = useState<UploadFile[]>([]);
@@ -70,16 +72,6 @@ export default function Setting() {
     }, [selectItem]);// eslint-disable-line react-hooks/exhaustive-deps
 
     async function loadLoginSetting() {
-        let response = await SettingService.getLoginPageSetting();
-        loginPageForm.setFieldsValue({
-            title: response.data.data.title
-        });
-        if (response.data.data.icon !== '' && response.data.data.icon !== null && response.data.data.icon !== undefined) {
-            setIconUrl(Configuration.BaseUrl + '/store/' + response.data.data.icon);
-        }
-        if (response.data.data.background !== '' && response.data.data.background !== null && response.data.data.background !== undefined) {
-            setBackgroundUrl(Configuration.BaseUrl + '/store/' + response.data.data.background);
-        }
     }
 
     return (
@@ -87,15 +79,17 @@ export default function Setting() {
             <div id="setting-container">
                 <div id="setting-item-container">
                     <ul>
-                        <li onClick={() => selectSetting(0)} className={selectClass(0)}>通用设置</li>
-{/*                         <li onClick={() => selectSetting(1)} className={selectClass(1)}>认证</li>
-                        <li onClick={() => selectSetting(2)} className={selectClass(2)}>定时任务</li> */}
+                        <li onClick={() => selectSetting(0)} style={{
+                            borderLeft: selectItem === 0 ? '5px solid ' + token[1].colorPrimary : ""
+                        }}>通用设置</li>
                     </ul>
                 </div>
+                <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="setting-detail-container">
                     {selectItem === 0 &&
                         <>
-                            <Form form={loginPageForm} onFinish={loginPageFormSubmit} layout='vertical'>
+                            {/* 此配置不再使用
+                                <Form form={loginPageForm} onFinish={loginPageFormSubmit} layout='vertical'>
                                 <Form.Item name="title" label="网站标题" required rules={
                                     [
                                         { required: true, message: "请输入网站标题" },
@@ -123,7 +117,7 @@ export default function Setting() {
                                 <Form.Item>
                                     <Button type='primary' htmlType="submit" >保存</Button>
                                 </Form.Item>
-                            </Form>
+                            </Form> */}
                         </>
                     }
                 </div>

@@ -1,6 +1,7 @@
-import { faCircleLeft, faCircleRight, faEdit, faOutdent, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faChessKnight } from "@fortawesome/free-regular-svg-icons";
+import { faCircleLeft, faCircleRight, faEdit, faMoon, faOutdent, faSun, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Button, Dropdown, Layout, Menu, MenuProps, Popover, Space } from "antd";
+import { Avatar, Button, Card, Divider, Dropdown, Layout, Menu, MenuProps, Popover, Space, Switch } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { useEffect, useState } from "react";
@@ -14,10 +15,11 @@ import { RefreshService } from "../../../service/refreshService";
 import './layout.css';
 
 interface IBasicLayout {
+    onColorChange(color: string): void;
     onThemeChange(color: string): void;
 }
 
-export default function BasicLayout({ onThemeChange }: IBasicLayout) {
+export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayout) {
 
     type MenuItem = Required<MenuProps>['items'][number];
 
@@ -25,6 +27,7 @@ export default function BasicLayout({ onThemeChange }: IBasicLayout) {
     const [realName, setRealName] = useState<string>('');
 
     const [primaryColor, setPrimaryColor] = useState<string>('');
+    const [theme, setTheme] = useState<string>('');
 
     const menus: MenuProps['items'] = [
         {
@@ -36,7 +39,7 @@ export default function BasicLayout({ onThemeChange }: IBasicLayout) {
         }, // 菜单项务必填写 key
         {
             label:
-                <Button type='link' style={{ padding: '4px 6px' }}  onClick={() => logout()}>
+                <Button type='link' style={{ padding: '4px 6px' }} onClick={() => logout()}>
                     <Space><FontAwesomeIcon icon={faOutdent} fixedWidth />注销</Space>
                 </Button>
             , key: '2'
@@ -47,6 +50,9 @@ export default function BasicLayout({ onThemeChange }: IBasicLayout) {
         init();
         let color = localStorage.getItem("primaryColor")!;
         setPrimaryColor(color);
+
+        let theme = localStorage.getItem("theme")!;
+        setTheme(theme);
     }, []);
 
     async function init() {
@@ -100,16 +106,23 @@ export default function BasicLayout({ onThemeChange }: IBasicLayout) {
     }
 
     function handleColorChanged(color: ColorResult) {
-        onThemeChange(color.hex);
+        onColorChange(color.hex);
         setPrimaryColor(color.hex);
-        localStorage.setItem("primaryColor",color.hex);
+        localStorage.setItem("primaryColor", color.hex);
+    }
+
+    function handleThemeChange(isDark: boolean) {
+        let theme = isDark ? "dark" : "light";
+        onThemeChange(theme);
+        setTheme(theme);
+        localStorage.setItem("theme", theme);
     }
 
     return (
         <>
             {/* all the other elements */}
             <Layout style={{ minHeight: '100vh', maxHeight: '100vh' }}>
-                <Sider trigger={null} collapsible collapsed={collapsed}>
+                <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
                     {collapsed ?
                         <div className="logo" >Admin</div> :
                         <div className="logo large-logo-font" >SnippetAdmin</div>
@@ -128,8 +141,17 @@ export default function BasicLayout({ onThemeChange }: IBasicLayout) {
                             <FontAwesomeIcon icon={faCircleLeft} style={{ color: 'white' }} />} />
                         <div style={{
                             display: 'flex',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}>
+
+                            <Switch style={{ marginRight: '12px', backgroundColor: primaryColor }}
+                                checked={theme === "dark"}
+                                defaultChecked={theme === "dark"}
+                                checkedChildren={<FontAwesomeIcon icon={faMoon} />}
+                                unCheckedChildren={<FontAwesomeIcon icon={faSun} />}
+                                onChange={handleThemeChange} />
+
                             <Popover content={(
                                 <CirclePicker onChangeComplete={handleColorChanged} />
                             )}>
@@ -151,9 +173,9 @@ export default function BasicLayout({ onThemeChange }: IBasicLayout) {
                             }} >{realName}</div>
                         </div>
                     </Header >
-                    <Content className="screen_container">
+                    <Card className="screen_container" size="small">
                         <Outlet />
-                    </Content>
+                    </Card>
                 </Layout>
             </Layout>
         </>

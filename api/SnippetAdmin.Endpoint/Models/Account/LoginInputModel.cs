@@ -1,4 +1,4 @@
 ﻿namespace SnippetAdmin.Endpoint.Models.Account
 {
-    public record LoginInputModel(string UserName, string Password);
+	public record LoginInputModel(string UserName, string Password);
 }

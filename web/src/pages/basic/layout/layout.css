@@ -26,7 +26,6 @@
 .site-layout {
     display: flex;
     justify-content: space-between;
-    background: #fff;
 }
 
 .tab_container {
@@ -39,7 +38,10 @@
 
 .screen_container {
     margin: 10px 10px 10px 10px;
-    padding: 10px;
+    flex: auto;
     overflow: auto;
-    background: #fff;
+}
+
+.screen_container>.ant-card-body {
+    height: 100%;
 }

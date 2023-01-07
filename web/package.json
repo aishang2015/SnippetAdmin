@@ -27,6 +27,7 @@
     "jsplumb": "^2.15.6",
     "lodash": "^4.17.21",
     "panzoom": "^9.4.3",
+    "particles-bg": "^2.5.5",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",

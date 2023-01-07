@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using SnippetAdmin.EntityFrameworkCore.Sharding;
 
 namespace SnippetAdmin.Data.Sharding
 {

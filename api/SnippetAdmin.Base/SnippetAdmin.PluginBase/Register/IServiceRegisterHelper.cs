@@ -1,6 +1,6 @@
 ﻿namespace SnippetAdmin.PluginBase.Register
 {
-    public static class IServiceRegisterHelper
-    {
-    }
+	public static class IServiceRegisterHelper
+	{
+	}
 }

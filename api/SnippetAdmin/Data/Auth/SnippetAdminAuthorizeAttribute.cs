@@ -2,10 +2,10 @@
 
 namespace SnippetAdmin.Data.Auth
 {
-    public class SnippetAdminAuthorizeAttribute : TypeFilterAttribute
-    {
-        public SnippetAdminAuthorizeAttribute() : base(typeof(SnippetAdminAuthorizeFilter))
-        {
-        }
-    }
+	public class SnippetAdminAuthorizeAttribute : TypeFilterAttribute
+	{
+		public SnippetAdminAuthorizeAttribute() : base(typeof(SnippetAdminAuthorizeFilter))
+		{
+		}
+	}
 }

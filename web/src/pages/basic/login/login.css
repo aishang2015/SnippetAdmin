@@ -10,9 +10,9 @@
 .full-window .login-card {
     min-width: 400px;
     padding: 0 60px;
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid gray;
-    box-shadow: 6px 6px 4px #0a0a0a;
+    background-color: transparent;
+    border: none;
+    /* box-shadow: 6px 6px 4px #0a0a0a; */
 }
 
 .full-window .login-card .ant-card-body {
@@ -22,25 +22,30 @@
     align-items: center;
 }
 
-.full-window .login-card .logo-contaier {
-    text-align: center;
-    vertical-align: center;
+.logo-contaier {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+    font-size: 2rem;
+    font-weight: 400;
+    
+    color: #60dafb;
+    text-shadow: 0 0 4px #60dafb;
+    user-select: none;
 }
 
-.full-window .login-card .logo-contaier .logo {
-    display: inline-block;
-    width: 80px;
-    height: 80px;
+.logo-contaier>.logo{
+    width: 4rem;
+    height: 4rem;
 }
 
-.full-window .login-card .logo-contaier .logo-text {
-    font-size: 30px;
-    color: white;
-}
 
 .full-window .login-card .form-container {
     display: block;
     width: 280px;
+    margin-top: 1rem;
 }
 
 .full-window .login-card .thrid-login-bar {

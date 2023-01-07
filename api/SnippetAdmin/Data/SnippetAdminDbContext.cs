@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -14,7 +13,6 @@ using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.EntityFrameworkCore.Cache;
-using System.Reflection.Emit;
 
 namespace SnippetAdmin.Data
 {

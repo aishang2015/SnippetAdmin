@@ -380,6 +380,7 @@ export default function User() {
                     }></RightElement>
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys: any, event: any) => orgSelect(keys, event)} />
                 </div>
+                <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="user-list-container">
                     <Space style={{ marginTop: "10px" }}>
                         <RightElement identify="create-user" child={

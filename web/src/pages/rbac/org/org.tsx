@@ -260,6 +260,7 @@ export default function Org() {
                     <Divider style={{ margin: "10px 0" }} />
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
                 </div>
+                <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="org-detail-container">
                     {orgDetail !== null &&
                         <>

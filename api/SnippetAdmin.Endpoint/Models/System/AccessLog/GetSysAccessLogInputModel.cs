@@ -1,5 +1,3 @@
-
-using System;
 using SnippetAdmin.CommonModel;
 
 namespace SnippetAdmin.Models.SysAccessLog

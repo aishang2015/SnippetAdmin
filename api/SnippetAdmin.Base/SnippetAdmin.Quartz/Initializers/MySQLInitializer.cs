@@ -3,65 +3,65 @@ using System.Text.RegularExpressions;
 
 namespace SnippetAdmin.Quartz.Initializers
 {
-    public partial class DBInitializer
-    {
-        public static void InitializeMySql(string connectionStr)
-        {
-            var regex = new Regex("Database=.*?;");
-            var noDbStr = regex.Replace(connectionStr, "");
-            var dbName = regex.Match(connectionStr).Groups[0].Value
-                .Replace("Database=", "")
-                .Replace(";", "");
-            using var connection = new MySqlConnection(noDbStr);
-            connection.Open();
+	public partial class DBInitializer
+	{
+		public static void InitializeMySql(string connectionStr)
+		{
+			var regex = new Regex("Database=.*?;");
+			var noDbStr = regex.Replace(connectionStr, "");
+			var dbName = regex.Match(connectionStr).Groups[0].Value
+				.Replace("Database=", "")
+				.Replace(";", "");
+			using var connection = new MySqlConnection(noDbStr);
+			connection.Open();
 
-            var deleteCmd = connection.CreateCommand();
-            deleteCmd.CommandText = string.Format(DropMySqlDatabaseSql, dbName);
-            deleteCmd.Connection = connection;
-            deleteCmd.ExecuteNonQuery();
+			var deleteCmd = connection.CreateCommand();
+			deleteCmd.CommandText = string.Format(DropMySqlDatabaseSql, dbName);
+			deleteCmd.Connection = connection;
+			deleteCmd.ExecuteNonQuery();
 
-            var checkCmd = connection.CreateCommand();
-            checkCmd.CommandText = string.Format(CheckMySqlDatabaseExist, dbName);
-            checkCmd.Connection = connection;
-            var result = (long)checkCmd.ExecuteScalar();
+			var checkCmd = connection.CreateCommand();
+			checkCmd.CommandText = string.Format(CheckMySqlDatabaseExist, dbName);
+			checkCmd.Connection = connection;
+			var result = (long)checkCmd.ExecuteScalar();
 
-            if (result == 0)
-            {
-                var transaction = connection.BeginTransaction();
-                using var cmd = connection.CreateCommand();
-                cmd.Connection = connection;
-                cmd.Transaction = transaction;
-                cmd.CommandType = System.Data.CommandType.Text;
+			if (result == 0)
+			{
+				var transaction = connection.BeginTransaction();
+				using var cmd = connection.CreateCommand();
+				cmd.Connection = connection;
+				cmd.Transaction = transaction;
+				cmd.CommandType = System.Data.CommandType.Text;
 
-                cmd.CommandText = string.Format(CreateMySqlDatabaseSql, dbName);
-                cmd.ExecuteNonQuery();
-                transaction.Commit();
+				cmd.CommandText = string.Format(CreateMySqlDatabaseSql, dbName);
+				cmd.ExecuteNonQuery();
+				transaction.Commit();
 
-                var transaction2 = connection.BeginTransaction();
-                using var cmd2 = connection.CreateCommand();
-                cmd2.Connection = connection;
-                cmd2.Transaction = transaction2;
-                cmd2.CommandType = System.Data.CommandType.Text;
+				var transaction2 = connection.BeginTransaction();
+				using var cmd2 = connection.CreateCommand();
+				cmd2.Connection = connection;
+				cmd2.Transaction = transaction2;
+				cmd2.CommandType = System.Data.CommandType.Text;
 
-                cmd2.CommandText = string.Format(CreateMySqlTableSql, dbName);
-                cmd2.ExecuteNonQuery();
-                transaction2.Commit();
-            }
+				cmd2.CommandText = string.Format(CreateMySqlTableSql, dbName);
+				cmd2.ExecuteNonQuery();
+				transaction2.Commit();
+			}
 
-        }
+		}
 
 
-        private static string CheckMySqlDatabaseExist = @"
+		private static string CheckMySqlDatabaseExist = @"
 SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '{0}';";
 
-        private static string DropMySqlDatabaseSql = @"
+		private static string DropMySqlDatabaseSql = @"
 DROP DATABASE IF EXISTS {0};";
 
-        private static string CreateMySqlDatabaseSql = @"
+		private static string CreateMySqlDatabaseSql = @"
         CREATE DATABASE IF NOT EXISTS {0};
 ";
 
-        private static string CreateMySqlTableSql = @"
+		private static string CreateMySqlTableSql = @"
 
 USE {0};
 DROP TABLE IF EXISTS QRTZ_FIRED_TRIGGERS;
@@ -236,7 +236,7 @@ CREATE INDEX IDX_QRTZ_FT_T_G ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIG
 CREATE INDEX IDX_QRTZ_FT_TG ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,TRIGGER_GROUP);
 
 commit;";
-    }
+	}
 
 
 }
