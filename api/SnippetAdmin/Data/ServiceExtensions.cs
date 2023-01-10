@@ -20,7 +20,7 @@ namespace SnippetAdmin.Data
 			{
 				// 添加缓存拦截器
 				services.AddMemoryCache();
-				services.AddScoped<MemoryCacheInterceptor<SnippetAdminDbContext>>();
+				services.AddScoped<SaveChangeInterceptor<SnippetAdminDbContext>>();
 				services.AddSingleton<IShardingInfoService, ShardingInfoService>();
 
 				if (setupAction == null)
@@ -39,7 +39,7 @@ namespace SnippetAdmin.Data
 				services.AddDbContext<SnippetAdminDbContext>((provider, option) =>
 				{
 					option.UseShardingDatabase(databaseOption);
-					option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor<SnippetAdminDbContext>>());
+					option.AddInterceptors(provider.GetRequiredService<SaveChangeInterceptor<SnippetAdminDbContext>>());
 
 				}).AddIdentity<RbacUser, RbacRole>(setupAction)
 				.AddEntityFrameworkStores<SnippetAdminDbContext>()

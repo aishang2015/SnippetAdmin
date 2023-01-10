@@ -23,7 +23,7 @@ namespace SnippetAdmin.Data
 			{
 				// 添加缓存拦截器
 				services.AddMemoryCache();
-				services.AddScoped<MemoryCacheInterceptor<TIdentityDbContext>>();
+				services.AddScoped<SaveChangeInterceptor<TIdentityDbContext>>();
 
 				if (setupAction == null)
 				{
@@ -41,7 +41,7 @@ namespace SnippetAdmin.Data
 				services.AddDbContext<TIdentityDbContext>((provider, option) =>
 				{
 					option.UseDatabase(databaseOption);
-					option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor<TIdentityDbContext>>());
+					option.AddInterceptors(provider.GetRequiredService<SaveChangeInterceptor<TIdentityDbContext>>());
 
 				}).AddIdentity<TIdentityUser, TIdentityRole>(setupAction)
 				.AddEntityFrameworkStores<TIdentityDbContext>()
@@ -60,12 +60,12 @@ namespace SnippetAdmin.Data
 			{
 				// 添加缓存拦截器
 				services.AddMemoryCache();
-				services.AddScoped<MemoryCacheInterceptor<TDbContext>>();
+				services.AddScoped<SaveChangeInterceptor<TDbContext>>();
 
 				services.AddDbContext<TDbContext>((provider, option) =>
 				{
 					option.UseDatabase(databaseOption);
-					option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor<TDbContext>>());
+					option.AddInterceptors(provider.GetRequiredService<SaveChangeInterceptor<TDbContext>>());
 				});
 
 				return services;
@@ -82,12 +82,12 @@ namespace SnippetAdmin.Data
 			{
 				// 添加缓存拦截器
 				services.AddMemoryCache();
-				services.AddScoped<MemoryCacheInterceptor<TDbContext>>();
+				services.AddScoped<SaveChangeInterceptor<TDbContext>>();
 
 				services.AddDbContext<TDbContext>((provider, option) =>
 				{
 					option.UseShardingDatabase(databaseOption);
-					option.AddInterceptors(provider.GetRequiredService<MemoryCacheInterceptor<TDbContext>>());
+					option.AddInterceptors(provider.GetRequiredService<SaveChangeInterceptor<TDbContext>>());
 				});
 
 				return services;

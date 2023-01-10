@@ -35,8 +35,10 @@ namespace SnippetAdmin.Background
 				var log = await ChannelHelper<SysAccessLog>.Instance.Reader.ReadAsync();
 
 				using var scope1 = _provider.CreateScope();
-				using var db1 = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-				await db1.CheckSharingTable<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+				using (var db1 = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>())
+				{
+					await db1.CheckSharingTable<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+				}
 
 				using var scope2 = _provider.CreateScope();
 				using var db2 = scope2.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();

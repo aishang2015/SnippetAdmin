@@ -184,7 +184,6 @@ namespace SnippetAdmin.Data
 			}
 		}
 
-
 		private DbContextOptions<TableDbContext> GetOption()
 		{
 			var builder = new DbContextOptionsBuilder<TableDbContext>()
@@ -237,6 +236,18 @@ namespace SnippetAdmin.Data
 
 			return null;
 #pragma warning restore EF1001 // Internal EF Core API usage.
+		}
+
+		public override void Dispose()
+		{
+			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
+			base.Dispose();
+		}
+
+		public override async ValueTask DisposeAsync()
+		{
+			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
+			await base.DisposeAsync();
 		}
 	}
 }

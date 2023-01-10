@@ -7,6 +7,7 @@ using System.Reflection;
 
 namespace SnippetAdmin.EntityFrameworkCore.Cache
 {
+	[Obsolete]
 	public class MemoryCacheInterceptor<T> : DbTransactionInterceptor, ISaveChangesInterceptor where T : DbContext
 	{
 		private class CachedEntry
