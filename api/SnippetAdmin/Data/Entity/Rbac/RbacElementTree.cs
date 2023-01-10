@@ -13,6 +13,7 @@ namespace SnippetAdmin.Data.Entity.Rbac
 	public class RbacElementTree
 	{
 		[Comment("主键")]
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }
 
 		[Comment("祖先")]

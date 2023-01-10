@@ -14,6 +14,7 @@ namespace SnippetAdmin.Data.Entity.Rbac;
 public class RbacElement
 {
 	[Comment("主键")]
+	[DatabaseGenerated(DatabaseGeneratedOption.None)]
 	public int Id { get; set; }
 
 	[Comment("元素名称")]

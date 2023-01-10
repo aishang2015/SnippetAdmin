@@ -12,7 +12,7 @@ export class Constants {
                 { path: '/role', name: '角色信息', identify: 'role', icon: <FontAwesomeIcon icon={faUserTag} fixedWidth /> },
                 { path: '/org', name: '组织信息', identify: 'org', icon: <FontAwesomeIcon icon={faSitemap} fixedWidth /> },
                 { path: '/pos', name: '职位信息', identify: 'org', icon: <FontAwesomeIcon icon={faUserFriends} fixedWidth /> },
-                { path: '/page', name: '页面权限', identify: 'permission', icon: <FontAwesomeIcon icon={faColumns} fixedWidth /> },
+                { path: '/page', name: '权限信息', identify: 'permission', icon: <FontAwesomeIcon icon={faColumns} fixedWidth /> },
             ]
         },
         {

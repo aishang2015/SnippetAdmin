@@ -74,32 +74,34 @@ namespace SnippetAdmin.Controllers.RBAC
 		[Description("创建页面元素")]
 		public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel)
 		{
-			// 开启事务
-			using var tran = await _dbContext.Database.BeginTransactionAsync();
+			var maxId = _dbContext.RbacElements.Max(r => r.Id) + 1;
+			var model = _mapper.Map<RbacElement>(inputModel);
+			model.Id = maxId;
 
 			// 保存节点
-			var entity = await _dbContext.RbacElements.AddAsync(_mapper.Map<RbacElement>(inputModel));
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.RbacElements.AddAsync(model);
 
 			// 保存节点关系
+			var treeMaxId = _dbContext.RbacElementTrees.Max(t => t.Id);
 			var treeData = _dbContext.RbacElementTrees.Where(t => t.Descendant == inputModel.UpId);
 			foreach (var treeNode in treeData)
 			{
 				await _dbContext.RbacElementTrees.AddAsync(new RbacElementTree
 				{
+					Id = ++treeMaxId,
 					Ancestor = treeNode.Ancestor,
-					Descendant = entity.Entity.Id,
+					Descendant = maxId,
 					Length = treeNode.Length + 1
 				});
 			}
 			await _dbContext.RbacElementTrees.AddAsync(new RbacElementTree
 			{
-				Ancestor = entity.Entity.Id,
-				Descendant = entity.Entity.Id,
+				Id = ++treeMaxId,
+				Ancestor = maxId,
+				Descendant = maxId,
 				Length = 0
 			});
 			await _dbContext.SaveChangesAsync();
-			await tran.CommitAsync();
 			return CommonResult.Success(MessageConstant.ELEMENT_INFO_0001);
 		}
 

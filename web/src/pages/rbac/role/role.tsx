@@ -197,7 +197,7 @@ export default function Role() {
                     }>
                         <TextArea />
                     </Form.Item>
-                    <Form.Item name="rights" label="页面权限">
+                    <Form.Item name="rights" label="权限">
                         <TreeSelect placeholder="请选择权限" treeData={rightTree} treeCheckable={true} showCheckedStrategy="SHOW_ALL"></TreeSelect>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>

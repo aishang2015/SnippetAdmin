@@ -86,20 +86,22 @@ namespace SnippetAdmin.Controllers.RBAC
 				return CommonResult.Fail(MessageConstant.ORGANIZATION_ERROR_0004);
 			}
 
-			// 开启事务
-			using var tran = await _dbContext.Database.BeginTransactionAsync();
-
 			// 保存节点
+			var maxId = _dbContext.RbacOrganizations.Any() ?
+				_dbContext.RbacOrganizations.Max(o => o.Id) : 0;
 			var newOrg = _mapper.Map<RbacOrganization>(inputModel);
+			newOrg.Id = ++maxId;
 			var entity = await _dbContext.RbacOrganizations.AddAsync(newOrg);
-			await _dbContext.SaveChangesAsync();
 
 			// 保存节点关系
+			var treeMaxId = _dbContext.RbacOrganizationTrees.Any() ?
+				_dbContext.RbacOrganizationTrees.Max(o => o.Id) : 0;
 			var treeData = _dbContext.RbacOrganizationTrees.Where(t => t.Descendant == inputModel.UpId);
 			foreach (var treeNode in treeData)
 			{
 				await _dbContext.RbacOrganizationTrees.AddAsync(new RbacOrganizationTree
 				{
+					Id = ++treeMaxId,
 					Ancestor = treeNode.Ancestor,
 					Descendant = entity.Entity.Id,
 					Length = treeNode.Length + 1
@@ -107,12 +109,12 @@ namespace SnippetAdmin.Controllers.RBAC
 			}
 			await _dbContext.RbacOrganizationTrees.AddAsync(new RbacOrganizationTree
 			{
+				Id = ++treeMaxId,
 				Ancestor = entity.Entity.Id,
 				Descendant = entity.Entity.Id,
 				Length = 0
 			});
 			await _dbContext.SaveChangesAsync();
-			await tran.CommitAsync();
 			return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0001);
 		}
 

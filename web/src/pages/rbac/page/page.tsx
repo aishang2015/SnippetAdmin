@@ -66,8 +66,8 @@ export default function Page() {
     // 删除元素
     function deleteElement(id: number) {
         Modal.confirm({
-            title: '是否删除该元素?',
-            content: '删除页面元素信息后，会导致角色的页面权限以及接口权限不可用，请谨慎操作！',
+            title: '是否删除?',
+            content: '删除权限信息后，可能会导致用户无法访问页面以及数据，请谨慎操作！',
             onOk: async () => {
                 await ElementService.deleteElement(elementDetail.id);
                 setElementDetail(null);
