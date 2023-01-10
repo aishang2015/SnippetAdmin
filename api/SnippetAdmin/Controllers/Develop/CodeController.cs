@@ -111,7 +111,6 @@ export interface {modelName} {
 
 			foreach (var model in modelList.Where(m => !string.IsNullOrEmpty(m)))
 			{
-				result += "\r\n\r\n";
 				result += model;
 			}
 
@@ -142,6 +141,7 @@ export interface {modelName} {
 
 		private string GenerateTypeModel(Type type)
 		{
+			var result = new StringBuilder();
 			if (type == null)
 			{
 				return null;
@@ -155,7 +155,8 @@ export interface {modelName} {
 			if (type.IsGenericType)
 			{
 				var genericType = type.GetGenericArguments().FirstOrDefault();
-				return GenerateTypeModel(genericType);
+				result.AppendLine();
+				result.Append(GenerateTypeModel(genericType));
 			}
 			else
 			{
@@ -163,14 +164,23 @@ export interface {modelName} {
 				var properties = type.GetProperties();
 				foreach (var property in properties)
 				{
+					if (property.PropertyType.IsGenericType)
+					{
+						result.Append(GenerateTypeModel(property.PropertyType));
+					}
+
 					sb.AppendLine(TsPropertyTemplate
 						.Replace("{propertyName}", LowerFistChar(property.Name))
 						.Replace("{propertyType}", GetTsType(property.PropertyType)));
 				}
-				return TsModelTemplate
+				var modelCode = TsModelTemplate
 						.Replace("{modelName}", type.Name)
 						.Replace("{properties}", sb.ToString());
+
+				result.AppendLine();
+				result.Append(modelCode);
 			}
+			return result.ToString();
 		}
 
 		private string GetTsType(Type type)

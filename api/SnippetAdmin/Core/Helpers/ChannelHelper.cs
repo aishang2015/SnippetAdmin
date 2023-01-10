@@ -2,41 +2,41 @@
 
 namespace SnippetAdmin.Core.Helpers
 {
-    public class ChannelHelper<TModel>
-    {
-        private static readonly Lazy<ChannelHelper<TModel>> lazy =
-            new(() => new ChannelHelper<TModel>());
+	public class ChannelHelper<TModel>
+	{
+		private static readonly Lazy<ChannelHelper<TModel>> lazy =
+			new(() => new ChannelHelper<TModel>());
 
-        private readonly ChannelWriter<TModel> _writer;
-        private readonly ChannelReader<TModel> _reader;
+		private readonly ChannelWriter<TModel> _writer;
+		private readonly ChannelReader<TModel> _reader;
 
-        static ChannelHelper()
-        {
-        }
+		static ChannelHelper()
+		{
+		}
 
-        private ChannelHelper()
-        {
-            var channelOptions = new BoundedChannelOptions(1000)
-            {
-                // 满了后的行为
-                FullMode = BoundedChannelFullMode.DropOldest,
-                SingleWriter = false
-            };
-            var channel = Channel.CreateBounded<TModel>(channelOptions);
-            _writer = channel.Writer;
-            _reader = channel.Reader;
-        }
+		private ChannelHelper()
+		{
+			var channelOptions = new BoundedChannelOptions(1000)
+			{
+				// 满了后的行为
+				FullMode = BoundedChannelFullMode.DropOldest,
+				SingleWriter = false
+			};
+			var channel = Channel.CreateBounded<TModel>(channelOptions);
+			_writer = channel.Writer;
+			_reader = channel.Reader;
+		}
 
-        public static ChannelHelper<TModel> Instance
-        {
-            get
-            {
-                return lazy.Value;
-            }
-        }
+		public static ChannelHelper<TModel> Instance
+		{
+			get
+			{
+				return lazy.Value;
+			}
+		}
 
-        public ChannelWriter<TModel> Writer => _writer;
+		public ChannelWriter<TModel> Writer => _writer;
 
-        public ChannelReader<TModel> Reader => _reader;
-    }
+		public ChannelReader<TModel> Reader => _reader;
+	}
 }

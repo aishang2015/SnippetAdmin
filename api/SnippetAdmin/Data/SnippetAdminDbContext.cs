@@ -89,6 +89,10 @@ namespace SnippetAdmin.Data
 
 		public DbSet<SysSetting> SysSettings { get; set; }
 
+		public DbSet<SysSettingGroup> SysSettingGroups { get; set; }
+
+		public DbSet<SysSettingSubGroup> SysSettingSubGroups { get; set; }
+
 		public DbSet<SysSharding> SysShardings { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)

@@ -7,21 +7,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Rbac
 {
-    [Comment("元素树")]
-    [Table("T_Rbac_ElementTree")]
-    [Cachable]
-    public class RbacElementTree
-    {
-        [Comment("主键")]
-        public int Id { get; set; }
+	[Comment("元素树")]
+	[Table("T_Rbac_ElementTree")]
+	[Cachable]
+	public class RbacElementTree
+	{
+		[Comment("主键")]
+		public int Id { get; set; }
 
-        [Comment("祖先")]
-        public int Ancestor { get; set; }
+		[Comment("祖先")]
+		public int Ancestor { get; set; }
 
-        [Comment("后代")]
-        public int Descendant { get; set; }
+		[Comment("后代")]
+		public int Descendant { get; set; }
 
-        [Comment("深度")]
-        public int Length { get; set; }
-    }
+		[Comment("深度")]
+		public int Length { get; set; }
+	}
 }

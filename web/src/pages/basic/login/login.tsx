@@ -29,55 +29,6 @@ export default class Login extends React.Component<any, any> {
         //this.init();
     }
 
-    // 取消动态配置登录页面文字和背景
-    async init() {
-        try {
-            let response = await SettingService.getLoginPageSetting();
-            let loginPageSetting = response.data.data;
-            if (loginPageSetting.background !== null &&
-                loginPageSetting.background !== undefined &&
-                loginPageSetting.background !== '') {
-                this.setState({
-                    background: `url("${Configuration.BaseUrl + '/store/' + loginPageSetting.background}")`
-                });
-            } else {
-                this.setState({
-                    background: `url("images/backgroud.jpg")`
-                });
-            }
-
-            if (loginPageSetting.icon !== null &&
-                loginPageSetting.icon !== undefined &&
-                loginPageSetting.icon !== '') {
-                this.setState({
-                    icon: `${Configuration.BaseUrl + '/store/' + loginPageSetting.icon}`
-                });
-            } else {
-                this.setState({
-                    icon: "logo192.png"
-                });
-            }
-
-            if (loginPageSetting.title !== null &&
-                loginPageSetting.title !== undefined &&
-                loginPageSetting.title !== '') {
-                this.setState({
-                    title: loginPageSetting.title
-                });
-            } else {
-                this.setState({
-                    title: 'Snippet Admin'
-                });
-            }
-        } catch (e) {
-            this.setState({
-                background: `url("images/backgroud.jpg")`,
-                icon: "logo192.png",
-                title: 'Snippet Admin',
-            });
-        }
-    }
-
     render() {
         return (
             <>

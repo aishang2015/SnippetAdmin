@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.FileStore;
 using SnippetAdmin.Data;
-using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.Endpoint.Models.System.Setting;
 using System.ComponentModel;
 
@@ -12,7 +12,8 @@ namespace SnippetAdmin.Controllers.System
 {
 	[Route("api/[controller]/[action]")]
 	[ApiController]
-	[Authorize(Policy = "AccessApi")]
+	//[Authorize(Policy = "AccessApi")]
+	[AllowAnonymous]
 	[ApiExplorerSettings(GroupName = "v1")]
 	public class SettingController : ControllerBase
 	{
@@ -20,50 +21,107 @@ namespace SnippetAdmin.Controllers.System
 
 		private readonly IFileStoreService _fileStoreService;
 
+		private readonly IMapper _mapper;
+
 		public SettingController(SnippetAdminDbContext dbContext,
-			IFileStoreService fileStoreService)
+			IFileStoreService fileStoreService,
+			IMapper mapper)
 		{
 			_dbContext = dbContext;
 			_fileStoreService = fileStoreService;
+			_mapper = mapper;
 		}
 
-		/// <summary>
-		/// 取得系统配置
-		/// </summary>
 		[HttpPost]
-		[CommonResultResponseType<List<SysSetting>>]
-		[Description("取得系统配置")]
-		public CommonResult<List<SysSetting>> GetSettings(GetSettingsInputModel inputModel)
+		[CommonResultResponseType<List<GetSettingGroupsOutputModel>>]
+		[Description("取得配置组信息")]
+		public CommonResult<List<GetSettingGroupsOutputModel>> GetSettingGroups()
 		{
-			var result = _dbContext.SysSettings.Where(s => inputModel.KeyList.Contains(s.Key)).ToList();
+			var result = _dbContext.SysSettingGroups
+				.OrderBy(g => g.Index)
+				.Select(g => new GetSettingGroupsOutputModel
+				{
+					Code = g.Code,
+					Name = g.Name,
+					Icon = g.Icon,
+				})
+				.ToList();
 			return CommonResult.Success(result);
 		}
 
-		/// <summary>
-		/// 更新系统配置
-		/// </summary>
+		[HttpPost]
+		[CommonResultResponseType<List<GetSettingsOutputModel>>]
+		[Description("取得配置详细信息")]
+		public CommonResult<List<GetSettingsOutputModel>> GetSettings(GetSettingsInputModel inputModel)
+		{
+			var subGroups = _dbContext.SysSettingSubGroups
+				.Where(g => g.GroupCode == inputModel.GroupCode).ToList();
+			var settings = _dbContext.SysSettings
+				.Where(g => g.GroupCode == inputModel.GroupCode).ToList();
+
+			var result = _mapper.Map<List<GetSettingsOutputModel>>(subGroups);
+			result.ForEach(r =>
+			{
+				var dbSettings = settings.Where(s => s.SubGroupCode == r.Code).ToList();
+				r.Settings = _mapper.Map<List<Setting>>(dbSettings);
+			});
+			return CommonResult.Success(result);
+		}
+
 		[HttpPost]
 		[CommonResultResponseType]
-		[Description("更新系统配置")]
-		public async Task<CommonResult> UpdateSetting(UpdateSettingInputModel inputModel)
+		[Description("更新配置值")]
+		public async Task<CommonResult> SaveSetting(SaveSettingInputModel inputModel)
 		{
-			var setting = _dbContext.SysSettings.FirstOrDefault(s => s.Key == inputModel.Key);
+			var setting = _dbContext.SysSettings.FirstOrDefault(s => s.Code == inputModel.Code);
 			if (setting == null)
 			{
-				_dbContext.SysSettings.Add(new SysSetting
-				{
-					Key = inputModel.Key,
-					Value = inputModel.Value
-				});
+				return CommonResult.Fail(MessageConstant.SETTING_ERROR_0001);
 			}
-			else
-			{
-				setting.Value = inputModel.Value;
-				_dbContext.SysSettings.Update(setting);
-			}
+
+			setting.Value = inputModel.Value;
+			_dbContext.SysSettings.Update(setting);
 			await _dbContext.SaveChangesAsync();
-			return CommonResult.Success(MessageConstant.SYSTEM_INFO_004);
+			return CommonResult.Success(MessageConstant.SETTING_INFO_0001, setting.Name);
 		}
+
+		///// <summary>
+		///// 取得系统配置
+		///// </summary>
+		//[HttpPost]
+		//[CommonResultResponseType<List<SysSetting>>]
+		//[Description("取得系统配置")]
+		//public CommonResult<List<SysSetting>> GetSettings(GetSettingsInputModel inputModel)
+		//{
+		//	var result = _dbContext.SysSettings.Where(s => inputModel.KeyList.Contains(s.Key)).ToList();
+		//	return CommonResult.Success(result);
+		//}
+
+		///// <summary>
+		///// 更新系统配置
+		///// </summary>
+		//[HttpPost]
+		//[CommonResultResponseType]
+		//[Description("更新系统配置")]
+		//public async Task<CommonResult> UpdateSetting(UpdateSettingInputModel inputModel)
+		//{
+		//	var setting = _dbContext.SysSettings.FirstOrDefault(s => s.Key == inputModel.Key);
+		//	if (setting == null)
+		//	{
+		//		_dbContext.SysSettings.Add(new SysSetting
+		//		{
+		//			Key = inputModel.Key,
+		//			Value = inputModel.Value
+		//		});
+		//	}
+		//	else
+		//	{
+		//		setting.Value = inputModel.Value;
+		//		_dbContext.SysSettings.Update(setting);
+		//	}
+		//	await _dbContext.SaveChangesAsync();
+		//	return CommonResult.Success(MessageConstant.SYSTEM_INFO_004);
+		//}
 
 		//    setting表结构变化处理注释掉
 		//      /// <summary>

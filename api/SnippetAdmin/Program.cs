@@ -147,7 +147,8 @@ try
 		"/api/User/*",
 		"/api/Job/*",
 		"/api/JobRecord/*",
-		"/api/Dic/*");
+		"/api/Dic/*",
+		"/api/Setting/*");
 	app.UseCustomExceptionRecorder();
 
 	// use cors config

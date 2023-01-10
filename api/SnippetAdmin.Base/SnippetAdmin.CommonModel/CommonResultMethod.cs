@@ -21,6 +21,13 @@
 			Message = codeMessage.Item2
 		};
 
+		public static CommonResult Success((string, string) codeMessage, params string[] args) => new CommonResult
+		{
+			IsSuccess = true,
+			Code = codeMessage.Item1,
+			Message = string.Format(codeMessage.Item2, args)
+		};
+
 		public static CommonResult Fail(string code, string message) => new CommonResult
 		{
 			IsSuccess = false,

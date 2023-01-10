@@ -167,8 +167,9 @@
 
 		#region SettingController
 
-		public static readonly (string, string) SETTING_INFO_0001 = ("SETTING_INFO_0001", "页面配置保存成功！");
+		public static readonly (string, string) SETTING_INFO_0001 = ("SETTING_INFO_0001", "{0}保存成功！");
 
+		public static readonly (string, string) SETTING_ERROR_0001 = ("SETTING_ERROR_0001", "没有找到该配置信息，请联系管理员！");
 
 		#endregion
 

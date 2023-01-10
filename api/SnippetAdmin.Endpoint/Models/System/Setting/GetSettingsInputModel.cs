@@ -2,9 +2,6 @@
 {
 	public class GetSettingsInputModel
 	{
-		/// <summary>
-		/// 配置关键字
-		/// </summary>
-		public List<string> KeyList { get; set; }
+		public string GroupCode { get; set; }
 	}
 }

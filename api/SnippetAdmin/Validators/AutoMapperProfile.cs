@@ -9,6 +9,7 @@ using SnippetAdmin.Endpoint.Models.RBAC.Role;
 using SnippetAdmin.Endpoint.Models.RBAC.User;
 using SnippetAdmin.Endpoint.Models.Scheduler.Job;
 using SnippetAdmin.Endpoint.Models.System.Dic;
+using SnippetAdmin.Endpoint.Models.System.Setting;
 
 namespace SnippetAdmin.Models
 {
@@ -42,6 +43,9 @@ namespace SnippetAdmin.Models
 			CreateMap<SysDicValue, GetDicValueListOutputModel>();
 			CreateMap<AddDicValueInputModel, SysDicValue>();
 			CreateMap<UpdateDicValueInputModel, SysDicValue>();
+
+			CreateMap<SysSetting, Setting>();
+			CreateMap<SysSettingSubGroup, GetSettingsOutputModel>();
 		}
 	}
 }
