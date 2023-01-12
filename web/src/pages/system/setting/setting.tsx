@@ -13,7 +13,7 @@ import locale from 'antd/locale/zh_CN';
 
 export default function Setting() {
 
-    const token = useToken();
+    const [_,token] = useToken();
     const [selectItem, setSelectItem] = useState<number>(0);
 
     const [iconFileList, setIconFileList] = useState<UploadFile[]>([]);
@@ -211,7 +211,7 @@ export default function Setting() {
                     <ul>
                         {groups.map((g, i) => (
                             <li key={i.toString()} onClick={() => selectSetting(i, g.code!)} style={{
-                                borderLeft: selectItem === i ? '5px solid ' + token[1].colorPrimary : ""
+                                borderLeft: selectItem === i ? '5px solid ' + token.colorPrimary : ""
                             }}>{g.name}</li>
                         ))}
                     </ul>

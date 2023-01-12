@@ -11,10 +11,13 @@ import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faKey, faPlus, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { useToken } from 'antd/es/theme/internal';
 
 export default function User() {
 
     const searchOption = useRef<any>({});
+
+    const [_, token] = useToken();
 
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(10);
@@ -77,7 +80,7 @@ export default function User() {
         {
             title: '角色', dataIndex: "roles", align: 'center', width: '220px',
             render: (array: any, record: any) => (
-                array?.map((s: any) => (s.isActive ? <Tag key={s} style={{ marginBottom: '5px' }} color="#2db7f5">{s.roleName}</Tag>
+                array?.map((s: any) => (s.isActive ? <Tag key={s} style={{ marginBottom: '5px' }} color={token.colorPrimary}>{s.roleName}</Tag>
                     : <Tag key={s} style={{ marginBottom: '5px' }} color="gray">{s.roleName}</Tag>))
             ),
         },
@@ -93,7 +96,7 @@ export default function User() {
             title: '职位', dataIndex: "positions", align: 'center',
             render: (array: any, record: any) => (
                 array?.map((s: any) => (
-                    <Tag key={s} style={{ marginBottom: '5px' }} color="gold">{s}</Tag>)
+                    <Tag key={s} style={{ marginBottom: '5px' }} color={token.colorPrimary}>{s}</Tag>)
                 )
             ),
         },

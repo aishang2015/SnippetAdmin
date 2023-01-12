@@ -1,4 +1,4 @@
-import { faArrowRight, faBug, faClipboardCheck, faCode, faCodeBranch, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faFirstAid, faHome, faInfo, faSitemap, faTasks, faThumbtack, faTools, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faArrowRight, faBook, faBug, faClipboardCheck, faCode, faCodeBranch, faCog, faCogs, faColumns, faDiceOne, faFileAlt, faFileExport, faFirstAid, faHome, faInfo, faPlaneUp, faPlug, faPortrait, faShieldHalved, faSignInAlt, faSitemap, faSocks, faTasks, faThumbtack, faTools, faUser, faUserFriends, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Configuration } from './config';
 
@@ -12,7 +12,7 @@ export class Constants {
                 { path: '/role', name: '角色信息', identify: 'role', icon: <FontAwesomeIcon icon={faUserTag} fixedWidth /> },
                 { path: '/org', name: '组织信息', identify: 'org', icon: <FontAwesomeIcon icon={faSitemap} fixedWidth /> },
                 { path: '/pos', name: '职位信息', identify: 'org', icon: <FontAwesomeIcon icon={faUserFriends} fixedWidth /> },
-                { path: '/page', name: '权限信息', identify: 'permission', icon: <FontAwesomeIcon icon={faColumns} fixedWidth /> },
+                { path: '/page', name: '权限信息', identify: 'permission', icon: <FontAwesomeIcon icon={faShieldHalved} fixedWidth /> },
             ]
         },
         {
@@ -28,15 +28,15 @@ export class Constants {
         // },
         {
             path: '', name: '日志中心', identify: 'systemLog', icon: <FontAwesomeIcon icon={faFileAlt} fixedWidth />, children: [
-                { path: '/access', name: '接口日志', identify: 'accessRecord', icon: <FontAwesomeIcon icon={faArrowRight} fixedWidth /> },
+                { path: '/access', name: '接口日志', identify: 'accessRecord', icon: <FontAwesomeIcon icon={faPlug} fixedWidth /> },
                 { path: '/exception', name: '异常日志', identify: 'exceptionRecord', icon: <FontAwesomeIcon icon={faBug} fixedWidth /> },
-                { path: '/loginlog', name: '登录日志', identify: 'loginRecord', icon: <FontAwesomeIcon icon={faInfo} fixedWidth /> },
+                { path: '/loginlog', name: '登录日志', identify: 'loginRecord', icon: <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> },
             ]
         },
         {
             path: '', name: '系统管理', identify: 'system-config', icon: <FontAwesomeIcon icon={faCog} fixedWidth />, children: [
                 { path: '/setting', name: '系统配置', identify: 'sys-config', icon: <FontAwesomeIcon icon={faCogs} fixedWidth /> },
-                { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faDiceOne} fixedWidth /> },
+                { path: '/dictionary', name: '字典配置', identify: 'dic-config', icon: <FontAwesomeIcon icon={faBook} fixedWidth /> },
             ]
         },
         // {

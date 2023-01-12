@@ -40,13 +40,15 @@ namespace SnippetAdmin.Core.Middleware
 						};
 						if (ex is ErrorSortPropertyException)
 						{
-							result.Code = MessageConstant.SYSTEM_ERROR_004.Item1;
-							result.Message = MessageConstant.SYSTEM_ERROR_004.Item2;
+							var (code, msg) = MessageConstant.SYSTEM_ERROR_004;
+							result.Code = code;
+							result.Message = msg;
 						}
 						else
 						{
-							result.Code = MessageConstant.SYSTEM_ERROR_001.Item1;
-							result.Message = MessageConstant.SYSTEM_ERROR_001.Item2;
+							var (code, msg) = MessageConstant.SYSTEM_ERROR_001;
+							result.Code = code;
+							result.Message = msg;
 						}
 
 						await JsonSerializer.SerializeAsync(httpContext.Response.Body, result, new JsonSerializerOptions

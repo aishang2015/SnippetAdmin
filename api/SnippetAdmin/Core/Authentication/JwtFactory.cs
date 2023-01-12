@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -35,12 +36,9 @@ namespace SnippetAdmin.Core.Authentication
 		public string GenerateJwtToken(List<(string, string)> tuples = null)
 		{
 			var userClaims = new List<Claim>();
-			if (tuples != null)
+			if (tuples != null && tuples.Count > 0)
 			{
-				foreach (var tuple in tuples)
-				{
-					userClaims.Add(new Claim(tuple.Item1, tuple.Item2));
-				}
+				userClaims = tuples.Select(tuple => new Claim(tuple.Item1, tuple.Item2)).ToList();
 			}
 			var jwtSecurityToken = new JwtSecurityToken(
 				issuer: _jwtOption.Issuer,
