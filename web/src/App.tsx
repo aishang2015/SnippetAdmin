@@ -9,6 +9,7 @@ import './App.css';
 import BasicLayout from './pages/basic/layout/layout';
 import { ConfigProvider, theme } from 'antd';
 import Login from './pages/basic/login/login';
+import { Loading } from './components/common/loading/loading';
 
 type ThemeData = {
   colorPrimary: string;
@@ -52,7 +53,7 @@ const App: FC = () => {
   const [colorData, setColorData] = React.useState<ThemeData>(defaultData);
   const [themeData, setThemeData] = React.useState<string>('');
 
-  const loadingContent = "加载中...";
+  const loadingContent = <Loading />;
 
   var noAuthorizedRouter = createBrowserRouter([
     { path: '', element: <Login /> },

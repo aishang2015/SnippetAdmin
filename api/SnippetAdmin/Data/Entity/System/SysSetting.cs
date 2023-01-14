@@ -39,6 +39,9 @@ namespace SnippetAdmin.Data.Entity.System
 		[Comment("顺序")]
 		public int Index { get; set; }
 
+		[Comment("是否在页面上显示")]
+		public bool IsShow { get; set; }
+
 		#region 校验
 
 		public int? Min { get; set; }

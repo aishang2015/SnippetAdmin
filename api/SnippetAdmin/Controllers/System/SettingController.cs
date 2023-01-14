@@ -57,7 +57,7 @@ namespace SnippetAdmin.Controllers.System
 			var subGroups = _dbContext.SysSettingSubGroups
 				.Where(g => g.GroupCode == inputModel.GroupCode).ToList();
 			var settings = _dbContext.SysSettings
-				.Where(g => g.GroupCode == inputModel.GroupCode).ToList();
+				.Where(g => g.GroupCode == inputModel.GroupCode && g.IsShow).ToList();
 
 			var result = _mapper.Map<List<GetSettingsOutputModel>>(subGroups);
 			result.ForEach(r =>

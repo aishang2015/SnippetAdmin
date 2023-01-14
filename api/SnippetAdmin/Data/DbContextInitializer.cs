@@ -371,7 +371,8 @@ namespace SnippetAdmin.Data
 					Value = "f12m",
 					Min = 2,
 					Max = 5,
-					Regex = "f.*?m"
+					Regex = "f.*?m",
+					IsShow = true,
 				},
 				new SysSetting
 				{
@@ -383,7 +384,8 @@ namespace SnippetAdmin.Data
 					InputType = 2,
 					Value = "342",
 					Max = 10000,
-					Min = 200
+					Min = 200,
+					IsShow = true,
 				},
 				new SysSetting
 				{
@@ -393,7 +395,8 @@ namespace SnippetAdmin.Data
 					Code = "Identity3",
 					Describe = "配置3",
 					InputType = 3,
-					Value = "1"
+					Value = "1",
+					IsShow = false,
 				},
 				new SysSetting
 				{
@@ -403,7 +406,8 @@ namespace SnippetAdmin.Data
 					Code = "Identity4",
 					Describe = "配置4",
 					InputType = 4,
-					Value = "true"
+					Value = "true",
+					IsShow = true
 				},
 				new SysSetting
 				{
@@ -414,7 +418,8 @@ namespace SnippetAdmin.Data
 					Describe = "配置5",
 					InputType = 5,
 					Value = "A",
-					Options = "A,B,C,D"
+					Options = "A,B,C,D",
+					IsShow = true
 				},
 				new SysSetting
 				{
@@ -425,7 +430,8 @@ namespace SnippetAdmin.Data
 					Describe = "配置6",
 					InputType = 6,
 					Value = "1,2,3",
-					Options = "1,2,3,4"
+					Options = "1,2,3,4",
+					IsShow = true
 				},
 				new SysSetting
 				{
@@ -436,7 +442,8 @@ namespace SnippetAdmin.Data
 					Describe = "配置7",
 					InputType = 7,
 					Value = "水",
-					Options = "金,木,水,火,土"
+					Options = "金,木,水,火,土",
+					IsShow = true
 				},
 				new SysSetting
 				{
@@ -446,7 +453,8 @@ namespace SnippetAdmin.Data
 					Code = "Identity8",
 					Describe = "配置8",
 					InputType = 8,
-					Value = "2022/09/01"
+					Value = "2022/09/01",
+					IsShow = true
 				},
 				new SysSetting
 				{
@@ -456,7 +464,8 @@ namespace SnippetAdmin.Data
 					Code = "Identity9",
 					Describe = "配置9",
 					InputType = 9,
-					Value = "2022/07/20 12:12:12"
+					Value = "2022/07/20 12:12:12",
+					IsShow = true
 				});
 
 			await dbContext.SaveChangesAsync();
