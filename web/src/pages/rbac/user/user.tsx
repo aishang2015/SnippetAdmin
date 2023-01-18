@@ -10,7 +10,7 @@ import { RoleService } from '../../../http/requests/role';
 import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faKey, faPlus, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faKey, faPlus, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 import { useToken } from 'antd/es/theme/internal';
 
 export default function User() {
@@ -386,6 +386,8 @@ export default function User() {
                 <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="user-list-container">
                     <Space style={{ marginTop: "10px" }}>
+                        <Button icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
+                            onClick={getUsers}>刷新</Button>
                         <RightElement identify="create-user" child={
                             <>
                                 <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createUser}>创建</Button>

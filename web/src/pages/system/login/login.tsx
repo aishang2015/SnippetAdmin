@@ -1,4 +1,6 @@
-import { Pagination, Table, Tag } from "antd";
+import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Pagination, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { dateFormat } from "../../../common/time";
 import { LoginLogService } from "../../../http/requests/login-log";
@@ -53,6 +55,10 @@ export default function Login() {
     }
     return (
         <>
+            <div style={{ marginBottom: 10 }}>
+                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
+                    onClick={initAsync}>刷新</Button>
+            </div>
             <Table bordered={true} size="small" columns={tableColumns} dataSource={tableData} scroll={{ x: 930 }}
                 pagination={false}  ></Table>
             {total > 0 &&

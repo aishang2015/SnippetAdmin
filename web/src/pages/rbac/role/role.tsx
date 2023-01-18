@@ -7,7 +7,7 @@ import { RoleService } from '../../../http/requests/role';
 import { ElementService } from '../../../http/requests/element';
 import { RightElement } from '../../../components/right/rightElement';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faSave, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faPlus, faSave, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Role() {
 
@@ -152,14 +152,15 @@ export default function Role() {
     return (
         <>
             <div id="role-container">
-                <RightElement identify="create-role" child={
-                    <>
-                        <Space style={{ marginTop: "10px" }}>
+                <Space style={{ marginTop: "10px" }}>
+                    <Button icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />} onClick={init}>刷新</Button>
+                    <RightElement identify="create-role" child={
+                        <>
                             <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createRole}>创建</Button>
-                        </Space>
-                        <Divider style={{ margin: "10px 0" }} />
-                    </>
-                }></RightElement>
+
+                        </>
+                    }></RightElement> </Space>
+                <Divider style={{ margin: "10px 0" }} />
                 <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}

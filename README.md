@@ -35,12 +35,12 @@
 - docker-compose up -d
 - 使用visual studio打开api，vscode打开web项目，在appsetting中配置mysql地址。启动后，程序会自动生成数据库以及数据
 
-### 创建模板
+### 使用此项目创建项目模板
 
-- cd api                                  #进入目录
+- cd 项目根目录                            #进入目录
 
-- dotnet new -u .                 #卸载
+- dotnet new uninstall .              #卸载
 
-- dotnet new -i .                  #安装
+- dotnet new install .                   #安装
 
 - dotnet new sa -n 你自己的项目名

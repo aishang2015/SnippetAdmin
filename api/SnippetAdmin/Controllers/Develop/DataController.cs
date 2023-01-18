@@ -52,8 +52,9 @@ namespace SnippetAdmin.Controllers.Develop
 
 			_methodDictionary = new Dictionary<string, Func<StreamWriter, Task>>
 			{
-				{ "element",WriteElementAsync },
-				{ "dictionary",WriteDictionaryAsync },
+				{ "权限信息",WriteElementAsync },
+				{ "字典信息",WriteDictionaryAsync },
+				{ "系统配置",WriteSettingAsync },
 			};
 		}
 
@@ -170,6 +171,35 @@ namespace SnippetAdmin.Controllers.Develop
 			{
 				sw.WriteLine($"_dbContext.SysDicValues.Add(new SysDicValue {{Id = {value.Id},Name = \"{value.Name}\", Code = \"{value.Code}\", TypeId = {value.TypeId}, Sorting = {value.Sorting} }});");
 			}
+			sw.WriteLine("await _dbContext.SaveChangesAsync();");
+		}
+
+		private async Task WriteSettingAsync(StreamWriter sw)
+		{
+			var groups = await _dbContext.SysSettingGroups.ToListAsync();
+			var subGroups = await _dbContext.SysSettingSubGroups.ToListAsync();
+			var settings = await _dbContext.SysSettings.ToListAsync();
+
+			sw.WriteLine("// 分组");
+			foreach (var group in groups)
+			{
+				sw.WriteLine($@"_dbContext.SysSettingGroups.Add(new Data.Entity.System.SysSettingGroup {{ Code = ""{group.Code}"", Icon = ""{group.Icon}"", Index = {group.Index}, Name = ""{group.Name}"" }});");
+			}
+
+			sw.WriteLine();
+			sw.WriteLine("// 子分组");
+			foreach (var subGroup in subGroups)
+			{
+				sw.WriteLine($@"_dbContext.SysSettingSubGroups.Add(new Data.Entity.System.SysSettingSubGroup {{Code = ""{subGroup.Code}"",Name = ""{subGroup.Name}"", GroupCode = ""{subGroup.GroupCode}"", Describe = ""{subGroup.Describe}"", Icon = ""{subGroup.Icon}"", Index = {subGroup.Index} }});");
+			}
+
+			sw.WriteLine();
+			sw.WriteLine("// 配置项");
+			foreach (var setting in settings)
+			{
+				sw.WriteLine($@"_dbContext.SysSettings.Add(new Data.Entity.System.SysSetting {{Describe = ""{setting.Describe}"",GroupCode = ""{setting.GroupCode}"", Code = ""{setting.Code}"", Icon = ""{setting.Icon}"", Index = {setting.Index}, InputType = {setting.InputType}, IsShow = {setting.IsShow.ToString().ToLower()}, Max = {(setting.Max != null ? setting.Max.ToString() : "null")}, Min = {(setting.Min != null ? setting.Min.ToString() : "null")}, Name = ""{setting.Name}"", Options = ""{setting.Options}"", Regex = ""{setting.Regex}"", SubGroupCode = ""{setting.SubGroupCode}"", Value = ""{setting.Value}"" }});");
+			}
+
 			sw.WriteLine("await _dbContext.SaveChangesAsync();");
 		}
 	}

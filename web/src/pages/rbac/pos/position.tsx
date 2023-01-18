@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Position() {
 
@@ -106,14 +106,16 @@ export default function Position() {
     return (
         <>
             <div id="position-container">
-                <RightElement identify="create-role" child={
-                    <>
-                        <Space style={{ marginTop: "10px" }}>
+                <Space style={{ marginTop: "10px" }}>
+                    <Button icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />} onClick={() => getPositions(page, size)}>刷新</Button>
+                    <RightElement identify="create-role" child={
+                        <>
                             <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createPosition}>创建</Button>
-                        </Space>
-                        <Divider style={{ margin: "10px 0" }} />
-                    </>
-                }></RightElement>
+
+                        </>
+                    }></RightElement>
+                </Space>
+                <Divider style={{ margin: "10px 0" }} />
                 <Table columns={positionTableColumns} dataSource={positionTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} onChange={async (p, s) => { setPage(p); setSize(s); await getPositions(p, s); }} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>

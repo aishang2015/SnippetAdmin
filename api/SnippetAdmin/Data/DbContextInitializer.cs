@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data.Entity.Rbac;
@@ -102,16 +103,16 @@ namespace SnippetAdmin.Data
 			_dbContext.RbacElements.Add(new RbacElement { Id = 45, Name = "编辑 ", Identity = "edit-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/AddOrUpdatePosition", Sorting = 0 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 46, Name = "删除", Identity = "delete-position", Type = ElementType.ButtonLink, AccessApi = "api/Position/DeletePosition", Sorting = 0 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 47, Name = "任务调度", Identity = "task", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
-			_dbContext.RbacElements.Add(new RbacElement { Id = 48, Name = "系统日志", Identity = "systemLog", Type = ElementType.Menu, AccessApi = "", Sorting = 4 });
+			_dbContext.RbacElements.Add(new RbacElement { Id = 48, Name = "日志中心", Identity = "systemLog", Type = ElementType.Menu, AccessApi = "", Sorting = 4 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 49, Name = "任务管理", Identity = "taskManage", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 50, Name = "任务记录", Identity = "taskRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
-			_dbContext.RbacElements.Add(new RbacElement { Id = 51, Name = "访问记录", Identity = "accessRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
-			_dbContext.RbacElements.Add(new RbacElement { Id = 52, Name = "异常记录", Identity = "exceptionRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
+			_dbContext.RbacElements.Add(new RbacElement { Id = 51, Name = "接口日志", Identity = "accessRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
+			_dbContext.RbacElements.Add(new RbacElement { Id = 52, Name = "异常日志", Identity = "exceptionRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 53, Name = "页面", Identity = "taskManagePage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 54, Name = "页面", Identity = "taskRecordPage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 55, Name = "页面", Identity = "accessRecordPage", Type = ElementType.ButtonLink, AccessApi = "api/SysAccessLog/GetMany2", Sorting = -1 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 56, Name = "页面", Identity = "exceptionRecordPage", Type = ElementType.ButtonLink, AccessApi = "api/SysExceptionLog/GetMany2", Sorting = -1 });
-			_dbContext.RbacElements.Add(new RbacElement { Id = 58, Name = "登录记录", Identity = "loginRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
+			_dbContext.RbacElements.Add(new RbacElement { Id = 58, Name = "登录日志", Identity = "loginRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 3 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 59, Name = "页面", Identity = "loginRecordPage", Type = ElementType.ButtonLink, AccessApi = "api/SysLoginLog/GetMany2", Sorting = -1 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 60, Name = "系统管理", Identity = "system-config", Type = ElementType.Menu, AccessApi = "", Sorting = 5 });
 			_dbContext.RbacElements.Add(new RbacElement { Id = 61, Name = "字典配置", Identity = "dic-config", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });

@@ -53,7 +53,7 @@ export default function Export() {
             <Row gutter={[16, 16]}>
                 {codeDataTypeList.map(type =>
                     <Col span={4} key={type}>
-                        <Card title={null}
+                        <Card title={null} size="small" style={{overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}
                             actions={[
                                 <FontAwesomeIcon icon={faDownload} onClick={() => downloadCodeData(type)} />
                             ]}>
@@ -67,7 +67,7 @@ export default function Export() {
             <Row gutter={[16, 16]}>
                 {csvDataTypeList.map(type =>
                     <Col span={4} key={type}>
-                        <Card title={null}
+                        <Card title={null} size="small" style={{overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}
                             actions={[
                                 <div onClick={() => downloadCsvData(type)}>
                                     <FontAwesomeIcon icon={faDownload} />

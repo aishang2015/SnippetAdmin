@@ -9,7 +9,7 @@ namespace SnippetAdmin.Core.Monitor
 
 		protected override void OnEventSourceCreated(EventSource eventSource)
 		{
-			Console.WriteLine(eventSource.Name);
+			//Console.WriteLine(eventSource.Name);
 			if (eventSource.Name.Equals("Microsoft.EntityFrameworkCore") ||
 				eventSource.Name.Equals("System.Runtime") ||
 				eventSource.Name.Equals("Microsoft.AspNetCore.Hosting"))
