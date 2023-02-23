@@ -34,17 +34,25 @@ namespace SnippetAdmin.Background
 			{
 				var log = await ChannelHelper<SysAccessLog>.Instance.Reader.ReadAsync();
 
+				SnippetAdminDbContext executorDb;
 				using var scope1 = _provider.CreateScope();
-				using (var db1 = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>())
+				using var db1 = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
+				var isExist = db1.CheckSharingTableWithNoCreate<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+				if (!isExist)
 				{
-					await db1.CheckSharingTable<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+					await db1.CheckSharingTableWithCreate<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+
+					var scope2 = _provider.CreateScope();
+					var db2 = scope2.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
+					executorDb = db2;
+				}
+				else
+				{
+					executorDb = db1;
 				}
 
-				using var scope2 = _provider.CreateScope();
-				using var db2 = scope2.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-
-				await db2.GetShardingTableSet<SysAccessLog>(DateTime.Now.ToString("yyyyMM")).AddAsync(log);
-				await db2.SaveChangesAsync();
+				await executorDb.GetShardingTableSet<SysAccessLog>(DateTime.Now.ToString("yyyyMM")).AddAsync(log);
+				await executorDb.SaveChangesAsync();
 			}
 		}
 	}

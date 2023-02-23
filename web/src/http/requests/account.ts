@@ -1,4 +1,4 @@
-import { CommonResult } from "../common-result";
+import { CommonResult, CommonResultNoData } from "../common-result";
 import { Axios } from "../request";
 
 export function login(model: LoginModel) {
@@ -27,6 +27,29 @@ export function refresh(userName: string, jwtToken: string) {
     });
 }
 
+export function updateUserInfo(model: UpdateUserInfoInputModel) {
+    return Axios.instance.post<CommonResult<CommonResultNoData>>('api/Account/UpdateUserInfo', model);
+}
+
+export function modifyPassword(param: ModifyPasswordInputModel) {
+    return Axios.instance.post<CommonResult<CommonResultNoData>>('api/Account/ModifyPassword', param);
+}
+
+/*
+ * ModifyPasswordInputModel
+ */
+export interface ModifyPasswordInputModel {
+    oldPassword?: null | string;
+    newPassword?: null | string;
+}
+
+/**
+ * UpdateUserInfoInputModel
+ */
+export interface UpdateUserInfoInputModel {
+    phoneNumber?: null | string;
+}
+
 export interface LoginModel {
     userName: string;
     password: string;
@@ -42,6 +65,7 @@ export interface LoginResult {
 
 export interface UserInfoResult {
     id: number;
+    avatar: string;
     userName: string;
     realName: string;
     email: string;

@@ -9,6 +9,8 @@ using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Core.Authentication;
 using SnippetAdmin.Core.Extensions;
+using SnippetAdmin.Core.FileStore;
+using SnippetAdmin.Core.Helpers;
 using SnippetAdmin.Core.Oauth;
 using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Data;
@@ -251,6 +253,70 @@ namespace SnippetAdmin.Controllers
 				);
 			}
 			return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0001);
+		}
+
+
+
+		/// <summary>
+		/// 上传用户头像
+		/// </summary>
+		[Authorize]
+		[HttpPost]
+		public async Task<CommonResult> UploadAvatar([FromForm] IFormFile avatar,
+			[FromServices] IFileStoreService fileStoreService,
+			[FromServices] SnippetAdminDbContext db)
+		{
+			var user = db.Users.FirstOrDefault(u => u.UserName == User.GetUserName());
+
+			if (!string.IsNullOrEmpty(user.Avatar))
+			{
+				await fileStoreService.DeleteFileAsync(user.Avatar);
+			}
+
+			var newFileName = GuidHelper.NewSequentialGuid().ToString("N") + "." + avatar.FileName.Split('.').Last();
+			await fileStoreService.SaveFromStreamAsync(avatar.OpenReadStream(), newFileName);
+
+			user.Avatar = newFileName;
+			db.Users.Update(user);
+			await db.SaveChangesAsync();
+
+			return CommonResult.Success(newFileName);
+		}
+
+		/// <summary>
+		/// 更新用户信息
+		/// </summary>
+		/// <returns></returns>
+		[Authorize]
+		[HttpPost]
+		public async Task<CommonResult> UpdateUserInfo([FromBody] UpdateUserInfoInputModel model,
+			[FromServices] SnippetAdminDbContext db)
+		{
+			var user = db.Users.FirstOrDefault(u => u.UserName == User.GetUserName());
+			user.PhoneNumber = model.PhoneNumber;
+			db.Update(user);
+			await db.SaveChangesAsync();
+			return CommonResult.Success(MessageConstant.SYSTEM_INFO_002);
+		}
+
+		/// <summary>
+		/// 修改密码
+		/// </summary>
+		/// <returns></returns>
+		[Authorize]
+		[HttpPost]
+		public async Task<CommonResult> ModifyPassword([FromBody] ModifyPasswordInputModel model,
+			[FromServices] SnippetAdminDbContext db,
+			[FromServices] UserManager<RbacUser> userManager)
+		{
+			var user = db.Users.FirstOrDefault(u => u.UserName == User.GetUserName());
+			var isValidPwd = await userManager.CheckPasswordAsync(user, model.OldPassword);
+			if (!isValidPwd)
+			{
+				return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0013);
+			}
+			await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+			return CommonResult.Success(MessageConstant.ACCOUNT_INFO_0003);
 		}
 
 		/// <summary>

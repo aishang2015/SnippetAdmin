@@ -22,6 +22,7 @@
 
 		public static readonly (string, string) ACCOUNT_INFO_0001 = ("ACCOUNT_INFO_0001", "登录成功！");
 		public static readonly (string, string) ACCOUNT_INFO_0002 = ("ACCOUNT_INFO_0002", "第三方信息获取成功，请绑定您的账号！");
+		public static readonly (string, string) ACCOUNT_INFO_0003 = ("ACCOUNT_INFO_0003", "密码修改成功！");
 
 		public static readonly (string, string) ACCOUNT_ERROR_0001 = ("ACCOUNT_ERROR_0001", "账号或密码错误！");
 		public static readonly (string, string) ACCOUNT_ERROR_0002 = ("ACCOUNT_ERROR_0002", "请输入账号！");
@@ -35,6 +36,7 @@
 		public static readonly (string, string) ACCOUNT_ERROR_0010 = ("ACCOUNT_ERROR_0010", "Jwt不合法！");
 		public static readonly (string, string) ACCOUNT_ERROR_0011 = ("ACCOUNT_ERROR_0011", "刷新token已过期！");
 		public static readonly (string, string) ACCOUNT_ERROR_0012 = ("ACCOUNT_ERROR_0012", "账号未激活！");
+		public static readonly (string, string) ACCOUNT_ERROR_0013 = ("ACCOUNT_ERROR_0013", "用户旧密码错误！");
 
 		#endregion AccountController
 

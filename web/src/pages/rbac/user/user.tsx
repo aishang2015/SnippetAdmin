@@ -12,6 +12,7 @@ import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faKey, faPlus, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 import { useToken } from 'antd/es/theme/internal';
+import { Configuration } from '../../../common/config';
 
 export default function User() {
 
@@ -58,7 +59,7 @@ export default function User() {
             render: (data: any, record: any) => (
                 data === null ?
                     <Avatar icon={<FontAwesomeIcon icon={faUser} />} /> :
-                    <Avatar src={data} />
+                    <Avatar src={`${Configuration.BaseUrl}/store/${data}`} />
             ),
 
         },

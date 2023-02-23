@@ -13,6 +13,8 @@ using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
 using SnippetAdmin.EntityFrameworkCore.Cache;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace SnippetAdmin.Data
 {
@@ -146,24 +148,44 @@ namespace SnippetAdmin.Data
 		/// 下次OnModelCreating时才会去SharedTypeEntity配置分表信息，因此此操作需要在一个
 		/// 独立的scope中去进行,这里把分表信息保存会执行一次SaveChangesAsync，
 		/// </remark>
-		public async Task CheckSharingTable<T>(string keyword) where T : class
+		public async Task CheckSharingTableWithCreate<T>(string keyword) where T : class
 		{
-			var tableName = typeof(T).Name + keyword;
+			string tableName = GetShardingTableName<T>(keyword);
 			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
 			{
 				await CreateTable(tableName, typeof(T));
-				_shardingInfoService.AddShardingInfo((typeof(T), tableName));
 			}
+		}
+
+		public bool CheckSharingTableWithNoCreate<T>(string keyword) where T : class
+		{
+			string tableName = GetShardingTableName<T>(keyword);
+			return CacheSet<SysSharding>().Any(s => s.TableName == tableName);
 		}
 
 		// 获取访问记录分表
 		public DbSet<T> GetShardingTableSet<T>(string keyword) where T : class
 		{
-			if (!CacheSet<SysSharding>().Any(s => s.TableName == typeof(T).Name + keyword))
+			string tableName = GetShardingTableName<T>(keyword);
+			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
 			{
 				return null;
 			}
-			return Set<T>(typeof(T).Name + keyword);
+			return Set<T>(tableName);
+		}
+
+		/// <summary>
+		/// 获取分表的表名
+		/// </summary>
+		/// <remarks>
+		/// 如果没有table标记，则用类型名和关键字拼接作为表明，如果有table标记则用table标记和关键字拼接作为表名
+		/// </remarks>
+		private static string GetShardingTableName<T>(string keyword) where T : class
+		{
+			var attribute = typeof(T).GetCustomAttribute<TableAttribute>();
+			var tableName = attribute == null ? typeof(T).Name + keyword :
+				attribute.Name + "_" + keyword;
+			return tableName;
 		}
 
 		public async Task CreateTable(string tableName, Type type)
@@ -175,7 +197,9 @@ namespace SnippetAdmin.Data
 				await creator.CreateTablesAsync();
 				_shardingInfoService.AddShardingInfo((type, tableName));
 
-				SysShardings.Add(new SysSharding { TableName = tableName, TableType = type.Name });
+				var newShardingInfo = new SysSharding { TableName = tableName, TableType = type.Name };
+				SysShardings.Add(newShardingInfo);
+				(CacheSet<SysSharding>() as List<SysSharding>).Add(newShardingInfo);
 				await SaveChangesAsync();
 			}
 			catch (Exception e)
