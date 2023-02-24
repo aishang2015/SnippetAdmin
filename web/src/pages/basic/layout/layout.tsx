@@ -268,21 +268,21 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                     <div style={{ width: "200px" }}>
                         <ul style={{ listStyle: "none", margin: '0', padding: '0' }}>
                             <li style={{
-                                backgroundColor: settingMenuIndex === 1 ? token.colorPrimary : "white",
+                                backgroundColor: settingMenuIndex === 1 ? token.colorPrimary : token.colorBgElevated,
                                 color: settingMenuIndex === 1 ? "white" : token.colorText,
                                 display: 'block', padding: "10px", cursor: "pointer",
                                 borderRadius: '4px', transition: "all 0.3s",
 
                             }} onClick={() => menuIndexChanged(1)}>修改头像</li>
                             <li style={{
-                                backgroundColor: settingMenuIndex === 2 ? token.colorPrimary : "white",
+                                backgroundColor: settingMenuIndex === 2 ? token.colorPrimary : token.colorBgElevated,
                                 color: settingMenuIndex === 2 ? "white" : token.colorText,
                                 display: 'block', padding: "10px", cursor: "pointer",
                                 borderRadius: '4px', transition: "all 0.3s",
 
                             }} onClick={() => menuIndexChanged(2)}>基本信息</li>
                             <li style={{
-                                backgroundColor: settingMenuIndex === 3 ? token.colorPrimary : "white",
+                                backgroundColor: settingMenuIndex === 3 ? token.colorPrimary : token.colorBgElevated,
                                 color: settingMenuIndex === 3 ? "white" : token.colorText,
                                 display: 'block', padding: "10px", cursor: "pointer",
                                 borderRadius: '4px', transition: "all 0.3s",
