@@ -11,7 +11,7 @@ namespace SnippetAdmin.Orleans
 			// use orleans
 			hostBuilder.Host.UseOrleans((ctx, builder) =>
 			{
-				builder.UseLocalhostClustering();
+				builder.UseLocalhostClustering(gatewayPort: 30001);
 				builder.AddMemoryGrainStorage("SnippetAdminSilo");
 			});
 
