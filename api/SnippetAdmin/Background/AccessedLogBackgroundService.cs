@@ -32,27 +32,17 @@ namespace SnippetAdmin.Background
 
 			while (!stoppingToken.IsCancellationRequested)
 			{
-				var log = await ChannelHelper<SysAccessLog>.Instance.Reader.ReadAsync();
+				var log = await ChannelHelper<SysAccessLog>.Instance.Reader.ReadAsync(stoppingToken);
 
-				SnippetAdminDbContext executorDb;
-				using var scope1 = _provider.CreateScope();
-				using var db1 = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-				var isExist = db1.CheckSharingTableWithNoCreate<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
-				if (!isExist)
+				if (log != null)
 				{
-					await db1.CheckSharingTableWithCreate<SysAccessLog>(DateTime.Now.ToString("yyyyMM"));
+					using var scope1 = _provider.CreateScope();
+					using var executorDb = scope1.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
 
-					var scope2 = _provider.CreateScope();
-					var db2 = scope2.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-					executorDb = db2;
-				}
-				else
-				{
-					executorDb = db1;
+					await executorDb.SysAccessLogs.AddAsync(log);
+					await executorDb.SaveChangesAsync();
 				}
 
-				await executorDb.GetShardingTableSet<SysAccessLog>(DateTime.Now.ToString("yyyyMM")).AddAsync(log);
-				await executorDb.SaveChangesAsync();
 			}
 		}
 	}

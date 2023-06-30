@@ -5,6 +5,8 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import FormItem from 'antd/es/form/FormItem';
 import { useForm } from 'antd/es/form/Form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
 
 export default function Frontend() {
 
@@ -371,7 +373,7 @@ export default function Frontend() {
                                                             <Form.Item name={[field.name, 'isRequired']} valuePropName="checked">
                                                                 <Checkbox>必须</Checkbox>
                                                             </Form.Item>
-                                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                                            <Button icon={<FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>} onClick={() => remove(field.name)}></Button>
                                                         </Space>
                                                     )
                                                 )
@@ -551,7 +553,8 @@ export default function Frontend() {
                                                             <Form.Item name={[field.name, 'render']} initialValue={false} valuePropName="checked">
                                                                 <Checkbox>自定义渲染</Checkbox>
                                                             </Form.Item>
-                                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                                            
+                                                            <Button icon={<FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>} onClick={() => remove(field.name)}></Button>
                                                         </Space>
                                                     )
                                                 )

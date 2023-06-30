@@ -16,6 +16,7 @@ using SnippetAdmin.Core.Oauth.Models;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Models.Account;
+using System.Security.Claims;
 
 namespace SnippetAdmin.Controllers
 {
@@ -245,7 +246,11 @@ namespace SnippetAdmin.Controllers
 			if (user != null)
 			{
 				// 生成jwttoken
-				var token = _jwtFactory.GenerateJwtToken(user.UserName);
+				var token = _jwtFactory.GenerateJwtToken(
+					new List<(string, string)> {
+						(ClaimTypes.Name, user.UserName),
+						(ClaimTypes.NameIdentifier, user.Id.ToString())
+					});
 				var identifies = await GetUserFrontRightsAsync(user);
 				return CommonResult.Success(
 					string.Empty, string.Empty,
@@ -325,7 +330,11 @@ namespace SnippetAdmin.Controllers
 		private async Task<CommonResult> MakeLoginResultAsync(RbacUser user)
 		{
 			// 生成jwttoken
-			var token = _jwtFactory.GenerateJwtToken(user.UserName);
+			var token = _jwtFactory.GenerateJwtToken(
+					new List<(string, string)> {
+						(ClaimTypes.Name, user.UserName),
+						(ClaimTypes.NameIdentifier, user.Id.ToString())
+					});
 			var identifies = await GetUserFrontRightsAsync(user);
 			return CommonResult.Success(
 				MessageConstant.ACCOUNT_INFO_0001,

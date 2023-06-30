@@ -6,6 +6,7 @@ using SnippetAdmin.Core.Attributes;
 using SnippetAdmin.Endpoint.Models.Develop.Code;
 using System.ComponentModel;
 using System.Text;
+using System.Linq;
 
 namespace SnippetAdmin.Controllers.Develop
 {
@@ -92,7 +93,7 @@ export interface {modelName} {
 
 				var responseType = desc.SupportedResponseTypes.FirstOrDefault()?.Type;
 				var responseTypeName = GetDataTypeName(responseType);
-				if (responseTypeName != null)
+				if (responseTypeName != null )
 				{
 					modelList.Add(GenerateTypeModel(responseType));
 				}
@@ -109,7 +110,7 @@ export interface {modelName} {
 				.Replace("{requests}", stringBuilder.ToString())
 				.Replace("{entity}", controllerName);
 
-			foreach (var model in modelList.Where(m => !string.IsNullOrEmpty(m)))
+			foreach (var model in modelList.Where(m => !string.IsNullOrEmpty(m)).Distinct())
 			{
 				result += model;
 			}
@@ -126,6 +127,10 @@ export interface {modelName} {
 			if (type != null)
 			{
 				var typeName = type.Name.Replace("`1", string.Empty);
+				if(typeName == "Int32")
+				{
+					typeName = "number";
+				}
 				if (type.IsGenericType)
 				{
 					var genericType = type.GetGenericArguments().FirstOrDefault();
@@ -147,13 +152,49 @@ export interface {modelName} {
 				return null;
 			}
 
-			if (type.Name == "String" || type.Name == "Int32")
+			if (type.Name == "String" || type.Name == "Int32" || type.Name == "IFormFile"
+				|| type.Name == "DateTime" || type.Name == "CommonResult")
 			{
 				return null;
 			}
 
 			if (type.IsGenericType)
 			{
+				if (!type.Name.StartsWith("Nullable") && !type.Name.StartsWith("IEnumerable") &&
+					!type.Name.StartsWith("List") && !type.Name.StartsWith("CommonResult"))
+				{
+
+					var typeName = type.Name.Replace("`1", string.Empty);
+					var genericStr = string.Empty;
+					Type[] array = type.GetGenericArguments();
+					for (int i = 0; i < array.Length; i++)
+					{
+						genericStr += $"T{i + 1},";
+					}
+					typeName += "<" + genericStr.Substring(0, genericStr.Length - 1) + ">";
+
+					var sb = new StringBuilder();
+					var properties = type.GetProperties();
+					foreach (var property in properties)
+					{
+						if (property.PropertyType.IsGenericType)
+						{
+							result.Append(GenerateTypeModel(property.PropertyType));
+						}
+
+						sb.AppendLine(TsPropertyTemplate
+							.Replace("{propertyName}", LowerFistChar(property.Name))
+							.Replace("{propertyType}", GetTsType(property.PropertyType)));
+					}
+
+					var modelCode = TsModelTemplate
+							.Replace("{modelName}", typeName)
+							.Replace("{properties}", sb.ToString());
+					result.AppendLine();
+					result.Append(modelCode);
+
+				}
+
 				var genericType = type.GetGenericArguments().FirstOrDefault();
 				result.AppendLine();
 				result.Append(GenerateTypeModel(genericType));
@@ -185,20 +226,34 @@ export interface {modelName} {
 
 		private string GetTsType(Type type)
 		{
+			var typeName = string.Empty;
 			if (type.IsGenericType && typeof(Nullable<>) == type.GetGenericTypeDefinition())
 			{
 				type = type.GetGenericArguments().FirstOrDefault();
+				typeName = type.Name;
+			}
+			else if (type.IsGenericType && typeof(IEnumerable<>) == type.GetGenericTypeDefinition())
+			{
+				type = type.GetGenericArguments().FirstOrDefault();
+				typeName = type.Name + "[]";
+			}
+			else if (type.IsGenericType)
+			{
+				typeName = type.Name.Replace("`1", string.Empty) + "<T>";
+			}
+			else
+			{
+				typeName = type.Name;
 			}
 
-			var typeName = type.Name;
 			return typeName switch
 			{
 				"DateTime" => "Date",
-				"Boolean" => "bool",
+				"Boolean" => "boolean",
 				"String" => "string",
 				"Int32" => "number",
 				"DateTime[]" => "Date[]",
-				"Boolean[]" => "bool[]",
+				"Boolean[]" => "boolean[]",
 				"String[]" => "string[]",
 				"Int32[]" => "number[]",
 				_ => typeName

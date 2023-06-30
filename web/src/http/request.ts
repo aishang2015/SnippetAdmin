@@ -32,45 +32,45 @@ export class Axios {
             baseURL: Configuration.BaseUrl,
         });
 
-       /*  // 添加检测token过期时间拦截器
-        Axios.instance.interceptors.request.use(
-            async config => {
-                let userName = localStorage.getItem("user-name");
-                let refreshToken = localStorage.getItem("refresh-token");
-                let token = localStorage.getItem("token");
-                let expires = localStorage.getItem("expire");
-                if (token && expires && userName && refreshToken) {
-                    if (new Date() > new Date(expires)) {
-                        let response = await axios.create({
-                            baseURL: Configuration.BaseUrl,
-                        }).post<CommonResult<LoginResult>>('api/account/refresh', {
-                            userName: userName,
-                            jwtToken: token,
-                            refreshToken: refreshToken
-                        });
-
-                        if (response.data.isSuccess) {
-                            let result = response.data.data;
-
-                            // 保存登录信息
-                            StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(),
-                                result.identifies, result.refreshToken);
-                        } else {
-
-                            // 清空登录信息
-                            message.error(`${response.data.message}(${response.data.code})`);
-                            StorageService.clearLoginStore();
-                            window.location.reload();
-                        }
-
-                    }
-                }
-                return config;
-            },
-            error => {
-                return Promise.reject(error);
-            }
-        ); */
+        /*  // 添加检测token过期时间拦截器
+         Axios.instance.interceptors.request.use(
+             async config => {
+                 let userName = localStorage.getItem("user-name");
+                 let refreshToken = localStorage.getItem("refresh-token");
+                 let token = localStorage.getItem("token");
+                 let expires = localStorage.getItem("expire");
+                 if (token && expires && userName && refreshToken) {
+                     if (new Date() > new Date(expires)) {
+                         let response = await axios.create({
+                             baseURL: Configuration.BaseUrl,
+                         }).post<CommonResult<LoginResult>>('api/account/refresh', {
+                             userName: userName,
+                             jwtToken: token,
+                             refreshToken: refreshToken
+                         });
+ 
+                         if (response.data.isSuccess) {
+                             let result = response.data.data;
+ 
+                             // 保存登录信息
+                             StorageService.setLoginStore(result.accessToken, result.userName, result.expire.toString(),
+                                 result.identifies, result.refreshToken);
+                         } else {
+ 
+                             // 清空登录信息
+                             message.error(`${response.data.message}(${response.data.code})`);
+                             StorageService.clearLoginStore();
+                             window.location.reload();
+                         }
+ 
+                     }
+                 }
+                 return config;
+             },
+             error => {
+                 return Promise.reject(error);
+             }
+         ); */
 
 
         // 添加认证头拦截器
@@ -100,21 +100,41 @@ export class Axios {
                     return response;
                 } else {
                     // 处理失败
-                    message.error(`${response.data.message}(${response.data.code})`);
+                    message.open({
+                        key: "key",
+                        type: 'error',
+                        content: `${response.data.message}(${response.data.code})`,
+                        duration: 2,
+                    });
                     return Promise.reject(response);
                 }
             },
             err => {
                 console.error(err);
                 if (!err.response) {
-                    message.error(`请求失败！服务器已经下线`);
+                    message.open({
+                        key: "key",
+                        type: 'error',
+                        content: '请求失败！服务器已经下线！',
+                        duration: 2,
+                    });
                 } else {
                     let errorStatus = err.response.status;
                     if (!errorStatus) {
-                        message.error(`发生未知错误！`);
+                        message.open({
+                            key: "key",
+                            type: 'error',
+                            content: '发生未知错误！',
+                            duration: 2,
+                        });
                     } else {
                         if (errorStatus === 401) {
-                            message.error(`认证已过期！`);
+                            message.open({
+                                key: "key",
+                                type: 'error',
+                                content: '认证已过期！',
+                                duration: 2,
+                            });
                             localStorage.clear();
                             setTimeout(() => {
                                 window.location.reload();
@@ -122,7 +142,13 @@ export class Axios {
 
                         } else {
                             let msg = Axios.codeMessage[errorStatus];
-                            message.error(`${errorStatus}:${msg}`);
+
+                            message.open({
+                                key: "key",
+                                type: 'error',
+                                content: `${errorStatus}:${msg}`,
+                                duration: 2,
+                            });
                         }
                     }
                 }

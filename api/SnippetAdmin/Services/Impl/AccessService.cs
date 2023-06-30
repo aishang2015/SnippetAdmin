@@ -24,14 +24,14 @@ namespace SnippetAdmin.Services.Impl
 		public List<int> GetCurrentUserOrgId()
 		{
 			var userName = _httpContextAccessor.HttpContext.User.GetUserName();
-			var user = _dbContext.CacheSet<RbacUser>().FirstOrDefault(u => u.UserName == userName);
+			var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
 
 			if (user == null)
 			{
 				throw new UserNotFoundException();
 			}
 
-			return _dbContext.CacheSet<RbacUserClaim>()
+			return _dbContext.UserClaims
 				.Where(uc => uc.UserId == user.Id && uc.ClaimType == ClaimConstant.UserOrganization)
 				.Select(uc => int.Parse(uc.ClaimValue))
 				.ToList();
@@ -43,19 +43,19 @@ namespace SnippetAdmin.Services.Impl
 		public List<int> GetCurrentUserGroupOrgId()
 		{
 			var userName = _httpContextAccessor.HttpContext.User.GetUserName();
-			var user = _dbContext.CacheSet<RbacUser>().FirstOrDefault(u => u.UserName == userName);
+			var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
 
 			if (user == null)
 			{
 				throw new UserNotFoundException();
 			}
 
-			var userOrgIds = _dbContext.CacheSet<RbacUserClaim>()
+			var userOrgIds = _dbContext.UserClaims
 				.Where(uc => uc.UserId == user.Id && uc.ClaimType == ClaimConstant.UserOrganization)
 				.Select(uc => int.Parse(uc.ClaimValue))
 				.ToList();
 
-			return _dbContext.CacheSet<RbacOrganizationTree>()
+			return _dbContext.RbacOrganizationTrees
 				.Where(o => userOrgIds.Contains(o.Ancestor))
 				.Select(o => o.Descendant).Distinct().ToList();
 		}

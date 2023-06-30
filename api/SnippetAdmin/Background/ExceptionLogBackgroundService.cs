@@ -19,12 +19,16 @@ namespace SnippetAdmin.Background
 		{
 			while (!stoppingToken.IsCancellationRequested)
 			{
-				var log = await ChannelHelper<SysExceptionLog>.Instance.Reader.ReadAsync();
+				var log = await ChannelHelper<SysExceptionLog>.Instance.Reader.ReadAsync(stoppingToken);
 
-				using var scope = _provider.CreateScope();
-				using var db = scope.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
-				await db.SysExceptionLogs.AddAsync(log);
-				await db.SaveChangesAsync();
+				if (log != null)
+				{
+					using var scope = _provider.CreateScope();
+					using var db = scope.ServiceProvider.GetRequiredService<SnippetAdminDbContext>();
+					await db.SysExceptionLogs.AddAsync(log);
+					await db.SaveChangesAsync();
+				}
+
 			}
 		}
 	}

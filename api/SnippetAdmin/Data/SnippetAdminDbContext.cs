@@ -1,39 +1,25 @@
-﻿using Hawthorn.EntityFramework.Sharding;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.InMemory.Infrastructure.Internal;
-using Microsoft.EntityFrameworkCore.Sqlite.Infrastructure.Internal;
-using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Caching.Memory;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
-using SnippetAdmin.EntityFrameworkCore.Cache;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
 
 namespace SnippetAdmin.Data
 {
 	public class SnippetAdminDbContext : IdentityDbContext<RbacUser, RbacRole, int,
 		RbacUserClaim, RbacUserRole, RbacUserLogin, RbacRoleClaim, RbacUserToken>
 	{
-		public string ShardingKey { get; private set; }
+		//public string ShardingKey { get; private set; }
 
-		private List<(Type, string)> _typeNames = new();
+		//private List<(Type, string)> _typeNames = new();
 
-		private readonly IMemoryCache _memoryCache;
+		//private readonly IMemoryCache _memoryCache;
 
-		private readonly IShardingInfoService _shardingInfoService;
+		//private readonly IShardingInfoService _shardingInfoService;
 
-		private DbContextOptions _options;
+		//private DbContextOptions _options;
 
-		public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options,
-			IShardingInfoService shardingInfoService,
-			IMemoryCache memoryCache) : base(options)
+		public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options) : base(options)
 		{
 			// 执行迁移命令之前需要暂时注释掉Program.cs中的mvcBuilder.AddDynamicController();
 			// 迁移命令,生成一个【FirstMigration】的迁移
@@ -51,17 +37,17 @@ namespace SnippetAdmin.Data
 			// 更改默认不跟踪所有实体
 			// ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
 			// 相同的对象
-			ShardingKey = shardingInfoService.GetShardingInfoKey();
-			_typeNames = shardingInfoService.GetShardingList();
+			//ShardingKey = shardingInfoService.GetShardingInfoKey();
+			//_typeNames = shardingInfoService.GetShardingList();
 
 			ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
 
 			// 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
 			ChangeTracker.AutoDetectChangesEnabled = false;
 
-			_memoryCache = memoryCache;
-			_shardingInfoService = shardingInfoService;
-			_options = options;
+			//_memoryCache = memoryCache;
+			//_shardingInfoService = shardingInfoService;
+			//_options = options;
 
 		}
 
@@ -76,6 +62,8 @@ namespace SnippetAdmin.Data
 		public DbSet<RbacOrganizationType> RbacOrganizationTypes { get; set; }
 
 		public DbSet<RbacPosition> RbacPositions { get; set; }
+
+		public DbSet<SysAccessLog> SysAccessLogs { get; set; }
 
 		public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
 
@@ -109,13 +97,13 @@ namespace SnippetAdmin.Data
 			builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
 			builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
 
-			if (_typeNames.Count > 0)
-			{
-				foreach (var typeName in _typeNames)
-				{
-					builder.SharedTypeEntity(typeName.Item2, typeName.Item1).ToTable(typeName.Item2);
-				}
-			}
+			//if (_typeNames.Count > 0)
+			//{
+			//	foreach (var typeName in _typeNames)
+			//	{
+			//		builder.SharedTypeEntity(typeName.Item2, typeName.Item1).ToTable(typeName.Item2);
+			//	}
+			//}
 
 		}
 
@@ -127,151 +115,151 @@ namespace SnippetAdmin.Data
 			optionsBuilder.EnableSensitiveDataLogging();
 		}
 
-		public IEnumerable<T> CacheSet<T>() where T : class
-		{
-			if (CacheableBase<SnippetAdminDbContext>.Instance.CacheableTypeList.Contains(typeof(T)))
-			{
-				return _memoryCache.Get(typeof(T).FullName) as List<T>;
-			}
-			else
-			{
-				return Set<T>().AsQueryable();
-			}
-		}
+		//public IEnumerable<T> CacheSet<T>() where T : class
+		//{
+		//	if (CacheableBase<SnippetAdminDbContext>.Instance.CacheableTypeList.Contains(typeof(T)))
+		//	{
+		//		return _memoryCache.Get(typeof(T).FullName) as List<T>;
+		//	}
+		//	else
+		//	{
+		//		return Set<T>().AsQueryable();
+		//	}
+		//}
 
-		// todo 需要优化
-		/// <summary>
-		/// 检查分表
-		/// </summary>
-		/// <remark>
-		/// 如果未实行分表则进行创建分表,这里AddShardingInfo会把分表数据保存，但是只有等到
-		/// 下次OnModelCreating时才会去SharedTypeEntity配置分表信息，因此此操作需要在一个
-		/// 独立的scope中去进行,这里把分表信息保存会执行一次SaveChangesAsync，
-		/// </remark>
-		public async Task CheckSharingTableWithCreate<T>(string keyword) where T : class
-		{
-			string tableName = GetShardingTableName<T>(keyword);
-			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
-			{
-				await CreateTable(tableName, typeof(T));
-			}
-		}
+		//		// todo 需要优化
+		//		/// <summary>
+		//		/// 检查分表
+		//		/// </summary>
+		//		/// <remark>
+		//		/// 如果未实行分表则进行创建分表,这里AddShardingInfo会把分表数据保存，但是只有等到
+		//		/// 下次OnModelCreating时才会去SharedTypeEntity配置分表信息，因此此操作需要在一个
+		//		/// 独立的scope中去进行,这里把分表信息保存会执行一次SaveChangesAsync，
+		//		/// </remark>
+		//		public async Task CheckSharingTableWithCreate<T>(string keyword) where T : class
+		//		{
+		//			string tableName = GetShardingTableName<T>(keyword);
+		//			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
+		//			{
+		//				await CreateTable(tableName, typeof(T));
+		//			}
+		//		}
 
-		public bool CheckSharingTableWithNoCreate<T>(string keyword) where T : class
-		{
-			string tableName = GetShardingTableName<T>(keyword);
-			return CacheSet<SysSharding>().Any(s => s.TableName == tableName);
-		}
+		//		public bool CheckSharingTableWithNoCreate<T>(string keyword) where T : class
+		//		{
+		//			string tableName = GetShardingTableName<T>(keyword);
+		//			return CacheSet<SysSharding>().Any(s => s.TableName == tableName);
+		//		}
 
-		// 获取访问记录分表
-		public DbSet<T> GetShardingTableSet<T>(string keyword) where T : class
-		{
-			string tableName = GetShardingTableName<T>(keyword);
-			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
-			{
-				return null;
-			}
-			return Set<T>(tableName);
-		}
+		//		// 获取访问记录分表
+		//		public DbSet<T> GetShardingTableSet<T>(string keyword) where T : class
+		//		{
+		//			string tableName = GetShardingTableName<T>(keyword);
+		//			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
+		//			{
+		//				return null;
+		//			}
+		//			return Set<T>(tableName);
+		//		}
 
-		/// <summary>
-		/// 获取分表的表名
-		/// </summary>
-		/// <remarks>
-		/// 如果没有table标记，则用类型名和关键字拼接作为表明，如果有table标记则用table标记和关键字拼接作为表名
-		/// </remarks>
-		private static string GetShardingTableName<T>(string keyword) where T : class
-		{
-			var attribute = typeof(T).GetCustomAttribute<TableAttribute>();
-			var tableName = attribute == null ? typeof(T).Name + keyword :
-				attribute.Name + "_" + keyword;
-			return tableName;
-		}
+		//		/// <summary>
+		//		/// 获取分表的表名
+		//		/// </summary>
+		//		/// <remarks>
+		//		/// 如果没有table标记，则用类型名和关键字拼接作为表明，如果有table标记则用table标记和关键字拼接作为表名
+		//		/// </remarks>
+		//		private static string GetShardingTableName<T>(string keyword) where T : class
+		//		{
+		//			var attribute = typeof(T).GetCustomAttribute<TableAttribute>();
+		//			var tableName = attribute == null ? typeof(T).Name + keyword :
+		//				attribute.Name + "_" + keyword;
+		//			return tableName;
+		//		}
 
-		public async Task CreateTable(string tableName, Type type)
-		{
-			using var context = new TableDbContext(GetOption(), tableName, type);
-			var creator = context.GetService<IRelationalDatabaseCreator>();
-			try
-			{
-				await creator.CreateTablesAsync();
-				_shardingInfoService.AddShardingInfo((type, tableName));
+		//		public async Task CreateTable(string tableName, Type type)
+		//		{
+		//			using var context = new TableDbContext(GetOption(), tableName, type);
+		//			var creator = context.GetService<IRelationalDatabaseCreator>();
+		//			try
+		//			{
+		//				await creator.CreateTablesAsync();
+		//				_shardingInfoService.AddShardingInfo((type, tableName));
 
-				var newShardingInfo = new SysSharding { TableName = tableName, TableType = type.Name };
-				SysShardings.Add(newShardingInfo);
-				(CacheSet<SysSharding>() as List<SysSharding>).Add(newShardingInfo);
-				await SaveChangesAsync();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-			}
-		}
+		//				var newShardingInfo = new SysSharding { TableName = tableName, TableType = type.Name };
+		//				SysShardings.Add(newShardingInfo);
+		//				(CacheSet<SysSharding>() as List<SysSharding>).Add(newShardingInfo);
+		//				await SaveChangesAsync();
+		//			}
+		//			catch (Exception e)
+		//			{
+		//				Console.WriteLine(e);
+		//			}
+		//		}
 
-		private DbContextOptions<TableDbContext> GetOption()
-		{
-			var builder = new DbContextOptionsBuilder<TableDbContext>()
-				.EnableServiceProviderCaching(false);
+		//		private DbContextOptions<TableDbContext> GetOption()
+		//		{
+		//			var builder = new DbContextOptionsBuilder<TableDbContext>()
+		//				.EnableServiceProviderCaching(false);
 
-#pragma warning disable EF1001 // Internal EF Core API usage.
-			var inMemoryOptions = _options.FindExtension<InMemoryOptionsExtension>();
-			if (inMemoryOptions != null)
-			{
-				return builder.UseInMemoryDatabase(inMemoryOptions.StoreName)
-					.Options;
-			}
+		//#pragma warning disable EF1001 // Internal EF Core API usage.
+		//			var inMemoryOptions = _options.FindExtension<InMemoryOptionsExtension>();
+		//			if (inMemoryOptions != null)
+		//			{
+		//				return builder.UseInMemoryDatabase(inMemoryOptions.StoreName)
+		//					.Options;
+		//			}
 
-			var sqliteOptions = _options.FindExtension<SqliteOptionsExtension>();
-			if (sqliteOptions != null)
-			{
-				return builder.UseSqlite(sqliteOptions.ConnectionString)
-					.Options;
-			}
+		//			var sqliteOptions = _options.FindExtension<SqliteOptionsExtension>();
+		//			if (sqliteOptions != null)
+		//			{
+		//				return builder.UseSqlite(sqliteOptions.ConnectionString)
+		//					.Options;
+		//			}
 
-			var sqlServerOptions = _options.FindExtension<SqlServerOptionsExtension>();
-			if (sqlServerOptions != null)
-			{
-				return builder.UseSqlServer(sqlServerOptions.ConnectionString)
-					.Options;
-			}
+		//			var sqlServerOptions = _options.FindExtension<SqlServerOptionsExtension>();
+		//			if (sqlServerOptions != null)
+		//			{
+		//				return builder.UseSqlServer(sqlServerOptions.ConnectionString)
+		//					.Options;
+		//			}
 
-			var mysqlOptions = _options.FindExtension<MySqlOptionsExtension>();
-			if (mysqlOptions != null)
-			{
-				return builder.UseMySql(mysqlOptions.ConnectionString,
-					ServerVersion.AutoDetect(mysqlOptions.ConnectionString))
-					.Options;
-			}
+		//			var mysqlOptions = _options.FindExtension<MySqlOptionsExtension>();
+		//			if (mysqlOptions != null)
+		//			{
+		//				return builder.UseMySql(mysqlOptions.ConnectionString,
+		//					ServerVersion.AutoDetect(mysqlOptions.ConnectionString))
+		//					.Options;
+		//			}
 
-			var npgsqlOptions = _options.FindExtension<NpgsqlOptionsExtension>();
-			if (inMemoryOptions != null)
-			{
-				return builder.UseNpgsql(npgsqlOptions.ConnectionString)
-					.Options;
-			}
+		//			var npgsqlOptions = _options.FindExtension<NpgsqlOptionsExtension>();
+		//			if (inMemoryOptions != null)
+		//			{
+		//				return builder.UseNpgsql(npgsqlOptions.ConnectionString)
+		//					.Options;
+		//			}
 
-			//var oracleOptions = _options.GetExtension<OracleOptionsExtension>();
-			//if (oracleOptions != null)
-			//{
-			//	// todo
-			//	return builder.UseOracle(oracleOptions.ConnectionString)
-			//		.Options;
-			//}
+		//			//var oracleOptions = _options.GetExtension<OracleOptionsExtension>();
+		//			//if (oracleOptions != null)
+		//			//{
+		//			//	// todo
+		//			//	return builder.UseOracle(oracleOptions.ConnectionString)
+		//			//		.Options;
+		//			//}
 
-			return null;
-#pragma warning restore EF1001 // Internal EF Core API usage.
-		}
+		//			return null;
+		//#pragma warning restore EF1001 // Internal EF Core API usage.
+		//		}
 
-		public override void Dispose()
-		{
-			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
-			base.Dispose();
-		}
+		//		public override void Dispose()
+		//		{
+		//			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
+		//			base.Dispose();
+		//		}
 
-		public override async ValueTask DisposeAsync()
-		{
-			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
-			await base.DisposeAsync();
-		}
+		//		public override async ValueTask DisposeAsync()
+		//		{
+		//			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
+		//			await base.DisposeAsync();
+		//		}
 	}
 }

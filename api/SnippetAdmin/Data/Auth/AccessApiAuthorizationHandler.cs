@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Extensions;
-using SnippetAdmin.Data.Entity.Rbac;
 
 namespace SnippetAdmin.Data.Auth
 {
@@ -23,37 +22,26 @@ namespace SnippetAdmin.Data.Auth
 			AccessApiRequirement requirement)
 		{
 			// user not exist or is not actived
-			if (!_dbContext.CacheSet<RbacUser>().Any(u =>
+			if (!_dbContext.Users.Any(u =>
 				u.UserName == _httpContextAccessor.HttpContext.User.GetUserName() && u.IsActive))
 			{
 				return Task.CompletedTask;
 			}
 
-			// get all user role
-			var userId = _dbContext.CacheSet<RbacUser>().First(u =>
-				u.UserName == _httpContextAccessor.HttpContext.User.GetUserName()).Id;
-			var userRoles = _dbContext.CacheSet<RbacUserRole>().Where(ur => ur.UserId == userId);
-			if (userRoles == null || !userRoles.Any())
-			{
-				return Task.CompletedTask;
-			}
 
 			// get actived roles
-			var roleIds = _dbContext.CacheSet<RbacRole>()
-				 .Where(r => userRoles.Select(ur => ur.RoleId).Contains(r.Id) && r.IsActive)
-				 .Select(r => r.Id);
+			var userId = _httpContextAccessor.HttpContext.User.GetUserId();
+			var roleIds = (from r in _dbContext.Roles
+						   join ur in _dbContext.UserRoles on r.Id equals ur.RoleId
+						   where ur.UserId == userId && r.IsActive
+						   select r.Id).ToList();
 
-			// get role elements id
-			var elementIds = _dbContext.CacheSet<RbacRoleClaim>()
-				.Where(rc => rc.ClaimType == ClaimConstant.RoleRight && roleIds.Contains(rc.RoleId))
-				.Select(rc => int.Parse(rc.ClaimValue));
 
-			// get all api that could access
-			var apiList = _dbContext.CacheSet<RbacElement>()
-				.Where(e => elementIds.Contains(e.Id))
-				.Select(e => e.AccessApi.ToLower().Split(",").ToList())
-				.SelectMany(e => e)
-				.Distinct();
+			var apiList = (from rc in _dbContext.RoleClaims
+						   join e in _dbContext.RbacElements on rc.ClaimValue equals e.Id.ToString()
+						   where roleIds.Contains(rc.RoleId)
+						   select e.AccessApi).ToList()
+						   .SelectMany(api => api.ToLower().Split(",").ToList()).Distinct();
 
 			// check have right to access this api
 			var path = _httpContextAccessor.HttpContext.Request.Path.Value

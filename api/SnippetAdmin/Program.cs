@@ -101,7 +101,7 @@ try
 	});
 
 	// record some log
-	builder.Services.AddBackgroundService<ShardingInitialBackgroundService>();
+	//builder.Services.AddBackgroundService<ShardingInitialBackgroundService>();
 	builder.Services.AddBackgroundService<LoginLogBackgroundService>();
 	builder.Services.AddBackgroundService<AccessedLogBackgroundService>();
 	builder.Services.AddBackgroundService<ExceptionLogBackgroundService>();

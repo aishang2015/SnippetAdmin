@@ -62,7 +62,7 @@ export default function TaskManage(props: any) {
                     <Tooltip title="删除任务">
                         <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} /></Button>
                     </Tooltip>
-                    <Tooltip title="立即执行任务">
+                    <Tooltip title="立即执行">
                         <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} /></Button>
                     </Tooltip>
                 </Space>

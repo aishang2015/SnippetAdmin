@@ -79,12 +79,12 @@ namespace SnippetAdmin.Controllers.RBAC
 		[Description("查询用户信息")]
 		public Task<CommonResult<PagedOutputModel<SearchUserOutputModel>>> SearchUser([FromBody] SearchUserInputModel inputModel)
 		{
-			var userQuery = _dbContext.CacheSet<RbacUser>().AsQueryable().OrderBy(u => u.Id);
-			var roleQuery = _dbContext.CacheSet<RbacRole>().AsQueryable().OrderBy(u => u.Id);
-			var userRoleQuery = _dbContext.CacheSet<RbacUserRole>().AsQueryable();
-			var userClaimQuery = _dbContext.CacheSet<RbacUserClaim>().AsQueryable();
-			var organizationQuery = _dbContext.CacheSet<RbacOrganization>().AsQueryable();
-			var positionQuery = _dbContext.CacheSet<RbacPosition>().AsQueryable();
+			var userQuery = _dbContext.Users.AsQueryable().OrderBy(u => u.Id);
+			var roleQuery = _dbContext.Roles.AsQueryable().OrderBy(u => u.Id);
+			var userRoleQuery = _dbContext.UserRoles.AsQueryable();
+			var userClaimQuery = _dbContext.UserClaims.AsQueryable();
+			var organizationQuery = _dbContext.RbacOrganizations.AsQueryable();
+			var positionQuery = _dbContext.RbacPositions.AsQueryable();
 
 			// 普通条件
 			var query = userQuery

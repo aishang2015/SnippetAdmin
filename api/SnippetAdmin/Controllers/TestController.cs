@@ -54,7 +54,7 @@ namespace SnippetAdmin.Controllers
 		public async Task<IActionResult> TestSharding1([FromServices] SnippetAdminDbContext dbContext)
 		{
 			var guid = Guid.NewGuid();
-			await dbContext.CreateTable(guid.ToString(), typeof(TemporaryEntity));
+			//await dbContext.CreateTable(guid.ToString(), typeof(TemporaryEntity));
 			return Ok();
 		}
 		[HttpGet]

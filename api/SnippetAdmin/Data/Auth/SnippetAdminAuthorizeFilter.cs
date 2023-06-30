@@ -26,7 +26,7 @@ namespace SnippetAdmin.Data.Auth
 		public void OnAuthorization(AuthorizationFilterContext context)
 		{
 			// user not exist or is not actived
-			if (!_dbContext.CacheSet<RbacUser>().Any(u =>
+			if (!_dbContext.Users.Any(u =>
 				u.UserName == _httpContextAccessor.HttpContext.User.GetUserName() && u.IsActive))
 			{
 				context.Result = new StatusCodeResult(403);
@@ -34,9 +34,9 @@ namespace SnippetAdmin.Data.Auth
 			}
 
 			// get all user role
-			var userId = _dbContext.CacheSet<RbacUser>().First(u =>
+			var userId = _dbContext.Users.First(u =>
 				u.UserName == _httpContextAccessor.HttpContext.User.GetUserName()).Id;
-			var userRoles = _dbContext.CacheSet<RbacUserRole>().Where(ur => ur.UserId == userId);
+			var userRoles = _dbContext.UserRoles.Where(ur => ur.UserId == userId);
 			if (userRoles == null || !userRoles.Any())
 			{
 				context.Result = new StatusCodeResult(403);
@@ -44,20 +44,21 @@ namespace SnippetAdmin.Data.Auth
 			}
 
 			// get actived roles
-			var roleIds = _dbContext.CacheSet<RbacRole>()
+			var roleIds = _dbContext.Roles
 				 .Where(r => userRoles.Select(ur => ur.RoleId).Contains(r.Id) && r.IsActive)
 				 .Select(r => r.Id);
 
 			// get role elements id
-			var elementIds = _dbContext.CacheSet<RbacRoleClaim>()
+			var elementIds = _dbContext.RoleClaims
 				.Where(rc => rc.ClaimType == ClaimConstant.RoleRight && roleIds.Contains(rc.RoleId))
 				.Select(rc => int.Parse(rc.ClaimValue));
 
 			// get all api that could access
-			var apiList = _dbContext.CacheSet<RbacElement>()
+			var apiList = _dbContext.RbacElements
 				.Where(e => elementIds.Contains(e.Id))
-				.Select(e => e.AccessApi.ToLower().Split(",").ToList())
-				.SelectMany(e => e)
+				.Select(e => e.AccessApi)
+				.ToList()
+				.SelectMany(api => api.ToLower().Split(",").ToList())
 				.Distinct();
 
 			// check have right to access this api

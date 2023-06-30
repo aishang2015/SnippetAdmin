@@ -7,7 +7,7 @@ namespace SnippetAdmin.Data.Sharding
 	{
 		public object Create(DbContext context, bool designTime)
 			=> context is SnippetAdminDbContext db
-				? (context.GetType(), db.ShardingKey, designTime)
+				? 1//(context.GetType(), db.ShardingKey, designTime)
 				: (object)context.GetType();
 
 		public object Create(DbContext context)

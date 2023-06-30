@@ -10,6 +10,8 @@ namespace SnippetAdmin.Data.Entity.System
 	[Table("T_Sys_AccessLog")]
 	[Index(nameof(AccessedTime))]
 	[Index(nameof(Path))]
+	[Index(nameof(RemoteIp))]
+	[Index(nameof(ElapsedTime))]
 	public class SysAccessLog
 	{
 		[Comment("主键")]

@@ -204,7 +204,10 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                         <div className="logo" >Admin</div> :
                         <div className="logo large-logo-font" >SnippetAdmin</div>
                     }
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: "space-between", userSelect: "none" }}>
+                    <div style={{
+                        display: 'flex', flexDirection: 'column', justifyContent: "space-between",
+                        userSelect: "none", height: "calc(100% - 70px)", overflow: 'auto',
+                    }}>
                         <Menu theme="dark" mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}
                             items={getMenuItems() as any}>
                         </Menu>

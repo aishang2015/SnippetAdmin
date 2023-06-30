@@ -33,8 +33,7 @@ namespace SnippetAdmin.Controllers.System
 		[HttpPost("GetMany")]
 		public CommonResult GetMany([FromBody] DynamicSearchInputModel inputModel)
 		{
-			var dataQuery = _snippetadmindbcontext.GetShardingTableSet<SysAccessLog>
-				(DateTime.Now.ToString("yyyyMM"))?.AsQueryable();
+			var dataQuery = _snippetadmindbcontext.SysAccessLogs.AsQueryable();
 			if (dataQuery == null)
 			{
 				return CommonResult.Fail(MessageConstant.SYSTEM_ERROR_005);
@@ -52,7 +51,7 @@ namespace SnippetAdmin.Controllers.System
 		[HttpPost("GetMany2")]
 		public CommonResult GetMany2([FromBody] GetSysAccessLogInputModel inputModel)
 		{
-			var dataQuery = _snippetadmindbcontext.GetShardingTableSet<SysAccessLog>(inputModel.Month)?.AsQueryable();
+			var dataQuery = _snippetadmindbcontext.SysAccessLogs.AsQueryable();
 			if (dataQuery == null)
 			{
 				return CommonResult.Fail(MessageConstant.SHARDING_ERROR_001);
