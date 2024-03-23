@@ -105,4 +105,18 @@ export class UserService {
     }) {
         return Axios.instance.post<CommonResultNoData>('api/user/removeOrgMember', params);
     }
+
+    
+    static getUserDic() {
+        return Axios.instance.post<CommonResult<Array<GetUserDicOutputModel>>>
+            ('api/User/GetUserDic', null);
+    }
+}
+
+/**
+ * GetUserDicOutputModel
+ */
+export interface GetUserDicOutputModel {
+    realName?: null | string;
+    userId?: number;
 }

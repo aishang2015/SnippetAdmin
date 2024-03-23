@@ -106,18 +106,6 @@ try
 	builder.Services.AddBackgroundService<AccessedLogBackgroundService>();
 	builder.Services.AddBackgroundService<ExceptionLogBackgroundService>();
 
-
-	// use orleans
-	builder.UseDevelopOrleans(typeof(TestGrain));
-	//builder.Host.UseOrleans((ctx, builder) =>
-	//{
-	//    builder.UseLocalhostClustering();
-	//    builder.AddMemoryGrainStorage("SnippetAdminSilo");
-	//    builder.ConfigureApplicationParts(parts => {
-	//        parts.AddApplicationPart(typeof(TestGrain).Assembly).WithReferences();
-	//    });
-	//});
-
 	var app = builder.Build();
 
 	if (builder.Environment.IsDevelopment())
@@ -138,17 +126,6 @@ try
 
 	// record some information
 	app.UseLoginLogRecorder();
-	app.UseAccessedLogRecord(
-		"/api/ApiInfo/*",
-		"/api/Element/*",
-		"/api/Organization/*",
-		"/api/Position/*",
-		"/api/Role/*",
-		"/api/User/*",
-		"/api/Job/*",
-		"/api/JobRecord/*",
-		"/api/Dic/*",
-		"/api/Setting/*");
 	app.UseCustomExceptionRecorder();
 
 	// use cors config
@@ -160,7 +137,15 @@ try
 	app.UseAuthorization();
 
 	app.MapMetricHub();
-	app.MapControllers();
+
+    // 启动倒带方式,为accesslog记录
+    app.Use(next => context =>
+    {
+        context.Request.EnableBuffering();
+        return next(context);
+    });
+
+    app.MapControllers();
 
 	app.Initialize(DbContextInitializer.InitialSnippetAdminDbContext);
 	app.Run();

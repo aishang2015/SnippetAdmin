@@ -34,7 +34,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("激活角色")]
-		public async Task<CommonResult> ActiveRole([FromBody] ActiveRoleInputModel inputModel)
+        [AccessLog("角色管理", "激活角色")]
+        public async Task<CommonResult> ActiveRole([FromBody] ActiveRoleInputModel inputModel)
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			role.IsActive = inputModel.IsActive;
@@ -49,7 +50,7 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType<GetRoleOutputModel>]
 		[Description("取得一个角色信息")]
-		public async Task<CommonResult<GetRoleOutputModel>> GetRole([FromBody] IdInputModel<int> inputModel)
+        public async Task<CommonResult<GetRoleOutputModel>> GetRole([FromBody] IdInputModel<int> inputModel)
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			var result = _mapper.Map<GetRoleOutputModel>(role);
@@ -101,7 +102,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("添加或更新角色")]
-		public async Task<CommonResult> AddOrUpdateRoleAsync([FromBody] AddOrUpdateRoleInputModel inputModel)
+        [AccessLog("角色管理", "添加或更新角色")]
+        public async Task<CommonResult> AddOrUpdateRoleAsync([FromBody] AddOrUpdateRoleInputModel inputModel)
 		{
 			// 校验名称和代码重复
 			if (_dbContext.Roles.Any(r => r.Id != inputModel.Id && r.Name == inputModel.Name))
@@ -162,7 +164,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("删除角色信息")]
-		public async Task<CommonResult> RemoveRoleAsync([FromBody] IdInputModel<int> inputModel)
+        [AccessLog("角色管理", "删除角色信息")]
+        public async Task<CommonResult> RemoveRoleAsync([FromBody] IdInputModel<int> inputModel)
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			_dbContext.Roles.Remove(role);

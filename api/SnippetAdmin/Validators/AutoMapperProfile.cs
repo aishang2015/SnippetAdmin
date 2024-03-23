@@ -8,6 +8,7 @@ using SnippetAdmin.Endpoint.Models.RBAC.Organization;
 using SnippetAdmin.Endpoint.Models.RBAC.Role;
 using SnippetAdmin.Endpoint.Models.RBAC.User;
 using SnippetAdmin.Endpoint.Models.Scheduler.Job;
+using SnippetAdmin.Endpoint.Models.System.AccessLog;
 using SnippetAdmin.Endpoint.Models.System.Dic;
 using SnippetAdmin.Endpoint.Models.System.Setting;
 
@@ -46,6 +47,8 @@ namespace SnippetAdmin.Models
 
 			CreateMap<SysSetting, Setting>();
 			CreateMap<SysSettingSubGroup, GetSettingsOutputModel>();
+
+			CreateMap<Data.Entity.System.SysAccessLog, GetSysAccessLogOutputModel>();
 		}
 	}
 }

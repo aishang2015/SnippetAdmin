@@ -72,7 +72,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("创建页面元素")]
-		public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel)
+        [AccessLog("权限管理", "创建页面元素")]
+        public async Task<CommonResult> CreateElement([FromBody] CreateElementInputModel inputModel)
 		{
 			var maxId = _dbContext.RbacElements.Max(r => r.Id) + 1;
 			var model = _mapper.Map<RbacElement>(inputModel);
@@ -111,7 +112,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("删除页面元素")]
-		public async Task<CommonResult> DeleteElement([FromBody] IdInputModel<int> inputModel)
+        [AccessLog("权限管理", "删除页面元素")]
+        public async Task<CommonResult> DeleteElement([FromBody] IdInputModel<int> inputModel)
 		{
 			var elements = from e in _dbContext.RbacElements
 						   join et in _dbContext.RbacElementTrees on e.Id equals et.Descendant
@@ -128,7 +130,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("修改页面元素")]
-		public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel)
+        [AccessLog("权限管理", "修改页面元素")]
+        public async Task<CommonResult> UpdateElement([FromBody] UpdateElementInputModel inputModel)
 		{
 			var element = _mapper.Map<RbacElement>(inputModel);
 			_dbContext.RbacElements.Update(element);

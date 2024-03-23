@@ -35,7 +35,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("创建或添加一个职位")]
-		public async Task<CommonResult> AddOrUpdatePositionAsync(AddOrUpdatePositionInputModel inputModel)
+        [AccessLog("职位管理", "创建或添加一个职位")]
+        public async Task<CommonResult> AddOrUpdatePositionAsync(AddOrUpdatePositionInputModel inputModel)
 		{
 			// validate
 			if (_dbContext.RbacPositions.Any(p => p.Id != inputModel.Id && p.Name == inputModel.Name))
@@ -75,7 +76,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("删除一个职位")]
-		public async Task<CommonResult> DeletePositionAsync(DeletePositionInputModel inputModel)
+        [AccessLog("职位管理", "删除一个职位")]
+        public async Task<CommonResult> DeletePositionAsync(DeletePositionInputModel inputModel)
 		{
 			var position = _dbContext.RbacPositions.Find(inputModel.Id);
 			var userClaims = _dbContext.UserClaims.Where(uc => uc.ClaimValue == inputModel.Id.ToString() &&
@@ -94,7 +96,7 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType<GetPositionOutputModel>]
 		[Description("取得职位信息")]
-		public async Task<CommonResult<GetPositionOutputModel>> GetPosition([FromBody] IdInputModel<int> inputModel)
+        public async Task<CommonResult<GetPositionOutputModel>> GetPosition([FromBody] IdInputModel<int> inputModel)
 		{
 			var positoin = await _dbContext.RbacPositions.FindAsync(inputModel.Id);
 			return CommonResult.Success(new GetPositionOutputModel

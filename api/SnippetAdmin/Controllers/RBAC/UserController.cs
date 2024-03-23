@@ -38,12 +38,13 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("用户激活")]
+		[AccessLog("用户管理", "用户激活")]
 		public async Task<CommonResult> ActiveUserAsync([FromBody] ActiveUserInputModel inputModel)
 		{
 			var user = await _dbContext.Users.FindAsync(inputModel.Id);
 			user.IsActive = inputModel.IsActive;
 			_dbContext.Users.Update(user);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.USER_INFO_0001);
 		}
 
@@ -53,7 +54,7 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType<GetUserOutputModel>]
 		[Description("取得用户详细信息")]
-		public async Task<CommonResult<GetUserOutputModel>> GetUserAsync([FromBody] IdInputModel<int> inputModel)
+        public async Task<CommonResult<GetUserOutputModel>> GetUserAsync([FromBody] IdInputModel<int> inputModel)
 		{
 			var user = await _dbContext.Users.FindAsync(inputModel.Id);
 			var result = _mapper.Map<GetUserOutputModel>(user);
@@ -159,13 +160,31 @@ namespace SnippetAdmin.Controllers.RBAC
 			return Task.FromResult(CommonResult.Success(result));
 		}
 
-		/// <summary>
-		/// 添加或删除用户
-		/// </summary>
-		[HttpPost]
+        /// <summary>
+        /// 取得用户字典
+        /// </summary>
+        [HttpPost]
+        [CommonResultResponseType<List<GetUserDicOutputModel>>]
+        [AllowAnonymous]
+        public CommonResult<List<GetUserDicOutputModel>> GetUserDic()
+        {
+            var result = _dbContext.Users
+                .Where(u => !u.IsDeleted)
+                .Select(u => new GetUserDicOutputModel
+                {
+                    UserId = u.Id,
+                    RealName = u.RealName,
+                }).ToList();
+            return CommonResult.Success(result);
+        }
+        /// <summary>
+        /// 添加或删除用户
+        /// </summary>
+        [HttpPost]
 		[CommonResultResponseType]
 		[Description("添加或删除用户")]
-		public async Task<CommonResult> AddOrUpdateUserAsync([FromBody] AddOrUpdateUserInputModel inputModel)
+        [AccessLog("用户管理", "添加或删除用户")]
+        public async Task<CommonResult> AddOrUpdateUserAsync([FromBody] AddOrUpdateUserInputModel inputModel)
 		{
 			if (_dbContext.Users.Any(u => u.UserName == inputModel.UserName && u.Id != inputModel.Id))
 			{
@@ -186,7 +205,7 @@ namespace SnippetAdmin.Controllers.RBAC
 				var ups = _dbContext.UserClaims.Where(uc => uc.UserId == user.Id &&
 					(uc.ClaimType == ClaimConstant.UserPosition || uc.ClaimType == ClaimConstant.UserOrganization)).ToList();
 				_dbContext.UserClaims.RemoveRange(ups);
-				await _dbContext.SaveChangesAsync();
+				await _dbContext.AuditSaveChangesAsync();
 			}
 			else
 			{
@@ -214,7 +233,7 @@ namespace SnippetAdmin.Controllers.RBAC
 					ClaimType = ClaimConstant.UserPosition
 				}));
 
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			await trans.CommitAsync();
 			return CommonResult.Success(MessageConstant.USER_INFO_0001);
 		}
@@ -225,13 +244,14 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("删除一个用户")]
-		public async Task<CommonResult> RemoveUserAsync([FromBody] IdInputModel<int> inputModel)
+        [AccessLog("用户管理", "删除一个用户")]
+        public async Task<CommonResult> RemoveUserAsync([FromBody] IdInputModel<int> inputModel)
 		{
 			var user = _dbContext.Users.Find(inputModel.Id);
 			var uops = _dbContext.UserClaims.Where(u => u.UserId == inputModel.Id).ToList();
 			_dbContext.Remove(user);
 			_dbContext.RemoveRange(uops);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.USER_INFO_0001);
 		}
 
@@ -241,7 +261,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("设置用户密码")]
-		public async Task<CommonResult> SetUserPasswordAsync([FromBody] SetUserPasswordInputModel inputModel)
+        [AccessLog("用户管理", "设置用户密码")]
+        public async Task<CommonResult> SetUserPasswordAsync([FromBody] SetUserPasswordInputModel inputModel)
 		{
 			if (inputModel.Password != inputModel.ConfirmPassword)
 			{
@@ -260,7 +281,8 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("添加组织成员")]
-		public async Task<CommonResult> AddOrgMemberAsync([FromBody] AddOrgMemberInputModel inputModel)
+        [AccessLog("用户管理", "添加组织成员")]
+        public async Task<CommonResult> AddOrgMemberAsync([FromBody] AddOrgMemberInputModel inputModel)
 		{
 			foreach (var userId in inputModel.UserIds)
 			{
@@ -271,7 +293,7 @@ namespace SnippetAdmin.Controllers.RBAC
 					ClaimValue = inputModel.OrgId.ToString(),
 				});
 			}
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.USER_INFO_0004);
 		}
 
@@ -281,12 +303,13 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType]
 		[Description("删除组织成员")]
-		public async Task<CommonResult> RemoveOrgMemberAsync([FromBody] RemoveOrgMemberInputModel inputModel)
+        [AccessLog("用户管理", "删除组织成员")]
+        public async Task<CommonResult> RemoveOrgMemberAsync([FromBody] RemoveOrgMemberInputModel inputModel)
 		{
 			var uops = _dbContext.UserClaims.Where(uop => uop.ClaimValue == inputModel.OrgId.ToString() &&
 				uop.UserId == inputModel.UserId && uop.ClaimType == ClaimConstant.UserOrganization).ToList();
 			_dbContext.RemoveRange(uops);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 
 			return CommonResult.Success(MessageConstant.USER_INFO_0004);
 		}

@@ -1,265 +1,198 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Quartz.Impl.AdoJobStore.Common;
+using SnippetAdmin.Constants;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Data.Entity.Scheduler;
 using SnippetAdmin.Data.Entity.System;
+using System.Security.AccessControl;
+using System.Security.Claims;
 
 namespace SnippetAdmin.Data
 {
-	public class SnippetAdminDbContext : IdentityDbContext<RbacUser, RbacRole, int,
-		RbacUserClaim, RbacUserRole, RbacUserLogin, RbacRoleClaim, RbacUserToken>
-	{
-		//public string ShardingKey { get; private set; }
+    public class SnippetAdminDbContext : IdentityDbContext<RbacUser, RbacRole, int,
+        RbacUserClaim, RbacUserRole, RbacUserLogin, RbacRoleClaim, RbacUserToken>
+    {
+        //public string ShardingKey { get; private set; }
 
-		//private List<(Type, string)> _typeNames = new();
+        //private List<(Type, string)> _typeNames = new();
 
-		//private readonly IMemoryCache _memoryCache;
+        //private readonly IMemoryCache _memoryCache;
 
-		//private readonly IShardingInfoService _shardingInfoService;
+        //private readonly IShardingInfoService _shardingInfoService;
 
-		//private DbContextOptions _options;
+        //private DbContextOptions _options;
 
-		public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options) : base(options)
-		{
-			// 执行迁移命令之前需要暂时注释掉Program.cs中的mvcBuilder.AddDynamicController();
-			// 迁移命令,生成一个【FirstMigration】的迁移
-			// Add-Migration FirstMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
-			// 应用迁移
-			// Update-Database
-			// 删除迁移
-			// Remove-Migration
-			// 列出迁移
-			// Get-Migration
-			// 生成脚本，生成一个AddElementSortingMigration到RemoveElementSortingMigration变化的脚本
-			// 如果不加from或to则生成一个初始到最后迁移的脚本
-			// Script-Migration AddElementSortingMigration RemoveElementSortingMigration 
+        private readonly IHttpContextAccessor _contextAccessor;
 
-			// 更改默认不跟踪所有实体
-			// ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
-			// 相同的对象
-			//ShardingKey = shardingInfoService.GetShardingInfoKey();
-			//_typeNames = shardingInfoService.GetShardingList();
+        public SnippetAdminDbContext(DbContextOptions<SnippetAdminDbContext> options,
+            IHttpContextAccessor contextAccessor) : base(options)
+        {
+            // 执行迁移命令之前需要暂时注释掉Program.cs中的mvcBuilder.AddDynamicController();
+            // 迁移命令,生成一个【FirstMigration】的迁移
+            // Add-Migration FirstMigration -Context SnippetAdminDbContext -OutputDir Data/Migrations/MySqlMigrations
+            // 应用迁移
+            // Update-Database
+            // 删除迁移
+            // Remove-Migration
+            // 列出迁移
+            // Get-Migration
+            // 生成脚本，生成一个AddElementSortingMigration到RemoveElementSortingMigration变化的脚本
+            // 如果不加from或to则生成一个初始到最后迁移的脚本
+            // Script-Migration AddElementSortingMigration RemoveElementSortingMigration 
 
-			ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
+            // 更改默认不跟踪所有实体
+            // ef core 5推荐 NoTracking在多次相同查询时会返回不同的对象，NoTrackingWithIdentityResolution则会返回
+            // 相同的对象
+            //ShardingKey = shardingInfoService.GetShardingInfoKey();
+            //_typeNames = shardingInfoService.GetShardingList();
 
-			// 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
-			ChangeTracker.AutoDetectChangesEnabled = false;
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
 
-			//_memoryCache = memoryCache;
-			//_shardingInfoService = shardingInfoService;
-			//_options = options;
+            // 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
+            ChangeTracker.AutoDetectChangesEnabled = false;
 
-		}
+            //_memoryCache = memoryCache;
+            //_shardingInfoService = shardingInfoService;
+            //_options = options;
+            _contextAccessor = contextAccessor;
 
-		public DbSet<RbacElement> RbacElements { get; set; }
+        }
 
-		public DbSet<RbacElementTree> RbacElementTrees { get; set; }
+        public DbSet<RbacElement> RbacElements { get; set; }
 
-		public DbSet<RbacOrganization> RbacOrganizations { get; set; }
+        public DbSet<RbacElementTree> RbacElementTrees { get; set; }
 
-		public DbSet<RbacOrganizationTree> RbacOrganizationTrees { get; set; }
+        public DbSet<RbacOrganization> RbacOrganizations { get; set; }
 
-		public DbSet<RbacOrganizationType> RbacOrganizationTypes { get; set; }
+        public DbSet<RbacOrganizationTree> RbacOrganizationTrees { get; set; }
 
-		public DbSet<RbacPosition> RbacPositions { get; set; }
+        public DbSet<RbacOrganizationType> RbacOrganizationTypes { get; set; }
 
-		public DbSet<SysAccessLog> SysAccessLogs { get; set; }
+        public DbSet<RbacPosition> RbacPositions { get; set; }
 
-		public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
+        public DbSet<SysAccessLog> SysAccessLogs { get; set; }
 
-		public DbSet<SysLoginLog> SysLoginLogs { get; set; }
+        public DbSet<SysDataLog> SysDataLogs { get; set; }
 
-		public DbSet<Job> Jobs { get; set; }
+        public DbSet<SysDataLogDetail> SysDataLogDetails { get; set; }
 
-		public DbSet<JobRecord> JobRecords { get; set; }
+        public DbSet<SysExceptionLog> SysExceptionLogs { get; set; }
 
-		public DbSet<SysDicType> SysDicTypes { get; set; }
+        public DbSet<SysLoginLog> SysLoginLogs { get; set; }
 
-		public DbSet<SysDicValue> SysDicValues { get; set; }
+        public DbSet<Job> Jobs { get; set; }
 
-		public DbSet<SysSetting> SysSettings { get; set; }
+        public DbSet<JobRecord> JobRecords { get; set; }
 
-		public DbSet<SysSettingGroup> SysSettingGroups { get; set; }
+        public DbSet<SysDicType> SysDicTypes { get; set; }
 
-		public DbSet<SysSettingSubGroup> SysSettingSubGroups { get; set; }
+        public DbSet<SysDicValue> SysDicValues { get; set; }
 
-		public DbSet<SysSharding> SysShardings { get; set; }
+        public DbSet<SysSetting> SysSettings { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder builder)
-		{
-			base.OnModelCreating(builder);
+        public DbSet<SysSettingGroup> SysSettingGroups { get; set; }
 
-			builder.Entity<RbacUser>().ToTable("T_RBAC_User");
-			builder.Entity<RbacRole>().ToTable("T_RBAC_Role");
-			builder.Entity<RbacUserRole>().ToTable("T_RBAC_UserRole");
-			builder.Entity<RbacUserClaim>().ToTable("T_RBAC_UserClaim");
-			builder.Entity<RbacRoleClaim>().ToTable("T_RBAC_RoleClaim");
-			builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
-			builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
+        public DbSet<SysSettingSubGroup> SysSettingSubGroups { get; set; }
 
-			//if (_typeNames.Count > 0)
-			//{
-			//	foreach (var typeName in _typeNames)
-			//	{
-			//		builder.SharedTypeEntity(typeName.Item2, typeName.Item1).ToTable(typeName.Item2);
-			//	}
-			//}
+        public DbSet<SysSharding> SysShardings { get; set; }
 
-		}
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			base.OnConfiguring(optionsBuilder);
+            builder.Entity<RbacUser>().ToTable("T_RBAC_User");
+            builder.Entity<RbacRole>().ToTable("T_RBAC_Role");
+            builder.Entity<RbacUserRole>().ToTable("T_RBAC_UserRole");
+            builder.Entity<RbacUserClaim>().ToTable("T_RBAC_UserClaim");
+            builder.Entity<RbacRoleClaim>().ToTable("T_RBAC_RoleClaim");
+            builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
+            builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
 
-			// 打印sql参数
-			optionsBuilder.EnableSensitiveDataLogging();
-		}
+        }
 
-		//public IEnumerable<T> CacheSet<T>() where T : class
-		//{
-		//	if (CacheableBase<SnippetAdminDbContext>.Instance.CacheableTypeList.Contains(typeof(T)))
-		//	{
-		//		return _memoryCache.Get(typeof(T).FullName) as List<T>;
-		//	}
-		//	else
-		//	{
-		//		return Set<T>().AsQueryable();
-		//	}
-		//}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
 
-		//		// todo 需要优化
-		//		/// <summary>
-		//		/// 检查分表
-		//		/// </summary>
-		//		/// <remark>
-		//		/// 如果未实行分表则进行创建分表,这里AddShardingInfo会把分表数据保存，但是只有等到
-		//		/// 下次OnModelCreating时才会去SharedTypeEntity配置分表信息，因此此操作需要在一个
-		//		/// 独立的scope中去进行,这里把分表信息保存会执行一次SaveChangesAsync，
-		//		/// </remark>
-		//		public async Task CheckSharingTableWithCreate<T>(string keyword) where T : class
-		//		{
-		//			string tableName = GetShardingTableName<T>(keyword);
-		//			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
-		//			{
-		//				await CreateTable(tableName, typeof(T));
-		//			}
-		//		}
+            // 打印sql参数
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
 
-		//		public bool CheckSharingTableWithNoCreate<T>(string keyword) where T : class
-		//		{
-		//			string tableName = GetShardingTableName<T>(keyword);
-		//			return CacheSet<SysSharding>().Any(s => s.TableName == tableName);
-		//		}
+        public async Task AuditSaveChangesAsync()
+        {
+            var user = _contextAccessor.HttpContext.User;
+            if (user.Identity != null && user.Identity.IsAuthenticated)
+            {
+                var userId = int.Parse(user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
+                var entries = ChangeTracker.Entries()
+                    .Where(e => e.State is EntityState.Added or EntityState.Deleted or EntityState.Modified)
+                    .ToList();
 
-		//		// 获取访问记录分表
-		//		public DbSet<T> GetShardingTableSet<T>(string keyword) where T : class
-		//		{
-		//			string tableName = GetShardingTableName<T>(keyword);
-		//			if (!CacheSet<SysSharding>().Any(s => s.TableName == tableName))
-		//			{
-		//				return null;
-		//			}
-		//			return Set<T>(tableName);
-		//		}
+                var transactionId = Database.CurrentTransaction?.TransactionId ?? Guid.NewGuid();
 
-		//		/// <summary>
-		//		/// 获取分表的表名
-		//		/// </summary>
-		//		/// <remarks>
-		//		/// 如果没有table标记，则用类型名和关键字拼接作为表明，如果有table标记则用table标记和关键字拼接作为表名
-		//		/// </remarks>
-		//		private static string GetShardingTableName<T>(string keyword) where T : class
-		//		{
-		//			var attribute = typeof(T).GetCustomAttribute<TableAttribute>();
-		//			var tableName = attribute == null ? typeof(T).Name + keyword :
-		//				attribute.Name + "_" + keyword;
-		//			return tableName;
-		//		}
+                foreach (var entry in entries)
+                {
+                    var logId = Guid.NewGuid();
+                    var auditLog = new SysDataLog()
+                    {
+                        TraceIdentifier = _contextAccessor.HttpContext.TraceIdentifier,
+                        TransactionId = transactionId,
+                        OperateTime = DateTime.UtcNow,
+                        EntityName = entry.Metadata.Name,
+                        Operation = (int)entry.State,
+                        UserId = userId
+                    };
+                    SysDataLogs.Add(auditLog);
 
-		//		public async Task CreateTable(string tableName, Type type)
-		//		{
-		//			using var context = new TableDbContext(GetOption(), tableName, type);
-		//			var creator = context.GetService<IRelationalDatabaseCreator>();
-		//			try
-		//			{
-		//				await creator.CreateTablesAsync();
-		//				_shardingInfoService.AddShardingInfo((type, tableName));
-
-		//				var newShardingInfo = new SysSharding { TableName = tableName, TableType = type.Name };
-		//				SysShardings.Add(newShardingInfo);
-		//				(CacheSet<SysSharding>() as List<SysSharding>).Add(newShardingInfo);
-		//				await SaveChangesAsync();
-		//			}
-		//			catch (Exception e)
-		//			{
-		//				Console.WriteLine(e);
-		//			}
-		//		}
-
-		//		private DbContextOptions<TableDbContext> GetOption()
-		//		{
-		//			var builder = new DbContextOptionsBuilder<TableDbContext>()
-		//				.EnableServiceProviderCaching(false);
-
-		//#pragma warning disable EF1001 // Internal EF Core API usage.
-		//			var inMemoryOptions = _options.FindExtension<InMemoryOptionsExtension>();
-		//			if (inMemoryOptions != null)
-		//			{
-		//				return builder.UseInMemoryDatabase(inMemoryOptions.StoreName)
-		//					.Options;
-		//			}
-
-		//			var sqliteOptions = _options.FindExtension<SqliteOptionsExtension>();
-		//			if (sqliteOptions != null)
-		//			{
-		//				return builder.UseSqlite(sqliteOptions.ConnectionString)
-		//					.Options;
-		//			}
-
-		//			var sqlServerOptions = _options.FindExtension<SqlServerOptionsExtension>();
-		//			if (sqlServerOptions != null)
-		//			{
-		//				return builder.UseSqlServer(sqlServerOptions.ConnectionString)
-		//					.Options;
-		//			}
-
-		//			var mysqlOptions = _options.FindExtension<MySqlOptionsExtension>();
-		//			if (mysqlOptions != null)
-		//			{
-		//				return builder.UseMySql(mysqlOptions.ConnectionString,
-		//					ServerVersion.AutoDetect(mysqlOptions.ConnectionString))
-		//					.Options;
-		//			}
-
-		//			var npgsqlOptions = _options.FindExtension<NpgsqlOptionsExtension>();
-		//			if (inMemoryOptions != null)
-		//			{
-		//				return builder.UseNpgsql(npgsqlOptions.ConnectionString)
-		//					.Options;
-		//			}
-
-		//			//var oracleOptions = _options.GetExtension<OracleOptionsExtension>();
-		//			//if (oracleOptions != null)
-		//			//{
-		//			//	// todo
-		//			//	return builder.UseOracle(oracleOptions.ConnectionString)
-		//			//		.Options;
-		//			//}
-
-		//			return null;
-		//#pragma warning restore EF1001 // Internal EF Core API usage.
-		//		}
-
-		//		public override void Dispose()
-		//		{
-		//			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
-		//			base.Dispose();
-		//		}
-
-		//		public override async ValueTask DisposeAsync()
-		//		{
-		//			CacheableExtension.CacheTrackerDataToMemory<SnippetAdminDbContext>(_memoryCache, ContextId.InstanceId);
-		//			await base.DisposeAsync();
-		//		}
-	}
+                    if (entry.State is EntityState.Modified)
+                    {
+                        var modifiedProperties = entry.Properties.Where(p => p.IsModified);
+                        foreach (var property in modifiedProperties)
+                        {
+                            var auditLogDetail = new SysDataLogDetail()
+                            {
+                                DataLogId = logId,
+                                EntityName = entry.Metadata.Name,
+                                PropertyName = property.Metadata.Name,
+                                NewValue = property.CurrentValue?.ToString(),
+                                OldValue = property.OriginalValue?.ToString()
+                            };
+                            SysDataLogDetails.Add(auditLogDetail);
+                        }
+                    }
+                    else if (entry.State is EntityState.Deleted)
+                    {
+                        foreach (var p in entry.Properties)
+                        {
+                            var auditLogDetail = new SysDataLogDetail()
+                            {
+                                DataLogId = logId,
+                                EntityName = entry.Metadata.Name,
+                                PropertyName = p.Metadata.Name,
+                                OldValue = p.OriginalValue?.ToString()
+                            };
+                            SysDataLogDetails.Add(auditLogDetail);
+                        }
+                    }
+                    else if (entry.State is EntityState.Added)
+                    {
+                        foreach (var p in entry.Properties)
+                        {
+                            var auditLogDetail = new SysDataLogDetail()
+                            {
+                                DataLogId = logId,
+                                EntityName = entry.Metadata.Name,
+                                PropertyName = p.Metadata.Name,
+                                NewValue = p.OriginalValue?.ToString()
+                            };
+                            SysDataLogDetails.Add(auditLogDetail);
+                        }
+                    }
+                }
+            }
+            await SaveChangesAsync();
+        }
+    }
 }

@@ -25,6 +25,7 @@ export default class Login extends React.Component<any, any> {
     }
 
     componentDidMount() {
+        localStorage.clear();
         StorageService.clearOauthStore();
         //this.init();
     }
