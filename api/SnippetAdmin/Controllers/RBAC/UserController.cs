@@ -43,7 +43,6 @@ namespace SnippetAdmin.Controllers.RBAC
 		{
 			var user = await _dbContext.Users.FindAsync(inputModel.Id);
 			user.IsActive = inputModel.IsActive;
-			_dbContext.Users.Update(user);
 			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.USER_INFO_0001);
 		}
@@ -197,7 +196,6 @@ namespace SnippetAdmin.Controllers.RBAC
 			if (user != null)
 			{
 				_mapper.Map(inputModel, user);
-				_dbContext.Users.Update(user);
 
 				var ur = _dbContext.UserRoles.Where(ur => ur.UserId == user.Id).ToList();
 				_dbContext.UserRoles.RemoveRange(ur);

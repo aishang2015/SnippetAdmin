@@ -39,7 +39,6 @@ namespace SnippetAdmin.Controllers.RBAC
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			role.IsActive = inputModel.IsActive;
-			_dbContext.Roles.Update(role);
 			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ROLE_INFO_0004);
 		}
@@ -122,7 +121,6 @@ namespace SnippetAdmin.Controllers.RBAC
 			if (role != null)
 			{
 				_mapper.Map(inputModel, role);
-				_dbContext.Roles.Update(role);
 			}
 			else
 			{

@@ -50,10 +50,10 @@ namespace SnippetAdmin.Data
             //ShardingKey = shardingInfoService.GetShardingInfoKey();
             //_typeNames = shardingInfoService.GetShardingList();
 
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
+            //ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
 
             // 关闭自动检测后，实体的变化需要手动调用Update，Delete等方法去进行检测。
-            ChangeTracker.AutoDetectChangesEnabled = false;
+            //ChangeTracker.AutoDetectChangesEnabled = false;
 
             //_memoryCache = memoryCache;
             //_shardingInfoService = shardingInfoService;
@@ -151,8 +151,8 @@ namespace SnippetAdmin.Data
 
                     if (entry.State is EntityState.Modified)
                     {
-                        var attachValues = Entry(entry.Entity).GetDatabaseValues();
-                        var modifiedProperties = entry.Properties.Where(p => p.IsModified);
+                        //var attachValues = Entry(entry.Entity).GetDatabaseValues();
+                        var modifiedProperties = entry.Properties.Where(p => p.IsModified || p.Metadata.IsKey());
                         foreach (var property in modifiedProperties)
                         {
                             var auditLogDetail = new SysDataLogDetail()
@@ -161,7 +161,7 @@ namespace SnippetAdmin.Data
                                 EntityName = entry.Metadata.Name,
                                 PropertyName = property.Metadata.Name,
                                 NewValue = property.CurrentValue?.ToString(),
-                                OldValue = attachValues[property.Metadata.Name]?.ToString()
+                                OldValue = property.OriginalValue?.ToString()
                             };
                             SysDataLogDetails.Add(auditLogDetail);
                         }

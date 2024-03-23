@@ -26,10 +26,8 @@ namespace SnippetAdmin.Data.Entity.Rbac
         [Comment("是否激活")]
         public bool IsActive { get; set; }
 
-        [Comment("Github用户标识")]
         public int? GithubId { get; set; }
 
-        [Comment("Baidu用户标识")]
         public string BaiduId { get; set; }
 
         [Comment("是否删除")]

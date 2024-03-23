@@ -162,8 +162,8 @@ namespace SnippetAdmin.Controllers.RBAC
 			}
 
 			// 更新组织节点
-			var organization = _mapper.Map<RbacOrganization>(inputModel);
-			_dbContext.RbacOrganizations.Update(organization);
+			var orgainzation = _dbContext.RbacOrganizations.Find(inputModel.Id);
+			_mapper.Map(inputModel, orgainzation);
 
 			// 判断树节点是否被移动
 			var upNode = (from orgTree in _dbContext.RbacOrganizationTrees
@@ -259,7 +259,6 @@ namespace SnippetAdmin.Controllers.RBAC
 				var orgType = _dbContext.RbacOrganizationTypes.Find(inputModel.Id);
 				orgType.Name = inputModel.Name;
 				orgType.Code = inputModel.Code;
-				_dbContext.RbacOrganizationTypes.Update(orgType);
 			}
 			else
 			{

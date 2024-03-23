@@ -63,7 +63,6 @@ namespace SnippetAdmin.Controllers.RBAC
 				position.Name = inputModel.Name;
 				position.Code = inputModel.Code;
 				position.Sorting = inputModel.Sorting;
-				_dbContext.RbacPositions.Update(position);
 			}
 			await _dbContext.AuditSaveChangesAsync();
 

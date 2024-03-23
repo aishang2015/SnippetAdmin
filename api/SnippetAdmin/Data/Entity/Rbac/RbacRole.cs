@@ -9,7 +9,10 @@ namespace SnippetAdmin.Data.Entity.Rbac
 	[Table("T_Rbac_Role")]
 	[Cachable]
 	public class RbacRole : IdentityRole<int>
-	{
+    {
+        [Comment("主键")]
+        public override int Id { get; set; }
+
 		[Comment("编码")]
 		public string Code { get; set; }
 
