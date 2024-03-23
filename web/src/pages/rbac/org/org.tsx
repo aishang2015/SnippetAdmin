@@ -3,18 +3,24 @@ import data from '@emoji-mart/data';
 //import 'emoji-mart/css/emoji-mart.css';
 import './org.css';
 
-import { faEdit, faObjectGroup, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faObjectGroup, faPlus, faSave, faSitemap, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Table, Tooltip, Tree, TreeSelect } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import React, { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
 import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
+import Title from 'antd/es/typography/Title';
+import { useToken } from 'antd/es/theme/internal';
 
 // @ts-ignore - alternatively, add `declare module "@emoji-mart/react"` to your project's type declarations
 const Picker = React.lazy(() => import("@emoji-mart/react"));
 
 export default function Org() {
+
+    // !全局样式    
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
 
     const [orgEditVisible, setOrgEditVisible] = useState(false);
     const [orgForm] = useForm();
@@ -245,19 +251,40 @@ export default function Org() {
 
     return (
         <>
-            <div id="org-container">
-                <div id='org-tree-container'>
+
+        
+
+
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "14px" }}>
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faSitemap} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>组织信息</Title>
+                </div>
+                <div>
+
                     <RightElement identify="create-org" child={
                         <>
-                            <Button icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={createOrg}>创建组织</Button>
+                            <Tooltip title="创建组织" color={token.colorPrimary}>
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} style={{ marginRight: '4px' }} onClick={createOrg} />
+                            </Tooltip>
                         </>
                     }></RightElement>
                     <RightElement identify="org-page" child={
                         <>
-                            <Button icon={<FontAwesomeIcon icon={faObjectGroup} fixedWidth />} onClick={showOrgTypes} style={{ marginLeft: '5px' }}>组织类型</Button>
+                            <Tooltip title="组织类型" color={token.colorPrimary}>
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faObjectGroup} />} style={{ marginRight: '4px' }} onClick={showOrgTypes} />
+                            </Tooltip>
                         </>
                     }></RightElement>
-                    <Divider style={{ margin: "10px 0" }} />
+                </div>
+            </div>
+
+            <Divider style={{ margin: '14px 0' }} />
+            
+            <div id="org-container">
+                <div id='org-tree-container'>
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
                 </div>
                 <Divider type='vertical' style={{ height: '100%' }} />

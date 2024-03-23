@@ -1,11 +1,14 @@
 #page-container {
     display: flex;
-    height: 100%;
+    height: calc( 100% - 60px);
 }
 
 #page-container #page-tree-container {
-    width: 350px;
+    width: 300px;
     padding: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 #page-container #page-detail-container {

@@ -10,6 +10,7 @@ import BasicLayout from './pages/basic/layout/layout';
 import { ConfigProvider, theme } from 'antd';
 import Login from './pages/basic/login/login';
 import { Loading } from './components/common/loading/loading';
+import { Constants } from './common/constants';
 
 type ThemeData = {
   colorPrimary: string;
@@ -61,6 +62,41 @@ const App: FC = () => {
     { path: "/*", element: <Login /> },
   ]);
 
+  const loader = async (path: string) => {
+    let pageName = Constants.FlatRouteInfo.find(r => r.path === path)?.name;
+    PubSub.publish("navTo", { name: pageName, path: path });
+  }
+
+  var routeInfo = [
+    { path: "",component:<HomePage/>},
+    { path: "/home",component:<HomePage/>},
+    { path: "/flow",component:<FlowPage/>},
+    { path: "/chat",component:<ChatPage/>},
+    { path: "/about",component:<AboutPage/>},
+
+    { path: "/user",component:<UserPage/>},
+    { path: "/role",component:<RolePage/>},
+    { path: "/page",component:<PagePage/>},
+    { path: "/org",component:<OrgPage/>},
+    { path: "/pos",component:<PosPage/>},
+    { path: "/state",component:<StatePage/>},
+
+    { path: "/taskMange",component:<TaskManagePage/>},
+    { path: "/taskRecord",component:<TaskRecordPage/>},
+
+    { path: "/access",component:<AccessLogPage/>},
+    { path: "/exception",component:<ExceptionedPage/>},
+    { path: "/loginlog",component:<LoginLogPage/>},
+    { path: "/dictionary",component:<DictionaryPage/>},
+    { path: "/setting",component:<SettingPage/>},
+
+    { path: "/export",component:<ExportPage/>},
+    { path: "/code",component:<CodePage/>},
+    { path: '/frontend',component:<FrontToolPage/>},
+
+    { path: "/*",component:<HomePage/>},
+  ];
+
   var authorizedRouter = createBrowserRouter([
     {
       path: '/',
@@ -73,35 +109,15 @@ const App: FC = () => {
         setThemeData(themeStr);
 
       }} />,
-      children: [
-        { path: "", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
-        { path: "/home", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
-        { path: "/flow", element: <Suspense fallback={loadingContent}><FlowPage /></Suspense> },
-        { path: "/chat", element: <Suspense fallback={loadingContent}><ChatPage /></Suspense> },
-        { path: "/about", element: <Suspense fallback={loadingContent}><AboutPage /></Suspense> },
-
-        { path: "/user", element: <Suspense fallback={loadingContent}><UserPage /></Suspense> },
-        { path: "/role", element: <Suspense fallback={loadingContent}><RolePage /></Suspense> },
-        { path: "/page", element: <Suspense fallback={loadingContent}><PagePage /></Suspense> },
-        { path: "/org", element: <Suspense fallback={loadingContent}><OrgPage /></Suspense> },
-        { path: "/pos", element: <Suspense fallback={loadingContent}><PosPage /></Suspense> },
-        { path: "/state", element: <Suspense fallback={loadingContent}><StatePage /></Suspense> },
-
-        { path: "/taskMange", element: <Suspense fallback={loadingContent}><TaskManagePage /></Suspense> },
-        { path: "/taskRecord", element: <Suspense fallback={loadingContent}><TaskRecordPage /></Suspense> },
-
-        { path: "/access", element: <Suspense fallback={loadingContent}><AccessLogPage /></Suspense> },
-        { path: "/exception", element: <Suspense fallback={loadingContent}><ExceptionedPage /></Suspense> },
-        { path: "/loginlog", element: <Suspense fallback={loadingContent}><LoginLogPage /></Suspense> },
-        { path: "/dictionary", element: <Suspense fallback={loadingContent}><DictionaryPage /></Suspense> },
-        { path: "/setting", element: <Suspense fallback={loadingContent}><SettingPage /></Suspense> },
-
-        { path: "/export", element: <Suspense fallback={loadingContent}><ExportPage /></Suspense> },
-        { path: "/code", element: <Suspense fallback={loadingContent}><CodePage /></Suspense> },
-        { path: '/frontend', element: <Suspense fallback={loadingContent}><FrontToolPage /></Suspense> },
-
-        { path: "/*", element: <Suspense fallback={loadingContent}><HomePage /></Suspense> },
-      ]
+      children: routeInfo.map(r=>
+        {
+          return {
+            path: r.path,
+            element: <Suspense fallback={loadingContent}>{r.component}</Suspense> ,
+            loader: async ({ params }) => { await loader(r.path) }
+          }
+        }
+      )
     }
   ]);
 

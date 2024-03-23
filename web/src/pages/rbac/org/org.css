@@ -1,6 +1,6 @@
 #org-container {
     display: flex;
-    height: 100%;
+    height: calc( 100% - 60px);
 }
 
 #org-container #org-tree-container {

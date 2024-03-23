@@ -10,15 +10,17 @@ import { RoleService } from '../../../http/requests/role';
 import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faEdit, faKey, faPlus, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faGroupArrowsRotate, faKey, faPlus, faRefresh, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 import { useToken } from 'antd/es/theme/internal';
 import { Configuration } from '../../../common/config';
+import Title from 'antd/es/typography/Title';
 
 export default function User() {
 
     const searchOption = useRef<any>({});
 
     const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
 
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(10);
@@ -372,31 +374,49 @@ export default function User() {
 
     return (
         <>
-            <div id="user-container">
-                <div id="user-group-container">
-                    <RightElement identify="add-member" child={
+
+
+            {contextHolder}
+
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "14px" }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>用户信息</Title>
+                </div>
+                <div>
+
+                    <Tooltip title="搜索" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
+                    </Tooltip>
+                    <Tooltip title="刷新" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={getUsers} />
+                    </Tooltip>
+                    <RightElement identify="create-user" child={
                         <>
-                            <div>
-                                <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={setOrgMember} disabled={selectedOrg === null}>绑定成员</Button>
-                            </div>
-                            <Divider style={{ margin: "10px 0" }} />
+                            <Tooltip title="新建" color={token.colorPrimary}>
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} style={{ marginRight: '4px' }} onClick={createUser} />
+                            </Tooltip>
                         </>
                     }></RightElement>
+                    <RightElement identify="add-member" child={
+                        <>
+                            <Tooltip title="绑定成员" color={token.colorPrimary}>
+                                <Button type="primary" disabled={selectedOrg === null} icon={<FontAwesomeIcon icon={faGroupArrowsRotate} />} style={{ marginRight: '4px' }} onClick={setOrgMember} />
+                            </Tooltip>
+                        </>
+                    }></RightElement>
+                </div>
+            </div>
+
+            <Divider style={{ margin: '14px 0' }} />
+            
+            <div id="user-container">
+                <div id="user-group-container">
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys: any, event: any) => orgSelect(keys, event)} />
                 </div>
                 <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="user-list-container">
-                    <Space style={{ marginTop: "10px" }}>
-                        <Button icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
-                            onClick={getUsers}>刷新</Button>
-                        <RightElement identify="create-user" child={
-                            <>
-                                <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createUser}>创建</Button>
-                            </>
-                        }></RightElement>
-                        <Button icon={<FontAwesomeIcon fixedWidth icon={faSearch} />} onClick={openSearchModal}>查找</Button>
-                    </Space>
-                    <Divider style={{ margin: "10px 0" }} />
                     <Table size="small" columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1700 }} pagination={false}></Table>
                     <Pagination current={page} total={total} pageSize={size} showSizeChanger={true} style={{ marginTop: '10px' }}
                         onChange={pageChange}></Pagination>

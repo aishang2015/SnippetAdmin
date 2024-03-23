@@ -1,7 +1,7 @@
 
 import './page.css';
 
-import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Tag, Tree, TreeSelect } from 'antd';
+import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select, Tag, Tooltip, Tree, TreeSelect } from 'antd';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { ApiInfoService } from '../../../http/requests/apiInfo';
@@ -10,10 +10,16 @@ import { join, split } from 'lodash';
 import { Constants } from '../../../common/constants';
 import { RightElement } from '../../../components/right/rightElement';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faEdit, faLink, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faEdit, faLink, faPlus, faSave, faShieldHalved, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useToken } from 'antd/es/theme/internal';
+import Title from 'antd/es/typography/Title';
 
 export default function Page() {
 
+    // !全局样式    
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
+    
     const [apiInfo, setApiInfo] = useState(new Array<string>());
     const [treeData, setTreeData] = useState(new Array<any>());
     const [elementDetail, setElementDetail] = useState<any>(null);
@@ -141,21 +147,29 @@ export default function Page() {
 
     return (
         <>
+            {contextHolder}
+
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "6px" }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faShieldHalved} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>权限信息</Title>
+                </div>
+                <div>
+                    <RightElement identify="add-position" child={
+                        <>
+                            <Tooltip title="创建" color={token.colorPrimary}>
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} onClick={addElement} className="mr-4" />
+                            </Tooltip>
+                        </>
+                    }></RightElement>
+                </div>
+            </div>
+
+            <Divider style={{ margin: '14px 0' }} />
+            
             <div id="page-container">
                 <div id="page-tree-container">
-                    <div>
-                        <RightElement identify="add-element" child={
-                            <>
-                                <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} style={{ marginRight: '10px' }} onClick={addElement}>创建</Button>
-                            </>
-                        }></RightElement>
-                        {/* <RightElement identify="export-element" child={
-                            <>
-                                <Button icon={<ExportOutlined />} style={{ marginRight: '10px' }} onClick={exportElement}>导出</Button>
-                            </>
-                        }></RightElement> */}
-                    </div>
-                    <Divider style={{ margin: "10px 0" }} />
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
                 </div>
                 <Divider type='vertical' style={{ height: '100%' }} />

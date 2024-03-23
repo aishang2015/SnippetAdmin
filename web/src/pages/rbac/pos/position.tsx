@@ -5,10 +5,16 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { PositionService } from '../../../http/requests/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faPlus, faSave, faTrash, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import Title from 'antd/es/typography/Title';
+import { useToken } from 'antd/es/theme/internal';
 
 export default function Position() {
 
+    // !全局样式    
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
+    
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [total, setTotal] = useState(0);
@@ -105,17 +111,30 @@ export default function Position() {
 
     return (
         <>
-            <div id="position-container">
-                <Space style={{ marginTop: "10px" }}>
-                    <Button icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />} onClick={() => getPositions(page, size)}>刷新</Button>
-                    <RightElement identify="create-role" child={
-                        <>
-                            <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createPosition}>创建</Button>
+            {contextHolder}
 
-                        </>
-                    }></RightElement>
-                </Space>
-                <Divider style={{ margin: "10px 0" }} />
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "6px" }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <FontAwesomeIcon icon={faUserFriends} style={{ marginRight: '8px', fontSize: "18px" }} />
+                        <Title level={4} style={{ marginBottom: 0 }}>职位信息</Title>
+                    </div>
+                    <div>
+                        <RightElement identify="add-position" child={
+                            <>
+                                <Tooltip title="新建订单" color={token.colorPrimary}>
+                                    <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} onClick={createPosition} className="mr-4" />
+                                </Tooltip>
+                            </>
+                        }></RightElement>
+                    </div>
+            </div>
+
+            <Divider style={{ margin: '14px 0' }} />
+            
+
+            <div id="position-container">
+
                 <Table columns={positionTableColumns} dataSource={positionTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} onChange={async (p, s) => { setPage(p); setSize(s); await getPositions(p, s); }} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>

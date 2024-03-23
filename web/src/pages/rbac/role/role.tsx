@@ -7,9 +7,15 @@ import { RoleService } from '../../../http/requests/role';
 import { ElementService } from '../../../http/requests/element';
 import { RightElement } from '../../../components/right/rightElement';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faEdit, faPlus, faSave, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faPlus, faRefresh, faSave, faSearch, faTrash, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import Title from 'antd/es/typography/Title';
+import { useToken } from 'antd/es/theme/internal';
 
 export default function Role() {
+
+    // !全局样式    
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
 
     const [rightTree, setRightTree] = useState(new Array<any>());
     const [page, setPage] = useState(1);
@@ -151,16 +157,31 @@ export default function Role() {
 
     return (
         <>
-            <div id="role-container">
-                <Space style={{ marginTop: "10px" }}>
-                    <Button icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />} onClick={init}>刷新</Button>
+            {contextHolder}
+
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "6px" }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faUserTag} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>角色信息</Title>
+                </div>
+                <div>
+                    <Tooltip title="刷新" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={init} />
+                    </Tooltip>
                     <RightElement identify="create-role" child={
                         <>
-                            <Button icon={<FontAwesomeIcon fixedWidth icon={faPlus} />} onClick={createRole}>创建</Button>
-
+                            <Tooltip title="新建" color={token.colorPrimary}>
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} style={{ marginRight: '4px' }} onClick={createRole} />
+                            </Tooltip>
                         </>
-                    }></RightElement> </Space>
-                <Divider style={{ margin: "10px 0" }} />
+                    }></RightElement>
+                </div>
+            </div>
+
+            <Divider style={{ margin: '14px 0' }} />
+
+            <div id="role-container">
                 <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}

@@ -1,22 +1,24 @@
 import { faChessKnight, faSave } from "@fortawesome/free-regular-svg-icons";
-import { faCircleLeft, faCircleRight, faEdit, faMoon, faOutdent, faPlus, faSun, faTruckLoading, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCircleLeft, faCircleRight, faEdit, faMoon, faOutdent, faPalette, faPlus, faSun, faTruckLoading, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Button, Card, Divider, Dropdown, Form, Input, Layout, Menu, MenuProps, message, Modal, Popover, Space, Switch, Upload } from "antd";
+import { Avatar, Button, Card, Divider, Dropdown, Form, Input, Layout, Menu, MenuProps, message, Modal, Popover, Space, Switch, Tabs, Upload } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { useToken } from "antd/es/theme/internal";
 import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CirclePicker, ColorResult } from 'react-color';
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Configuration } from "../../../common/config";
 import { Constants } from "../../../common/constants";
 import { StorageService } from "../../../common/storage";
 import { getUserInfo, modifyPassword, updateUserInfo, UserInfoResult } from "../../../http/requests/account";
 import { RefreshService } from "../../../service/refreshService";
+import PubSub from 'pubsub-js';
 
 import './layout.css';
+import { cloneDeep } from "lodash";
 
 interface IBasicLayout {
     onColorChange(color: string): void;
@@ -70,6 +72,29 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
 
         let theme = localStorage.getItem("theme")!;
         setTheme(theme);
+
+        let navSub = PubSub.subscribe('navTo', natToPage);
+        let str = localStorage.getItem("cachedTabItems");
+        if (str) {
+            let d = JSON.parse(str);
+            for (const iteratord of d) {
+                iteratord.children = <></>;
+                iteratord.label = iteratord.label
+            }
+            tabItems.current = d;
+            setDisplayTabItems(tabItems.current);
+            setActivedTabItemKey(location.pathname);
+            setMenuSelectedKeys([location.pathname]);
+        } else {
+            tabItems.current = [{ label: '主页', key: '/home', closable: false }];
+            setDisplayTabItems([{ label: '主页', key: '/home', closable: false }]);
+            setActivedTabItemKey('/home');
+            setMenuSelectedKeys(['/home']);
+        }
+
+        return () => {
+            PubSub.unsubscribe(navSub);
+        }
     }, []);
 
     async function init() {
@@ -164,7 +189,7 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                     if (!StorageService.getRights().find(right => right === child.identify) && child.identify) {
                         continue;
                     }
-                    childItems.push(getItem(<Link to={child.path}>{child.name}</Link>, index++, child.icon));
+                    childItems.push(getItem(<Link to={child.path}>{child.name}</Link>, child.path, child.icon));
                 }
                 items.push(getItem(routeInfo.name, index++, routeInfo.icon, childItems));
             } else {
@@ -195,6 +220,86 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
         });
     }
 
+    //#region  tab相关
+
+    const tabItems = useRef<Array<any>>([
+        { label: "主页", key: '/home', closable: false }
+    ]);
+    const [displayTabItems, setDisplayTabItems] = useState<Array<any>>([
+        { label: "主页", key: '/home', closable: false }
+    ]);
+    const [activedTabItemKey, setActivedTabItemKey] = useState<any>('/home');
+
+    const [menuSelectedKeys, setMenuSelectedKeys] = useState<Array<any>>([]);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    function natToPage(name: any, data: any) {
+
+        if (tabItems.current.find((d: any) => d.key === data.path)) {
+
+        } else {
+            let newTabItems = cloneDeep(tabItems.current);
+            newTabItems.push({
+                label: data.name, children: <></>, key: data.path,
+            });
+            tabItems.current = newTabItems;
+        }
+        setActivedTabItemKey(data.path);
+        setDisplayTabItems(tabItems.current);
+        setMenuSelectedKeys([data.path]);
+
+        localStorage.setItem("cachedTabItems", JSON.stringify(tabItems.current));
+    }
+
+    function tabKeyClick(key: string, e: any) {
+        navigate(key);
+        setActivedTabItemKey(key);
+    }
+
+    function editTabKey(targetKey: any, action: 'add' | 'remove') {
+        if (action === 'remove') {
+            let newTabs = tabItems.current.filter(d => d.key !== targetKey);
+            tabItems.current = newTabs;
+            setDisplayTabItems(newTabs);
+
+            if (location.pathname === targetKey) {
+                navigate(newTabs[newTabs.length - 1].key);
+            }
+
+            if (targetKey === "/product") {
+                localStorage.removeItem("product-searchObj");
+                localStorage.removeItem("product-page");
+            } else if (targetKey === "/company") {
+                localStorage.removeItem("company-searchObj");
+                localStorage.removeItem("company-page");
+            } else if (targetKey === "/printtask") {
+                localStorage.removeItem("printtask-searchObj");
+                localStorage.removeItem("printtask-page");
+            } else if (targetKey === "/pdfprinttask") {
+                localStorage.removeItem("pdfprinttask-page");
+                localStorage.removeItem("pdfprinttask-searchObj");
+            } else if (targetKey === "/user") {
+                localStorage.removeItem("user-page");
+                localStorage.removeItem("user-searchObj");
+            } else if (targetKey === "/access") {
+                localStorage.removeItem("access-page");
+                localStorage.removeItem("access-searchObj");
+            } else if (targetKey === "/loginlog") {
+                localStorage.removeItem("login-page");
+                localStorage.removeItem("login-searchObj");
+            } else if (targetKey === "/emaillog") {
+                localStorage.removeItem("email-page");
+                localStorage.removeItem("email-searchObj");
+            }
+
+
+        }
+    }
+
+    //#endregion
+
     return (
         <>
             {/* all the other elements */}
@@ -209,7 +314,7 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                         userSelect: "none", height: "calc(100% - 70px)", overflow: 'auto',
                     }}>
                         <Menu theme="dark" mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}
-                            items={getMenuItems() as any}>
+                            items={getMenuItems() as any} selectedKeys={menuSelectedKeys}>
                         </Menu>
                     </div>
                 </Sider>
@@ -225,22 +330,16 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                             justifyContent: 'center'
                         }}>
 
-                            <Switch style={{ marginRight: '12px', backgroundColor: primaryColor }}
-                                checked={theme === "dark"}
-                                defaultChecked={theme === "dark"}
-                                checkedChildren={<FontAwesomeIcon icon={faMoon} />}
-                                unCheckedChildren={<FontAwesomeIcon icon={faSun} />}
-                                onChange={handleThemeChange} />
+                            <Button style={{ marginRight: '8px' }} shape="circle"
+                                icon={<FontAwesomeIcon icon={theme === "dark" ? faMoon : faSun} />}
+                                onClick={() => handleThemeChange(theme !== "dark")} />
 
                             <Popover content={(
                                 <CirclePicker onChangeComplete={handleColorChanged} />
                             )}>
-                                <div style={{
-                                    width: '20px', height: '20px', backgroundColor: primaryColor,
-                                    borderRadius: '4px', marginRight: '10px'
-                                }}>
-
-                                </div>
+                                <Button style={{ marginRight: '8px' }} shape="circle"
+                                    icon={<FontAwesomeIcon icon={faPalette}
+                                        style={{ color: primaryColor }} />} />
                             </Popover>
                             {(avatar === null || avatar === '') &&
                                 <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
@@ -259,7 +358,12 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                             }} >{realName}</div>
                         </div>
                     </Header >
-                    <Card className="screen_container" size="small">
+                    <div style={{ margin: '10px 10px 0 10px' }}>
+                        <Tabs hideAdd type="editable-card" items={displayTabItems} activeKey={activedTabItemKey}
+                            onTabClick={tabKeyClick} onEdit={editTabKey} />
+                    </div>
+                    <Card className="screen_container" size="small" bordered={false}
+                                style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
                         <Outlet />
                     </Card>
                 </Layout>

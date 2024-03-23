@@ -40,8 +40,13 @@
     margin: 10px 10px 10px 10px;
     flex: auto;
     overflow: auto;
+    margin-top: 0;
 }
 
 .screen_container>.ant-card-body {
     height: 100%;
+}
+
+.ant-tabs-nav {
+    margin-bottom: 0 !important;
 }
