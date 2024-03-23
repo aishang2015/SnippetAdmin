@@ -102,7 +102,7 @@ namespace SnippetAdmin.Controllers.RBAC
 				Descendant = maxId,
 				Length = 0
 			});
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ELEMENT_INFO_0001);
 		}
 
@@ -120,7 +120,7 @@ namespace SnippetAdmin.Controllers.RBAC
 						   where et.Ancestor == inputModel.Id
 						   select e;
 			_dbContext.RbacElements.RemoveRange(elements);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ELEMENT_INFO_0002);
 		}
 
@@ -135,7 +135,7 @@ namespace SnippetAdmin.Controllers.RBAC
 		{
 			var element = _mapper.Map<RbacElement>(inputModel);
 			_dbContext.RbacElements.Update(element);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ELEMENT_INFO_0003);
 		}
 

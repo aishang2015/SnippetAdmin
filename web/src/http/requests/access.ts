@@ -10,6 +10,37 @@ export class AccessLogService {
     static GetModuleMethodDic() {
         return Axios.instance.post<CommonResult<any>>('api/SysAccessLog/GetModuleMethodDic', null);
     }
+
+    static GetDataDetailLogs(param: GetDataDetailLogsInputModel) {
+        return Axios.instance.post<CommonResult<Array<GetDataDetailLogsOutputModel>>>('api/SysAccessLog/GetDataDetailLogs', param);
+    }
+}
+
+/*
+ * GetDataDetailLogsInputModel
+ */
+export interface GetDataDetailLogsInputModel {
+    traceIdentifier?: null | string;
+}
+
+/*
+ * GetDataDetailLogsOutputModel
+ */
+export interface GetDataDetailLogsOutputModel {
+    id?: null | number;
+    entityName?: null | string;
+    operation?: null | string;
+    operateTime?: null | Date;
+    dataDetailList?: null | Array<DataDetailModel>;
+}
+
+/*
+ * DataDetailModel
+ */
+export interface DataDetailModel {
+    propertyName?: null | string;
+    oldValue?: null | string;
+    newValue?: null | string;
 }
 
 /**
@@ -68,6 +99,7 @@ export interface SysAccessLogResponse {
     data: [
         {
             id?: number;
+            traceIdentifier?: string | null;
             method?: string | null;
             path?: string | null;
             username?: string | null;

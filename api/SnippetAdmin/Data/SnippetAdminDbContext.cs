@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿
+using MassTransit;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Quartz.Impl.AdoJobStore.Common;
@@ -134,9 +136,10 @@ namespace SnippetAdmin.Data
 
                 foreach (var entry in entries)
                 {
-                    var logId = Guid.NewGuid();
+                    var logId = NewId.NextGuid();
                     var auditLog = new SysDataLog()
                     {
+                        Id = logId,
                         TraceIdentifier = _contextAccessor.HttpContext.TraceIdentifier,
                         TransactionId = transactionId,
                         OperateTime = DateTime.UtcNow,
@@ -148,6 +151,7 @@ namespace SnippetAdmin.Data
 
                     if (entry.State is EntityState.Modified)
                     {
+                        var attachValues = Entry(entry.Entity).GetDatabaseValues();
                         var modifiedProperties = entry.Properties.Where(p => p.IsModified);
                         foreach (var property in modifiedProperties)
                         {
@@ -157,7 +161,7 @@ namespace SnippetAdmin.Data
                                 EntityName = entry.Metadata.Name,
                                 PropertyName = property.Metadata.Name,
                                 NewValue = property.CurrentValue?.ToString(),
-                                OldValue = property.OriginalValue?.ToString()
+                                OldValue = attachValues[property.Metadata.Name]?.ToString()
                             };
                             SysDataLogDetails.Add(auditLogDetail);
                         }

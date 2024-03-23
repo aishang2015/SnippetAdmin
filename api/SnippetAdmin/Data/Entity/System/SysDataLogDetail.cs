@@ -11,7 +11,7 @@ namespace SnippetAdmin.Data.Entity.System
         [Comment("主键")]
         public int Id { get; set; }
 
-        [Comment("审计日志Id")]
+        [Comment("数据变更日志Id")]
         public Guid DataLogId { get; set; }
 
         [Comment("实体名称")]

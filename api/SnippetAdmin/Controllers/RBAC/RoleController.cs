@@ -40,7 +40,7 @@ namespace SnippetAdmin.Controllers.RBAC
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			role.IsActive = inputModel.IsActive;
 			_dbContext.Roles.Update(role);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ROLE_INFO_0004);
 		}
 
@@ -129,7 +129,7 @@ namespace SnippetAdmin.Controllers.RBAC
 				role = _mapper.Map<RbacRole>(inputModel);
 				role = _dbContext.Roles.Add(role).Entity;
 			}
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 
 			// 保存权限信息
 			// 清理旧权限
@@ -151,7 +151,7 @@ namespace SnippetAdmin.Controllers.RBAC
 					});
 				});
 
-				await _dbContext.SaveChangesAsync();
+				await _dbContext.AuditSaveChangesAsync();
 			}
 			await trans.CommitAsync();
 
@@ -169,7 +169,7 @@ namespace SnippetAdmin.Controllers.RBAC
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			_dbContext.Roles.Remove(role);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ROLE_INFO_0002);
 		}
 	}

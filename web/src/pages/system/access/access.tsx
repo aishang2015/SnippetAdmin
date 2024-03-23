@@ -1,17 +1,23 @@
-import { faCircleNotch, faFilter, faPlug, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faDatabase, faEdit, faFilter, faPlug, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, DatePicker, Form, Input, InputNumber, Modal, Pagination, Select, Table, Tooltip } from 'antd';
+import { Button, Card, DatePicker, Form, Input, InputNumber, Modal, Pagination, Select, Table, Tag, Tooltip, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
-import { AccessLogService } from '../../../http/requests/access';
+import { AccessLogService, GetDataDetailLogsOutputModel } from '../../../http/requests/access';
 import 'dayjs/locale/zh-cn';
 import dayjs from 'dayjs';
 import { UserService } from '../../../http/requests/user';
 import Title from 'antd/es/typography/Title';
+import { RightElement } from '../../../components/right/rightElement';
+import { useToken } from 'antd/es/theme/internal';
 dayjs.locale('zh-cn');
 
 export default function Access() {
+
+    // !全局样式    
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
 
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
@@ -46,8 +52,20 @@ export default function Access() {
             title: '访问时间', dataIndex: "accessedTime", align: 'center', width: '180px',
             render: (date: any) => dateFormat(date)
         },
-        { title: '状态码', dataIndex: "statusCode", align: 'center', width: '90px'},
-        { title: '耗时', dataIndex: "elapsedTime", align: 'center', width: '80px', fixed: 'right',  }
+        { title: '状态码', dataIndex: "statusCode", align: 'center', width: '90px' },
+        { title: '耗时', dataIndex: "elapsedTime", align: 'center', width: '80px', fixed: 'right', },
+
+        {
+            title: '操作', dataIndex: "operate", align: 'center', width: '80px', fixed: 'right',
+            render: (_data: any, record: any) => (
+                <div>
+                    <Tooltip title="数据日志" color={token.colorPrimary}>
+                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => viewDataLog(record.traceIdentifier)}>
+                            <FontAwesomeIcon fixedWidth icon={faDatabase} /></Button>
+                    </Tooltip>
+                </div>
+            ),
+        }
     ];
 
     useEffect(() => {
@@ -113,8 +131,24 @@ export default function Access() {
         await initAsync();
     }
 
+    //#region 数据日志
+
+    const [dataLogVisible, setDataLogVisible] = useState(false);
+    const [dataLogData, setDataLogData] = useState<Array<GetDataDetailLogsOutputModel>>([]);
+
+    async function viewDataLog(identify: string) {
+        let response = await AccessLogService.GetDataDetailLogs({
+            traceIdentifier: identify
+        });
+        setDataLogData(response.data.data);
+        setDataLogVisible(true);
+    }
+
+    //#endregion
+
     return (
         <>
+            {contextHolder}
 
             {/* 操作 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -192,6 +226,30 @@ export default function Access() {
                         <Button style={{ marginLeft: '10px' }} onClick={() => setSearchModalVisible(false)}>取消</Button>
                     </Form.Item>
                 </Form>
+            </Modal>
+
+            <Modal open={dataLogVisible} onCancel={() => setDataLogVisible(false)} title="数据日志" footer={null}
+                width={800}>
+                {dataLogData.map(d => {
+                    return <Card style={{marginBottom:'8px'}}>
+                        <Title level={5}>{d.entityName} <Tag color="success">{d.operation}</Tag></Title>
+
+                        <div style={{ display: 'flex' }}>
+                            <div style={{ flex: "1", fontWeight: 'bold' }}>属性名</div>
+                            <div style={{ flex: "1", fontWeight: 'bold' }}>旧值</div>
+                            <div style={{ flex: "1", fontWeight: 'bold' }}>新值</div>
+                        </div>
+                        {d.dataDetailList?.map(dd => {
+                            return <>
+                                <div style={{ display: 'flex' }}>
+                                    <div style={{ flex: "1" }}>{dd.propertyName}</div>
+                                    <div style={{ flex: "1", wordBreak: 'break-all' }}>{dd.oldValue}</div>
+                                    <div style={{ flex: "1", wordBreak: 'break-all' }}>{dd.newValue}</div>
+                                </div>
+                            </>;
+                        })}
+                    </Card>;
+                })}
             </Modal>
         </>
     );

@@ -251,9 +251,7 @@ export default function Org() {
 
     return (
         <>
-
-        
-
+            {contextHolder}
 
             {/* 操作 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "14px" }}>
@@ -282,7 +280,7 @@ export default function Org() {
             </div>
 
             <Divider style={{ margin: '14px 0' }} />
-            
+
             <div id="org-container">
                 <div id='org-tree-container'>
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />

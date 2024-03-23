@@ -10,7 +10,8 @@ namespace SnippetAdmin.Data.Entity.System
     public class SysDataLog
     {
         [Comment("主键")]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; }
 
         [Comment("跟踪标识")]
         public string TraceIdentifier { get; set; }

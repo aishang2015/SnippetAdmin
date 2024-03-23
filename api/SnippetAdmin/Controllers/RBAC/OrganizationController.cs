@@ -115,7 +115,7 @@ namespace SnippetAdmin.Controllers.RBAC
 				Descendant = entity.Entity.Id,
 				Length = 0
 			});
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0001);
 		}
 
@@ -133,7 +133,7 @@ namespace SnippetAdmin.Controllers.RBAC
 								where orgTree.Ancestor == inputModel.Id
 								select org;
 			_dbContext.RbacOrganizations.RemoveRange(organizations);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0002);
 		}
 
@@ -211,7 +211,7 @@ namespace SnippetAdmin.Controllers.RBAC
 				}
 			}
 
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0003);
 		}
 
@@ -269,7 +269,7 @@ namespace SnippetAdmin.Controllers.RBAC
 					Code = inputModel.Code
 				});
 			}
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 
 			return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0005);
 		}
@@ -291,7 +291,7 @@ namespace SnippetAdmin.Controllers.RBAC
 			var orgs = _dbContext.RbacOrganizations.Where(org => org.Type == orgType.Code).ToList();
 			orgs.ForEach(org => org.Type = null);
 			_dbContext.RbacOrganizations.UpdateRange(orgs);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ORGANIZATION_INFO_0002);
 		}
 

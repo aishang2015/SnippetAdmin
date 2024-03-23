@@ -65,7 +65,7 @@ namespace SnippetAdmin.Controllers.RBAC
 				position.Sorting = inputModel.Sorting;
 				_dbContext.RbacPositions.Update(position);
 			}
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 
 			return CommonResult.Success(MessageConstant.POSITION_INFO_0001);
 		}
@@ -85,7 +85,7 @@ namespace SnippetAdmin.Controllers.RBAC
 
 			_dbContext.Remove(position);
 			_dbContext.RemoveRange(userClaims);
-			await _dbContext.SaveChangesAsync();
+			await _dbContext.AuditSaveChangesAsync();
 
 			return CommonResult.Success(MessageConstant.POSITION_INFO_0002);
 		}

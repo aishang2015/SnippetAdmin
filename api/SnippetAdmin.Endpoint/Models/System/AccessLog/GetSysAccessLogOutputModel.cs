@@ -9,6 +9,7 @@ namespace SnippetAdmin.Endpoint.Models.System.AccessLog
     public record GetSysAccessLogOutputModel
     {
         public int Id { get; set; }
+        public string TraceIdentifier { get; set; }
         public string Module { get; set; }
         public string Method { get; set; }
         public string Path { get; set; }
