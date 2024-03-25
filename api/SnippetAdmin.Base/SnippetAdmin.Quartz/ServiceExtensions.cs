@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using Quartz.AspNetCore;
 using SnippetAdmin.Quartz.Initializers;
 
 namespace SnippetAdmin.Quartz
@@ -24,14 +25,14 @@ namespace SnippetAdmin.Quartz
 			var dbProviderString = quartzOptions[dbProvider];
 			var connectionString = quartzOptions[connectionKey];
 
-			if (dbProviderString == "MySql")
-			{
-				DBInitializer.InitializeMySql(connectionString);
-			}
-			else if (dbProviderString == "SqlServer")
-			{
-				DBInitializer.InitializeSqlServer(connectionString);
-			}
+			//if (dbProviderString == "MySql")
+			//{
+			//	DBInitializer.InitializeMySql(connectionString);
+			//}
+			//else if (dbProviderString == "SqlServer")
+			//{
+			//	DBInitializer.InitializeSqlServer(connectionString);
+			//}
 
 			//services.AddSingleton<QuartzJobRunner>();
 			//services.AddSingleton<IJobFactory, ProviderJobFactory>();
@@ -40,7 +41,7 @@ namespace SnippetAdmin.Quartz
 			services.AddSingleton<IQuartzService, QuartzService>();
 
 			// quartz现在提供了内置的scope的job工厂，因此不需要quartzjobrunner和ijobfactory了
-			services.AddQuartz(x => x.UseMicrosoftDependencyInjectionJobFactory());
+			services.AddQuartz();
 
 			// ASP.NET Core hosting
 			services.AddQuartzServer(options =>

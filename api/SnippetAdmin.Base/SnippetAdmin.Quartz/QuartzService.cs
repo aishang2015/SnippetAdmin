@@ -24,11 +24,6 @@ namespace SnippetAdmin.Quartz
 		{
 			_schedulerFactory = schedulerFactory;
 			_scheduler = _schedulerFactory.GetScheduler().Result;
-			//_scheduler.JobFactory = jobFactory;
-			//if (!_scheduler.IsStarted)
-			//{
-			//    _scheduler.Start().Wait();
-			//}
 		}
 
 		public async Task Add(JobDetail jobDetail)

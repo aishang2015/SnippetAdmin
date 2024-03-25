@@ -84,7 +84,13 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
             tabItems.current = d;
             setDisplayTabItems(tabItems.current);
             setActivedTabItemKey(location.pathname);
-            setMenuSelectedKeys([location.pathname]);
+
+            if (location.pathname === '/') {
+                setMenuSelectedKeys(['/home']);
+                natToPage(null, '/home');
+            } else {
+                setMenuSelectedKeys([location.pathname]);
+            }
         } else {
             tabItems.current = [{ label: '主页', key: '/home', closable: false }];
             setDisplayTabItems([{ label: '主页', key: '/home', closable: false }]);
@@ -237,7 +243,7 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
 
     function natToPage(name: any, data: any) {
 
-        if (tabItems.current.find((d: any) => d.key === data.path)) {
+        if (tabItems.current.find((d: any) => d.key === data.path) || data.path === '') {
 
         } else {
             let newTabItems = cloneDeep(tabItems.current);
@@ -304,30 +310,36 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
         <>
             {/* all the other elements */}
             <Layout style={{ minHeight: '100vh', maxHeight: '100vh' }}>
-                <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
+                <Sider trigger={null} collapsible collapsed={collapsed} style={{
+                    backgroundColor: token.colorBgContainer,
+                    borderRight: '.8px solid ' + token.colorBorderSecondary
+                }}>
                     {collapsed ?
-                        <div className="logo" >Admin</div> :
-                        <div className="logo large-logo-font" >SnippetAdmin</div>
+                        <div className="logo" style={{ color: token.colorText, }}>Admin</div> :
+                        <div className="logo large-logo-font" style={{ color: token.colorText }}>SnippetAdmin</div>
                     }
                     <div style={{
                         display: 'flex', flexDirection: 'column', justifyContent: "space-between",
                         userSelect: "none", height: "calc(100% - 70px)", overflow: 'auto',
                     }}>
-                        <Menu theme="dark" mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}
-                            items={getMenuItems() as any} selectedKeys={menuSelectedKeys}>
+                        <Menu mode="inline" defaultSelectedKeys={[localStorage.getItem('activeKey') ?? "/home"]}
+                            items={getMenuItems() as any} selectedKeys={menuSelectedKeys} style={{ border: 0 }}>
                         </Menu>
                     </div>
                 </Sider>
                 <Layout>
-                    <Header className="site-layout" style={{ padding: 0, display: 'flex', alignItems: 'center' }}>
+                    <Header className="site-layout" style={{
+                        padding: 0, display: 'flex', alignItems: 'center',
+                        backgroundColor: token.colorBgContainer, borderBottom: '.8px solid ' + token.colorBorderSecondary
+                    }}>
 
                         <Button type="text" onClick={() => setCollapsed(!collapsed)} icon={collapsed ?
-                            <FontAwesomeIcon icon={faCircleRight} style={{ color: 'white' }} /> :
-                            <FontAwesomeIcon icon={faCircleLeft} style={{ color: 'white' }} />} />
+                            <FontAwesomeIcon icon={faCircleRight} style={{}} /> :
+                            <FontAwesomeIcon icon={faCircleLeft} style={{}} />} />
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                         }}>
 
                             <Button style={{ marginRight: '8px' }} shape="circle"
@@ -337,25 +349,26 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                             <Popover content={(
                                 <CirclePicker onChangeComplete={handleColorChanged} />
                             )}>
-                                <Button style={{ marginRight: '8px' }} shape="circle"
+                                <Button style={{ marginRight: '4px' }} shape="circle"
                                     icon={<FontAwesomeIcon icon={faPalette}
                                         style={{ color: primaryColor }} />} />
                             </Popover>
-                            {(avatar === null || avatar === '') &&
-                                <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
-                                    <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '4px' }} />
-                                </Dropdown>
-                            }
-                            {(avatar !== null && avatar !== '') &&
-                                <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
-                                    <Avatar src={`${Configuration.BaseUrl}/store/${avatar}`} style={{ marginRight: '4px' }} />
-                                </Dropdown>
-                            }
 
-                            <div style={{
-                                color: 'white', marginRight: '30px', userSelect: 'none', width: '80px',
-                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-                            }} >{realName}</div>
+                            <Dropdown className="dropdown" menu={{ items: menus }} arrow={{ pointAtCenter: false }} trigger={['click']}>
+                                <Button type="text" style={{ display: 'flex', alignItems: "center", padding: '0 4px', marginRight: '40px', height: '48px' }}>
+                                    {(avatar === null || avatar === '') &&
+                                        <Avatar icon={<FontAwesomeIcon icon={faUser} />} style={{ marginRight: '4px' }} />
+                                    }
+                                    {(avatar !== null && avatar !== '') &&
+                                        <Avatar src={`${Configuration.BaseUrl}/store/${avatar}`} style={{ marginRight: '4px' }} />
+                                    }
+                                    <div style={{
+                                        userSelect: 'none',
+                                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                                    }} >{realName}</div>
+                                </Button>
+                            </Dropdown>
+
                         </div>
                     </Header >
                     <div style={{ margin: '10px 10px 0 10px' }}>
@@ -363,7 +376,10 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                             onTabClick={tabKeyClick} onEdit={editTabKey} />
                     </div>
                     <Card className="screen_container" size="small" bordered={false}
-                                style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+                        style={{
+                            borderTopLeftRadius: 0, borderTopRightRadius: 0,
+                            border: '.8px solid ' + token.colorBorderSecondary, borderTop: 0
+                        }}>
                         <Outlet />
                     </Card>
                 </Layout>
