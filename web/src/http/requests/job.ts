@@ -12,7 +12,7 @@ export class JobService {
             data: [
                 {
                     id: number,
-                    name: string,
+                    type: string,
                     describe: string,
                     cron: string,
                     isActive: boolean,
@@ -48,7 +48,6 @@ export class JobService {
     static UpdateJob(param: {
         id: number,
         type: string,
-        name: string,
         describe: string,
         cron: string
     }) {
@@ -63,7 +62,6 @@ export class JobService {
 
     static AddJob(param: {
         type: string,
-        name: string,
         describe: string,
         cron: string
     }) {

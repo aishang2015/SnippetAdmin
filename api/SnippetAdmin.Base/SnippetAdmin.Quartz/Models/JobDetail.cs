@@ -10,7 +10,7 @@
 		/// <summary>
 		/// 任务名称
 		/// </summary>
-		public string JobName { get; set; }
+		public string JobKey { get; set; }
 
 		/// <summary>
 		/// 任务描述

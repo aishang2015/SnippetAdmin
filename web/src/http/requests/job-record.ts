@@ -7,7 +7,7 @@ export class JobRecordService {
         page: number,
         size: number,
         jobState?: number,
-        jobName: string
+        jobType: string
     }) {
         type getJobsResult = {
             total: number,

@@ -24,7 +24,7 @@ namespace SnippetAdmin.Jobs
             record.JobState = Data.Enums.JobState.运行中;
             _dbContext.Add(record);
 
-            var job = _dbContext.Jobs.FirstOrDefault(j => j.Name == context.JobDetail.Key.Name);
+            var job = _dbContext.Jobs.FirstOrDefault(j => j.Key == context.JobDetail.Key.Name);
             if (job != null)
             {
                 job.LastTime = record.BeginTime;

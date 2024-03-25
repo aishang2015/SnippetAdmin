@@ -9,7 +9,7 @@ namespace SnippetAdmin.Jobs
 
         public override async Task<CommonResult> DoExecute()
         {
-            await Task.Delay(10000);
+            await Task.Delay(new Random().Next(1000, 10000));
             Console.WriteLine("hello " + DateTime.Now);
 
             return CommonResult.Success(string.Empty, "Hello任务处理成功！");

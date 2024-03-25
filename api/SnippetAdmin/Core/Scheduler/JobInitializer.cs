@@ -26,7 +26,7 @@ namespace SnippetAdmin.Core.Scheduler
 
 				   // 更新数据库内的数据
 				   var schedulerAttribute = attributeObj as SchedulerAttribute;
-				   var findJob = dbcontext.Jobs.FirstOrDefault(j => j.Name == jobType.FullName);
+				   var findJob = dbcontext.Jobs.FirstOrDefault(j => j.Key == jobType.FullName);
 				   if (findJob == null)
 				   {
 					   dbcontext.Jobs.Add(new Data.Entity.Scheduler.Job
@@ -34,7 +34,7 @@ namespace SnippetAdmin.Core.Scheduler
 						   Cron = schedulerAttribute.Cron,
 						   Describe = schedulerAttribute.Describe,
 						   IsActive = schedulerAttribute.IsActive,
-						   Name = jobType.FullName,
+						   Key = jobType.FullName,
 						   CreateTime = DateTime.Now,
 					   });
 				   }

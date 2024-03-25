@@ -1,13 +1,20 @@
-import { Button, Form, Input, Modal, Pagination, Select, Space, Switch, Table, Tag, Tooltip } from 'antd';
+import { Button, Divider, Form, Input, Modal, Pagination, Select, Space, Switch, Table, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
-import { faCircleNotch, faEdit, faInfoCircle, faPlay, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faEdit, faInfoCircle, faPlay, faPlus, faRefresh, faSave, faSearch, faThumbtack, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { JobService } from '../../../http/requests/job';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useToken } from 'antd/es/theme/internal';
+import Title from 'antd/es/typography/Title';
+import { RightElement } from '../../../components/right/rightElement';
 
 
 export default function TaskManage(props: any) {
+
+    // !全局样式    
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
 
     const [page, setPage] = useState<number>(1);
     const [size, setSize] = useState<number>(20);
@@ -22,12 +29,12 @@ export default function TaskManage(props: any) {
 
     const taskTableColumns: any = [
         {
-            title: '编号', dataIndex: "id", align: 'center', width: '100px',
+            title: '编号', dataIndex: "id", align: 'center', width: '80px', fixed: 'left',
             render: (data: any, record: any, index: any) => (
                 <span>{1 + index + size * (page - 1)} </span>
             )
         },
-        { title: '任务名', dataIndex: "name", align: 'center', width: '300px' },
+        { title: '任务类型', dataIndex: "type", align: 'center' },
         { title: '任务描述', dataIndex: "describe", align: 'center' },
         {
             title: '执行计划', dataIndex: "cron", align: 'center', width: '120px',
@@ -44,7 +51,7 @@ export default function TaskManage(props: any) {
             render: (date: any) => dateFormat(date)
         },
         {
-            title: '状态', dataIndex: "isActive", align: 'center', width: '120px',
+            title: '状态', dataIndex: "isActive", align: 'center', width: '100px', fixed: 'right',
             render: (data: any, record: any) => (
                 <Switch defaultChecked={data}
                     checkedChildren="启动"
@@ -57,13 +64,13 @@ export default function TaskManage(props: any) {
             render: (text: any, record: any) => (
                 <Space size="middle">
                     <Tooltip title="编辑任务">
-                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { editTask(record.id) }}><FontAwesomeIcon icon={faEdit} /></Button>
+                        <Button type='link' style={{ padding: '0px' }} onClick={() => { editTask(record.id) }}><FontAwesomeIcon icon={faEdit} /></Button>
                     </Tooltip>
                     <Tooltip title="删除任务">
-                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} /></Button>
+                        <Button type='link' style={{ padding: '0px' }} onClick={() => { deleteTask(record.id) }}><FontAwesomeIcon icon={faTrash} /></Button>
                     </Tooltip>
                     <Tooltip title="立即执行">
-                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} /></Button>
+                        <Button type='link' style={{ padding: '0px' }} onClick={() => { runTask(record.id) }}><FontAwesomeIcon icon={faPlay} /></Button>
                     </Tooltip>
                 </Space>
             ),
@@ -97,7 +104,6 @@ export default function TaskManage(props: any) {
         editForm.setFieldsValue({
             id: job.data.data.id,
             type: job.data.data.type,
-            name: job.data.data.name,
             describe: job.data.data.describe,
             cron: job.data.data.cron
         });
@@ -109,14 +115,12 @@ export default function TaskManage(props: any) {
             await JobService.UpdateJob({
                 id: jobs["id"],
                 type: jobs["type"],
-                name: jobs["name"],
                 describe: jobs["describe"],
                 cron: jobs["cron"]
             });
         } else {
             await JobService.AddJob({
                 type: jobs["type"],
-                name: jobs["name"],
                 describe: jobs["describe"],
                 cron: jobs["cron"]
             });
@@ -151,13 +155,35 @@ export default function TaskManage(props: any) {
 
     return (
         <>
-            <div style={{ marginBottom: '10px' }}>
-                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
-                    onClick={initial}>刷新</Button>
-                <Button type="primary" onClick={addTask}><FontAwesomeIcon icon={faPlus} fixedWidth></FontAwesomeIcon>创建新任务</Button>
+            {contextHolder}
+
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "14px" }}>
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faThumbtack} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>任务管理</Title>
+                </div>
+                <div>
+                    <Tooltip title="刷新" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} 
+                            onClick={initial} />
+                    </Tooltip>
+                    <RightElement identify="create-user" child={
+                        <>
+                            <Tooltip title="新建" color={token.colorPrimary}>
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} style={{ marginRight: '4px' }} 
+                                    onClick={addTask} />
+                            </Tooltip>
+                        </>
+                    }></RightElement>
+                </div>
             </div>
+
+            <Divider style={{ margin: '14px 0' }} />
+
             <Table style={{ marginBottom: '10px' }} columns={taskTableColumns} dataSource={taskTableData} pagination={false}
-                bordered scroll={{ x: 1600 }} size="small"></Table>
+                bordered scroll={{ x: 1400 }} size="small"></Table>
             <Pagination pageSize={size} total={total} current={page} showSizeChanger={true} onChange={pageChange} />
 
             <Modal open={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
@@ -170,21 +196,13 @@ export default function TaskManage(props: any) {
                             { required: true, message: "请选择任务类型" },
                         ]}
                     >
-                        <Select placeholder="请选择任务类型">
+                        <Select placeholder="请选择任务类型" disabled={editForm.getFieldValue('id')}>
                             {
                                 jobTypeList.map(o => (
                                     <Select.Option value={o} key={o}>{o}</Select.Option>
                                 ))
                             }
                         </Select>
-                    </Form.Item>
-                    <Form.Item name="name" label="任务名称" rules={
-                        [
-                            { required: true, message: "请输入任务名称" },
-                            { max: 40, message: "任务名称过长" },
-                        ]}
-                    >
-                        <Input placeholder="请输入任务名" autoComplete="off2" />
                     </Form.Item>
                     <Form.Item name="describe" label="任务描述" rules={
                         [

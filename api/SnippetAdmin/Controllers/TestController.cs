@@ -45,7 +45,7 @@ namespace SnippetAdmin.Controllers
 				JobType = typeof(HelloJob),
 				CronExpression = "0/10 * * * * ?",
 				JobDescribe = "描述",
-				JobName = "这个任务"
+				JobKey = "这个任务"
 			});
 			return Ok();
 		}
