@@ -1,5 +1,5 @@
-import { CommonResult, CommonResultNoData } from "../common-result";
-import { Axios } from "../request";
+import { CommonResult, CommonResultNoData } from "../../common-result";
+import { Axios } from "../../request";
 
 export type GetRoleResult = {
     id: number,

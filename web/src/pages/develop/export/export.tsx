@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Card, Col, Divider, Row, Typography } from 'antd';
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
-import { ExportService } from '../../../http/requests/export';
+import { ExportService } from '../../../http/requests/develop/export';
 
 
 export default function Export() {

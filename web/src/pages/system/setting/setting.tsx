@@ -4,7 +4,7 @@ import { useToken } from 'antd/es/theme/internal';
 import { useForm } from 'antd/lib/form/Form';
 import { RcFile, UploadFile } from 'antd/lib/upload/interface';
 import { useEffect, useState } from 'react';
-import { GetSettingGroupsOutputModel, GetSettingsOutputModel, SettingModel, SettingService } from '../../../http/requests/setting';
+import { GetSettingGroupsOutputModel, GetSettingsOutputModel, SettingModel, SettingService } from '../../../http/requests/system/setting';
 import './setting.css';
 import dayjs from 'dayjs';
 

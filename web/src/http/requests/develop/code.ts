@@ -1,5 +1,5 @@
-import { CommonResult } from "../common-result";
-import { Axios } from "../request";
+import { CommonResult } from "../../common-result";
+import { Axios } from "../../request";
 
 export class CodeService {
 

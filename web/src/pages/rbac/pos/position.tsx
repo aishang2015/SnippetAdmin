@@ -3,7 +3,7 @@ import { RightElement } from '../../../components/right/rightElement';
 import './position.css';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
-import { PositionService } from '../../../http/requests/position';
+import { PositionService } from '../../../http/requests/rbac/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faPlus, faSave, faTrash, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import Title from 'antd/es/typography/Title';

@@ -1,6 +1,6 @@
 import React from "react";
 import { StorageService } from "../../../common/storage";
-import { handleThirdPartyCode } from "../../../http/requests/account";
+import { handleThirdPartyCode } from "../../../http/requests/basic/account";
 
 export class Callback extends React.Component<any>{
 

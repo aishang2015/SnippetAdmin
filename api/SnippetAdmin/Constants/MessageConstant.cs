@@ -147,8 +147,9 @@
 		public static readonly (string, string) DICTIONARY_INFO_0004 = ("DICTIONARY_INFO_0004", "字典项目创建成功！");
 		public static readonly (string, string) DICTIONARY_INFO_0005 = ("DICTIONARY_INFO_0005", "字典项目更新成功！");
 		public static readonly (string, string) DICTIONARY_INFO_0006 = ("DICTIONARY_INFO_0006", "字典项目删除成功！");
+        public static readonly (string, string) DICTIONARY_INFO_0007 = ("DICTIONARY_INFO_0007", "字典项目状态修改成功！");
 
-		public static readonly (string, string) DICTIONARY_ERROR_0001 = ("DICTIONARY_ERROR_0001", "字典类型名称重复！");
+        public static readonly (string, string) DICTIONARY_ERROR_0001 = ("DICTIONARY_ERROR_0001", "字典类型名称重复！");
 		public static readonly (string, string) DICTIONARY_ERROR_0002 = ("DICTIONARY_ERROR_0002", "字典类型代码重复！");
 		public static readonly (string, string) DICTIONARY_ERROR_0003 = ("DICTIONARY_ERROR_0003", "同一字典类型下字典项目名称重复！");
 		public static readonly (string, string) DICTIONARY_ERROR_0004 = ("DICTIONARY_ERROR_0004", "同一字典类型下字典项目代码重复！");

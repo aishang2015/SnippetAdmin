@@ -2,13 +2,13 @@ import './login.css';
 
 import React from "react";
 import { Button, Card, Form, Input, Space } from 'antd';
-import { LoginModel, login } from '../../../http/requests/account';
+import { LoginModel, login } from '../../../http/requests/basic/account';
 import { OauthService } from '../../../common/oauth';
 import { StorageService } from '../../../common/storage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faSignIn, faUser } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { SettingService } from '../../../http/requests/setting';
+import { SettingService } from '../../../http/requests/system/setting';
 import { Configuration } from '../../../common/config';
 import ParticlesBg from 'particles-bg';
 

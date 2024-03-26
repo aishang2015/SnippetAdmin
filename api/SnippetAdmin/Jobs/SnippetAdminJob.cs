@@ -35,9 +35,6 @@ namespace SnippetAdmin.Jobs
             var sw = new Stopwatch();
             sw.Start();
 
-            record.JobState = Data.Enums.JobState.成功;
-            await _dbContext.SaveChangesAsync();
-
             try
             {
                 var result = await DoExecute();

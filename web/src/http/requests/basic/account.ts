@@ -1,5 +1,5 @@
-import { CommonResult, CommonResultNoData } from "../common-result";
-import { Axios } from "../request";
+import { CommonResult, CommonResultNoData } from "../../common-result";
+import { Axios } from "../../request";
 
 export function login(model: LoginModel) {
     return Axios.instance.post<CommonResult<LoginResult>>('api/account/login', model);

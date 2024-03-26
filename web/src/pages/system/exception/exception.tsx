@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Pagination, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
-import { ExceptionLogService } from '../../../http/requests/exception';
+import { ExceptionLogService } from '../../../http/requests/system/exception';
 
 
 export default function Exception() {

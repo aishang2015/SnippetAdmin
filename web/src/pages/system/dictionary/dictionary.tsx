@@ -1,14 +1,21 @@
-import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Divider, Form, Input, InputNumber, List, Modal, Space, Table, Tooltip } from 'antd';
+import { Button, Divider, Form, Input, InputNumber, List, Modal, Space, Switch, Table, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
-import { DictionaryService, GetDicTypeListResponse, GetDicValueListResponse } from '../../../http/requests/dictionary';
+import { DictionaryService, GetDicTypeListResponse, GetDicValueListResponse } from '../../../http/requests/system/dictionary';
 import './dictionary.css';
+import { useToken } from 'antd/es/theme/internal';
 
 
 export default function Dictionary() {
+
+
+    const [_, token] = useToken();
+    const [modal, contextHolder] = Modal.useModal();
+
+    const [selectItem, setSelectItem] = useState<number>(-1);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -34,7 +41,18 @@ export default function Dictionary() {
         { title: '字典项目代码', dataIndex: "code", align: 'center' },
         { title: '排序', dataIndex: "sorting", align: 'center', width: '100px' },
         {
-            title: '操作', dataIndex: "operate", align: 'center', width: '130px', fixed: 'right',
+            title: '是否启用', dataIndex: "isEnabled", align: 'center', width: '100px',
+            render: (data: any, record: any) => (
+                <RightElement identify="active-user" child={
+                    <>
+                        <Switch defaultChecked={data} onChange={async (checked, event) => { 
+                            await DictionaryService.EnableDicValue({ id: record.id, isEnabled: record.checked }) }}></Switch>
+                    </>
+                }></RightElement>
+            ),
+        },
+        {
+            title: '操作', dataIndex: "operate", align: 'center', width: '80px', fixed: 'right',
             render: (data: any, record: any) => (
                 <div >
                     <Tooltip title="编辑">
@@ -76,7 +94,12 @@ export default function Dictionary() {
         setDicTypeVisible(true);
     }
 
-    async function editType(data: GetDicValueListResponse) {
+    async function selected(index: number, id: number) {
+        setSelectItem(index);
+        await initValueList(id);
+    }
+
+    async function editType(data: any) {
         typeForm.setFieldsValue({
             id: data.id,
             name: data.name,
@@ -191,6 +214,8 @@ export default function Dictionary() {
 
     return (
         <>
+            {contextHolder}
+
             <div id="dic-container">
                 <div id="dic-type-container">
                     <RightElement identify="add-dictype" child={
@@ -201,24 +226,47 @@ export default function Dictionary() {
                             <Divider style={{ margin: "10px 0" }} />
                         </>
                     }></RightElement>
-                    <List itemLayout='horizontal' dataSource={typeData}
-                        renderItem={item => (
-                            <List.Item actions={[
+                    {typeData.map((item, index) => {
+                        return <>
+                            <div style={{
+                                display: 'flex', cursor: "pointer", alignItems: 'center', padding: '0 10px',
+                                borderRadius: token.borderRadius,
+                                backgroundColor: selectItem === index ? token.colorPrimary : token.colorBgBase
+                            }}
+                                onClick={() => selected(index, item.id!)}>
+                                <FontAwesomeIcon icon={faBook} size='1x' style={{
+                                    marginRight: '6px',
+                                    color: selectItem === index ? token.colorWhite : token.colorText
+                                }}></FontAwesomeIcon>
+                                <div style={{
+                                    color: selectItem === index ? token.colorWhite : token.colorText
+                                }}>
+                                    {item.name}
+                                </div>
+                                <div style={{
+                                    color: selectItem === index ? token.colorTextLightSolid : token.colorTextDisabled
+                                }}>({item.code})</div>
+                                <div style={{ flex: 1 }}></div>
                                 <RightElement identify="edit-dictype" child={
                                     <>
-                                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => editType(item)}><FontAwesomeIcon icon={faEdit} /></Button>
-                                    </>
-                                }></RightElement>,
-                                <RightElement identify="delete-dictype" child={
-                                    <>
-                                        <Button type='link' style={{ padding: '4px 6px' }} onClick={() => deleteType(item.id!)}><FontAwesomeIcon icon={faTrash} /></Button>
+                                        <Button type='link' style={{
+                                            padding: '4px 6px',
+                                            color: selectItem === index ? token.colorWhite : token.colorPrimary
+                                        }}
+                                            onClick={() => editType(item)}><FontAwesomeIcon icon={faEdit} /></Button>
                                     </>
                                 }></RightElement>
-                            ]}>
-                                <List.Item.Meta title={<Button type='link' style={{ padding: '4px 0px' }} onClick={() => initValueList(item.id!)}>{item.name}</Button>} description={item.code} />
-                            </List.Item>
-                        )}
-                    />
+                                <RightElement identify="delete-dictype" child={
+                                    <>
+                                        <Button type='link' style={{
+                                            padding: '4px 6px',
+                                            color: selectItem === index ? token.colorWhite : token.colorPrimary
+                                        }} onClick={() => deleteType(item.id!)}><FontAwesomeIcon icon={faTrash} /></Button>
+                                    </>
+                                }></RightElement>
+                            </div>
+                        </>;
+                    })}
                 </div>
                 <Divider type="vertical" style={{ height: '100%' }} />
                 <div id="dic-value-container">
@@ -230,7 +278,8 @@ export default function Dictionary() {
                             <Divider style={{ margin: "10px 0" }} />
                         </>
                     }></RightElement>
-                    <Table size="small" columns={tableColumns} dataSource={valueData} scroll={{ x: 900 }} pagination={false}></Table>
+                    <Table size="small" columns={tableColumns} dataSource={valueData} scroll={{ x: 900 }}
+                        pagination={false} bordered>  </Table>
                 </div>
             </div>
             <Modal open={dicTypeVisible} destroyOnClose={true} maskClosable={false} footer={null}

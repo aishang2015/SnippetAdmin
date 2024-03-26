@@ -1,5 +1,5 @@
-import { CommonResult, CommonResultNoData } from "../common-result";
-import { Axios } from "../request";
+import { CommonResult, CommonResultNoData } from "../../common-result";
+import { Axios } from "../../request";
 
 export class DictionaryService {
 
@@ -34,6 +34,17 @@ export class DictionaryService {
     static deleteDicValue(model: DeleteDicValueRequest) {
         return Axios.instance.post<CommonResultNoData>('api/Dic/DeleteDicValue', model);
     }
+    static EnableDicValue(param:EnableDicValueInputModel) {
+        return Axios.instance.post<CommonResultNoData>('api/Dic/EnableDicValue',param);
+    }
+}
+
+/*
+ * EnableDicValueInputModel
+ */
+export interface EnableDicValueInputModel {
+    id?: null | number;
+    isEnabled?: null | boolean;
 }
 
 
@@ -66,6 +77,7 @@ export interface GetDicValueListResponse {
     id?: number;
     name?: string | null;
     code?: string | null;
+    isEnabled: boolean | null;
     sorting?: number;
 }
 

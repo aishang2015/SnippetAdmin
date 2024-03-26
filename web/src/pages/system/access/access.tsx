@@ -4,10 +4,10 @@ import { Button, Card, DatePicker, Form, Input, InputNumber, Modal, Pagination, 
 import { useForm } from 'antd/lib/form/Form';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
-import { AccessLogService, GetDataDetailLogsOutputModel } from '../../../http/requests/access';
+import { AccessLogService, GetDataDetailLogsOutputModel } from '../../../http/requests/system/access';
 import 'dayjs/locale/zh-cn';
 import dayjs from 'dayjs';
-import { UserService } from '../../../http/requests/user';
+import { UserService } from '../../../http/requests/rbac/user';
 import Title from 'antd/es/typography/Title';
 import { RightElement } from '../../../components/right/rightElement';
 import { useToken } from 'antd/es/theme/internal';

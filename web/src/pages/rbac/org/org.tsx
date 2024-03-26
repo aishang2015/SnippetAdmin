@@ -9,7 +9,7 @@ import { Button, Descriptions, Divider, Form, Input, InputNumber, Modal, Select,
 import { useForm } from 'antd/lib/form/Form';
 import React, { useEffect, useState } from 'react';
 import { RightElement } from '../../../components/right/rightElement';
-import { getOrganizationResult, OrganizationService } from '../../../http/requests/organization';
+import { getOrganizationResult, OrganizationService } from '../../../http/requests/rbac/organization';
 import Title from 'antd/es/typography/Title';
 import { useToken } from 'antd/es/theme/internal';
 

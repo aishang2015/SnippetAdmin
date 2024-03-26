@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 
 import { faCircleNotch, faEdit, faInfoCircle, faPlay, faPlus, faRefresh, faSave, faSearch, faThumbtack, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { JobService } from '../../../http/requests/job';
+import { JobService } from '../../../http/requests/task/job';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useToken } from 'antd/es/theme/internal';
 import Title from 'antd/es/typography/Title';

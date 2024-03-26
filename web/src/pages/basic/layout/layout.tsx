@@ -13,7 +13,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Configuration } from "../../../common/config";
 import { Constants } from "../../../common/constants";
 import { StorageService } from "../../../common/storage";
-import { getUserInfo, modifyPassword, updateUserInfo, UserInfoResult } from "../../../http/requests/account";
+import { getUserInfo, modifyPassword, updateUserInfo, UserInfoResult } from "../../../http/requests/basic/account";
 import { RefreshService } from "../../../service/refreshService";
 import PubSub from 'pubsub-js';
 

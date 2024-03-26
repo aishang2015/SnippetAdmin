@@ -13,7 +13,7 @@ namespace SnippetAdmin.Controllers.System
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Policy = "AccessApi")]
+    [Authorize]
     [ApiExplorerSettings(GroupName = "v1")]
     public class DicController : ControllerBase, IDicApi
     {
@@ -155,6 +155,7 @@ namespace SnippetAdmin.Controllers.System
             }
 
             var dicValue = _mapper.Map<SysDicValue>(inputModel);
+            dicValue.IsEnabled = true;
             _dbContext.Add(dicValue);
             await _dbContext.SaveChangesAsync();
 
@@ -202,6 +203,20 @@ namespace SnippetAdmin.Controllers.System
             _dbContext.Remove(dicType);
             await _dbContext.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.DICTIONARY_INFO_0006);
+        }
+
+        /// <summary>
+        /// 启动用字典项目
+        /// </summary>
+        [HttpPost]
+        [CommonResultResponseType]
+        [Description("修改字典项目启用状态")]
+        public async Task<CommonResult> EnableDicValue(EnableDicValueInputModel inputModel)
+        {
+            var dicValue = await _dbContext.SysDicValues.FindAsync(inputModel.Id);
+            dicValue.IsEnabled = inputModel.IsEnabled;
+            await _dbContext.SaveChangesAsync();
+            return CommonResult.Success(MessageConstant.DICTIONARY_INFO_0007);
         }
     }
 }

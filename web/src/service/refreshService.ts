@@ -1,5 +1,5 @@
 import { StorageService } from "../common/storage";
-import { refresh } from "../http/requests/account";
+import { refresh } from "../http/requests/basic/account";
 
 
 export class RefreshService {

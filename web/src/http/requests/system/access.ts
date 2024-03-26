@@ -1,6 +1,6 @@
 import { Dictionary } from "lodash";
-import { CommonResult } from "../common-result";
-import { Axios } from "../request";
+import { CommonResult } from "../../common-result";
+import { Axios } from "../../request";
 
 export class AccessLogService {
     static getAccessLogs(model: GetSysAccessLogInputModel) {

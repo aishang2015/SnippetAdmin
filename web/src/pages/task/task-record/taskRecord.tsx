@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Divider, Modal, Pagination, Radio, Select, Space, Table, Tag, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
-import { JobService } from '../../../http/requests/job';
-import { JobRecordService } from '../../../http/requests/job-record';
+import { JobService } from '../../../http/requests/task/job';
+import { JobRecordService } from '../../../http/requests/task/job-record';
 import { useToken } from 'antd/es/theme/internal';
 import Title from 'antd/es/typography/Title';
 

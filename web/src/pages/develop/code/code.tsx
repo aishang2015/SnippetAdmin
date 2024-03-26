@@ -1,6 +1,6 @@
 import { Button, Divider, Form, message, Select } from "antd";
 import { useEffect, useState } from "react";
-import { CodeService } from "../../../http/requests/code";
+import { CodeService } from "../../../http/requests/develop/code";
 import MonacoEditor from 'react-monaco-editor';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCode, faCopy } from "@fortawesome/free-solid-svg-icons";

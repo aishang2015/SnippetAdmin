@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Pagination, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { dateFormat } from "../../../common/time";
-import { LoginLogService } from "../../../http/requests/login-log";
+import { LoginLogService } from "../../../http/requests/system/login-log";
 
 
 

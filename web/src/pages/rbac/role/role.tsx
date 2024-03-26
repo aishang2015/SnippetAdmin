@@ -3,8 +3,8 @@ import { Button, Divider, Form, Input, Modal, Pagination, Space, Switch, Table, 
 import './role.css';
 import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
-import { RoleService } from '../../../http/requests/role';
-import { ElementService } from '../../../http/requests/element';
+import { RoleService } from '../../../http/requests/rbac/role';
+import { ElementService } from '../../../http/requests/rbac/element';
 import { RightElement } from '../../../components/right/rightElement';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faPlus, faRefresh, faSave, faSearch, faTrash, faUserTag } from '@fortawesome/free-solid-svg-icons';
