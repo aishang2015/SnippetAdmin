@@ -3,66 +3,51 @@ import { Axios } from "../../request";
 
 export class SettingService {
 
-    static GetSettingGroups() {
-        return Axios.instance.post<CommonResult<Array<GetSettingGroupsOutputModel>>>('api/Setting/GetSettingGroups',{});
+    static GetSettings(param: GetSettingsInputModel) {
+        return Axios.instance.post<CommonResult<GetSettingsOutputModel>>('api/Setting/GetSettings', param);
     }
-    static GetSettings(param:GetSettingsInputModel) {
-        return Axios.instance.post<CommonResult<Array<GetSettingsOutputModel>>>('api/Setting/GetSettings',param);
-    }
-    static SaveSetting(param:SaveSettingInputModel) {
-        return Axios.instance.post<CommonResultNoData>('api/Setting/SaveSetting',param);
+    static UpdateSetting(param: UpdateSettingInputModel) {
+        return Axios.instance.post<CommonResultNoData>('api/Setting/UpdateSetting', param);
     }
 }
 
-
-/*
- * GetSettingGroupsOutputModel
- */
-export interface GetSettingGroupsOutputModel {
-    icon?: null | string;
-    name?: null | string;
-    code?: null | string;
-}
 
 /*
  * GetSettingsInputModel
  */
 export interface GetSettingsInputModel {
-    groupCode?: null | string;
+    keyList?: null | Array<string>;
 }
 
+
+
 /*
- * SettingModel
+ * Setting
  */
-export interface SettingModel {
-    icon?: null | string;
-    name?: null | string;
-    describe?: null | string;
-    code?: null | string;
+export interface Setting {
+    key?: null | string;
     value?: null | string;
-    inputType?: null | number;
-    options?: null | string;
-    index?: null | number;
-    min?: null | number;
-    max?: null | number;
-    regex?: null | string;
 }
 
 /*
  * GetSettingsOutputModel
  */
 export interface GetSettingsOutputModel {
-    icon?: null | string;
-    name?: null | string;
-    describe?: null | string;
-    code?: null | string;
-    settings?: null | SettingModel[];
+    settings?: null | Array<Setting>;
+}
+
+
+/*
+ * Setting
+ */
+export interface Setting {
+    key?: null | string;
+    value?: null | string;
 }
 
 /*
- * SaveSettingInputModel
+ * UpdateSettingInputModel
  */
-export interface SaveSettingInputModel {
-    code?: null | string;
-    value?: null | string;
+export interface UpdateSettingInputModel {
+    settings?: null | Array<Setting>;
 }

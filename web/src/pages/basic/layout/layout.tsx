@@ -20,6 +20,9 @@ import PubSub from 'pubsub-js';
 import './layout.css';
 import { cloneDeep } from "lodash";
 
+import 'dayjs/locale/zh-cn';
+import dayjs from 'dayjs';
+
 interface IBasicLayout {
     onColorChange(color: string): void;
     onThemeChange(color: string): void;
@@ -65,8 +68,39 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
         },
     ];
 
+    const lastOperateTime = useRef<Date>(new Date());
+
     useEffect(() => {
+
+        let timeStr = localStorage.getItem('refreshedTime');
+        if (timeStr) {
+            let timeObj = JSON.parse(timeStr);
+            if (timeObj) {
+                let currentDate = Date.now();
+                let oldDate = Date.parse(timeObj.time);
+                let diff = currentDate - oldDate;
+                if (diff > 3000) {
+                    console.log('超时秒数：' + diff);
+                    logout();
+                }
+            }
+        }
+
+        localStorage.setItem('refreshedTime', JSON.stringify({
+            time: new Date()
+        }));
+        const autoLogoutTimer = setInterval(() => {
+            let expireTime = dayjs(lastOperateTime.current).add(30, 'minute').toDate();
+            if (new Date() > expireTime) {
+                logout();
+            }
+            localStorage.setItem('refreshedTime', JSON.stringify({
+                time: new Date()
+            }));
+        }, 1000);
+
         init();
+
         let color = localStorage.getItem("primaryColor")!;
         setPrimaryColor(color);
 
@@ -100,6 +134,7 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
 
         return () => {
             PubSub.unsubscribe(navSub);
+            clearInterval(autoLogoutTimer);
         }
     }, []);
 
@@ -117,6 +152,7 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
     };
 
     async function userSetting() {
+        setSettingMenuIndex(1);
         setUserSettingModalVisible(true);
         let info = await getUserInfo();
         setUserInfo(info.data.data);
@@ -144,6 +180,8 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
             pwdEditForm.resetFields();
 
             await userSetting();
+
+            logout();
 
         }
         finally {
@@ -491,8 +529,6 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                                     <Form.Item name="pwd" label="密码" rules={
                                         [
                                             { required: true, message: "请输入密码" },
-                                            { max: 100, message: "密码过长" },
-                                            { min: 4, message: "密码最小4位" },
                                         ]
                                     }>
                                         <Input autoComplete="off2" placeholder="请输入密码" type="password" />

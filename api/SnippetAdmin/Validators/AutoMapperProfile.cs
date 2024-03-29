@@ -46,7 +46,6 @@ namespace SnippetAdmin.Models
 			CreateMap<UpdateDicValueInputModel, SysDicValue>();
 
 			CreateMap<SysSetting, Setting>();
-			CreateMap<SysSettingSubGroup, GetSettingsOutputModel>();
 
 			CreateMap<Data.Entity.System.SysAccessLog, GetSysAccessLogOutputModel>();
 		}

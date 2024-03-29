@@ -1,5 +1,5 @@
 
-import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Select, Space, Switch, Table, Tabs, TreeSelect } from 'antd';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Select, Space, Switch, Table, Tabs, TreeSelect, Typography } from 'antd';
 import './frontend.css';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
@@ -25,6 +25,7 @@ export default function Frontend() {
     const items = [
         { label: '表单', key: 'form' },
         { label: '表格', key: 'table' },
+        { label: '设置项', key: 'setting' },
     ];
 
     function tabKeyChanged(key: string) {
@@ -286,6 +287,148 @@ export default function Frontend() {
     }
 
     //#endregion
+
+    //#region 配置文件窗口
+
+    const [title, setTitle] = useState("");
+
+    function generateSettingFile(values: any) {
+        if (values.properties && values.properties.length > 0) {
+            setCouldGenerateCode(false);
+            elementForm.resetFields();
+            setFormSetting(values);
+            setProperties(values.properties);
+            setTitle(values.settingTitle);
+        }
+
+    }
+
+    function generateSettingFormCode() {
+
+        function getCom(type: string, label: string) {
+            switch (type) {
+                case "string":
+                    return '<Input placeholder={"请输入' + label + '"} />';
+                case "textarea":
+                    return '<Input.TextArea placeholder={"请输入' + label + '"} />';
+                case "number":
+                    return '<InputNumber style={{ width: "100%" }} placeholder={"请输入' + label + '"} />';
+                case "date":
+                    return '<DatePicker style={{ width: "100%" }} />';
+                case "range":
+                    return '<DatePicker.RangePicker />';
+                case "checkbox":
+                    return '<Checkbox />';
+                case "radio":
+                    return `
+                    <Radio.Group>
+                        <Radio value="a">item 1</Radio>
+                        <Radio value="b">item 2</Radio>
+                        <Radio value="c">item 3</Radio>
+                    </Radio.Group>
+                    `;
+                case "switch":
+                    return '<Switch />';
+                case "select":
+                    return '<Select ></Select>';
+                case "tree":
+                    return '<TreeSelect />';
+                default:
+                    return '';
+            }
+        }
+
+        let pHtml = '';
+        for (const p of properties) {
+            pHtml += `
+            <FormItem name="${p.name}" label="${p.label}" required={${p.isRequired ?? false}} hidden={${p.isHidden ?? false}}
+                valuePropName="${(p.type === "checkbox" || p.type === "switch") ? "checked" : "value"}" rules={
+                    ${p.isRequired ? ("[{ required: true, message: \"请输入" + p.label + "\" }]") : ("[]")}
+                } preserve={false}>
+                ${getCom(p.type, p.label)}
+            </FormItem>
+            `;
+        }
+
+        let nameList = '';
+        for (const p of properties) {
+            nameList += `\"${p.name}\",\n                `
+        }
+        let fieldSetList = '';
+        for (const p of properties) {
+            if (p.type === 'switch') {
+                fieldSetList += `${p.name}: response.data.data.settings?.find(d => d.key === \"${p.name}\")?.value === 'true',\n            `
+            } else {
+                fieldSetList += `${p.name}: response.data.data.settings?.find(d => d.key === \"${p.name}\")?.value,\n            `
+            }
+        }
+        let updateList = '';
+        for (const p of properties) {
+            updateList += `{ key: \"${p.name}\", value: values.${p.name}?.toString() },\n                    `
+        }
+
+
+        let result = `
+import { useToken } from 'antd/es/theme/internal';
+import { useForm } from 'antd/lib/form/Form';
+import { Alert, Button, Card, Checkbox, DatePicker, Divider, Form, Input, InputNumber, message, Radio, Select, Space, Switch, Tooltip, Typography } from 'antd';
+
+import { useEffect, useState } from 'react';
+import FormItem from 'antd/es/form/FormItem';
+import { SettingService } from '../../../../http/requests/system/setting';
+
+export default function Setting() {
+
+    const [_, token] = useToken();
+    
+    const [isLoading, setIsLoading] = useState(false);
+    const [form] = useForm();
+
+    useEffect(() => {
+        initial();
+    }, []);
+
+    async function initial() {
+        let response = await SettingService.GetSettings({
+            keyList: [
+                ${nameList}
+            ]
+        });
+        form.setFieldsValue({
+            ${fieldSetList}
+        });
+    }
+
+    async function formSubmit(values: any) {
+        try {
+            setIsLoading(true);
+            await SettingService.UpdateSetting({
+                settings: [
+                    ${updateList}
+                ]
+            });
+        }finally{
+            setIsLoading(false);
+        }
+    }
+
+    return (<>
+        <Typography.Title level={5}>${title}</Typography.Title>
+        <Form form={form} labelCol={{ span: ${formSetting.labelCol} }} wrapperCol={{ span: ${formSetting.wrapperCol} }} 
+                layout="${formSetting.layout}" onFinish={formSubmit}>
+            ${pHtml}
+            <Form.Item wrapperCol={{ offset: ${formSetting.labelCol}, span: ${formSetting.wrapperCol} }}>
+                <Button type='primary' htmlType="submit" loading={isLoading}>保存</Button>
+            </Form.Item>
+        </Form>
+    </>);
+}
+        `;
+        setFormCode(result);
+    }
+
+    //#endregion
+
 
     return (
         <>
@@ -553,7 +696,7 @@ export default function Frontend() {
                                                             <Form.Item name={[field.name, 'render']} initialValue={false} valuePropName="checked">
                                                                 <Checkbox>自定义渲染</Checkbox>
                                                             </Form.Item>
-                                                            
+
                                                             <Button icon={<FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>} onClick={() => remove(field.name)}></Button>
                                                         </Space>
                                                     )
@@ -603,6 +746,194 @@ export default function Frontend() {
                     </div>
                 </div>
 
+            }
+            {tabKey === "setting" &&
+                <div className="design-container">
+                    <div className='input-area'>
+                        <Form name='dynamic-form' autoComplete='off' onFinish={generateSettingFile}>
+                            <div style={{ display: 'flex' }}>
+                                <Form.Item
+                                    label="配置标题"
+                                    name="settingTitle"
+                                    initialValue={''}
+                                    rules={[{ required: true, message: '请输入' }]}
+                                >
+                                    <Input style={{ width: '130px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="标签宽"
+                                    name="labelCol"
+                                    initialValue={6}
+                                    rules={[{ required: true, message: '请输入' }]}
+                                >
+                                    <InputNumber style={{ width: '130px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="内容宽"
+                                    name="wrapperCol"
+                                    initialValue={16}
+                                    rules={[{ required: true, message: '请输入' }]}
+                                >
+                                    <InputNumber style={{ width: '130px' }} />
+                                </Form.Item>
+                                <Form.Item
+                                    label="方向"
+                                    name="layout"
+                                    initialValue={'horizontal'}
+                                    rules={[{ required: true, message: '请输入' }]}
+                                >
+                                    <Select style={{ width: '130px' }} >
+                                        <Select.Option key='horizontal'>垂直</Select.Option>
+                                        <Select.Option key='inline'>内联</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </div>
+                            <Form.List name="properties">
+                                {
+                                    (fields, { add, remove }) => (
+                                        <>
+                                            {
+                                                fields.map(
+                                                    (field) => (
+                                                        <Space key={field.key} align="baseline" style={{ display: 'flex' }}>
+                                                            <Form.Item
+                                                                {...field}
+                                                                label="标签"
+                                                                name={[field.name, 'label']}
+                                                                rules={[{ required: true, message: '请输入' }]}
+                                                            >
+                                                                <Input style={{ width: '130px' }} />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                {...field}
+                                                                label="名称"
+                                                                name={[field.name, 'name']}
+                                                                rules={[{ required: true, message: '请输入' }]}
+                                                            >
+                                                                <Input style={{ width: '130px' }} />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                {...field}
+                                                                label="类型"
+                                                                name={[field.name, 'type']}
+                                                                rules={[{ required: true, message: '请输入' }]}
+                                                            >
+                                                                <Select style={{ width: '130px' }} >
+                                                                    <Select.Option key="string">文本</Select.Option>
+                                                                    <Select.Option key="textarea">多行文本</Select.Option>
+                                                                    <Select.Option key="number">数字</Select.Option>
+                                                                    <Select.Option key="date">日期</Select.Option>
+                                                                    <Select.Option key="range">日期范围</Select.Option>
+                                                                    <Select.Option key="checkbox">复选框</Select.Option>
+                                                                    <Select.Option key="radio">单选框</Select.Option>
+                                                                    <Select.Option key="switch">开关</Select.Option>
+                                                                    <Select.Option key="select">选择</Select.Option>
+                                                                    <Select.Option key="tree">树</Select.Option>
+                                                                </Select>
+                                                            </Form.Item>
+                                                            <Form.Item name={[field.name, 'isHidden']} valuePropName="checked">
+                                                                <Checkbox>隐藏</Checkbox>
+                                                            </Form.Item>
+                                                            <Form.Item name={[field.name, 'isRequired']} valuePropName="checked">
+                                                                <Checkbox>必须</Checkbox>
+                                                            </Form.Item>
+                                                            <Button icon={<FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>} onClick={() => remove(field.name)}></Button>
+                                                        </Space>
+                                                    )
+                                                )
+                                            }
+                                            <Form.Item>
+                                                <Button type="dashed" onClick={() => add()} block >
+                                                    添加字段
+                                                </Button>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <div>
+                                                    <Button type="primary" htmlType='submit' style={{ marginRight: '8px' }} >
+                                                        生成配置页面
+                                                    </Button>
+                                                    <Button disabled={couldGenerateCode} onClick={generateSettingFormCode} type="primary" htmlType='button' style={{ marginRight: '8px' }}  >
+                                                        生成代码
+                                                    </Button>
+                                                    <Button disabled={couldGenerateCode} onClick={copyFormCode} type="primary" htmlType='button' style={{ marginRight: '8px' }}  >
+                                                        复制代码
+                                                    </Button>
+                                                </div>
+                                            </Form.Item>
+                                        </>
+                                    )
+                                }
+                            </Form.List>
+                        </Form>
+                    </div>
+                    <div className='output-area'>
+                        <Form form={elementForm} labelCol={{ span: formSetting.labelCol }}
+                            wrapperCol={{ span: formSetting.wrapperCol }} layout={formSetting.layout}>
+
+                            <Typography.Title level={5}>{title}</Typography.Title>
+                            {
+                                properties.map(p =>
+                                (
+                                    <>
+                                        <FormItem name={p.name} label={p.label} required={p.isRequired} hidden={p.isHidden}
+                                            valuePropName={p.type === "checkbox" || "switch" ? "checked" : "value"} rules={
+                                                p.isRequired ?
+                                                    [
+                                                        { required: true, message: "请输入" + p.label },
+                                                    ] : []
+                                            }>
+                                            {p.type === "string" &&
+                                                <Input placeholder={"请输入" + p.label} />
+                                            }
+                                            {p.type === "textarea" &&
+                                                <Input.TextArea placeholder={"请输入" + p.label} />
+                                            }
+                                            {p.type === "number" &&
+                                                <InputNumber style={{ width: "100%" }} placeholder={"请输入" + p.label} />
+                                            }
+                                            {p.type === "date" &&
+                                                <DatePicker style={{ width: "100%" }} />
+                                            }
+                                            {p.type === "range" &&
+                                                <DatePicker.RangePicker />
+                                            }
+                                            {p.type === "checkbox" &&
+                                                <Checkbox />
+                                            }
+                                            {p.type === "radio" &&
+                                                <Radio.Group>
+                                                    <Radio value="a">item 1</Radio>
+                                                    <Radio value="b">item 2</Radio>
+                                                    <Radio value="c">item 3</Radio>
+                                                </Radio.Group>
+                                            }
+                                            {p.type === "switch" &&
+                                                <Switch />
+                                            }
+                                            {p.type === "select" &&
+                                                <Select ></Select>
+                                            }
+                                            {p.type === "tree" &&
+                                                <TreeSelect />
+                                            }
+                                        </FormItem>
+                                    </>
+                                )
+                                )
+                            }
+                            {properties.length > 0 &&
+                                <Form.Item wrapperCol={{ offset: formSetting.labelCol, span: formSetting.wrapperCol }}>
+                                    <Button type='primary' htmlType="submit">保存</Button>
+                                </Form.Item>
+                            }
+                        </Form>
+                    </div>
+                    <div id="code-area">
+                        <pre>
+                            {formCode}
+                        </pre>
+                    </div>
+                </div>
             }
         </>
     );

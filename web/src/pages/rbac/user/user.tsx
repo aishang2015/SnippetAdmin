@@ -553,8 +553,6 @@ export default function User() {
                     <Form.Item name="pwd" label="密码" rules={
                         [
                             { required: true, message: "请输入密码" },
-                            { max: 100, message: "密码过长" },
-                            { min: 4, message: "密码最小4位" },
                         ]
                     }>
                         <Input autoComplete="off2" placeholder="请输入密码" type="password" />
