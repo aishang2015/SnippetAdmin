@@ -231,8 +231,12 @@ export default function Access() {
             <Modal open={dataLogVisible} onCancel={() => setDataLogVisible(false)} title="数据日志" footer={null}
                 width={800}>
                 {dataLogData.map(d => {
-                    return <Card style={{marginBottom:'8px'}}>
-                        <Title level={5}>{d.entityName} <Tag color="success">{d.operation}</Tag></Title>
+                    return <Card style={{ marginBottom: '8px' }}>
+                        <Title level={5}>{d.entityName}
+                            {d.operation === "删除数据" && <Tag color="red">{d.operation}</Tag>}
+                            {d.operation === "修改数据" && <Tag color="orange">{d.operation}</Tag>}
+                            {d.operation === "添加数据" && <Tag color="green">{d.operation}</Tag>}
+                        </Title>
 
                         <div style={{ display: 'flex' }}>
                             <div style={{ flex: "1", fontWeight: 'bold' }}>属性名</div>

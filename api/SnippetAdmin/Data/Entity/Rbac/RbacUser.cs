@@ -11,6 +11,9 @@ namespace SnippetAdmin.Data.Entity.Rbac
     [Cachable]
     public class RbacUser : IdentityUser<int>
     {
+        [Comment("主键")]
+        public override int Id { get; set; }
+
         [Comment("头像")]
         public string Avatar { get; set; }
 

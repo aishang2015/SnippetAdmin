@@ -43,7 +43,7 @@ namespace SnippetAdmin.Controllers.RBAC
         {
             var user = await _dbContext.Users.FindAsync(inputModel.Id);
             user.IsActive = inputModel.IsActive;
-            await _dbContext.AuditSaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.USER_INFO_0001);
         }
 
@@ -203,7 +203,7 @@ namespace SnippetAdmin.Controllers.RBAC
                 var ups = _dbContext.UserClaims.Where(uc => uc.UserId == user.Id &&
                     (uc.ClaimType == ClaimConstant.UserPosition || uc.ClaimType == ClaimConstant.UserOrganization)).ToList();
                 _dbContext.UserClaims.RemoveRange(ups);
-                await _dbContext.AuditSaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
             }
             else
             {
@@ -231,7 +231,7 @@ namespace SnippetAdmin.Controllers.RBAC
                     ClaimType = ClaimConstant.UserPosition
                 }));
 
-            await _dbContext.AuditSaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             await trans.CommitAsync();
             return CommonResult.Success(MessageConstant.USER_INFO_0001);
         }
@@ -249,7 +249,7 @@ namespace SnippetAdmin.Controllers.RBAC
             var uops = _dbContext.UserClaims.Where(u => u.UserId == inputModel.Id).ToList();
             _dbContext.Remove(user);
             _dbContext.RemoveRange(uops);
-            await _dbContext.AuditSaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.USER_INFO_0001);
         }
 
@@ -297,7 +297,7 @@ namespace SnippetAdmin.Controllers.RBAC
                     ClaimValue = inputModel.OrgId.ToString(),
                 });
             }
-            await _dbContext.AuditSaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.USER_INFO_0004);
         }
 
@@ -313,7 +313,7 @@ namespace SnippetAdmin.Controllers.RBAC
             var uops = _dbContext.UserClaims.Where(uop => uop.ClaimValue == inputModel.OrgId.ToString() &&
                 uop.UserId == inputModel.UserId && uop.ClaimType == ClaimConstant.UserOrganization).ToList();
             _dbContext.RemoveRange(uops);
-            await _dbContext.AuditSaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             return CommonResult.Success(MessageConstant.USER_INFO_0004);
         }

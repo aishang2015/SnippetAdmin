@@ -3,6 +3,8 @@ using MassTransit;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Quartz.Impl.AdoJobStore.Common;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Data.Entity.Rbac;
@@ -107,7 +109,6 @@ namespace SnippetAdmin.Data
             builder.Entity<RbacRoleClaim>().ToTable("T_RBAC_RoleClaim");
             builder.Entity<RbacUserLogin>().ToTable("T_RBAC_UserLogin");
             builder.Entity<RbacUserToken>().ToTable("T_RBAC_UserToken");
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -118,8 +119,13 @@ namespace SnippetAdmin.Data
             optionsBuilder.EnableSensitiveDataLogging();
         }
 
-        public async Task AuditSaveChangesAsync()
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+            if (_contextAccessor.HttpContext == null)
+            {
+                return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            }
+
             var user = _contextAccessor.HttpContext.User;
             if (user.Identity != null && user.Identity.IsAuthenticated)
             {
@@ -130,9 +136,10 @@ namespace SnippetAdmin.Data
 
                 var transactionId = Database.CurrentTransaction?.TransactionId ?? Guid.NewGuid();
 
+                var designModel = this.GetService<IDesignTimeModel>().Model;
                 foreach (var entry in entries)
                 {
-                    var logId = NewId.NextGuid();
+                    var logId = Guid.NewGuid();
                     var auditLog = new SysDataLog()
                     {
                         Id = logId,
@@ -145,11 +152,13 @@ namespace SnippetAdmin.Data
                     };
                     SysDataLogs.Add(auditLog);
 
+                    var properties = designModel.FindEntityType(entry.Entity.GetType()).GetProperties().Where(p => !string.IsNullOrEmpty(p.GetComment()));
+                    var entryProperties = entry.Properties.Where(ep => properties.Any(p => p.Name == ep.Metadata.Name));
+
                     if (entry.State is EntityState.Modified)
                     {
                         //var attachValues = Entry(entry.Entity).GetDatabaseValues();
-                        var modifiedProperties = entry.Properties.Where(p => p.IsModified || p.Metadata.IsKey());
-                        foreach (var property in modifiedProperties)
+                        foreach (var property in entryProperties)
                         {
                             var auditLogDetail = new SysDataLogDetail()
                             {
@@ -164,7 +173,7 @@ namespace SnippetAdmin.Data
                     }
                     else if (entry.State is EntityState.Deleted)
                     {
-                        foreach (var p in entry.Properties)
+                        foreach (var p in entryProperties)
                         {
                             var auditLogDetail = new SysDataLogDetail()
                             {
@@ -178,7 +187,7 @@ namespace SnippetAdmin.Data
                     }
                     else if (entry.State is EntityState.Added)
                     {
-                        foreach (var p in entry.Properties)
+                        foreach (var p in entryProperties)
                         {
                             var auditLogDetail = new SysDataLogDetail()
                             {
@@ -192,7 +201,9 @@ namespace SnippetAdmin.Data
                     }
                 }
             }
-            await SaveChangesAsync();
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
+
+
     }
 }

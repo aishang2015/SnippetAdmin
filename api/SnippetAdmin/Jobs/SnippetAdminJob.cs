@@ -30,7 +30,7 @@ namespace SnippetAdmin.Jobs
                 job.LastTime = record.BeginTime;
                 _dbContext.Update(job);
             }
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
 
             var sw = new Stopwatch();
             sw.Start();
@@ -59,7 +59,7 @@ namespace SnippetAdmin.Jobs
                 record.Duration = sw.ElapsedMilliseconds;
                 record.EndTime = DateTime.Now;
                 _dbContext.Update(record);
-                await _dbContext.SaveChangesAsync();
+                _dbContext.SaveChanges();
             }
         }
     }

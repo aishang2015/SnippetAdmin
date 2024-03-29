@@ -11,6 +11,7 @@ namespace SnippetAdmin.Data.Entity.Rbac
     [Cachable]
     public class RbacRoleClaim : IdentityRoleClaim<int>
     {
+        [Comment("主键")]
         public override int Id { get; set; }
 
         [Comment("角色ID")]

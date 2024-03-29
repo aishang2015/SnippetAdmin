@@ -124,7 +124,7 @@ namespace SnippetAdmin.Data
             _dbContext.RbacElements.Add(new RbacElement { Id = 48, Name = "日志中心", Identity = "systemLog", Type = ElementType.Menu, AccessApi = "", Sorting = 4 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 49, Name = "任务管理", Identity = "taskManage", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 50, Name = "任务记录", Identity = "taskRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
-            _dbContext.RbacElements.Add(new RbacElement { Id = 51, Name = "接口日志", Identity = "accessRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
+            _dbContext.RbacElements.Add(new RbacElement { Id = 51, Name = "审计日志", Identity = "accessRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 52, Name = "异常日志", Identity = "exceptionRecord", Type = ElementType.Menu, AccessApi = "", Sorting = 2 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 53, Name = "页面", Identity = "taskManagePage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
             _dbContext.RbacElements.Add(new RbacElement { Id = 54, Name = "页面", Identity = "taskRecordPage", Type = ElementType.ButtonLink, AccessApi = "", Sorting = -1 });
