@@ -6,7 +6,6 @@ namespace SnippetAdmin.Data.Entity.Scheduler
 {
     [Comment("任务定义")]
     [Table("T_Scheduler_Job")]
-    [Cachable]
     public class Job
     {
         [Comment("主键")]

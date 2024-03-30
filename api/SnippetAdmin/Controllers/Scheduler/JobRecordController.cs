@@ -27,7 +27,6 @@ namespace SnippetAdmin.Controllers.Scheduler
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<PagedOutputModel<GetJobRecordsOutputModel>>]
-        [Description("查询任务记录")]
         public async Task<CommonResult<PagedOutputModel<GetJobRecordsOutputModel>>> GetJobRecords(GetJobRecordsInputModel inputModel)
         {
             var q = from jr in _dbContext.JobRecords

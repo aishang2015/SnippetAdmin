@@ -8,7 +8,6 @@ namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Table("T_Rbac_RoleClaim")]
     [Comment("角色Claim捆绑表")]
-    [Cachable]
     public class RbacRoleClaim : IdentityRoleClaim<int>
     {
         [Comment("主键")]

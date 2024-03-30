@@ -9,7 +9,6 @@ namespace SnippetAdmin.Data.Entity.Rbac
 {
 	[Comment("职位")]
 	[Table("T_Rbac_Position")]
-	[Cachable]
 	public class RbacPosition
 	{
 		[Comment("主键")]

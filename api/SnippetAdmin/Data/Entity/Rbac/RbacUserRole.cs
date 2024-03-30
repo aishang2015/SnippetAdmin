@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Table("T_Rbac_UserRole")]
-    [Cachable]
     public class RbacUserRole : IdentityUserRole<int>
     {
         [Comment("用户ID")]

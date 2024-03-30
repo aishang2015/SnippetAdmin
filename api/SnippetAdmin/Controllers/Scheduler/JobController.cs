@@ -41,7 +41,6 @@ namespace SnippetAdmin.Controllers.Scheduler
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<string>>]
-        [Description("查询任务类型列表")]
         public CommonResult<List<string>> GetJobTypeList()
         {
             var typeNameList = ReflectionHelper
@@ -57,7 +56,6 @@ namespace SnippetAdmin.Controllers.Scheduler
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<PagedOutputModel<GetJobsOutputModel>>]
-        [Description("查询任务列表")]
         public async Task<CommonResult<PagedOutputModel<GetJobsOutputModel>>> GetJobs(GetJobsInputModel inputModel)
         {
             var query = _dbContext.Jobs;
@@ -72,15 +70,6 @@ namespace SnippetAdmin.Controllers.Scheduler
                 Total = await query.CountAsync(),
                 Data = _mapper.Map<List<GetJobsOutputModel>>(data)
             };
-
-            //result.Data.AsParallel().ForAll(job =>
-            //{
-            //    if (job.IsActive)
-            //    {
-            //        job.NextTime = new CronExpression(job.Cron)
-            //            .GetNextValidTimeAfter(DateTime.UtcNow).Value.DateTime;
-            //    }
-            //});
 
             return CommonResult.Success(result);
         }
@@ -122,7 +111,6 @@ namespace SnippetAdmin.Controllers.Scheduler
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<GetJobOutputModel>]
-        [Description("取得任务详情")]
         public async Task<CommonResult<GetJobOutputModel>> GetJob(GetJobInputModel inputModel)
         {
             var job = await _dbContext.Jobs.FindAsync(inputModel.Id);
@@ -238,7 +226,6 @@ namespace SnippetAdmin.Controllers.Scheduler
         /// </summary>
         [HttpPost]
         [CommonResultResponseType<List<string>>]
-        [Description("获取任务名称")]
         public async Task<CommonResult<List<string>>> GetJobNames()
         {
             var result = await _dbContext.Jobs.Select(j => j.Key).ToListAsync();

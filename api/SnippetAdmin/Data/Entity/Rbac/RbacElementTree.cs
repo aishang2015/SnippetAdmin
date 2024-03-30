@@ -9,7 +9,6 @@ namespace SnippetAdmin.Data.Entity.Rbac
 {
 	[Comment("元素树")]
 	[Table("T_Rbac_ElementTree")]
-	[Cachable]
 	public class RbacElementTree
 	{
 		[Comment("主键")]

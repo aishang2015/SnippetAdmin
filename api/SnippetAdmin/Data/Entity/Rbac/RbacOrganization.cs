@@ -9,7 +9,6 @@ namespace SnippetAdmin.Data.Entity.Rbac
 {
 	[Comment("组织")]
 	[Table("T_Rbac_Organization")]
-	[Cachable]
 	public class RbacOrganization
 	{
 		[Comment("主键")]

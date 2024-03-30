@@ -8,7 +8,6 @@ namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Comment("系统用户")]
     [Table("T_Rbac_User")]
-    [Cachable]
     public class RbacUser : IdentityUser<int>
     {
         [Comment("主键")]

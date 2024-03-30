@@ -58,6 +58,7 @@ namespace SnippetAdmin.Controllers.System
         [HttpPost]
         [CommonResultResponseType]
         [Description("更新系统配置")]
+        [AccessLog("系统配置", "更新系统配置")]
         public async Task<CommonResult> UpdateSetting(UpdateSettingInputModel inputModel)
         {
             foreach (var setting in inputModel.Settings)

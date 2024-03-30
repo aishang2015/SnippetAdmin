@@ -6,7 +6,6 @@ namespace SnippetAdmin.Data.Entity.System
 {
 	[Comment("系统分表记录表")]
 	[Table("T_Sys_Sharding")]
-	[Cachable]
 	public class SysSharding
 	{
 		public int Id { get; set; }
