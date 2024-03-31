@@ -1,6 +1,7 @@
 #setting-container {
     display: flex;
-    height: 100%;
+    margin-top: 10px;
+    height: calc(100% - 80px);
 }
 
 #setting-container #setting-item-container {

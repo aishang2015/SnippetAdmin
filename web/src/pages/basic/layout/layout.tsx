@@ -121,7 +121,6 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
 
             if (location.pathname === '/') {
                 setMenuSelectedKeys(['/home']);
-                natToPage(null, '/home');
             } else {
                 setMenuSelectedKeys([location.pathname]);
             }

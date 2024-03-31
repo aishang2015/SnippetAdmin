@@ -1,9 +1,10 @@
-import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
+import { faCircleNotch, faRefresh, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Pagination, Table, Tag } from "antd";
+import { Button, Pagination, Table, Tag, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { dateFormat } from "../../../common/time";
 import { LoginLogService } from "../../../http/requests/system/login-log";
+import Title from "antd/es/typography/Title";
 
 
 
@@ -55,11 +56,22 @@ export default function Login() {
     }
     return (
         <>
-            <div style={{ marginBottom: 10 }}>
-                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
-                    onClick={initAsync}>刷新</Button>
+        
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>登录日志</Title>
+                </div>
+                <div>
+                    <Tooltip title="刷新">
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} 
+                            onClick={initAsync}/>
+                    </Tooltip>
+                </div>
             </div>
-            <Table bordered={true} size="small" columns={tableColumns} dataSource={tableData} scroll={{ x: 930 }}
+            
+            <Table style={{ marginBottom: 10 }} bordered={true} size="small" columns={tableColumns} dataSource={tableData} scroll={{ x: 930 }}
                 pagination={false}  ></Table>
             {total > 0 &&
                 <Pagination current={page} total={total} showSizeChanger={true} style={{ marginTop: '10px' }}

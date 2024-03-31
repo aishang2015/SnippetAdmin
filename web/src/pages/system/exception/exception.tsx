@@ -1,9 +1,10 @@
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faBug, faCircleNotch, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Pagination, Table } from 'antd';
+import { Button, Pagination, Table, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { dateFormat } from '../../../common/time';
 import { ExceptionLogService } from '../../../http/requests/system/exception';
+import Title from 'antd/es/typography/Title';
 
 
 export default function Exception() {
@@ -54,11 +55,20 @@ export default function Exception() {
 
     return (
         <>
-            <div style={{ marginBottom: 10 }}>
-                <Button style={{ marginRight: '10px' }} icon={<FontAwesomeIcon icon={faCircleNotch} fixedWidth />}
-                    onClick={() => initAsync(page, size)}>刷新</Button>
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faBug} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>异常日志</Title>
+                </div>
+                <div>
+                    <Tooltip title="刷新">
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={() => initAsync(page, size)}/>
+                    </Tooltip>
+                </div>
             </div>
-            <Table bordered={true} size="small" columns={tableColumns} dataSource={tableData} scroll={{ x: 2130 }}
+
+            <Table style={{ marginTop: '10px' }}  bordered={true} size="small" columns={tableColumns} dataSource={tableData} scroll={{ x: 2130 }}
                 expandable={{
                     expandedRowRender: record =>
                         <div>

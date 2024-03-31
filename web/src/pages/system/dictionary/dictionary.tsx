@@ -7,6 +7,7 @@ import { RightElement } from '../../../components/right/rightElement';
 import { DictionaryService, GetDicTypeListResponse, GetDicValueListResponse } from '../../../http/requests/system/dictionary';
 import './dictionary.css';
 import { useToken } from 'antd/es/theme/internal';
+import Title from 'antd/es/typography/Title';
 
 
 export default function Dictionary() {
@@ -45,8 +46,9 @@ export default function Dictionary() {
             render: (data: any, record: any) => (
                 <RightElement identify="active-user" child={
                     <>
-                        <Switch defaultChecked={data} onChange={async (checked, event) => { 
-                            await DictionaryService.EnableDicValue({ id: record.id, isEnabled: record.checked }) }}></Switch>
+                        <Switch defaultChecked={data} onChange={async (checked, event) => {
+                            await DictionaryService.EnableDicValue({ id: record.id, isEnabled: record.checked })
+                        }}></Switch>
                     </>
                 }></RightElement>
             ),
@@ -216,16 +218,34 @@ export default function Dictionary() {
         <>
             {contextHolder}
 
+            {/* 操作 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faBook} style={{ marginRight: '8px', fontSize: "18px" }} />
+                    <Title level={4} style={{ marginBottom: 0 }}>字典配置</Title>
+                </div>
+                <div>
+
+                    <RightElement identify="add-dictype" child={
+                        <Tooltip title="创建字典类型">
+                            <Button style={{ marginRight: '4px' }} icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicType}></Button>
+                        </Tooltip>}
+                    ></RightElement>
+
+                    <RightElement identify="add-dicvalue" child={
+                        <Tooltip title="创建字典项目">
+                            <Button disabled={selectedTypeId === null} style={{ marginRight: '4px' }}
+                                icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicValue}></Button>
+                        </Tooltip>
+                    }></RightElement>
+
+                </div>
+
+            </div>
+            <Divider style={{ margin: "8px 0" }} />
+
             <div id="dic-container">
                 <div id="dic-type-container">
-                    <RightElement identify="add-dictype" child={
-                        <>
-                            <div>
-                                <Button icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicType}>创建字典类型</Button>
-                            </div>
-                            <Divider style={{ margin: "10px 0" }} />
-                        </>
-                    }></RightElement>
                     {typeData.map((item, index) => {
                         return <>
                             <div style={{
@@ -270,14 +290,6 @@ export default function Dictionary() {
                 </div>
                 <Divider type="vertical" style={{ height: '100%' }} />
                 <div id="dic-value-container">
-                    <RightElement identify="add-dicvalue" child={
-                        <>
-                            <div>
-                                <Button disabled={selectedTypeId === null} icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicValue}>创建字典项目</Button>
-                            </div>
-                            <Divider style={{ margin: "10px 0" }} />
-                        </>
-                    }></RightElement>
                     <Table size="small" columns={tableColumns} dataSource={valueData} scroll={{ x: 900 }}
                         pagination={false} bordered>  </Table>
                 </div>
