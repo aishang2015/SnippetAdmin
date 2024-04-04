@@ -117,11 +117,12 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
             }
             tabItems.current = d;
             setDisplayTabItems(tabItems.current);
-            setActivedTabItemKey(location.pathname);
 
             if (location.pathname === '/') {
+                setActivedTabItemKey('/home');
                 setMenuSelectedKeys(['/home']);
             } else {
+                setActivedTabItemKey(location.pathname);
                 setMenuSelectedKeys([location.pathname]);
             }
         } else {
@@ -291,7 +292,14 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
         }
         setActivedTabItemKey(data.path);
         setDisplayTabItems(tabItems.current);
-        setMenuSelectedKeys([data.path]);
+
+        if (data.path === '/' || data.path === '') {
+            setActivedTabItemKey('/home');
+            setMenuSelectedKeys(['/home']);
+        } else {
+            setActivedTabItemKey(data.path);
+            setMenuSelectedKeys([data.path]);
+        }
 
         localStorage.setItem("cachedTabItems", JSON.stringify(tabItems.current));
     }

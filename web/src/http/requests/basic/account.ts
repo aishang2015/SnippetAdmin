@@ -35,6 +35,10 @@ export function modifyPassword(param: ModifyPasswordInputModel) {
     return Axios.instance.post<CommonResult<CommonResultNoData>>('api/Account/ModifyPassword', param);
 }
 
+export function getCaptcha() {
+    return Axios.instance.post<Blob>('api/account/getCaptcha', null, { responseType: 'blob' });
+}
+
 /*
  * ModifyPasswordInputModel
  */
@@ -53,6 +57,8 @@ export interface UpdateUserInfoInputModel {
 export interface LoginModel {
     userName: string;
     password: string;
+    captchaCode: string;
+    captchaKey: string;
 }
 
 export interface LoginResult {

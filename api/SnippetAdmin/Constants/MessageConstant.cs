@@ -42,6 +42,8 @@
         public static readonly (string, string) ACCOUNT_ERROR_0016 = ("ACCOUNT_ERROR_0016", "密码必须包含小写字母！");
         public static readonly (string, string) ACCOUNT_ERROR_0017 = ("ACCOUNT_ERROR_0017", "密码必须包含特殊符号！");
         public static readonly (string, string) ACCOUNT_ERROR_0018 = ("ACCOUNT_ERROR_0018", "密码长度必须大于等于{0}！");
+        public static readonly (string, string) ACCOUNT_ERROR_0019 = ("ACCOUNT_ERROR_0019", "验证码已过期！");
+        public static readonly (string, string) ACCOUNT_ERROR_0020 = ("ACCOUNT_ERROR_0020", "验证码不正确！");
 
         #endregion AccountController
 

@@ -103,7 +103,7 @@ export class Axios {
                     message.open({
                         key: "key",
                         type: 'error',
-                        content: `${response.data.message}(${response.data.code})`,
+                        content: `${response.data.message}`,
                         duration: 2,
                     });
                     return Promise.reject(response);

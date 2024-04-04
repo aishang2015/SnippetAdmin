@@ -65,6 +65,17 @@ namespace SnippetAdmin.Controllers
         [CommonResultResponseType<LoginOutputModel>]
         public async Task<CommonResult> Login([FromBody] LoginInputModel inputModel)
         {
+            var captchaCode = _memoryCache.Get(inputModel.CaptchaKey)?.ToString();
+            if (string.IsNullOrEmpty(captchaCode))
+            {
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0019);
+            }
+
+            if (captchaCode != inputModel.CaptchaCode)
+            {
+                return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0020);
+            }
+
             // 取得用户
             var user = await _userManager.FindByNameAsync(inputModel.UserName);
             if (user == null)
@@ -84,6 +95,22 @@ namespace SnippetAdmin.Controllers
                 return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0012);
             }
             return await MakeLoginResultAsync(user);
+        }
+
+        /// <summary>
+        /// 取得验证码
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> GetCaptcha()
+        {
+            var result = CaptchaHelper.GenerateCaptcha(4);
+
+            var captchaKey = Guid.NewGuid().ToString("N");
+            _memoryCache.Set(captchaKey, result.Item2, TimeSpan.FromMinutes(1));
+
+            HttpContext.Response.Headers.Append("Access-Control-Expose-Headers", "X-Captcha-Key");
+            HttpContext.Response.Headers.Append("X-Captcha-Key", captchaKey);
+            return File(result.Item1, "image/png");
         }
 
         /// <summary>
