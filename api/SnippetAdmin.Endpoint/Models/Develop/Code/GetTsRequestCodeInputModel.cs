@@ -2,6 +2,6 @@
 {
 	public class GetTsRequestCodeInputModel
 	{
-		public string ControllerName { get; set; }
+		public string? ControllerName { get; set; }
 	}
 }

@@ -14,7 +14,7 @@ namespace SnippetAdmin.Data.Entity.Scheduler
 
 		[Comment("任务名称")]
 		[DynamicDicValue]
-		public string JobName { get; set; }
+		public string? JobName { get; set; }
 
 		[Comment("任务状态")]
 		public JobState JobState { get; set; }
@@ -29,6 +29,6 @@ namespace SnippetAdmin.Data.Entity.Scheduler
 		public DateTime? EndTime { get; set; }
 
 		[Comment("执行信息")]
-		public string Infomation { get; set; }
+		public string? Infomation { get; set; }
 	}
 }

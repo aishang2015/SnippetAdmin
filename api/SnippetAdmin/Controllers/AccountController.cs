@@ -71,7 +71,7 @@ namespace SnippetAdmin.Controllers
                 return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0019);
             }
 
-            if (captchaCode != inputModel.CaptchaCode)
+            if (string.Compare(captchaCode, inputModel.CaptchaCode, StringComparison.OrdinalIgnoreCase) != 0)
             {
                 return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0020);
             }
@@ -101,7 +101,7 @@ namespace SnippetAdmin.Controllers
         /// 取得验证码
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> GetCaptcha()
+        public IActionResult GetCaptcha()
         {
             var result = CaptchaHelper.GenerateCaptcha(4);
 
@@ -225,7 +225,7 @@ namespace SnippetAdmin.Controllers
             switch (inputModel.ThirdPartyType)
             {
                 case CommonConstant.Github:
-                    var githubUserInfo = _memoryCache.Get<GithubUserInfo>(inputModel.ThirdPartyInfoCacheKey);
+                    var githubUserInfo = _memoryCache.Get<GithubUserInfo>(inputModel.ThirdPartyInfoCacheKey!);
                     if (githubUserInfo != null)
                     {
                         user.GithubId = githubUserInfo.id;
@@ -238,7 +238,7 @@ namespace SnippetAdmin.Controllers
                     }
 
                 case CommonConstant.Baidu:
-                    var baiduUserInfo = _memoryCache.Get<BaiduUserInfo>(inputModel.ThirdPartyInfoCacheKey);
+                    var baiduUserInfo = _memoryCache.Get<BaiduUserInfo>(inputModel.ThirdPartyInfoCacheKey!);
                     if (baiduUserInfo != null)
                     {
                         user.BaiduId = baiduUserInfo.openid;
@@ -271,7 +271,7 @@ namespace SnippetAdmin.Controllers
 
             // 取得用户
             var user = await _userManager.FindByNameAsync(inputModel.UserName);
-            if (user != null)
+            if (user != null && user.UserName != null)
             {
                 // 生成jwttoken
                 var token = _jwtFactory.GenerateJwtToken(
@@ -301,7 +301,7 @@ namespace SnippetAdmin.Controllers
         {
             var user = db.Users.FirstOrDefault(u => u.UserName == User.GetUserName());
 
-            if (!string.IsNullOrEmpty(user.Avatar))
+            if (!string.IsNullOrEmpty(user?.Avatar))
             {
                 await fileStoreService.DeleteFileAsync(user.Avatar);
             }
@@ -309,7 +309,7 @@ namespace SnippetAdmin.Controllers
             var newFileName = GuidHelper.NewSequentialGuid().ToString("N") + "." + avatar.FileName.Split('.').Last();
             await fileStoreService.SaveFromStreamAsync(avatar.OpenReadStream(), newFileName);
 
-            user.Avatar = newFileName;
+            user!.Avatar = newFileName;
             db.Users.Update(user);
             await db.SaveChangesAsync();
 
@@ -326,7 +326,7 @@ namespace SnippetAdmin.Controllers
             [FromServices] SnippetAdminDbContext db)
         {
             var user = db.Users.FirstOrDefault(u => u.UserName == User.GetUserName());
-            user.PhoneNumber = model.PhoneNumber;
+            user!.PhoneNumber = model.PhoneNumber;
             db.Update(user);
             await db.SaveChangesAsync();
             return CommonResult.Success(MessageConstant.SYSTEM_INFO_002);
@@ -342,19 +342,19 @@ namespace SnippetAdmin.Controllers
             [FromServices] SnippetAdminDbContext db,
             [FromServices] UserManager<RbacUser> userManager)
         {
-            var checkResult = await PwdCheck(model.NewPassword);
+            var checkResult = PwdCheck(model.NewPassword);
             if (!string.IsNullOrEmpty(checkResult))
             {
                 return CommonResult.Fail(("ACCOUNT_ERROR_0016", checkResult));
             }
 
             var user = db.Users.FirstOrDefault(u => u.UserName == User.GetUserName());
-            var isValidPwd = await userManager.CheckPasswordAsync(user, model.OldPassword);
+            var isValidPwd = await userManager.CheckPasswordAsync(user!, model.OldPassword);
             if (!isValidPwd)
             {
                 return CommonResult.Fail(MessageConstant.ACCOUNT_ERROR_0013);
             }
-            await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            await userManager.ChangePasswordAsync(user!, model.OldPassword, model.NewPassword);
             return CommonResult.Success(MessageConstant.ACCOUNT_INFO_0003);
         }
 
@@ -366,13 +366,13 @@ namespace SnippetAdmin.Controllers
             // 生成jwttoken
             var token = _jwtFactory.GenerateJwtToken(
                     new List<(string, string)> {
-                        (ClaimTypes.Name, user.UserName),
+                        (ClaimTypes.Name, user.UserName!),
                         (ClaimTypes.NameIdentifier, user.Id.ToString())
                     });
             var identifies = await GetUserFrontRightsAsync(user);
             return CommonResult.Success(
                 MessageConstant.ACCOUNT_INFO_0001,
-                new LoginOutputModel(token, user.UserName, _jwtOption.Expires, identifies)
+                new LoginOutputModel(token, user.UserName!, _jwtOption.Expires, identifies)
             );
         }
 
@@ -388,7 +388,7 @@ namespace SnippetAdmin.Controllers
                                  element.Id.ToString() == rc.ClaimValue &&
                                  rc.ClaimType == ClaimConstant.RoleRight &&
                                  rc.RoleId == role.Id &&
-                                 roles.Contains(role.Name)
+                                 roles.Contains(role.Name!)
                               select element.Id).Distinct().ToList();
 
             return (from element in _dbContext.RbacElements
@@ -399,7 +399,7 @@ namespace SnippetAdmin.Controllers
         }
 
 
-        private async Task<string> PwdCheck(string pwd)
+        private string PwdCheck(string pwd)
         {
             var SecurityPwdContainsDigit = _dbContext.SysSettings.FirstOrDefault(s => s.Key == "SecurityPwdContainsDigit")?.Value;
             var SecurityPwdContainsUpperChar = _dbContext.SysSettings.FirstOrDefault(s => s.Key == "SecurityPwdContainsUpperChar")?.Value;

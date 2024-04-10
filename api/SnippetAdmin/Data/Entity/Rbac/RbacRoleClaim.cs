@@ -17,9 +17,9 @@ namespace SnippetAdmin.Data.Entity.Rbac
         public override int RoleId { get; set; }
 
         [Comment("角色Claim类型")]
-        public override string ClaimType { get; set; }
+        public override string? ClaimType { get; set; }
 
         [Comment("角色Claim值")]
-        public override string ClaimValue { get; set; }
+        public override string? ClaimValue { get; set; }
     }
 }

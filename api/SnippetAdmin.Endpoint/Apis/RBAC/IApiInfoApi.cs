@@ -7,6 +7,6 @@ namespace SnippetAdmin.Endpoint.Apis.RBAC
 		/// <summary>
 		/// 获取程序所有API信息
 		/// </summary>
-		public Task<CommonResult<List<string>>> GetApiPaths();
+		public Task<CommonResult<List<string?>>> GetApiPaths();
 	}
 }

@@ -15,24 +15,24 @@ namespace SnippetAdmin.Data.Entity.System
 		public int Id { get; set; }
 
 		[Comment("异常类型")]
-		public string Type { get; set; }
+		public string? Type { get; set; }
 
 		[Comment("异常消息")]
-		public string Message { get; set; }
+		public string? Message { get; set; }
 
 		[Comment("异常源")]
-		public string Source { get; set; }
+		public string? Source { get; set; }
 
 		[Comment("堆栈跟踪")]
-		public string StackTrace { get; set; }
+		public string? StackTrace { get; set; }
 
 		[Comment("发生时间")]
 		public DateTime HappenedTime { get; set; }
 
 		[Comment("访问路径")]
-		public string Path { get; set; }
+		public string? Path { get; set; }
 
 		[Comment("访问用户名")]
-		public string Username { get; set; }
+		public string? Username { get; set; }
 	}
 }

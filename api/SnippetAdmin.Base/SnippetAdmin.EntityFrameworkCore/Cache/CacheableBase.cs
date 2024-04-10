@@ -53,10 +53,11 @@ namespace SnippetAdmin.EntityFrameworkCore.Cache
 		}
 
 
-		/// <summary>
-		/// 取得并设置可以实例化的类型
-		/// </summary>
-		private static void SetCacheableTypeList(CacheableBase<TDbContext> instance)
+#pragma warning disable CS8604 // 引用类型参数可能为 null。
+        /// <summary>
+        /// 取得并设置可以实例化的类型
+        /// </summary>
+        private static void SetCacheableTypeList(CacheableBase<TDbContext> instance)
 		{
 			instance.CacheableTypeList = typeof(TDbContext).GetProperties()
 				.Where(p => p.PropertyType.IsGenericType)
@@ -66,7 +67,7 @@ namespace SnippetAdmin.EntityFrameworkCore.Cache
 				.Where(t =>
 				{
 					var cacheAttribute = t.GetCustomAttributes(typeof(CachableAttribute), false).FirstOrDefault();
-					return cacheAttribute != null && (cacheAttribute as CachableAttribute).CacheAble;
+					return cacheAttribute != null && (cacheAttribute as CachableAttribute)!.CacheAble;
 				}).ToList();
 		}
 
@@ -78,11 +79,10 @@ namespace SnippetAdmin.EntityFrameworkCore.Cache
 			instance.CacheableTypeList.ForEach(t =>
 			{
 				var listType = typeof(List<>).MakeGenericType(t);
-				instance.AddMethodInfoDic.Add(t.FullName, typeof(List<>)
-					.MakeGenericType(t).GetMethod("Add"));
-				instance.RemoveAllMethodInfoDic.Add(t.FullName, typeof(List<>)
-					.MakeGenericType(t).GetMethod("RemoveAll"));
+                instance.AddMethodInfoDic.Add(t.FullName, typeof(List<>).MakeGenericType(t).GetMethod("Add"));
+                instance.RemoveAllMethodInfoDic.Add(t.FullName, typeof(List<>).MakeGenericType(t).GetMethod("RemoveAll"));
 			});
 		}
-	}
+    }
+#pragma warning restore CS8604 // 引用类型参数可能为 null。
 }

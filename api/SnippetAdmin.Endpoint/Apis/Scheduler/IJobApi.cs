@@ -19,6 +19,6 @@ namespace SnippetAdmin.Endpoint.Apis.Scheduler
 
 		public Task<CommonResult> RunJob(RunJobInputModel inputModel);
 
-		public Task<CommonResult<List<string>>> GetJobNames();
+		public Task<CommonResult<List<string?>>> GetJobNames();
 	}
 }

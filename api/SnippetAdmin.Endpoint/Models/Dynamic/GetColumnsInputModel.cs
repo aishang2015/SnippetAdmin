@@ -2,6 +2,6 @@
 {
 	public record GetColumnsInputModel
 	{
-		public string EntityName { get; set; }
+		public string? EntityName { get; set; }
 	}
 }

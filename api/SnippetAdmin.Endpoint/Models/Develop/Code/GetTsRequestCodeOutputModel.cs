@@ -2,6 +2,6 @@
 {
 	public class GetTsRequestCodeOutputModel
 	{
-		public string RequestCode { get; set; }
+		public string? RequestCode { get; set; }
 	}
 }

@@ -13,10 +13,10 @@ namespace SnippetAdmin.Data.Entity.System
 		public int Id { get; set; }
 
 		[Comment("访问用户名")]
-		public string Username { get; set; }
+		public string? Username { get; set; }
 
 		[Comment("访问者ip")]
-		public string RemoteIp { get; set; }
+		public string? RemoteIp { get; set; }
 
 		[Comment("访问时间")]
 		public DateTime AccessedTime { get; set; }

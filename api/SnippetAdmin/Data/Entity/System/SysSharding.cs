@@ -11,9 +11,9 @@ namespace SnippetAdmin.Data.Entity.System
 		public int Id { get; set; }
 
 		[Comment("分表表名")]
-		public string TableName { get; set; }
+		public string? TableName { get; set; }
 
 		[Comment("分表类型名")]
-		public string TableType { get; set; }
+		public string? TableType { get; set; }
 	}
 }

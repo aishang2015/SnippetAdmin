@@ -4,8 +4,10 @@ using Microsoft.Extensions.Caching.Memory;
 namespace SnippetAdmin.EntityFrameworkCore.Cache
 {
 	public static class CacheableInitializer
-	{
-		public static void LoadAllCacheableData<TDbContext>(
+    {
+#pragma warning disable IDE0051 // 删除未使用的私有成员
+
+        public static void LoadAllCacheableData<TDbContext>(
 			this CacheableBase<TDbContext> instance,
 			TDbContext dbContext,
 			IMemoryCache cache)
@@ -16,13 +18,11 @@ namespace SnippetAdmin.EntityFrameworkCore.Cache
 
 			instance.CacheableTypeList.ForEach(t =>
 			{
-				var method = toListMethod.MakeGenericMethod(typeof(TDbContext), t);
+				var method = toListMethod!.MakeGenericMethod(typeof(TDbContext), t);
 				var data = method.Invoke(instance, new object[] { dbContext });
-				cache.Set(t.FullName, data);
+				cache.Set(t.FullName!, data);
 			});
 		}
-
-#pragma warning disable IDE0051 // 删除未使用的私有成员
 
 		private static List<T> GetDataList<TDbContext, T>(TDbContext dbContext)
 			where TDbContext : DbContext

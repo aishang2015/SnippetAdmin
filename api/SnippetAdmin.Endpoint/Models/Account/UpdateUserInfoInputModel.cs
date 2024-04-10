@@ -2,6 +2,6 @@
 {
 	public record UpdateUserInfoInputModel
 	{
-		public string PhoneNumber { get; set; }
+		public string? PhoneNumber { get; set; }
 	}
 }

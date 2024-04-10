@@ -10,9 +10,9 @@ namespace SnippetAdmin.Data.Entity.System
 		public int Id { get; set; }
 
 		[Comment("字典类型名称")]
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		[Comment("字典类型编码")]
-		public string Code { get; set; }
+		public string? Code { get; set; }
 	}
 }

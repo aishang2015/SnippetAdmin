@@ -10,9 +10,9 @@ namespace SnippetAdmin.Data.Entity.System
         public int Id { get; set; }
 
         [Comment("配置Key")]
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
         [Comment("配置值")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 }

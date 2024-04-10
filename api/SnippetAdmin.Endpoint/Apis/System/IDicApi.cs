@@ -34,7 +34,7 @@ namespace SnippetAdmin.Controllers.System
 		/// <summary>
 		/// 取得字典项目列表
 		/// </summary>
-		public Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueListByCode(IdInputModel<string> inputModel);
+		public Task<CommonResult<List<GetDicValueListOutputModel>>> GetDicValueListByCode(IdInputModel<string?> inputModel);
 
 		/// <summary>
 		/// 添加字典项目

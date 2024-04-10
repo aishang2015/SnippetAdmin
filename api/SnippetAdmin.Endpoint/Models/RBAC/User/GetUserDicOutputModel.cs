@@ -10,6 +10,6 @@ namespace SnippetAdmin.Endpoint.Models.RBAC.User
     {
         public int UserId { get; set; }
 
-        public string RealName { get; set; }
+        public string? RealName { get; set; }
     }
 }

@@ -2,15 +2,15 @@
 {
 	public record GetDynamicInfoOutputModel
 	{
-		public string Group { get; set; }
+		public string? Group { get; set; }
 
 		public List<DynamicInfoGroup> DynamicInfoGroups { get; set; }
 	}
 
 	public record DynamicInfoGroup
 	{
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
-		public string EntityName { get; set; }
+		public string? EntityName { get; set; }
 	}
 }

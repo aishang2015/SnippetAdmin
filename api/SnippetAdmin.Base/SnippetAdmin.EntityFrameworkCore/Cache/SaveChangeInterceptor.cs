@@ -35,22 +35,24 @@ namespace SnippetAdmin.EntityFrameworkCore.Cache
 			return result;
 		}
 
-		public async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData,
-			int result, CancellationToken cancellationToken = default)
+#pragma warning disable CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
+        public async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData,
+            int result, CancellationToken cancellationToken = default)
 		{
 			CacheTrackerData(eventData);
 			return result;
-		}
+        }
+#pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
 
-		// 失败时不做处理
-		// todo 当事务失败时会使之前的某几个savechange回滚
+        // 失败时不做处理
+        // todo 当事务失败时会使之前的某几个savechange回滚
 
-		/// <summary>
-		/// 取得将要缓存的数据
-		/// </summary>
-		private void LoadTrackData(DbContextEventData eventData)
+        /// <summary>
+        /// 取得将要缓存的数据
+        /// </summary>
+        private void LoadTrackData(DbContextEventData eventData)
 		{
-			var contextId = eventData.Context.ContextId.InstanceId;
+			var contextId = eventData.Context!.ContextId.InstanceId;
 
 			_entries = eventData.Context.ChangeTracker.Entries()
 				.Where(e => CacheableBase<T>.Instance.CacheableTypeList.Contains(e.Entity.GetType()))
@@ -69,7 +71,7 @@ namespace SnippetAdmin.EntityFrameworkCore.Cache
 		/// </summary>
 		private void CacheTrackerData(DbContextEventData eventData)
 		{
-			var contextId = eventData.Context.ContextId.InstanceId;
+			var contextId = eventData.Context!.ContextId.InstanceId;
 			if (_entries.Count > 0)
 			{
 				var cachedEntryList = _memoryCache.Get<List<CachedEntry>>(contextId);

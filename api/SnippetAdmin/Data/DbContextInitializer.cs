@@ -27,11 +27,11 @@ namespace SnippetAdmin.Data
                 if (dbContext.Database.EnsureCreated())
                 {
                     var section = configuration.GetSection("quartz");
-                    var quartzOptions = section.Get<QuartzOptions>();
-                    var dbProvider = quartzOptions.Keys.FirstOrDefault(k => k.Contains("provider"));
-                    var connectionKey = quartzOptions.Keys.FirstOrDefault(k => k.Contains("connectionString"));
+                    var quartzOptions = section.Get<QuartzOptions>()!;
+                    var dbProvider = quartzOptions.Keys.FirstOrDefault(k => k.Contains("provider"))!;
+                    var connectionKey = quartzOptions.Keys.FirstOrDefault(k => k.Contains("connectionString"))!;
                     var dbProviderString = quartzOptions[dbProvider];
-                    var connectionString = quartzOptions[connectionKey];
+                    var connectionString = quartzOptions[connectionKey]!;
 
                     if (dbProviderString == "MySql")
                     {
@@ -41,10 +41,6 @@ namespace SnippetAdmin.Data
                     {
                         DBInitializer.InitializeSqlServer(connectionString);
                     }
-
-                    // 将所有数据加载到缓存
-                    CacheableBase<SnippetAdminDbContext>.Instance.LoadAllCacheableData(
-                       dbContext, memoryCache);
 
                     // 初始化权限
                     logger.LogInformation("初始化权限数据。");
@@ -364,6 +360,7 @@ namespace SnippetAdmin.Data
         /// <returns></returns>
         private static async Task InitialSettings(SnippetAdminDbContext dbContext)
         {
+            await Task.Yield();
         }
 
 

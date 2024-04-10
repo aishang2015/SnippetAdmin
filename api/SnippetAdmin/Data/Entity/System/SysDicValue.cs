@@ -14,10 +14,10 @@ namespace SnippetAdmin.Data.Entity.System
         public int TypeId { get; set; }
 
         [Comment("字典项目名称")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Comment("字典项目编码")]
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         [Comment("是否启用")]
         public bool IsEnabled { get; set; }

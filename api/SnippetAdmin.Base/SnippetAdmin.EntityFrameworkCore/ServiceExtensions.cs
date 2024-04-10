@@ -13,7 +13,7 @@ namespace SnippetAdmin.Data
     {
         public static IServiceCollection AddDatabase<TIdentityDbContext, TIdentityUser, TIdentityRole>(
             this IServiceCollection services, IConfiguration configuration,
-            string optionKey = "DatabaseOption", Action<IdentityOptions> setupAction = null)
+            string optionKey = "DatabaseOption", Action<IdentityOptions>? setupAction = null)
             where TIdentityDbContext : DbContext
             where TIdentityUser : class
             where TIdentityRole : class

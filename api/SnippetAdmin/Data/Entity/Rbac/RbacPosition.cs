@@ -15,10 +15,10 @@ namespace SnippetAdmin.Data.Entity.Rbac
 		public int Id { get; set; }
 
 		[Comment("名称")]
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		[Comment("编码")]
-		public string Code { get; set; }
+		public string? Code { get; set; }
 
 		[Comment("排序")]
 		public int Sorting { get; set; }

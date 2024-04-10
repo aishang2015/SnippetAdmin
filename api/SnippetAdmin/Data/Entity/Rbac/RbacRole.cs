@@ -13,10 +13,10 @@ namespace SnippetAdmin.Data.Entity.Rbac
         public override int Id { get; set; }
 
 		[Comment("编码")]
-		public string Code { get; set; }
+		public string? Code { get; set; }
 
 		[Comment("备注")]
-		public string Remark { get; set; }
+		public string? Remark { get; set; }
 
 		[Comment("是否激活")]
 		public bool IsActive { get; set; }

@@ -8,6 +8,6 @@ namespace SnippetAdmin.Endpoint.Models.System.AccessLog
 {
     public record GetDataDetailLogsInputModel
     {
-        public string TraceIdentifier { get; set; }
+        public string? TraceIdentifier { get; set; }
     }
 }

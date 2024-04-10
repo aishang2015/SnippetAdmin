@@ -35,7 +35,6 @@ const App: FC = () => {
   const PagePage = React.lazy(() => import('./pages/rbac/page/page'));
   const OrgPage = React.lazy(() => import('./pages/rbac/org/org'));
   const PosPage = React.lazy(() => import('./pages/rbac/pos/position'));
-  const StatePage = React.lazy(() => import('./pages/rbac/state/state'));
 
   const TaskManagePage = React.lazy(() => import('./pages/task/task-manage/taskManage'));
   const TaskRecordPage = React.lazy(() => import('./pages/task/task-record/taskRecord'));
@@ -79,7 +78,6 @@ const App: FC = () => {
     { path: "/page",component:<PagePage/>},
     { path: "/org",component:<OrgPage/>},
     { path: "/pos",component:<PosPage/>},
-    { path: "/state",component:<StatePage/>},
 
     { path: "/taskMange",component:<TaskManagePage/>},
     { path: "/taskRecord",component:<TaskRecordPage/>},

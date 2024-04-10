@@ -17,16 +17,16 @@ public class RbacElement
     public int Id { get; set; }
 
     [Comment("元素名称")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [Comment("元素类型")]
     public ElementType Type { get; set; }
 
     [Comment("元素标识")]
-    public string Identity { get; set; }
+    public string? Identity { get; set; }
 
     [Comment("访问接口")]
-    public string AccessApi { get; set; }
+    public string? AccessApi { get; set; }
 
     [Comment("排序")]
     public int Sorting { get; set; }

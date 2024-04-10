@@ -38,7 +38,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> ActiveRole([FromBody] ActiveRoleInputModel inputModel)
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
-			role.IsActive = inputModel.IsActive;
+			role!.IsActive = inputModel.IsActive;
 			await _dbContext.SaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ROLE_INFO_0004);
 		}
@@ -54,7 +54,7 @@ namespace SnippetAdmin.Controllers.RBAC
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
 			var result = _mapper.Map<GetRoleOutputModel>(role);
 			result.Rights = _dbContext.RoleClaims.Where(r => r.RoleId == inputModel.Id && r.ClaimType == ClaimConstant.RoleRight)
-				.Select(r => int.Parse(r.ClaimValue)).ToArray();
+				.Select(r => int.Parse(r.ClaimValue!)).ToArray();
 			return CommonResult.Success(result);
 		}
 
@@ -166,7 +166,7 @@ namespace SnippetAdmin.Controllers.RBAC
         public async Task<CommonResult> RemoveRoleAsync([FromBody] IdInputModel<int> inputModel)
 		{
 			var role = await _dbContext.Roles.FindAsync(inputModel.Id);
-			_dbContext.Roles.Remove(role);
+			_dbContext.Roles.Remove(role!);
 			await _dbContext.SaveChangesAsync();
 			return CommonResult.Success(MessageConstant.ROLE_INFO_0002);
 		}

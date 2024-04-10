@@ -2,8 +2,8 @@
 {
 	public record RefreshInputModel
 	{
-		public string UserName { get; set; }
+		public string UserName { get; set; } = null!;	
 
-		public string JwtToken { get; set; }
+		public string JwtToken { get; set; } = null!;
 	}
 }

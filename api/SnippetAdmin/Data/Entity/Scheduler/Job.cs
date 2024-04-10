@@ -12,16 +12,16 @@ namespace SnippetAdmin.Data.Entity.Scheduler
         public int Id { get; set; }
 
         [Comment("执行的任务类")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [Comment("任务key")]
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
         [Comment("任务描述")]
-        public string Describe { get; set; }
+        public string? Describe { get; set; }
 
         [Comment("Cron表达式")]
-        public string Cron { get; set; }
+        public string? Cron { get; set; }
 
         [Comment("是否活动的任务")]
         public bool IsActive { get; set; }

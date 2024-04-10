@@ -2,6 +2,6 @@
 {
     public class GetSettingsInputModel
     {
-        public List<string> KeyList { get; set; }
+        public List<string?> KeyList { get; set; }
     }
 }

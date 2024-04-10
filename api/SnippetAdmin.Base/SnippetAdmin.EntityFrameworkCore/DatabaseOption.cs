@@ -2,10 +2,10 @@
 {
 	public class DatabaseOption
 	{
-		public string Type { get; set; }
+		public string Type { get; set; } = null!;
 
-		public string Version { get; set; }
+		public string Version { get; set; } = null!;
 
-		public string Connection { get; set; }
-	}
+        public string Connection { get; set; } = null!;
+    }
 }

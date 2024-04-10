@@ -2,7 +2,7 @@
 {
 	public record GetElementTreeOutputModel
 	{
-		public string Title { get; set; }
+		public string? Title { get; set; }
 
 		public int Value { get; set; }
 
