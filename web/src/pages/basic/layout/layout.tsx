@@ -513,7 +513,7 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                                             { max: 20, message: "电话过长" },
                                         ]
                                     }>
-                                        <Input autoComplete="off2" placeholder="请输入电话" />
+                                        <Input autoComplete="off" placeholder="请输入电话" />
                                     </Form.Item>
                                     <Form.Item wrapperCol={{ offset: 6 }}>
                                         <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
@@ -531,21 +531,21 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                                             { required: true, message: "请输入密码" },
                                         ]
                                     }>
-                                        <Input autoComplete="off2" placeholder="请输入旧密码" type="password" />
+                                        <Input autoComplete="off" placeholder="请输入旧密码" type="password" />
                                     </Form.Item>
                                     <Form.Item name="pwd" label="密码" rules={
                                         [
                                             { required: true, message: "请输入密码" },
                                         ]
                                     }>
-                                        <Input autoComplete="off2" placeholder="请输入密码" type="password" />
+                                        <Input autoComplete="off" placeholder="请输入密码" type="password" />
                                     </Form.Item>
                                     <Form.Item name="confirmPwd" label="确认密码" rules={
                                         [
                                             { required: true, message: "请输入确认密码" },
                                         ]
                                     }>
-                                        <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
+                                        <Input autoComplete="off" placeholder="请输入确认密码" type="password" />
                                     </Form.Item>
                                     <Form.Item wrapperCol={{ offset: 6 }}>
                                         <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>

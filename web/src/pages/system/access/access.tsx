@@ -215,7 +215,7 @@ export default function Access() {
                             options={userDic.map((user: any) => ({ label: user.realName, value: user.userId }))} />
                     </Form.Item>
                     <Form.Item name="ip" label="访问者ip" >
-                        <Input className="searchInput" autoComplete="off2" placeholder="请输入ip地址" />
+                        <Input className="searchInput" autoComplete="" placeholder="请输入ip地址" />
                     </Form.Item>
                     <Form.Item name="elapsed" label="最小请求时长">
                         <InputNumber placeholder="请输入最小请求时长" style={{ width: '100%' }} />

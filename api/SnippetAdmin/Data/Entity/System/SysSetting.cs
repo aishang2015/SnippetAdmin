@@ -7,6 +7,7 @@ namespace SnippetAdmin.Data.Entity.System
     [Table("T_Sys_Setting")]
     public class SysSetting
     {
+        [Comment("主键")]
         public int Id { get; set; }
 
         [Comment("配置Key")]

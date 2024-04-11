@@ -153,7 +153,7 @@ export default function Position() {
                             { max: 30, message: "职位名称过长" },
                         ]
                     }>
-                        <Input autoComplete="off2" placeholder="请输入职位名称" />
+                        <Input autoComplete="off" placeholder="请输入职位名称" />
                     </Form.Item>
                     <Form.Item name="code" label="职位编码" rules={
                         [
@@ -161,14 +161,14 @@ export default function Position() {
                             { max: 32, message: "职位编码过长" },
                         ]
                     }>
-                        <Input autoComplete="off2" placeholder="请输入职位编码" />
+                        <Input autoComplete="off" placeholder="请输入职位编码" />
                     </Form.Item>
                     <Form.Item name="sorting" label="排序" rules={
                         [
                             { required: true, message: "请输入排序值" },
                         ]
                     } >
-                        <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
+                        <InputNumber style={{ width: '100%' }} autoComplete="off" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
                         <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>

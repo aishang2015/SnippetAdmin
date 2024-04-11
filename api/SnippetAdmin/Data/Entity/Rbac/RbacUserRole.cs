@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Table("T_Rbac_UserRole")]
+    [Comment("用户角色关联表")]
     public class RbacUserRole : IdentityUserRole<int>
     {
         [Comment("用户ID")]

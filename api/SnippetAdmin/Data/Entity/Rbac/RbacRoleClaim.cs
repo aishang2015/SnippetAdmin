@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Table("T_Rbac_RoleClaim")]
-    [Comment("角色Claim捆绑表")]
+    [Comment("角色声明表")]
     public class RbacRoleClaim : IdentityRoleClaim<int>
     {
         [Comment("主键")]

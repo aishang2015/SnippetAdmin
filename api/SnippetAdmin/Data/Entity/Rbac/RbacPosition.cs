@@ -7,9 +7,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Rbac
 {
-	[Comment("职位")]
 	[Table("T_Rbac_Position")]
-	public class RbacPosition
+    [Comment("职位表")]
+    public class RbacPosition
 	{
 		[Comment("主键")]
 		public int Id { get; set; }

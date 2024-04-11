@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SnippetAdmin.Data.Entity.Rbac
 {
     [Table("T_Rbac_UserClaim")]
+    [Comment("用户声明表")]
     public class RbacUserClaim : IdentityUserClaim<int>
     {
         [Comment("主键")]

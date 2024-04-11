@@ -429,10 +429,10 @@ export default function User() {
                         <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
                     </Form.Item>
                     <Form.Item name="realName" label="姓名" >
-                        <Input className="searchInput" autoComplete="off2" placeholder="请输入姓名" />
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入姓名" />
                     </Form.Item>
                     <Form.Item name="phoneNumber" label="电话">
-                        <Input className="searchInput" autoComplete="off2" placeholder="请输入电话" />
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入电话" />
                     </Form.Item>
                     <Form.Item name="role" label="角色">
                         <Select allowClear={true} className="searchInput" placeholder="请选择角色">
@@ -499,7 +499,7 @@ export default function User() {
                             { max: 10, message: "姓名过长" },
                         ]
                     }>
-                        <Input autoComplete="off2" placeholder="请输入姓名" />
+                        <Input autoComplete="off" placeholder="请输入姓名" />
                     </Form.Item>
                     <Form.Item name="gender" label="性别" initialValue={0}>
                         <Radio.Group>
@@ -514,7 +514,7 @@ export default function User() {
                             { max: 20, message: "电话过长" },
                         ]
                     }>
-                        <Input autoComplete="off2" placeholder="请输入电话" />
+                        <Input autoComplete="off" placeholder="请输入电话" />
                     </Form.Item>
                     <Form.Item name="roles" label="角色">
                         <Select allowClear={true} placeholder="请选择角色" mode="multiple" >
@@ -555,14 +555,14 @@ export default function User() {
                             { required: true, message: "请输入密码" },
                         ]
                     }>
-                        <Input autoComplete="off2" placeholder="请输入密码" type="password" />
+                        <Input autoComplete="off" placeholder="请输入密码" type="password" />
                     </Form.Item>
                     <Form.Item name="confirmPwd" label="确认密码" rules={
                         [
                             { required: true, message: "请输入确认密码" },
                         ]
                     }>
-                        <Input autoComplete="off2" placeholder="请输入确认密码" type="password" />
+                        <Input autoComplete="off" placeholder="请输入确认密码" type="password" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6 }}>
                         <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>

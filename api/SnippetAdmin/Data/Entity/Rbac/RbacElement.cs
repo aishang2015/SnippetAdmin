@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Rbac;
 
-[Comment("元素树")]
+[Comment("元素树表")]
 [Table("T_Rbac_Element")]
 public class RbacElement
 {

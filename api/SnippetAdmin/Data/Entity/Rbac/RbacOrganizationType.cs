@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Rbac
 {
-	[Comment("组织类型")]
+	[Comment("组织类型表")]
 	[Table("T_Rbac_OrganizationType")]
 	public class RbacOrganizationType
 	{

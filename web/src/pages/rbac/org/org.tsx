@@ -354,17 +354,17 @@ export default function Org() {
                         <a onClick={() => setEmojiModalVisible(true)} style={{ fontSize: "20px" }}>{orgIcon}</a>
                     </Form.Item>
                     <Form.Item name="orgPhone" label="联系电话" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                        <Input placeholder="请输入联系电话" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入联系电话" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="orgAddress" label="地址" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                        <Input placeholder="请输入地址" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入地址" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="sorting" label="排序" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} rules={
                         [
                             { required: true, message: "请输入排序值" },
                         ]
                     } >
-                        <InputNumber style={{ width: '100%' }} autoComplete="off2" placeholder="请输入排序值" />
+                        <InputNumber style={{ width: '100%' }} autoComplete="off" placeholder="请输入排序值" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>
@@ -407,7 +407,7 @@ export default function Org() {
                             { max: 50, message: "组织类型名称过长" },
                         ]
                     }>
-                        <Input placeholder="请输入组织类型名称" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入组织类型名称" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="code" label="组织类型编码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} required rules={
                         [
@@ -415,7 +415,7 @@ export default function Org() {
                             { max: 50, message: "组织类型编码过长" },
                         ]
                     }>
-                        <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入组织类型编码" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSave} />} htmlType="submit" loading={isLoading}>保存</Button>

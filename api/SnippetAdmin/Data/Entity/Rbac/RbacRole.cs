@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnippetAdmin.Data.Entity.Rbac
 {
-	[Comment("系统角色")]
 	[Table("T_Rbac_Role")]
-	public class RbacRole : IdentityRole<int>
+    [Comment("角色表")]
+    public class RbacRole : IdentityRole<int>
     {
         [Comment("主键")]
         public override int Id { get; set; }

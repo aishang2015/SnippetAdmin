@@ -307,7 +307,7 @@ export default function Dictionary() {
                                 { max: 50, message: "字典类型名称过长" }
                             ]
                         }>
-                        <Input placeholder="请输入名称" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入名称" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="code" label="编码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} rules={
                         [
@@ -316,7 +316,7 @@ export default function Dictionary() {
                             { pattern: /^[A-Za-z0-9-_]+$/g, message: '字典类型编码只允许数字字母下划线' },
                         ]
                     }>
-                        <Input placeholder="请输入编码" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入编码" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button type='primary' icon={<FontAwesomeIcon icon={faSave} fixedWidth />} htmlType="submit" loading={isLoading}>保存</Button>
@@ -335,7 +335,7 @@ export default function Dictionary() {
                             { max: 50, message: "字典项目名称过长" }
                         ]
                     }>
-                        <Input placeholder="请输入名称" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入名称" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="code" label="编码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} rules={
                         [
@@ -344,14 +344,14 @@ export default function Dictionary() {
                             { pattern: /^[A-Za-z0-9-_]+$/g, message: '字典项目编码只允许数字字母下划线' },
                         ]
                     }>
-                        <Input placeholder="请输入编码" allowClear={true} autoComplete="off2"></Input>
+                        <Input placeholder="请输入编码" allowClear={true} autoComplete="off"></Input>
                     </Form.Item>
                     <Form.Item name="sorting" label="排序" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} rules={
                         [
                             { required: true, message: '请输入字典项目排序' }
                         ]
                     }>
-                        <InputNumber style={{ width: "100%" }} placeholder="请输入排序" autoComplete="off2" />
+                        <InputNumber style={{ width: "100%" }} placeholder="请输入排序" autoComplete="off" />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                         <Button type='primary' icon={<FontAwesomeIcon icon={faSave} fixedWidth />} htmlType="submit" loading={isLoading}>保存</Button>
