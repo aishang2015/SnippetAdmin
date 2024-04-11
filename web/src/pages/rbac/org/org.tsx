@@ -261,7 +261,24 @@ export default function Org() {
                     <Title level={4} style={{ marginBottom: 0 }}>组织信息</Title>
                 </div>
                 <div>
-
+                    {orgDetail !== null &&
+                        <>
+                            <RightElement identify="edit-org" child={
+                                <>
+                                    <Tooltip title="编辑当前组织" color={token.colorPrimary}>
+                                        <Button type="primary" onClick={editOrg} icon={<FontAwesomeIcon fixedWidth icon={faEdit} />} style={{ marginRight: '4px' }}></Button>
+                                    </Tooltip>
+                                </>
+                            }></RightElement>
+                            <RightElement identify="remove-org" child={
+                                <>
+                                    <Tooltip title="删除当前组织" color={token.colorPrimary}>
+                                        <Button type="primary" onClick={deleteOrg} icon={<FontAwesomeIcon fixedWidth icon={faTrash} />} style={{ marginRight: '4px' }}></Button>
+                                    </Tooltip>
+                                </>
+                            }></RightElement>
+                        </>
+                    }
                     <RightElement identify="create-org" child={
                         <>
                             <Tooltip title="创建组织" color={token.colorPrimary}>
@@ -279,7 +296,7 @@ export default function Org() {
                 </div>
             </div>
 
-            <Divider style={{ margin: '14px 0' }} />
+            <Divider style={{ margin: '14px 0 0 0' }} />
 
             <div id="org-container">
                 <div id='org-tree-container'>
@@ -289,20 +306,7 @@ export default function Org() {
                 <div id="org-detail-container">
                     {orgDetail !== null &&
                         <>
-                            <div>
-                                <RightElement identify="edit-org" child={
-                                    <>
-                                        <Button onClick={editOrg} icon={<FontAwesomeIcon fixedWidth icon={faEdit} />} style={{ marginRight: '10px' }}>编辑组织</Button>
-                                    </>
-                                }></RightElement>
-                                <RightElement identify="remove-org" child={
-                                    <>
-                                        <Button onClick={deleteOrg} icon={<FontAwesomeIcon fixedWidth icon={faTrash} />} style={{ marginRight: '10px' }}>删除组织</Button>
-                                    </>
-                                }></RightElement>
-                            </div>
-                            <Divider style={{ margin: "10px 0" }} />
-                            <Descriptions title="组织信息" bordered>
+                            <Descriptions bordered>
                                 <Descriptions.Item label="组织名称" labelStyle={{ width: "200px" }} span={3}>{orgDetail.name}</Descriptions.Item>
                                 <Descriptions.Item label="组织编码" span={3}>{orgDetail.code}</Descriptions.Item>
                                 <Descriptions.Item label="组织类型" span={3}>{orgDetail.type}</Descriptions.Item>

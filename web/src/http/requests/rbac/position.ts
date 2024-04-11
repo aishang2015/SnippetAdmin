@@ -42,7 +42,8 @@ export type deletePositionInput = {
 
 export type getPositionsInput = {
     page: number,
-    size: number
+    size: number,
+    name: string | null
 }
 
 export type getPositionInput = {

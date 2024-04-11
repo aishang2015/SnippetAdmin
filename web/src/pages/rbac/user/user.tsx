@@ -10,7 +10,7 @@ import { RoleService } from '../../../http/requests/rbac/role';
 import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/rbac/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faEdit, faGroupArrowsRotate, faKey, faPlus, faRefresh, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { faBroom, faCircleNotch, faEdit, faGroupArrowsRotate, faKey, faPlus, faRefresh, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 import { useToken } from 'antd/es/theme/internal';
 import { Configuration } from '../../../common/config';
 import Title from 'antd/es/typography/Title';
@@ -389,6 +389,10 @@ export default function User() {
                     <Tooltip title="搜索" color={token.colorPrimary}>
                         <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
                     </Tooltip>
+                    <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
+                            onClick={() => { setPage(1); resetSearchForm(); getUsers(); }} />
+                    </Tooltip>
                     <Tooltip title="刷新" color={token.colorPrimary}>
                         <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={getUsers} />
                     </Tooltip>
@@ -399,18 +403,21 @@ export default function User() {
                             </Tooltip>
                         </>
                     }></RightElement>
-                    <RightElement identify="add-member" child={
-                        <>
-                            <Tooltip title="绑定成员" color={token.colorPrimary}>
-                                <Button type="primary" disabled={selectedOrg === null} icon={<FontAwesomeIcon icon={faGroupArrowsRotate} />} style={{ marginRight: '4px' }} onClick={setOrgMember} />
-                            </Tooltip>
-                        </>
-                    }></RightElement>
+                    {selectedOrg !== null &&
+                        <RightElement identify="add-member" child={
+                            <>
+                                <Tooltip title="绑定成员" color={token.colorPrimary}>
+                                    <Button type="primary" disabled={selectedOrg === null} icon={<FontAwesomeIcon icon={faGroupArrowsRotate} />} style={{ marginRight: '4px' }} onClick={setOrgMember} />
+                                </Tooltip>
+                            </>
+                        }></RightElement>
+                    }
+
                 </div>
             </div>
 
-            <Divider style={{ margin: '14px 0' }} />
-            
+            <Divider style={{ margin: '14px 0 0 0' }} />
+
             <div id="user-container">
                 <div id="user-group-container">
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={(keys: any, event: any) => orgSelect(keys, event)} />
@@ -418,7 +425,7 @@ export default function User() {
                 <Divider type='vertical' style={{ height: '100%' }} />
                 <div id="user-list-container">
                     <Table size="small" columns={userTableColumns} dataSource={userTableData} scroll={{ x: 1700 }} pagination={false}></Table>
-                    <Pagination current={page} total={total} pageSize={size} showSizeChanger={true} style={{ marginTop: '10px' }}
+                    <Pagination current={page} total={total} pageSize={size} style={{ marginTop: '10px' }}
                         onChange={pageChange}></Pagination>
                 </div>
             </div>
@@ -426,16 +433,16 @@ export default function User() {
             <Modal open={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item name="userName" label="账号">
-                        <Input className="searchInput" autoComplete="off" placeholder="请输入账号" />
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入账号" allowClear />
                     </Form.Item>
                     <Form.Item name="realName" label="姓名" >
-                        <Input className="searchInput" autoComplete="off" placeholder="请输入姓名" />
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入姓名" allowClear />
                     </Form.Item>
                     <Form.Item name="phoneNumber" label="电话">
-                        <Input className="searchInput" autoComplete="off" placeholder="请输入电话" />
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入电话" allowClear />
                     </Form.Item>
                     <Form.Item name="role" label="角色">
-                        <Select allowClear={true} className="searchInput" placeholder="请选择角色">
+                        <Select allowClear={true} className="searchInput" placeholder="请选择角色" >
                             {
                                 roleOptions.map(o => (
                                     <Select.Option value={o.key} key={o.key}>{o.value}</Select.Option>
@@ -453,9 +460,8 @@ export default function User() {
                         </Select>
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
-                        <Button type="primary" htmlType="submit">确定</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => resetSearchForm()}>重置</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => setSearchVisible(false)}>取消</Button>
+                        <Button type="primary" htmlType="submit" icon={<FontAwesomeIcon fixedWidth icon={faSearch} />}>
+                            搜索</Button>
                     </Form.Item>
                 </Form>
             </Modal>

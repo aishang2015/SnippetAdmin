@@ -1,4 +1,4 @@
-import { faCircleNotch, faDatabase, faEdit, faFilter, faPlug, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBroom, faCircleNotch, faDatabase, faEdit, faFilter, faPlug, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Card, DatePicker, Form, Input, InputNumber, Modal, Pagination, Select, Table, Tag, Tooltip, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
@@ -43,9 +43,9 @@ export default function Access() {
                 <span>{(page - 1) * size + 1 + index}</span>
             )
         },
-        { title: '模块', dataIndex: "module", align: 'center', width: '200px' },
-        { title: '方法', dataIndex: "method", align: 'center' },
-        { title: '路径', dataIndex: "path", align: 'center', width: '200px' },
+        { title: '模块', dataIndex: "module", align: 'center', width: '150px' },
+        { title: '方法', dataIndex: "method", align: 'center', width: '240px' },
+        { title: '路径', dataIndex: "path", align: 'center' },
         { title: '用户姓名', dataIndex: "realName", align: 'center', width: '120px' },
         { title: '访问者ip', dataIndex: "remoteIp", align: 'center', width: '100px' },
         {
@@ -106,6 +106,7 @@ export default function Access() {
     }
 
     function handleModulesChange(moduleName: string) {
+        searchForm.setFieldValue("method", {});
         setMethodNames(methodDic[moduleName] ?? []);
     }
 
@@ -160,13 +161,17 @@ export default function Access() {
                     <Tooltip title="查找">
                         <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
                     </Tooltip>
+                    <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
+                            onClick={() => { setPage(1); resetSearchForm();}} />
+                    </Tooltip>
                     <Tooltip title="刷新">
                         <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={refresh} />
                     </Tooltip>
                 </div>
             </div>
 
-            <Table style={{ marginTop: '10px' }} bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1400 }}
+            <Table style={{ marginTop: '10px' }} bordered={true} columns={tableColumns} dataSource={tableData} scroll={{ x: 1600 }}
                 expandable={{
                     expandedRowRender: record =>
                         <div>
@@ -208,22 +213,20 @@ export default function Access() {
                         </Input.Group>
                     </Form.Item>
                     <Form.Item name="path" label="请求路径">
-                        <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" />
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" allowClear/>
                     </Form.Item>
                     <Form.Item name="userId" label="用户" >
                         <Select allowClear defaultValue={null} placeholder="请选择用户"
                             options={userDic.map((user: any) => ({ label: user.realName, value: user.userId }))} />
                     </Form.Item>
                     <Form.Item name="ip" label="访问者ip" >
-                        <Input className="searchInput" autoComplete="" placeholder="请输入ip地址" />
+                        <Input className="searchInput" autoComplete="" placeholder="请输入ip地址" allowClear/>
                     </Form.Item>
                     <Form.Item name="elapsed" label="最小请求时长">
                         <InputNumber placeholder="请输入最小请求时长" style={{ width: '100%' }} />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 6, span: 14 }}>
-                        <Button type="primary" htmlType="submit">确定</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => resetSearchForm()}>重置</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => setSearchModalVisible(false)}>取消</Button>
+                        <Button type="primary" htmlType="submit" icon={<FontAwesomeIcon icon={faSearch} />}>搜索</Button>
                     </Form.Item>
                 </Form>
             </Modal>
@@ -232,23 +235,31 @@ export default function Access() {
                 width={800}>
                 {dataLogData.map(d => {
                     return <Card style={{ marginBottom: '8px' }}>
-                        <Title level={5}>{d.entityName}
+                        <Title level={5}>{d.entityName}  <span style={{ width: '10px' }}></span>
                             {d.operation === "删除数据" && <Tag color="red">{d.operation}</Tag>}
                             {d.operation === "修改数据" && <Tag color="orange">{d.operation}</Tag>}
                             {d.operation === "添加数据" && <Tag color="green">{d.operation}</Tag>}
                         </Title>
 
-                        <div style={{ display: 'flex' }}>
-                            <div style={{ flex: "1", fontWeight: 'bold' }}>属性名</div>
-                            <div style={{ flex: "1", fontWeight: 'bold' }}>旧值</div>
-                            <div style={{ flex: "1", fontWeight: 'bold' }}>新值</div>
+                        <div style={{ display: 'flex', borderBottom: '1px solid #dddddd' }}>
+                            <div style={{ flex: "1", fontWeight: 'bold', borderRight: '1px solid #dddddd', margin: '0 4px' }}>属性名</div>
+                            <div style={{ flex: "1", fontWeight: 'bold', borderRight: '1px solid #dddddd', margin: '0 4px' }}>旧值</div>
+                            <div style={{ flex: "1", fontWeight: 'bold', margin: '0 4px' }}>新值</div>
                         </div>
                         {d.dataDetailList?.map(dd => {
                             return <>
-                                <div style={{ display: 'flex' }}>
-                                    <div style={{ flex: "1" }}>{dd.propertyName}</div>
-                                    <div style={{ flex: "1", wordBreak: 'break-all' }}>{dd.oldValue}</div>
-                                    <div style={{ flex: "1", wordBreak: 'break-all' }}>{dd.newValue}</div>
+                                <div style={{
+                                    display: 'flex', borderBottom: '1px solid #dddddd',
+                                    backgroundColor: dd.newValue === dd.oldValue ? token.colorBgBase : token.colorPrimary,
+                                    color: dd.newValue === dd.oldValue ? token.colorText : token.colorBgBase
+                                }}>
+                                    <div style={{ flex: "1", borderRight: '1px solid #dddddd', margin: '0 4px' }}>{dd.propertyName}</div>
+                                    <div style={{
+                                        flex: "1", wordBreak: 'break-all', borderRight: '1px solid #dddddd', margin: '0 4px',
+                                    }}>{dd.oldValue}</div>
+                                    <div style={{
+                                        flex: "1", wordBreak: 'break-all', margin: '0 4px',
+                                    }}>{dd.newValue}</div>
                                 </div>
                             </>;
                         })}

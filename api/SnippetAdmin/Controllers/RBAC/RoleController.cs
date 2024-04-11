@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
+using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Apis.RBAC;
@@ -64,9 +65,12 @@ namespace SnippetAdmin.Controllers.RBAC
 		[HttpPost]
 		[CommonResultResponseType<PagedOutputModel<GetRoleOutputModel>>]
 		[Description("取得职位列表")]
-		public async Task<CommonResult<PagedOutputModel<GetRoleOutputModel>>> GetRolesAsync([FromBody] PagedInputModel inputModel)
+		public async Task<CommonResult<PagedOutputModel<GetRoleOutputModel>>> GetRolesAsync([FromBody] GetRolesInputModel inputModel)
 		{
-			var roles = await _dbContext.Roles.Skip(inputModel.SkipCount)
+			var roles = await _dbContext.Roles
+				.AndIfExist(inputModel.Name, r => r.Name!.Contains(inputModel.Name!))
+				.AndIfExist(inputModel.Code, r => r.Code!.Contains(inputModel.Code!))
+				.Skip(inputModel.SkipCount)
 				.Take(inputModel.TakeCount).ToListAsync();
 
 			var result = new PagedOutputModel<GetRoleOutputModel>()

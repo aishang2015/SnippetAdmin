@@ -1,6 +1,6 @@
 #user-container {
     width: 100%;
-    height: calc( 100% - 60px);
+    height: calc( 100% - 46px);
     display: flex;
 }
 

@@ -37,7 +37,9 @@ export class RoleService {
 
     static getRoles(param: {
         page: number,
-        size: number
+        size: number,
+        name: string | null,
+        code: string | null,
     }) {
         return Axios.instance.post<CommonResult<GetRolesResult>>('api/role/getRoles', param);
     }

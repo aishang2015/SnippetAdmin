@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Azure.Core.GeoJson;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SnippetAdmin.CommonModel.Extensions;
 using SnippetAdmin.Constants;
 using SnippetAdmin.Core.Attributes;
+using SnippetAdmin.Core.Extensions;
 using SnippetAdmin.Data;
 using SnippetAdmin.Data.Entity.Rbac;
 using SnippetAdmin.Endpoint.Apis.RBAC;
@@ -82,7 +84,7 @@ namespace SnippetAdmin.Controllers.RBAC
             var userClaims = _dbContext.UserClaims.Where(uc => uc.ClaimValue == inputModel.Id.ToString() &&
                 uc.ClaimType == ClaimConstant.UserPosition);
 
-            if(position != null)
+            if (position != null)
             {
                 _dbContext.Remove(position);
                 _dbContext.RemoveRange(userClaims);
@@ -120,10 +122,15 @@ namespace SnippetAdmin.Controllers.RBAC
         [HttpPost]
         [CommonResultResponseType<PagedOutputModel<GetPositionsOutputModel>>]
         [Description("查询职位列表")]
-        public async Task<CommonResult<PagedOutputModel<GetPositionsOutputModel>>> GetPositions([FromBody] PagedInputModel inputModel)
+        public async Task<CommonResult<PagedOutputModel<GetPositionsOutputModel>>> GetPositions([FromBody] GetPositionsInputModel inputModel)
         {
-            var query = _dbContext.RbacPositions.OrderBy(p => p.Sorting).AsQueryable();
-            query = query.Sort(inputModel.Sorts);
+            var query = _dbContext.RbacPositions
+                .AndIfExist(inputModel.Name, p => p.Name!.Contains(inputModel.Name!))
+                .OrderBy(p => p.Sorting).AsQueryable();
+            if (inputModel.Sorts != null)
+            {
+                query = query.Sort(inputModel.Sorts);
+            }
 
             var result = new PagedOutputModel<GetPositionsOutputModel>()
             {

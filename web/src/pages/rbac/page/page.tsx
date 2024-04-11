@@ -19,7 +19,7 @@ export default function Page() {
     // !全局样式    
     const [_, token] = useToken();
     const [modal, contextHolder] = Modal.useModal();
-    
+
     const [apiInfo, setApiInfo] = useState(new Array<string>());
     const [treeData, setTreeData] = useState(new Array<any>());
     const [elementDetail, setElementDetail] = useState<any>(null);
@@ -156,6 +156,26 @@ export default function Page() {
                     <Title level={4} style={{ marginBottom: 0 }}>权限信息</Title>
                 </div>
                 <div>
+                    {elementDetail !== null &&
+                        <>
+                            <RightElement identify="edit-element" child={
+                                <>
+                                    <Tooltip title="编辑当前权限" color={token.colorPrimary}>
+                                        <Button type="primary" icon={<FontAwesomeIcon fixedWidth icon={faEdit} />}
+                                            style={{ marginRight: '4px' }} onClick={() => editElement(1)}></Button>
+                                    </Tooltip>
+                                </>
+                            }></RightElement>
+                            <RightElement identify="remove-element" child={
+                                <>
+                                    <Tooltip title="删除当前权限" color={token.colorPrimary}>
+                                        <Button type="primary" icon={<FontAwesomeIcon fixedWidth icon={faTrash} />}
+                                            style={{ marginRight: '4px' }} onClick={() => deleteElement(1)}></Button>
+                                    </Tooltip>
+                                </>
+                            }></RightElement>
+                        </>
+                    }
                     <RightElement identify="add-position" child={
                         <>
                             <Tooltip title="创建" color={token.colorPrimary}>
@@ -166,8 +186,8 @@ export default function Page() {
                 </div>
             </div>
 
-            <Divider style={{ margin: '14px 0' }} />
-            
+            <Divider style={{ margin: '14px 0 0 0' }} />
+
             <div id="page-container">
                 <div id="page-tree-container">
                     <Tree showLine={true} showIcon={true} treeData={treeData} onSelect={elementSelect} />
@@ -176,22 +196,9 @@ export default function Page() {
                 <div id="page-detail-container">
                     {elementDetail !== null &&
                         <>
-                            <div>
-                                <RightElement identify="edit-element" child={
-                                    <>
-                                        <Button icon={<FontAwesomeIcon fixedWidth icon={faEdit} />} style={{ marginRight: '10px' }} onClick={() => editElement(1)}>编辑</Button>
-                                    </>
-                                }></RightElement>
-                                <RightElement identify="remove-element" child={
-                                    <>
-                                        <Button icon={<FontAwesomeIcon fixedWidth icon={faTrash} />} style={{ marginRight: '10px' }} onClick={() => deleteElement(1)}>删除</Button>
-                                    </>
-                                }></RightElement>
-                            </div>
-                            <Divider style={{ margin: "10px 0" }} />
-                            <Descriptions title="页面元素信息" bordered column={3}>
+                            <Descriptions title="" bordered column={3}>
                                 <Descriptions.Item label="元素名称" span={3} labelStyle={{ width: "200px" }}>{elementDetail.name}</Descriptions.Item>
-                                <Descriptions.Item label="元素类型" span={3}>{elementDetail.type}</Descriptions.Item>
+                                <Descriptions.Item label="元素类型" span={3}>{elementDetail.type === 1  ? '菜单' : '按钮/链接'}</Descriptions.Item>
                                 <Descriptions.Item label="元素标识" span={3}>{elementDetail.identity}</Descriptions.Item>
                                 <Descriptions.Item label="接口信息" span={3}>
                                     {elementDetail.accessApi && split(elementDetail.accessApi, ',')?.map((api, index) => (

@@ -1,4 +1,5 @@
-﻿using SnippetAdmin.CommonModel;
+﻿using Microsoft.AspNetCore.Mvc;
+using SnippetAdmin.CommonModel;
 using SnippetAdmin.Endpoint.Models.RBAC.Role;
 
 namespace SnippetAdmin.Endpoint.Apis.RBAC
@@ -9,9 +10,9 @@ namespace SnippetAdmin.Endpoint.Apis.RBAC
 
 		public Task<CommonResult<GetRoleOutputModel>> GetRole(IdInputModel<int> inputModel);
 
-		public Task<CommonResult<PagedOutputModel<GetRoleOutputModel>>> GetRolesAsync(PagedInputModel inputModel);
+		public Task<CommonResult<PagedOutputModel<GetRoleOutputModel>>> GetRolesAsync(GetRolesInputModel inputModel);
 
-		public Task<CommonResult<List<DicOutputModel<int>>>> GetRoleDic();
+        public Task<CommonResult<List<DicOutputModel<int>>>> GetRoleDic();
 
 		public Task<CommonResult> AddOrUpdateRoleAsync(AddOrUpdateRoleInputModel inputModel);
 

@@ -8,6 +8,7 @@ import { DictionaryService, GetDicTypeListResponse, GetDicValueListResponse } fr
 import './dictionary.css';
 import { useToken } from 'antd/es/theme/internal';
 import Title from 'antd/es/typography/Title';
+import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 
 
 export default function Dictionary() {
@@ -227,17 +228,21 @@ export default function Dictionary() {
                 <div>
 
                     <RightElement identify="add-dictype" child={
-                        <Tooltip title="创建字典类型">
-                            <Button style={{ marginRight: '4px' }} icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicType}></Button>
+                        <Tooltip title="创建字典类型" color={token.colorPrimary}>
+                            <Button type='primary' style={{ marginRight: '4px' }} icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicType}></Button>
                         </Tooltip>}
                     ></RightElement>
 
-                    <RightElement identify="add-dicvalue" child={
-                        <Tooltip title="创建字典项目">
-                            <Button disabled={selectedTypeId === null} style={{ marginRight: '4px' }}
-                                icon={<FontAwesomeIcon icon={faPlus} fixedWidth />} onClick={addDicValue}></Button>
-                        </Tooltip>
-                    }></RightElement>
+                    {selectedTypeId !== null &&
+
+                        <RightElement identify="add-dicvalue" child={
+                            <Tooltip title="创建字典项目" color={token.colorPrimary}>
+                                <Button type='primary' disabled={selectedTypeId === null} style={{ marginRight: '4px' }}
+                                    icon={<FontAwesomeIcon icon={faSquarePlus} fixedWidth />} onClick={addDicValue}></Button>
+                            </Tooltip>
+                        }></RightElement>
+
+                    }
 
                 </div>
 

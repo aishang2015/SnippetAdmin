@@ -7,7 +7,7 @@ import { RoleService } from '../../../http/requests/rbac/role';
 import { ElementService } from '../../../http/requests/rbac/element';
 import { RightElement } from '../../../components/right/rightElement';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faEdit, faPlus, faRefresh, faSave, faSearch, faTrash, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faBroom, faCircleNotch, faEdit, faPlus, faRefresh, faSave, faSearch, faTrash, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import Title from 'antd/es/typography/Title';
 import { useToken } from 'antd/es/theme/internal';
 
@@ -76,6 +76,8 @@ export default function Role() {
     const [rightModalVisible, setRightModalVisible] = useState(false);
     const [rights, setRights] = useState<any>();
 
+    const [searchObject, setSearchObject] = useState<any>({});
+
     function createRole() {
         setRoleModalVisible(true);
     }
@@ -102,7 +104,7 @@ export default function Role() {
             title: '是否删除该角色?',
             onOk: async () => {
                 await RoleService.removeRole({ id: id });
-                await getRoles(page, size);
+                await getRoles();
             }
         })
     }
@@ -125,7 +127,7 @@ export default function Role() {
                 remark: values["remark"],
                 rights: values["rights"]
             });
-            await getRoles(page, size);
+            await getRoles();
             setRoleModalVisible(false);
         }
         finally {
@@ -137,13 +139,22 @@ export default function Role() {
         init();
     }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
+    useEffect(() => {
+        getRoles();
+    }, [page, size, searchObject])
+
     async function init() {
-        await getRoles(page, size);
+        await getRoles();
         await getTreeData();
     }
 
-    async function getRoles(page: number, size: number) {
-        let result = await RoleService.getRoles({ page: page, size: size });
+    async function getRoles() {
+        let result = await RoleService.getRoles({
+            page: page,
+            size: size,
+            name: searchObject.name,
+            code: searchObject.code,
+        });
         setTotal(result.data.data.total);
         setRoleTableData(result.data.data.data);
     }
@@ -153,6 +164,26 @@ export default function Role() {
         let response = await ElementService.getElementTree();
         setRightTree(response.data.data);
     }
+
+    //#region  搜索
+
+    const [searchModalVisible, setSearchModalVisible] = useState(false);
+    const [searchForm] = useForm();
+
+    async function openSearchModal() {
+        setSearchModalVisible(true);
+    }
+
+    async function searchSubmit(values: any) {
+        setPage(1);
+        setSearchObject({
+            name: values["roleName"],
+            code: values["roleCode"],
+        });
+        setSearchModalVisible(false);
+    }
+
+    //#endregion
 
 
     return (
@@ -166,6 +197,13 @@ export default function Role() {
                     <Title level={4} style={{ marginBottom: 0 }}>角色信息</Title>
                 </div>
                 <div>
+                    <Tooltip title="搜索" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
+                    </Tooltip>
+                    <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
+                            onClick={() => { setPage(1); setSearchObject({}); }} />
+                    </Tooltip>
                     <Tooltip title="刷新" color={token.colorPrimary}>
                         <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={init} />
                     </Tooltip>
@@ -185,7 +223,7 @@ export default function Role() {
                 <Table columns={roleTableColumns} dataSource={roleTableData} pagination={false} size="small" ></Table>
                 {total > 0 &&
                     <Pagination current={page} total={total} showSizeChanger={false} style={{ marginTop: '10px' }}
-                        onChange={async (p, s) => { setPage(p); setSize(s); await getRoles(p, s); }}></Pagination>
+                        onChange={async (p, s) => { setPage(p); setSize(s); }}></Pagination>
                 }
             </div>
 
@@ -230,6 +268,23 @@ export default function Role() {
 
             <Modal open={rightModalVisible} onCancel={() => setRightModalVisible(false)} title="角色权限" footer={null}>
                 <Tree checkable checkedKeys={rights} defaultExpandAll={true} treeData={rightTree} />
+            </Modal>
+
+            {/*搜索模态框*/}
+            <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)}
+                footer={null} title="搜索">
+                <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} preserve={false}>
+                    <Form.Item name="roleName" label="角色名">
+                        <Input autoComplete="off" placeholder="请输入角色名" />
+                    </Form.Item>
+                    <Form.Item name="roleCode" label="角色编码">
+                        <Input autoComplete="off" placeholder="请输入角色编码" />
+                    </Form.Item>
+                    <Form.Item wrapperCol={{ offset: 6 }}>
+                        <Button type='primary' icon={<FontAwesomeIcon fixedWidth icon={faSearch} />}
+                            htmlType="submit" loading={isLoading}>搜索</Button>
+                    </Form.Item>
+                </Form>
             </Modal>
         </>
     );
