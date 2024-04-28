@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faEdit, faLink, faPlus, faSave, faShieldHalved, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useToken } from 'antd/es/theme/internal';
 import Title from 'antd/es/typography/Title';
+import DraggableModal from '../../../components/common/draggableModal';
 
 export default function Page() {
 
@@ -198,7 +199,7 @@ export default function Page() {
                         <>
                             <Descriptions title="" bordered column={3}>
                                 <Descriptions.Item label="元素名称" span={3} labelStyle={{ width: "200px" }}>{elementDetail.name}</Descriptions.Item>
-                                <Descriptions.Item label="元素类型" span={3}>{elementDetail.type === 1  ? '菜单' : '按钮/链接'}</Descriptions.Item>
+                                <Descriptions.Item label="元素类型" span={3}>{elementDetail.type === 1 ? '菜单' : '按钮/链接'}</Descriptions.Item>
                                 <Descriptions.Item label="元素标识" span={3}>{elementDetail.identity}</Descriptions.Item>
                                 <Descriptions.Item label="接口信息" span={3}>
                                     {elementDetail.accessApi && split(elementDetail.accessApi, ',')?.map((api, index) => (
@@ -215,7 +216,8 @@ export default function Page() {
                 </div>
             </div>
 
-            <Modal open={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={elementEditVisible} destroyOnClose={true} onCancel={() => setElementEditVisible(false)} footer={null}
                 title="页面元素编辑" width={600} maskClosable={false}>
                 <Form form={elementForm} onFinish={elementFormSubmit} preserve={false} >
                     <Form.Item name="id" hidden>

@@ -1,4 +1,4 @@
-import { faBroom, faCircleNotch, faRefresh, faSearch, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
+import { faBroom, faCircleNotch, faDeleteLeft, faRefresh, faSearch, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Form, Input, Modal, Pagination, Table, Tag, Tooltip } from "antd";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import { LoginLogService } from "../../../http/requests/system/login-log";
 import Title from "antd/es/typography/Title";
 import { useToken } from "antd/es/theme/internal";
 import { useForm } from "antd/es/form/Form";
+import DraggableModal from "../../../components/common/draggableModal";
 
 
 
@@ -98,7 +99,7 @@ export default function Login() {
                         <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
                     </Tooltip>
                     <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
-                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faDeleteLeft} />} style={{ marginRight: '4px' }}
                             onClick={() => { setPage(1); setSearchObject({}); }} />
                     </Tooltip>
                     <Tooltip title="刷新">
@@ -116,7 +117,8 @@ export default function Login() {
             }
 
             {/*搜索模态框*/}
-            <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={searchModalVisible} onCancel={() => setSearchModalVisible(false)}
                 footer={null} title="搜索">
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="loginName" label="登录名">

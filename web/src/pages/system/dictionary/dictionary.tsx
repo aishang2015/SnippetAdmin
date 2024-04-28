@@ -9,6 +9,7 @@ import './dictionary.css';
 import { useToken } from 'antd/es/theme/internal';
 import Title from 'antd/es/typography/Title';
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
+import DraggableModal from '../../../components/common/draggableModal';
 
 
 export default function Dictionary() {
@@ -299,7 +300,8 @@ export default function Dictionary() {
                         pagination={false} bordered>  </Table>
                 </div>
             </div>
-            <Modal open={dicTypeVisible} destroyOnClose={true} maskClosable={false} footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={dicTypeVisible} destroyOnClose={true} maskClosable={false} footer={null}
                 title={"编辑字典类型"} onCancel={() => setDicTypeVisible(false)}>
                 <Form form={typeForm} preserve={false} onFinish={submitType}>
                     <Form.Item name="id" hidden>
@@ -328,7 +330,8 @@ export default function Dictionary() {
                     </Form.Item>
                 </Form>
             </Modal>
-            <Modal open={dicValueVisible} destroyOnClose={true} maskClosable={false} footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={dicValueVisible} destroyOnClose={true} maskClosable={false} footer={null}
                 title={"编辑字典项目"} onCancel={() => setDicValueVisible(false)}>
                 <Form form={valueForm} preserve={false} onFinish={submitValue}>
                     <Form.Item name="id" hidden>

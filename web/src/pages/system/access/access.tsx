@@ -1,4 +1,4 @@
-import { faBroom, faCircleNotch, faDatabase, faEdit, faFilter, faPlug, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBroom, faCircleNotch, faDatabase, faDeleteLeft, faEdit, faFilter, faPlug, faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Card, DatePicker, Form, Input, InputNumber, Modal, Pagination, Select, Table, Tag, Tooltip, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
@@ -11,6 +11,7 @@ import { UserService } from '../../../http/requests/rbac/user';
 import Title from 'antd/es/typography/Title';
 import { RightElement } from '../../../components/right/rightElement';
 import { useToken } from 'antd/es/theme/internal';
+import DraggableModal from '../../../components/common/draggableModal';
 dayjs.locale('zh-cn');
 
 export default function Access() {
@@ -162,8 +163,8 @@ export default function Access() {
                         <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
                     </Tooltip>
                     <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
-                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
-                            onClick={() => { setPage(1); resetSearchForm();}} />
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faDeleteLeft} />} style={{ marginRight: '4px' }}
+                            onClick={() => { setPage(1); resetSearchForm(); }} />
                     </Tooltip>
                     <Tooltip title="刷新">
                         <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} onClick={refresh} />
@@ -195,7 +196,8 @@ export default function Access() {
                 <Pagination current={page} total={total} showSizeChanger={true} style={{ marginTop: '10px' }}
                     onChange={async (p, s) => { setPage(p); setSize(s); }}></Pagination>
             }
-            <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={searchModalVisible} onCancel={() => setSearchModalVisible(false)} title="搜索条件" footer={null}
                 width={600}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item label="方法">
@@ -213,14 +215,14 @@ export default function Access() {
                         </Input.Group>
                     </Form.Item>
                     <Form.Item name="path" label="请求路径">
-                        <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" allowClear/>
+                        <Input className="searchInput" autoComplete="off" placeholder="请输入请求路径" allowClear />
                     </Form.Item>
                     <Form.Item name="userId" label="用户" >
                         <Select allowClear defaultValue={null} placeholder="请选择用户"
                             options={userDic.map((user: any) => ({ label: user.realName, value: user.userId }))} />
                     </Form.Item>
                     <Form.Item name="ip" label="访问者ip" >
-                        <Input className="searchInput" autoComplete="" placeholder="请输入ip地址" allowClear/>
+                        <Input className="searchInput" autoComplete="" placeholder="请输入ip地址" allowClear />
                     </Form.Item>
                     <Form.Item name="elapsed" label="最小请求时长">
                         <InputNumber placeholder="请输入最小请求时长" style={{ width: '100%' }} />
@@ -231,7 +233,8 @@ export default function Access() {
                 </Form>
             </Modal>
 
-            <Modal open={dataLogVisible} onCancel={() => setDataLogVisible(false)} title="数据日志" footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={dataLogVisible} onCancel={() => setDataLogVisible(false)} title="数据日志" footer={null}
                 width={800}>
                 {dataLogData.map(d => {
                     return <Card style={{ marginBottom: '8px' }}>

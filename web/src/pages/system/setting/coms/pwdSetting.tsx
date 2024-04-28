@@ -92,7 +92,7 @@ export default function PwdSetting() {
                 valuePropName="value" rules={
                     []
                 } preserve={false}>
-                <InputNumber style={{ width: "100%" }} placeholder={"请输入SecurityPwdLength"} />
+                <InputNumber style={{ width: "100%" }} placeholder={"请输入密码长度"} />
             </FormItem>
             
             <Form.Item wrapperCol={{ offset: 6, span: 16 }}>

@@ -10,10 +10,11 @@ import { RoleService } from '../../../http/requests/rbac/role';
 import { RightElement } from '../../../components/right/rightElement';
 import { PositionService } from '../../../http/requests/rbac/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBroom, faCircleNotch, faEdit, faGroupArrowsRotate, faKey, faPlus, faRefresh, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { faBroom, faCircleNotch, faDeleteLeft, faEdit, faGroupArrowsRotate, faKey, faPlus, faRefresh, faSave, faSearch, faTrash, faUser, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 import { useToken } from 'antd/es/theme/internal';
 import { Configuration } from '../../../common/config';
 import Title from 'antd/es/typography/Title';
+import DraggableModal from '../../../components/common/draggableModal';
 
 export default function User() {
 
@@ -390,7 +391,7 @@ export default function User() {
                         <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
                     </Tooltip>
                     <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
-                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faDeleteLeft} />} style={{ marginRight: '4px' }}
                             onClick={() => { setPage(1); resetSearchForm(); getUsers(); }} />
                     </Tooltip>
                     <Tooltip title="刷新" color={token.colorPrimary}>
@@ -430,7 +431,8 @@ export default function User() {
                 </div>
             </div>
 
-            <Modal open={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={searchVisible} onCancel={() => setSearchVisible(false)} title="搜索条件" footer={null}>
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} >
                     <Form.Item name="userName" label="账号">
                         <Input className="searchInput" autoComplete="off" placeholder="请输入账号" allowClear />
@@ -466,7 +468,8 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal open={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={orgAddVisible} onCancel={() => setOrgAddVisible(false)} title="添加新的组织成员" footer={null}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={orgSettingForm} onFinish={submitOrgMember} preserve={false}>
                     <Form.Item label="成员" name="members" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} rules={
@@ -483,7 +486,8 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal open={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={userEditVisible} title="用户信息" footer={null} onCancel={() => setUserEditVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={userEditForm} onFinish={userInfoSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -549,7 +553,8 @@ export default function User() {
                 </Form>
             </Modal>
 
-            <Modal open={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={pwdEditVisible} title="密码设置" footer={null} onCancel={() => setPwdEditVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={pwdEditForm} onFinish={pwdSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>

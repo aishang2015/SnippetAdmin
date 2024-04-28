@@ -12,6 +12,7 @@ import { RightElement } from '../../../components/right/rightElement';
 import { getOrganizationResult, OrganizationService } from '../../../http/requests/rbac/organization';
 import Title from 'antd/es/typography/Title';
 import { useToken } from 'antd/es/theme/internal';
+import DraggableModal from '../../../components/common/draggableModal';
 
 // @ts-ignore - alternatively, add `declare module "@emoji-mart/react"` to your project's type declarations
 const Picker = React.lazy(() => import("@emoji-mart/react"));
@@ -320,7 +321,8 @@ export default function Org() {
                 </div>
             </div>
 
-            <Modal open={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={orgEditVisible} destroyOnClose={true} onCancel={() => setOrgEditVisible(false)} footer={null}
                 title="组织信息编辑" width={800} maskClosable={false}>
                 <Form preserve={false} form={orgForm} onFinish={orgSubmit}>
                     <Form.Item name="id" hidden>
@@ -376,7 +378,8 @@ export default function Org() {
                 </Form>
             </Modal>
 
-            <Modal width={390} open={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                width={390} open={emojiModalVisible} footer={null} title="选择图标" destroyOnClose={true}
                 onCancel={() => setEmojiModalVisible(false)} maskClosable={false}>
                 <Picker data={data} emoji={orgIconId} theme="light" locale={"zh"} onEmojiSelect={
                     (value: any) => {
@@ -388,7 +391,8 @@ export default function Org() {
                 } />
             </Modal>
 
-            <Modal width={600} open={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                width={600} open={orgTypeTableVisible} onCancel={() => setOrgTypeTableVisible(false)} footer={null} title="组织类型" >
 
                 <RightElement identify="add-update-org-type" child={
                     <>
@@ -397,7 +401,8 @@ export default function Org() {
                 }></RightElement>
                 <Table size="small" columns={orgTypeTableColumns} dataSource={orgTypeData} pagination={false}></Table>
             </Modal>
-            <Modal width={500} open={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                width={500} open={orgTypeEditVisible} destroyOnClose={true} onCancel={() => setOrgTypeEditVisible(false)} footer={null}
                 title="组织类型编辑" maskClosable={false}>
 
                 <Form preserve={false} form={orgTypeForm} onFinish={orgTypeSubmit}>

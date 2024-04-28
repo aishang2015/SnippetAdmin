@@ -22,6 +22,7 @@ import { cloneDeep } from "lodash";
 
 import 'dayjs/locale/zh-cn';
 import dayjs from 'dayjs';
+import DraggableModal from "../../../components/common/draggableModal";
 
 interface IBasicLayout {
     onColorChange(color: string): void;
@@ -430,7 +431,8 @@ export default function BasicLayout({ onColorChange, onThemeChange }: IBasicLayo
                 </Layout>
             </Layout>
 
-            <Modal open={userSettingModalVisible} width={800} footer={null} title="用户信息设置"
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={userSettingModalVisible} width={800} footer={null} title="用户信息设置"
                 onCancel={() => setUserSettingModalVisible(false)} >
                 <div style={{ display: "flex", height: "600px", overflow: "auto" }}>
                     <div style={{ width: "200px" }}>

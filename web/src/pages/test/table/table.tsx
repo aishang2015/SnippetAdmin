@@ -7,6 +7,7 @@ import { useForm } from 'antd/lib/form/Form';
 //import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckSquare, faEye, faFilter, faPlus, faRotateLeft, faSave, faSearch } from '@fortawesome/free-solid-svg-icons';
+import DraggableModal from '../../../components/common/draggableModal';
 
 
 export default function TablePage(props: any) {
@@ -473,7 +474,8 @@ export default function TablePage(props: any) {
             <Pagination defaultCurrent={1} pageSize={size} total={total} current={page} style={{ marginTop: '10px' }}
                 showSizeChanger={true} onChange={pageChange} showTotal={(total, range) => `共计 ${total} 条数据`} />
 
-            <Modal open={editDataModal} onCancel={() => setEditDataModal(false)} title="编辑数据" footer={null}>
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={editDataModal} onCancel={() => setEditDataModal(false)} title="编辑数据" footer={null}>
                 <Form form={dataEditForm} onFinish={dataEditSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
                     {

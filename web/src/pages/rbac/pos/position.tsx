@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'antd/lib/form/Form';
 import { PositionService } from '../../../http/requests/rbac/position';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBroom, faCircleNotch, faEdit, faPlus, faRefresh, faSave, faSearch, faTrash, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { faBroom, faCircleNotch, faDeleteLeft, faEdit, faPlus, faRefresh, faSave, faSearch, faTrash, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import Title from 'antd/es/typography/Title';
 import { useToken } from 'antd/es/theme/internal';
+import DraggableModal from '../../../components/common/draggableModal';
 
 export default function Position() {
 
@@ -150,7 +151,7 @@ export default function Position() {
                         <Button type="primary" icon={<FontAwesomeIcon icon={faSearch} />} style={{ marginRight: '4px' }} onClick={openSearchModal} />
                     </Tooltip>
                     <Tooltip title="重置条件并搜索" color={token.colorPrimary}>
-                        <Button type="primary" icon={<FontAwesomeIcon icon={faBroom} />} style={{ marginRight: '4px' }}
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faDeleteLeft} />} style={{ marginRight: '4px' }}
                             onClick={() => { setPage(1); setSearchObject({}); }} />
                     </Tooltip>
                     <Tooltip title="刷新" color={token.colorPrimary}>
@@ -176,7 +177,8 @@ export default function Position() {
                     <Pagination current={page} total={total} onChange={async (p, s) => { setPage(p); setSize(s); }} showSizeChanger={false} style={{ marginTop: '10px' }}></Pagination>
                 }
             </div>
-            <Modal open={positionModalVisible} title="职位信息" footer={null} onCancel={() => setPositionModalVisible(false)}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={positionModalVisible} title="职位信息" footer={null} onCancel={() => setPositionModalVisible(false)}
                 destroyOnClose={true} maskClosable={false}>
                 <Form form={positionEditForm} onFinish={positionSubmit} labelCol={{ span: 6 }}
                     wrapperCol={{ span: 16 }} preserve={false}>
@@ -213,7 +215,8 @@ export default function Position() {
             </Modal>
 
             {/*搜索模态框*/}
-            <Modal open={searchModalVisible} onCancel={() => setSearchModalVisible(false)}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={searchModalVisible} onCancel={() => setSearchModalVisible(false)}
                 footer={null} title="搜索">
                 <Form form={searchForm} onFinish={searchSubmit} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} preserve={false}>
                     <Form.Item name="posName" label="职位名称">

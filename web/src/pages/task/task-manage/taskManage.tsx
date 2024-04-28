@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useToken } from 'antd/es/theme/internal';
 import Title from 'antd/es/typography/Title';
 import { RightElement } from '../../../components/right/rightElement';
+import DraggableModal from '../../../components/common/draggableModal';
 
 
 export default function TaskManage(props: any) {
@@ -166,13 +167,13 @@ export default function TaskManage(props: any) {
                 </div>
                 <div>
                     <Tooltip title="刷新" color={token.colorPrimary}>
-                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }} 
+                        <Button type="primary" icon={<FontAwesomeIcon icon={faRefresh} />} style={{ marginRight: '4px' }}
                             onClick={initial} />
                     </Tooltip>
                     <RightElement identify="create-user" child={
                         <>
                             <Tooltip title="新建" color={token.colorPrimary}>
-                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} style={{ marginRight: '4px' }} 
+                                <Button type="primary" icon={<FontAwesomeIcon icon={faPlus} />} style={{ marginRight: '4px' }}
                                     onClick={addTask} />
                             </Tooltip>
                         </>
@@ -186,7 +187,8 @@ export default function TaskManage(props: any) {
                 bordered scroll={{ x: 1400 }} size="small"></Table>
             <Pagination pageSize={size} total={total} current={page} showSizeChanger={true} onChange={pageChange} />
 
-            <Modal open={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
+            <Modal modalRender={(modal) => { return <DraggableModal ><div>{modal}</div></DraggableModal> }}
+                open={editModalVisible} destroyOnClose={true} onCancel={() => setEditModalVisible(false)}
                 footer={null} title="任务信息编辑" maskClosable={false}>
                 <Form form={editForm} preserve={false} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}
                     onFinish={submitJob}>
