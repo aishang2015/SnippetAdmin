@@ -13,6 +13,7 @@ import { getOrganizationResult, OrganizationService } from '../../../http/reques
 import Title from 'antd/es/typography/Title';
 import { useToken } from 'antd/es/theme/internal';
 import DraggableModal from '../../../components/common/draggableModal';
+import { faBuilding } from '@fortawesome/free-regular-svg-icons';
 
 // @ts-ignore - alternatively, add `declare module "@emoji-mart/react"` to your project's type declarations
 const Picker = React.lazy(() => import("@emoji-mart/react"));
@@ -231,7 +232,7 @@ export default function Org() {
     function makeTreeData(data: any) {
         for (const d of data) {
             d.value = d.key;
-            d.icon = (<>{d.icon}</>);
+            d.icon = (<>{<FontAwesomeIcon icon={faBuilding}></FontAwesomeIcon>}</>);
             if (d.children.length === 0) {
                 d.switcherIcon = (<></>)
             } else {
@@ -355,9 +356,6 @@ export default function Org() {
                                 ))
                             }
                         </Select>
-                    </Form.Item>
-                    <Form.Item name="orgIcon" label="组织图标" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                        <a onClick={() => setEmojiModalVisible(true)} style={{ fontSize: "20px" }}>{orgIcon}</a>
                     </Form.Item>
                     <Form.Item name="orgPhone" label="联系电话" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
                         <Input placeholder="请输入联系电话" allowClear={true} autoComplete="off"></Input>

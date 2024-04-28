@@ -10,7 +10,7 @@
 
 		public string? Remark { get; set; }
 
-		public int[] Rights { get; set; }
+		public int[]? Rights { get; set; }
 
 		public bool IsActive { get; set; }
 	}
